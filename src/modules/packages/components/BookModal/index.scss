@@ -1,0 +1,151 @@
+.payment-wrapper {
+    .payment-price {
+        max-width: 320px;
+
+        .input-wrapper {
+            input {
+                margin-bottom: 8px;
+                padding-right: 45px;
+
+                &.with-error {
+                    color: var(--semanticTokens-outlineError, #FA3434) !important;
+                }
+            }
+        }
+
+        .dram-icon {
+            position: absolute;
+            right: 12px;
+            top: 35px;
+        }
+
+        .payment-price-info {
+            color: var(--semanticTokens-surfaceInverse, #1C1C1C);
+            font-size: 13px;
+            font-weight: 500;
+        }
+    }
+
+    .payment-info-text {
+        color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+        font-size: 16px;
+    }
+}
+
+.preview-wrapper {
+    .stars {
+        border-radius: 29px;
+        background: var(--semanticTokens-surfacePrimaryLighter, #E3F0FF);
+        color: var(--semanticTokens-onSurfaceBlue, #33AAFA);
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: -0.2px;
+        padding: 4px 12px 5px 11px;
+    }
+
+    .hotel-name {
+        color: var(--semanticTokens-onSurface, #1C1C1C);
+        font-size: 20px;
+        line-height: 28px;
+        letter-spacing: -0.2px;
+    }
+
+    .hotel-place {
+        color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+        font-size: 16px;
+    }
+
+    .inludes-title {
+        margin-bottom: 22px;
+    }
+
+    .includes-info {
+        margin-bottom: 14px;
+
+        .inner {
+            &:first-child {
+                width: 136px;
+            }
+        }
+    }
+
+    .terms-and-descriptions {
+        color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+        font-size: 14px;
+        font-weight: 400;
+
+        .terms-link {
+            text-decoration-line: underline;
+        }
+    }
+}
+
+@media (max-width: 1170px) {
+    .payment-wrapper {
+        .payment-price {
+            max-width: 325px;
+        }
+    }
+
+    .preview-wrapper {
+        .inludes-title {
+            margin: 32px 0 20px 0;
+        }
+    }
+}
+
+@media (max-width: 993px) {
+    .payment-wrapper {
+        .payment-price {
+            max-width: 100%;
+
+            &.m-b-32 {
+                margin-bottom: 24px;
+            }
+        }
+
+        .checkbox-wrapper {
+            font-size: 14px;
+            line-height: 19px;
+        }
+
+        .payment-info-text {
+            font-size: 14px;
+            line-height: 19px;
+        }
+    }
+
+    .preview-wrapper {
+        .hotel-name {
+            font-size: 16px;
+            line-height: 22px;
+        }
+
+        .hotel-place {
+            font-size: 14px;
+            line-height: 19px;
+        }
+
+        .inludes-title {
+            margin: 24px 0 20px 0;
+        }
+
+        .packaga-includes {
+            .includes-info {
+                display: block;
+                margin: 0;
+
+                .inner {
+                    width: 100%;
+                    margin-bottom: 8px;
+                    font-size: 14px;
+                    align-items: center;
+
+                    span {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}

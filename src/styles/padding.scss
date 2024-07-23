@@ -1,0 +1,33 @@
+@import './variables';
+
+@each $size in $size-list {
+  .p-#{$size} {
+    padding: #{$size}px;
+  }
+
+  .p-x-#{$size} {
+    padding-inline-end: #{$size}px;
+    padding-inline-start: #{$size}px;
+  }
+
+  .p-y-#{$size} {
+    padding-block-end: #{$size}px;
+    padding-block-start: #{$size}px;
+  }
+
+  .p-b-#{$size} {
+    padding-block-end: #{$size}px;
+  }
+
+  .p-r-#{$size} {
+    padding-inline-end: #{$size}px;
+  }
+
+  .p-l-#{$size} {
+    padding-inline-start: #{$size}px;
+  }
+
+  .p-t-#{$size} {
+    padding-block-start: #{$size}px;
+  }
+}

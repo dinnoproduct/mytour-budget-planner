@@ -1,0 +1,129 @@
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.font-bold {
+    font-weight: 600;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.background {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.no-border {
+    border: none !important;
+}
+
+.details-title {
+    color: var(--semanticTokens-onSurface, #1C1C1C);
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.2px;
+    margin-bottom: 20px;
+}
+
+.flights-details-title {
+    color: var(--semanticTokens-onSurface, #1C1C1C);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: -0.2px;
+    margin-bottom: 20px;
+}
+
+.hotel-details-title {
+    color: var(--semanticTokens-onSurface, #1C1C1C);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 20px;
+}
+
+.grades-details-title {
+    color: var(--semanticTokens-onSurface, #1C1C1C);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 20px;
+}
+
+.booking {
+    color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.detail-info-item {
+    font-size: 16px;
+    border-bottom: 1px solid #F2F2F7;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    .details-info-name {
+        color: var(--semanticTokens-onSurface, #1C1C1C);
+    }
+
+    .details-info-value {
+        color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+    }
+
+    &.last {
+        border: none;
+        margin-bottom: 7px;
+    }
+}
+
+@media (max-width: 993px) {
+    .detail-info-item {
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+    }
+    .booking {
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+}
+
+.btn-main {
+    background-color: #0D6EFD;
+    border-radius: 12px;
+    color: var(--semanticTokens-onSurfaceInverse, #FFF);
+}
+
+.btn-outline {
+    border: 1px solid var(--semanticTokens-outline, #DEE2E7);
+}
+
+.error-message {
+    color: var(--semanticTokens-onSurfaceError, #FA3434);
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: -4px;
+}
+
+.with-error {
+    border: 1px solid var(--semanticTokens-outlineError, #FA3434) !important;
+
+    &::placeholder {
+        color: var(--semanticTokens-outlineError, #FA3434) !important;
+    }
+}

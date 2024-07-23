@@ -1,0 +1,161 @@
+.subscribe {
+    min-height: 327px;
+    border-radius: 32px;
+    background-color: #E3F0FF;
+    padding: 20px 0;
+    margin: 24px 0 56px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+
+    .subscribe-title {
+        font-size: 32px;
+        line-height: 44px;
+        color: #1C1C1C;
+        margin: 8px 0;
+    }
+
+    .subscribe-subtitle {
+        font-size: 20px;
+        line-height: 28px;
+        color: #8B96A5;
+        margin-bottom: 8px;
+    }
+
+    .subscribe-subtitle-small {
+        font-size: 16px;
+        line-height: 22px;
+        color: #8B96A5;
+        margin-bottom: 24px;
+    }
+
+    .subscribe-success-title {
+        font-size: 32px;
+        line-height: 44px;
+        color: #8B96A5;
+        margin-top: -25px;
+    }
+
+    .subscribe-action {
+        display: flex;
+        align-items: center;
+        width: 473px;
+        margin: 0 auto;
+
+        .input-wrapper {
+            width: 100%;
+        }
+
+        button {
+            margin-left: 16px;
+            width: 183px;
+            height: 40px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+    }
+}
+
+@media (max-width: 1170px) {
+    .subscribe {
+        margin: 0 0 24px 0;
+
+        .subscribe-action {
+            justify-content: center;
+            width: 100%;
+
+            .input-wrapper {
+                display: inline-block;
+                width: 278px;
+                margin-right: 6px;
+            }
+
+            button {
+                width: auto;
+                margin-left: 6px;
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .subscribe {
+        min-height: auto;
+        height: 280px;
+        box-sizing: border-box;
+        padding: 24px;
+        align-items: center;
+
+        img {
+            width: 54px;
+        }
+
+        .subscribe-title {
+            font-size: 18px;
+            line-height: 25px;
+        }
+
+        .subscribe-success-title {
+            font-size: 16px;
+            line-height: 21.76px;
+            margin-top: 0;
+        }
+
+        .subscribe-subtitle {
+            font-size: 16px;
+            line-height: 22px;
+        }
+
+        .subscribe-subtitle-small {
+            font-size: 14px;
+            line-height: 19px;
+        }
+
+        .subscribe-action {
+            display: block;
+            box-sizing: border-box;
+            text-align: left !important;
+
+            .input-wrapper {
+                display: block;
+                width: 100%;
+                margin: 0;
+            }
+
+            button {
+                width: 100%;
+                margin: 0;
+            }
+        }
+    }
+}
+
+@media (max-width: 650px) {
+    .subscribe {
+        height: 330px;
+    }
+}
+
+@media (max-width: 500px) {
+    .subscribe {
+        height: 360px;
+    }
+}
+
+@media (max-width: 300px) {
+    .subscribe {
+        height: 342px;
+    }
+}
+
+@media (max-width: 330px) {
+    .subscribe {
+        height: 390px;
+    }
+}
+
+@media (max-width: 300px) {
+    .subscribe {
+        height: 415px;
+    }
+}

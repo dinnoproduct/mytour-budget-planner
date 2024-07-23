@@ -1,0 +1,14 @@
+.no-result-wrapper {
+    margin: 48px 0 151px 0;
+    .no-result-text {
+        color: var(--semanticTokens-onSurface, #1C1C1C);
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 993px) {
+    .no-result-wrapper {
+        padding: 0 10%;
+        margin: 0 0 80px 0;
+    }
+}

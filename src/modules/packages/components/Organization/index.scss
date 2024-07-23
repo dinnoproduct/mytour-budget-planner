@@ -1,0 +1,45 @@
+.organization-wrapper {
+    .organization-title {
+        color: var(--semanticTokens-onSurface, #1C1C1C);
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .organization-logo {
+        margin-bottom: 20px;
+    }
+
+    .organization-text {
+        color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+        font-size: 16px;
+        margin: -20px 0 20px;
+    }
+
+    .policy-url:visited {
+        text-decoration: none;
+    }
+
+    .policy-url {
+        color: var(--semanticTokens-onSurfacePrimary, #0D6EFD);
+    }
+}
+
+@media (max-width: 993px) {
+    .organization-wrapper {
+        .organization-title {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .organization-logo {
+            img {
+                width: 61px;
+            }
+        }
+
+        .organization-text {
+            font-size: 13px;
+            margin: -7px 0 20px;
+        }
+    }
+}

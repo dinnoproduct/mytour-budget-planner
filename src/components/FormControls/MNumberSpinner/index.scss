@@ -1,0 +1,12 @@
+.number-spinner-wrapper {
+    align-items: center;
+
+    .spinner-value {
+        overflow: hidden;
+        color: var(--Label-Colors-Secondary, rgba(0, 0, 0, 0.55));
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 22px;
+        margin: 0 12px;
+    }
+}

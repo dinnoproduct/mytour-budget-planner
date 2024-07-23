@@ -1,0 +1,6 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="check">
+<rect id="Rectangle" width="20" height="20" rx="5" fill="gray"/>
+<path id="Path" fill-rule="evenodd" clip-rule="evenodd" d="M8.64286 15L4 10.6731L5.3 9.46154L8.64286 12.5769L15.7 6L17 7.21154L8.64286 15Z" fill="white"/>
+</g>
+</svg>

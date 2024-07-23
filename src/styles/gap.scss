@@ -1,0 +1,15 @@
+@import './variables';
+
+@each $size in $size-list {
+    .gap-#{$size} {
+        gap: #{$size}px;
+    }
+
+    .column-gap-#{$size} {
+       column-gap: #{$size}px;
+    }
+
+    .row-gap-#{$size} {
+        row-gap: #{$size}px;
+    }
+}

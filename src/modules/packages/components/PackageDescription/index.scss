@@ -1,0 +1,33 @@
+.includes-wrapper {
+    margin-bottom: 50px;
+}
+
+@media (max-width: 1170px) {
+    .includes-wrapper {
+        .details-title {
+            color: var(--semanticTokens-onSurface, #1C1C1C);
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 32px;
+            letter-spacing: -0.2px;
+        }
+    }
+}
+
+@media (max-width: 993px) {
+    .includes-wrapper {
+        .includes-wrapper  {
+            color: var(--semanticTokens-onSurface, #1C1C1C);
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+        .details-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+    }
+}

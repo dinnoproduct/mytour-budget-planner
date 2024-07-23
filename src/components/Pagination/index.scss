@@ -1,0 +1,108 @@
+.rc-pagination {
+    padding-top: 24px;
+    text-align: center;
+}
+
+.rc-pagination-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #DEE2E7;
+    padding-top: 10px;
+    box-sizing: border-box;
+
+    a {
+        font-size: 14px;
+        line-height: 19px;
+        color: #8B96A5;
+    }
+}
+
+.rc-pagination-jump-next {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #DEE2E7;
+    padding-top: 5px;
+    box-sizing: border-box;
+
+    button {
+        font-size: 14px;
+        line-height: 19px;
+        color: #8B96A5;
+    }
+}
+
+.rc-pagination-item-active {
+    background-color: #0D6EFD;
+
+    a {
+        color: #fff;
+    }
+}
+
+.rc-pagination-prev,
+.rc-pagination-next {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #DEE2E7;
+
+    .rc-pagination-item-link {
+        background: none;
+        border: none;
+    }
+}
+
+.rc-pagination-next {
+    position: relative;
+
+    &:after {
+        content: '';
+        display: block;
+        width: 14px;
+        height: 14px;
+        background-image: url("/public/images/pagination-next.svg") !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -7px 0px 0px -7px;
+    }
+}
+
+.rc-pagination-prev {
+    position: relative;
+
+    &:after {
+        content: '';
+        display: block;
+        width: 14px;
+        height: 14px;
+        background-image: url("/public/images/pagination-next.svg") !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -7px 0px 0px -7px;
+        transform: rotate(180deg);
+    }
+}
+
+.rc-pagination-next button:after,
+.rc-pagination-prev button:after {
+    display: none;
+}
+
+.rc-pagination-item-active:focus a, 
+.rc-pagination-item-active:hover a {
+    color: #fff;
+}
+
+@media (max-width: 1170px) {
+    .rc-pagination {
+        padding-top: 0;
+    }
+}
