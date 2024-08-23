@@ -1,7 +1,5 @@
 // prod
-export const BASE_URL = import.meta.env.BASE_API_URL || 'https://api.mytour.am';
-//development
-// export const BASE_URL = import.meta.env.BASE_API_URL || 'https://mytourapi.azurewebsites.net';
+export const BASE_URL = import.meta.env.VITE_API_URL
 
 export enum AppPaths {
   packages = 'egypt',

@@ -1,5 +1,17 @@
 // foundation
-export { Text, Heading } from './foundation/typography'
-export { Logo } from '@foundation/logo'
-export { Icon } from '@foundation/iconography'
+export { Text, Heading } from '@foundation/Typography'
+export { Logo } from '@foundation/Logo'
+export { Icon } from '@foundation/Iconography'
+
+// components
+export { Avatar } from '@components/Avatar'
+export { Switch } from '@components/Switch'
+export { Checkbox } from '@components/Checkbox'
+export { Tooltip } from '@components/Tooltip'
+export { Skeleton, SkeletonCircle, SkeletonText } from '@components/Skeleton'
+export { Progress } from '@components/Progress'
+export { Alert } from '@components/Alert'
+export { Button } from '@components/Button'
+export { Input } from '@components/Input'
+export { Footer } from '@components/Footer'
 

@@ -1,6 +1,6 @@
 import baseStyles from './base'
 import { extendTheme } from '@chakra-ui/react'
-import { theme } from '@foundation/theme-provider/index.tsx'
+import { theme } from '@foundation/ThemeProvider'
 
 export const chakraTheme = extendTheme({
 	...theme,

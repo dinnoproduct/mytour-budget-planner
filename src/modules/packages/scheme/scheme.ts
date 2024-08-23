@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { EMAIL_REGEXP } from '../../../utils/regex.ts';
-import { i18n } from '../../../configs/i18next.ts';
+import { i18n } from '../../../shared/configs/i18next.ts';
 import { REQUIRED_MESSAGE, WRONG_FORMAT } from '../../../constants/constants.ts';
 import { CustomFields, PackagesFields } from '../data/packagesEnums.ts';
 import { numberWithCommaNormalizer } from '../../../utils/normalizers.ts';

@@ -1,0 +1,1 @@
+export type LanguageName = 'arm' | 'rus' | 'eng'

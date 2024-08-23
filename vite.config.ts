@@ -17,6 +17,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@foundation': path.resolve(__dirname, 'src/shared/ui/foundation'),
+			'@components': path.resolve(__dirname, 'src/shared/ui/components'),
 			'@ui': path.resolve(__dirname, 'src/shared/ui/index.ts')
 		}
 	}
