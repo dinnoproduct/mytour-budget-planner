@@ -12,15 +12,17 @@ import { inputComponentTheme } from '@components/Input'
 import { formComponentsTheme } from '@components/Form'
 import { menuComponentTheme } from '@components/Menu/theme.ts'
 
+export const breakpoints = {
+	base: '0px',
+	sm: '768px',
+	md: '1280px',
+	lg: '1440px'
+}
+
 export const theme = extendTheme({
 	...colorsTheme,
 	...typographyTheme,
-	breakpoints: {
-		base: '0px',
-		sm: '768px',
-		md: '1280px',
-		lg: '1440px'
-	},
+	breakpoints,
 	components: {
 		...typographyComponentTheme,
 		...avatarComponentTheme,

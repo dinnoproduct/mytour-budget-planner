@@ -9,7 +9,6 @@ export const Footer = () => {
 		<Layout>
 			<Flex direction={{ base: 'column', md: 'row' }}>
 				<Contact/>
-				<AboutUs/>
 			</Flex>
 			<CopyRight/>
 		</Layout>
@@ -17,7 +16,7 @@ export const Footer = () => {
 }
 
 const Contact = () => {
-	const {t} = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<Flex
@@ -29,7 +28,7 @@ const Contact = () => {
 			<HStack spacing="4" mb="4">
 				{SOCIALS.map((social) => (
 					<Link key={social.icon} href={social.link} isExternal>
-						<Icon name={social.icon} size="32"/>
+						<Icon name={social.icon} size="32" color="gray.600"/>
 					</Link>
 				))}
 			</HStack>
@@ -41,7 +40,7 @@ const Contact = () => {
 	)
 }
 const AboutUs = () => {
-	const {t} = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<Box
@@ -71,7 +70,7 @@ const ItemsList = ({ items }: {items: string[]}) => {
 		<UnorderedList listStyleType="none" spacing="2" mx="0">
 			{items.map((item) => (
 				<ListItem key={item}>
-					<Text size="md" color="white">
+					<Text size="md" color="gray.600">
 						{item}
 					</Text>
 				</ListItem>
@@ -83,7 +82,7 @@ const ItemsList = ({ items }: {items: string[]}) => {
 
 const Layout = ({ children }: {children: ReactNode | ReactNode[]}) => {
 	return (
-		<Box as="footer" bgColor="gray.700">
+		<Box as="footer" bgColor="white" borderTop="1px solid" borderColor="gray.100">
 			<Flex
 				px={{ base: 4, md: 6 }}
 				py="10"

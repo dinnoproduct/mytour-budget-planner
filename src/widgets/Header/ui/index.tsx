@@ -5,6 +5,7 @@ import { LanguageMenu } from './LanguageMenu.tsx'
 import { useTranslation } from 'react-i18next'
 import { LanguageName } from 'shared/model'
 import { AccountMenu } from './AccountMenu.tsx'
+import { Link } from 'react-router-dom'
 
 
 export const Header = () => {
@@ -16,7 +17,9 @@ export const Header = () => {
 
 	return (
 		<Layout>
-			<Logo height={{ base: '16px', md: '20px' }}/>
+			<Link to="/">
+				<Logo height={{ base: '16px', md: '20px' }}/>
+			</Link>
 
 			<HStack spacing="2">
 				<LanguageMenu
@@ -24,7 +27,7 @@ export const Header = () => {
 					onChange={handleChangeLanguage}
 				/>
 
-				<AccountMenu/>
+				{/*<AccountMenu/>*/}
 			</HStack>
 		</Layout>
 	)
@@ -33,9 +36,11 @@ export const Header = () => {
 const Layout = ({ children }: LayoutProps) => {
 	return (
 		<Box height="80px">
-			<Box as="header" height="80px" position="fixed" bgColor="white" width="full"
-			     zIndex={10}
-			     maxWidth="100dvw"
+			<Box
+				as="header" height="80px" position="fixed" bgColor="white" width="full"
+				zIndex={10}
+				maxWidth="100dvw"
+				borderBottom="1px solid" borderColor="gray.100"
 			>
 				<Box
 					px={{ base: '4', md: '6' }}

@@ -1,13 +1,41 @@
 import { DatePickerHeaderProps } from './types.ts'
 import React from 'react'
-import { Box, Flex, Hide, Show } from '@chakra-ui/react'
-import { Icon, Text } from '@ui'
+import { Box, Flex } from '@chakra-ui/react'
+import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 
-export const DatePickerHeader = ({ fromDate, toDate }: DatePickerHeaderProps) => {
+export const DatePickerHeader = ({ fromDate, toDate, dateSelectState, onFromTabClick }: DatePickerHeaderProps) => {
 	const { t } = useTranslation()
 
-	const formatDate = (date: Date) => {
+	return (
+		<Flex
+			width="full"
+			justifyContent="space-between"
+			alignItems="center"
+			borderTop={{ base: '1px solid', md: 'none' }}
+			borderColor="gray.100"
+			pt={{ base: 0, md: 4 }}
+		>
+			<DateTab
+				label={t`departure`}
+				date={fromDate}
+				isActive={dateSelectState === 'from'}
+				onClick={() => onFromTabClick()}
+			/>
+
+			<DateTab
+				label={t`return`}
+				date={toDate}
+				isActive={dateSelectState === 'to'}
+			/>
+		</Flex>
+	)
+}
+
+const DateTab = ({ date, label, isActive, onClick }: {date?: Date | null, label: string, isActive?: boolean, onClick?: () => void}) => {
+	const { t } = useTranslation()
+
+	const formatDate = (date?: Date | null) => {
 		if (!date) {
 			return ''
 		}
@@ -20,45 +48,33 @@ export const DatePickerHeader = ({ fromDate, toDate }: DatePickerHeaderProps) =>
 	}
 
 	return (
-		<Flex
+		<Box
 			width="full"
-			justifyContent="space-between"
-			alignItems="center"
-			height={{ base: '48px', md: '70px' }}
-			borderBottom="1px solid"
-			borderTop={{ base: '1px solid', md: 'none' }}
-			borderColor="gray.100"
-			pt={{ base: 0, md: 4 }}
+			textAlign="center"
+			borderBottom={isActive ? '2px solid' : '1px solid'}
+			borderColor={isActive ? 'blue.500' : 'gray.100'}
+			px="10px"
+			pt="2"
+			pb="3"
+			cursor={onClick ? 'pointer' : 'default'}
+			onClick={onClick}
 		>
-			<Flex width="full" justify="center">
-				<Text size={{ base: 'xs', md: 'sm' }}>
-					{`${t`departure`} • ${formatDate(fromDate as any)}`}
-				</Text>
-			</Flex>
-
-			<Box
-				height={{ base: '24px', md: '30px' }}
+			<Text
+				size="sm"
+				color={isActive ? 'blue.500' : 'gray.500'}
+				fontWeight="semibold"
 			>
-				<Show above="md">
-					<Icon
-						name="compare-arrows" color="gray.400"
-						size="30"
-					/>
-				</Show>
+				{label}
+			</Text>
 
-				<Hide above="md">
-					<Icon
-						name="compare-arrows" color="gray.400"
-						size="24"
-					/>
-				</Hide>
-			</Box>
-
-			<Flex width="full" justify="center">
-				<Text size={{ base: 'xs', md: 'sm' }}>
-					{`${t`return`} • ${formatDate(toDate as any)}`}
-				</Text>
-			</Flex>
-		</Flex>
+			<Text
+				size="xs"
+				color={isActive ? 'gray.400' : 'gray.300'}
+			>
+				{
+					date ? formatDate(date) : t`selectDay`
+				}
+			</Text>
+		</Box>
 	)
 }

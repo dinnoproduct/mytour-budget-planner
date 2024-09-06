@@ -2,25 +2,40 @@ import { Box, Flex, Menu, MenuButton, MenuList, Portal, useMediaQuery, VStack } 
 import { Button, Icon, Input, Text } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { SearchTravelersProps } from './types.ts'
 
 const MAX_TRAVELERS = 6
 
-export const SearchTravelers = () => {
+export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps) => {
 	const { t } = useTranslation()
 
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
-	const [adultsCount, setAdultsCount] = useState(1)
-	const [childrenCount, setChildrenCount] = useState(0)
 	const [tempAdultsCount, setTempAdultsCount] = useState(1)
 	const [tempChildrenCount, setTempChildrenCount] = useState(0)
-	const [childrenAges, setChildrenAges] = useState<number[]>([])
 	const [tempChildrenAges, setTempChildrenAges] = useState<number[]>([])
+	const [adultsCount, setAdultsCount] = useState(2);
+	const [childrenCount, setChildrenCount] = useState(0);
+	const [childrenAges, setChildrenAges] = useState<number[]>([]);
+
+	useEffect(() => {
+		if (defaultData) {
+			if (defaultData.adultsCount !== undefined) setAdultsCount(defaultData.adultsCount);
+			if (defaultData.childrenCount !== undefined) setChildrenCount(defaultData.childrenCount);
+			if (defaultData.childrenAges !== undefined) setChildrenAges(defaultData.childrenAges);
+		}
+	}, [JSON.stringify(defaultData)]);
 
 	const handleConfirm = () => {
 		setAdultsCount(tempAdultsCount)
 		setChildrenCount(tempChildrenCount)
 		setChildrenAges(tempChildrenAges.slice(0, tempChildrenCount))
 		setDropdownOpen(false)
+
+		onChange && onChange({
+			adultsCount: tempAdultsCount,
+			childrenCount: tempChildrenCount,
+			childrenAges: tempChildrenAges
+		})
 	}
 
 	const handleAgeChange = (index: number, age: number) => {
@@ -129,7 +144,7 @@ export const SearchTravelers = () => {
 							align="center"
 							width="full"
 						>
-							<Text size="md" fontWeight="semibold">{t`travelersAndRoom`}</Text>
+							<Text size="md" fontWeight="semibold">{t`travelers`}</Text>
 
 							<Button
 								icon="close"
@@ -146,11 +161,16 @@ export const SearchTravelers = () => {
 							height={{ base: 'calc(100% - 138px)', md: 'auto' }}
 							pb={{ base: 4, md: 0 }}
 						>
-							<Flex height="32px">
-								<Text size="md" color="gray.800">{t`room`} 1</Text>
-							</Flex>
+							{/*<Flex height="32px">*/}
+							{/*	<Text size="md" color="gray.800">{t`room`} 1</Text>*/}
+							{/*</Flex>*/}
 
-							<VStack width="full" spacing="4" mt="4" align="stretch">
+							<VStack
+								width="full"
+								spacing="4"
+								// mt="4"
+								align="stretch"
+							>
 								<PeopleCounter
 									count={tempAdultsCount}
 									onChange={setTempAdultsCount}
@@ -202,7 +222,7 @@ const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
 	onChange: (age: number) => void,
 	childrenIndex: number
 }) => {
-	const {t} = useTranslation()
+	const { t } = useTranslation()
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
 
 	return (
@@ -345,7 +365,7 @@ const SearchInput = ({ travelersCount, roomsCount, isFocused }: {
 	return (
 		<Input
 			type="text"
-			value={`${travelersCount} ${t`traveler`},  ${roomsCount} ${t`room`.toLowerCase()}`}
+			value={`${travelersCount} ${t`traveler`}`}
 			width="full"
 			borderColor={isFocused ? 'blue.500' : undefined}
 			leftIconName="people-alt"

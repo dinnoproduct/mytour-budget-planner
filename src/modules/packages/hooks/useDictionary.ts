@@ -6,9 +6,9 @@ import { DictionaryTypes } from '../data/dictionaryEnum.ts';
 import { getDictionaryService } from '../services/PackagesServices.ts';
 
 const languageForDictionaryAdapter: Record<string, number> = {
-  hy: 1,
-  en: 2,
-  ru: 3,
+  arm: 1,
+  eng: 2,
+  rus: 3,
 };
 
 const useDictionary = (dictionaryType: DictionaryTypes) => {

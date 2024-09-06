@@ -3,27 +3,18 @@ import { Box, SimpleGrid, Button } from '@chakra-ui/react'
 import { DateButtonProps, DatePickerMonthProps } from './types'
 import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment'
 
-const daysOfWeek = ['Կիր', 'Երկ', 'Երք', 'Չրք', 'Հնգ', 'Ուրբ', 'Շբթ'] // Armenian abbreviations for days of the week
-
-const isSameDay = (date1: Date, date2: Date) => {
-	return date1.getFullYear() === date2.getFullYear() &&
-		date1.getMonth() === date2.getMonth() &&
-		date1.getDate() === date2.getDate()
-}
-
-const isBetween = (date: Date, start: Date, end: Date) => {
-	return date > start && date < end
-}
-
-export const DatePickerMonth: React.FC<DatePickerMonthProps> = ({
-	                                                                currentMonth,
-	                                                                availableFlightDates,
-	                                                                onDayClick,
-	                                                                selectedFromDate,
-	                                                                selectedToDate
-                                                                }) => {
-	const {t} = useTranslation()
+export const DatePickerMonth = ({
+	                                currentMonth,
+	                                availableDates,
+	                                onDayClick,
+	                                selectedFromDate,
+	                                selectedToDate,
+	                                isLoading,
+	                                dateSelectState
+                                }: DatePickerMonthProps) => {
+	const { t } = useTranslation()
 	const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
 	const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0)
 
@@ -51,9 +42,12 @@ export const DatePickerMonth: React.FC<DatePickerMonthProps> = ({
 						return <Box key={index}/> // Empty box for padding
 					}
 
-					const isAvailable = availableFlightDates.some(flightDate => isSameDay(flightDate, date))
-					const isSelected = (selectedFromDate && isSameDay(selectedFromDate, date)) || (selectedToDate && isSameDay(selectedToDate, date))
-					const isInRange = selectedFromDate && selectedToDate && isBetween(date, selectedFromDate, selectedToDate)
+					const isAvailable = !isLoading && availableDates.some(d => moment(d).isSame(date, 'day'))
+					const isSelected =
+						(dateSelectState === 'from' && selectedFromDate && moment(date).isSame(selectedFromDate, 'day')) ||
+						(dateSelectState === 'to' && selectedToDate && moment(date).isSame(selectedToDate, 'day'));
+					const isInRange = false
+					// selectedFromDate && selectedToDate && moment(date).isBetween(selectedFromDate, selectedToDate, 'day', '()')
 
 					return (
 						<DateButton
@@ -61,8 +55,9 @@ export const DatePickerMonth: React.FC<DatePickerMonthProps> = ({
 							date={date}
 							isAvailable={isAvailable}
 							isSelected={!!isSelected}
-							isInRange={!!isInRange}
+							isInRange={isInRange}
 							onClick={onDayClick}
+							isLoading={isLoading}
 						/>
 					)
 				})}
@@ -71,11 +66,11 @@ export const DatePickerMonth: React.FC<DatePickerMonthProps> = ({
 	)
 }
 
-const DateButton = ({ date, isAvailable, isSelected, isInRange, onClick, ...props }: DateButtonProps) => {
+const DateButton = ({ date, isAvailable, isSelected, isInRange, isLoading, onClick, ...props }: DateButtonProps) => {
 	return (
 		<Button
 			onClick={() => isAvailable && onClick(date)}
-			isDisabled={!isAvailable}
+			isDisabled={!isAvailable || isLoading}
 			border="1px solid"
 			borderColor={isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent'}
 			bgColor={isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50'}

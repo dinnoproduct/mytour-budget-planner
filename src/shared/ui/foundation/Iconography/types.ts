@@ -37,6 +37,7 @@ export type IconName =
 	| 'mobile-friendly'
 	| 'phone-in-talk'
 	| 'remove'
+  | 'edit-note'
 
 export type IconSize = '12' | '14' | '16' | '18' | '20' | '24' | '30' | '32' | '40'
 export const ICON_SIZES: IconSize[] = ['12', '14', '16', '18', '20', '24', '30', '32', '40']

@@ -1,23 +1,37 @@
 import { Header } from '../widgets/Header'
 import { Box, Link, HStack, Image, Flex } from '@chakra-ui/react'
-import { Text } from '@ui'
+import { Footer, Text } from '@ui'
 import { PackageSearch } from '../widgets/PackageSearch'
 import { HotOffersSection } from '../widgets/HotOffersSection'
 import { useTranslation } from 'react-i18next'
+import { useEffect } from 'react'
 
 export const HomePage = () => {
+	useEffect(() => {
+		const scriptId = 'EmbedSocialHashtagScript'
+		if (document.getElementById(scriptId)) return
+
+		const script = document.createElement('script')
+		script.id = scriptId
+		script.src = 'https://embedsocial.com/cdn/ht.js'
+		document.head.appendChild(script)
+	}, [])
+
 	return (
 		<Box overflowX="hidden">
 			<Header/>
-			<PackageSearch/>
+			<PackageSearch variant="centered"/>
 			<HotOffersSection mt={{ base: '62px', md: '84px' }}/>
 			<AppSection/>
+			<div className="embedsocial-hashtag" data-ref="f348cf39b90fa99e65cfce589513e45493bd6815"></div>
+
+			<Footer/>
 		</Box>
 	)
 }
 
 const AppSection = () => {
-	const {t} = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<Box
@@ -26,8 +40,8 @@ const AppSection = () => {
 			pt={{ base: 10, md: 0 }}
 			pr={{ base: 4, md: '10' }}
 			pl={{ base: 4, md: '10' }}
-			mt={{base: '60px', md: '20'}}
-			mb={{base: '140px', md: '180px'}}
+			mt={{ base: '60px', md: '20' }}
+			mb={{ base: '80px', md: '180px' }}
 		>
 			<Flex
 				direction={{ base: 'column-reverse', sm: 'row' }}

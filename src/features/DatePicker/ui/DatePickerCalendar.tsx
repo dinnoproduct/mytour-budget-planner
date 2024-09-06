@@ -1,22 +1,41 @@
-import React, { useState, useMemo } from 'react'
-import { Box, Flex, useMediaQuery } from '@chakra-ui/react'
+import React, { useState, useMemo, useEffect } from 'react'
+import { Box, Flex } from '@chakra-ui/react'
 import { DatePickerCalendarProps } from './types'
 import { DatePickerMonth } from './DatePickerMonth'
 import { Text, Button } from '@ui'
 import { useTranslation } from 'react-i18next'
+import { useBreakpoint } from '@shared/hooks'
 
-const MAX_MONTHS = 6
+const MAX_MONTHS = 8
 
-export const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
-	                                                                      availableFlightDates,
-	                                                                      onDayClick,
-	                                                                      selectedFromDate,
-	                                                                      selectedToDate
-                                                                      }) => {
+export const DatePickerCalendar = ({
+	                                   availableDates,
+	                                   startDate,
+	                                   onDayClick,
+	                                   selectedFromDate,
+	                                   selectedToDate,
+	                                   isLoading,
+	                                   dateSelectState
+                                   }: DatePickerCalendarProps) => {
 	const today = new Date()
-	const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
+	const [currentMonth, setCurrentMonth] = useState(startDate || today)
 
-	const isMobile = useMediaQuery('(max-width: 1280px)')[0]
+	useEffect(() => {
+		if (selectedFromDate && dateSelectState === 'from') {
+			setCurrentMonth(new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1))
+		} else if (availableDates.length > 0) {
+			const earliestAvailableDate = new Date(availableDates[0])
+			setCurrentMonth(new Date(earliestAvailableDate.getFullYear(), earliestAvailableDate.getMonth(), 1))
+		} else if (selectedFromDate) {
+			setCurrentMonth(new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1))
+		} else if (startDate) {
+			setCurrentMonth(new Date(startDate.getFullYear(), startDate.getMonth(), 1))
+		} else {
+			setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1))
+		}
+	}, [availableDates, startDate, selectedFromDate])
+
+	const { isMd } = useBreakpoint()
 
 	const maxDate = useMemo(
 		() => new Date(today.getFullYear(), today.getMonth() + (MAX_MONTHS - 2), 1),
@@ -59,26 +78,27 @@ export const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
 				px={{ md: 4 }}
 				pb="4"
 			>
-				{isMobile ? (
-					// Render MAX_MONTHS count of months stacked vertically on mobile
+				{!isMd ? (
 					Array.from({ length: MAX_MONTHS }).map((_, index) => {
-						const monthDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + index, 1)
-
+						const monthDate = new Date(
+							startDate ? startDate.getFullYear() : currentMonth.getFullYear(),
+							startDate ? startDate.getMonth() + index : currentMonth.getMonth() + index,
+							1
+						)
 						return (
 							<Box key={index} pt="4" px="4">
 								<MonthHeader
 									month={monthDate}
-									onClick={index === 0 ? handlePrevMonth : handleNextMonth}
-									isDisabled={index === 0 ? isPrevDisabled : isNextDisabled}
-									isNext={index !== 0}
 								/>
 
 								<DatePickerMonth
 									currentMonth={monthDate}
-									availableFlightDates={availableFlightDates}
+									availableDates={availableDates}
+									isLoading={isLoading}
 									onDayClick={onDayClick}
 									selectedFromDate={selectedFromDate}
 									selectedToDate={selectedToDate}
+									dateSelectState={dateSelectState}
 								/>
 							</Box>
 						)
@@ -88,33 +108,20 @@ export const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
 						<Box pt="4" px="4">
 							<MonthHeader
 								month={currentMonth}
-								onClick={handlePrevMonth}
-								isDisabled={isPrevDisabled}
+								onPrevClick={handlePrevMonth}
+								onNextClick={handleNextMonth}
+								isPrevDisabled={isPrevDisabled}
+								isNextDisabled={isNextDisabled}
 							/>
 
 							<DatePickerMonth
 								currentMonth={currentMonth}
-								availableFlightDates={availableFlightDates}
+								availableDates={availableDates}
+								isLoading={isLoading}
 								onDayClick={onDayClick}
 								selectedFromDate={selectedFromDate}
 								selectedToDate={selectedToDate}
-							/>
-						</Box>
-
-						<Box pt="4" px="4">
-							<MonthHeader
-								month={new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)}
-								onClick={handleNextMonth}
-								isNext
-								isDisabled={isNextDisabled}
-							/>
-
-							<DatePickerMonth
-								currentMonth={new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)}
-								availableFlightDates={availableFlightDates}
-								onDayClick={onDayClick}
-								selectedFromDate={selectedFromDate}
-								selectedToDate={selectedToDate}
+								dateSelectState={dateSelectState}
 							/>
 						</Box>
 					</>
@@ -126,18 +133,21 @@ export const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
 
 const MonthHeader = ({
 	                     month,
-	                     onClick,
-	                     isNext,
-	                     isDisabled
+	                     onPrevClick,
+	                     onNextClick,
+	                     isPrevDisabled,
+	                     isNextDisabled
                      }: {
-	month: Date
-	onClick: () => void
-	isNext?: boolean
-	isDisabled: boolean
+	month: Date;
+	onPrevClick?: () => void;
+	onNextClick?: () => void;
+	isPrevDisabled?: boolean;
+	isNextDisabled?: boolean;
 }) => {
 	const { t } = useTranslation()
 
 	const monthName = month.toLocaleString('default', { month: 'long' }).toLowerCase()
+	const year = month.getFullYear()
 
 	return (
 		<Flex
@@ -145,34 +155,28 @@ const MonthHeader = ({
 			justify="space-between"
 			mb="4"
 			align="center"
-			pl={{ md: isNext ? '8' : '0' }}
-			pr={{ md: isNext ? '0' : '8' }}
 		>
-			{!isNext ? (
-				<Button
-					onClick={() => onClick()}
-					icon="chevron-left"
-					variant="solid-gray"
-					size="sm"
-					isDisabled={isDisabled}
-					display={{ base: 'none', md: 'inline-flex' }}
-				/>
-			) : null}
+			<Button
+				onClick={() => onPrevClick && onPrevClick()}
+				icon="chevron-left"
+				variant="solid-gray"
+				size="sm"
+				isDisabled={isPrevDisabled}
+				display={{ base: 'none', md: 'inline-flex' }}
+			/>
 
 			<Text size="md" color="gray.800" align="center" flexGrow="1">
-				{t(monthName)}
+				{`${t(monthName)} ${year}`}
 			</Text>
 
-			{isNext && (
-				<Button
-					onClick={() => onClick()}
-					icon="chevron-right"
-					variant="solid-gray"
-					size="sm"
-					isDisabled={isDisabled}
-					display={{ base: 'none', md: 'inline-flex' }}
-				/>
-			)}
+			<Button
+				onClick={() => onNextClick && onNextClick()}
+				icon="chevron-right"
+				variant="solid-gray"
+				size="sm"
+				isDisabled={isNextDisabled}
+				display={{ base: 'none', md: 'inline-flex' }}
+			/>
 		</Flex>
 	)
 }

@@ -1,6 +1,5 @@
 import Slider, { Settings } from 'react-slick'
 import React, { useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Box, BoxProps, Image } from '@chakra-ui/react'
 import classnames from 'classnames'
 import { HotelStarBadge, PaginationBadge, StatusBadge } from './Badge.tsx'
@@ -8,9 +7,7 @@ import { HotelStarBadge, PaginationBadge, StatusBadge } from './Badge.tsx'
 const slideTime = 300
 
 const ImageSlider = ({ images, starsCount, isPackageList }: any) => {
-	console.log('images', images)
 	const sliderRef = useRef<Slider>(null)
-	const { t } = useTranslation()
 	const [currentSlide, setCurrentSlide] = useState(0)
 	const [isHovered, setIsHovered] = useState(false)
 
@@ -111,11 +108,11 @@ const Layout = ({ children, ...props }: BoxProps) => {
 				},
 				'.slick-prev': {
 					left: '2',
-					backgroundImage: '/public/assets/icons/slider-arrow-prev.svg'
+					backgroundImage: '/assets/icons/slider-arrow-prev.svg'
 				},
 				'.slick-next': {
 					right: '2',
-					backgroundImage: '/public/assets/icons/slider-arrow-next.svg'
+					backgroundImage: '/assets/icons/slider-arrow-next.svg'
 				},
 				'.slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus': {
 					outline: 'none !important',

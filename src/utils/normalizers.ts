@@ -27,9 +27,9 @@ export const selectOptionNormalizer = (options: ISelectNormalizer[], language: s
   }));
 
 export const langKeyAdapter = {
-  hy: 'Arm',
-  en: 'Eng',
-  ru: 'Rus',
+  arm: 'Arm',
+  eng: 'Eng',
+  rus: 'Rus',
 };
 
 export const dateFormatter = (date: Date | string) => {

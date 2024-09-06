@@ -22,9 +22,16 @@
 
     "baseUrl": "./src",
     "paths": {
-      "@foundation/*": ["shared/ui/foundation/*"],
-      "@components/*": ["shared/ui/components/*"],
-      "@ui": ["shared/ui/index.ts"]
+      "@/*": ["./*"],
+      "@components/*": ["./shared/ui/components/*"],
+      "@foundation/*": ["./shared/ui/foundation/*"],
+      "@ui": ["./shared/ui/index.ts"],
+      "@widgets/*": ["./widgets/*"],
+      "@features/*": ["./features/*"],
+      "@shared/*": ["./shared/*"],
+      "@entities/*": ["./entities/*"],
+      "@app/*": ["./app/*"],
+      "@pages/*": ["./pages/*"]
     }
   },
   "include": ["src"],

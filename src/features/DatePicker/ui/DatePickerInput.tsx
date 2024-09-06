@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { DatePickerInputProps } from './types.ts'
 import { Input } from '@ui'
 import { useTranslation } from 'react-i18next'
 
 export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInputProps) => {
-	const {t} = useTranslation()
+	const {t, i18n} = useTranslation()
 
 	const formatDate = (date?: Date) => {
 		if (!date) {
@@ -16,13 +16,22 @@ export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInput
 		return `${shortMonthName} ${date.getDate()}`
 	}
 
+	const inputValue = useMemo(() => {
+		if (!fromDate || !toDate) {
+			return ''
+		}
+
+		return `${formatDate(fromDate)} - ${formatDate(toDate)}`
+	}, [fromDate, toDate, i18n.language])
+
 	return (
 		<Input
 			type="text"
-			value={`${formatDate(fromDate)} - ${formatDate(toDate)}`}
+			value={inputValue}
 			width="full"
 			borderColor={isFocused ? 'blue.500' : undefined}
 			leftIconName="calendar-today"
+			placeholder={t`duration`}
 		/>
 	)
 }

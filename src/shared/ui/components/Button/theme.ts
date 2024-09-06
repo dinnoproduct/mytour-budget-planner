@@ -41,7 +41,7 @@ export const buttonComponentTheme = {
 		baseStyle: {
 			borderRadius: '6px',
 			fontFamily: 'heading',
-			fontWeight: 'semibold',
+			fontWeight: 'medium',
 			background: 'transparent',
 			color: 'white',
 			display: 'inline-flex',
@@ -101,13 +101,15 @@ export const buttonComponentTheme = {
 				_hover: {
 					background: 'blue.600',
 					_disabled: {
-						background: 'gray.300'
+						background: 'gray.300',
+						color: 'white'
 					}
 				},
 				_active: {
 					background: 'blue.700',
 					_disabled: {
-						background: 'gray.300'
+						background: 'gray.300',
+						color: 'white'
 					}
 				},
 				_focus: {
@@ -117,7 +119,8 @@ export const buttonComponentTheme = {
 					background: 'blue.700'
 				},
 				_disabled: {
-					background: 'gray.300'
+					background: 'gray.300',
+					color: 'white'
 				},
 				'svg[data-fill=true]>path': {
 					fill: 'white'

@@ -1,23 +1,40 @@
-import { Box, Link, LinkProps } from '@chakra-ui/react'
+import { Box, LinkProps, Link, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { numberWithCommaNormalizer } from '../../../utils/normalizers.ts'
-import { PackagesFields } from '../../../modules/packages/data/packagesEnums.ts'
+import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import ImageSlider from './ImageSlider.tsx'
 import { ReactNode, useMemo } from 'react'
-import { LANGUAGE_PREFIX } from '../../../shared/model'
-import { Language } from '../../../widgets/Header/model'
+import { LANGUAGE_PREFIX } from '@shared/model'
+import { Language } from '@widgets/Header/model'
 import { Text } from '@ui'
+import { Link as ReactLink } from 'react-router-dom'
+import { PackageCardProps } from '@features/PackageCard/ui/types.ts'
+import { PackageCity, PackageCountry, PackageEntity } from '@entities/package'
 
-export const PackageCard = ({ tourPackage = {}, ...props }: {tourPackage: any} & LinkProps) => {
-	console.log('tourPackage', tourPackage)
+export const PackageCard = ({ tourPackage = {}, link, ...props }: PackageCardProps) => {
 	const { i18n, t } = useTranslation()
 
 	const languageSuffix = useMemo(() => {
 		return LANGUAGE_PREFIX[i18n.language as Language['name']]
 	}, [i18n.language])
 
+	const cityLabel = useMemo(() => {
+		return (tourPackage.city as PackageCity)['name' + languageSuffix as keyof PackageCity] as string
+	}, [tourPackage.city, languageSuffix])
+
+	const countryLabel = useMemo(() => {
+		return (tourPackage.city.country as PackageCountry)['name' + languageSuffix as keyof PackageCountry] as string
+	}, [tourPackage.city.country, languageSuffix])
+
+	const packageName = useMemo(() => {
+		return tourPackage['name' + languageSuffix as keyof PackageEntity] as string
+	}, [tourPackage, languageSuffix])
+
+
 	return (
-		<Layout {...props}>
+		<Layout
+			link={link}
+			{...props}
+		>
 			<ImageSlider
 				images={tourPackage.hotel.images}
 				starsCount={tourPackage.hotel.stars}
@@ -29,18 +46,26 @@ export const PackageCard = ({ tourPackage = {}, ...props }: {tourPackage: any} &
 						color="gray.800" size="sm" fontWeight="semibold"
 						noOfLines={1}
 					>
-						{tourPackage['name' + languageSuffix]}
+						{packageName}
 					</Text>
 
 					<Text size="sm" color="gray.600" mt="1">
-						{tourPackage.city.country['name' + languageSuffix]}, {tourPackage.city['name' + languageSuffix]}
+						{cityLabel}, {countryLabel}
 					</Text>
 				</Box>
 
 				<Box mt="4" px="4">
-					<Text size="lg" fontWeight="bold" color="gray.800">
-						{numberWithCommaNormalizer(tourPackage[PackagesFields.price])} ֏
-					</Text>
+					<Flex align="center">
+						<Text size="lg" fontWeight="bold" color="gray.800">
+							{numberWithCommaNormalizer(tourPackage.price)} ֏
+						</Text>
+
+						{/*{tourPackage.hotOffer ?*/}
+						{/*	<Text size="sm" fontWeight="normal" color="red.500" textDecoration="line-through" ml="2">*/}
+						{/*		{numberWithCommaNormalizer(tourPackage.oldPrice)} ֏*/}
+						{/*	</Text>*/}
+						{/*	: null}*/}
+					</Flex>
 
 					<Text mt="1" size="sm" color="gray.600">
 						{tourPackage.adultTravelers} {t`adult`} • {tourPackage.nights} {t`night`}
@@ -51,11 +76,16 @@ export const PackageCard = ({ tourPackage = {}, ...props }: {tourPackage: any} &
 	)
 }
 
-const Layout = ({ children, ...props }: {children: ReactNode | ReactNode[]} & LinkProps) => {
+const Layout = ({ children, link, ...props }: {children: ReactNode | ReactNode[], link: string} & LinkProps) => {
 	return (
-		<Link _hover={{ textTransform: 'none' }} {...props}>
+		<Link
+			as={ReactLink}
+			to={link}
+			_hover={{ textTransform: 'none' }}
+			{...props}
+		>
 			<Box
-				maxWidth="328px"
+				maxWidth="362px"
 				width="full"
 				rounded="lg"
 				overflow="hidden"

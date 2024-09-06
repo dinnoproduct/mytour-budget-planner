@@ -1,18 +1,48 @@
 import { Box, BoxProps } from '@chakra-ui/react'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { OffersSection } from './OffersSection.tsx'
-import { MOCK_PACKAGES } from '../../../shared/model'
-import usePackages from '../../../modules/packages/hooks/usePackages.ts'
+import { usePackageList, usePackagesSearchContext } from '@entities/package'
 
 export const HotOffersSection = (props: BoxProps) => {
-	const { filteredPackages=[], loading } = usePackages();
-	console.log('filteredPackages', filteredPackages)
+	const { handleSearch } = usePackagesSearchContext()
+	const { data: packages = [], isLoading: isLoadingPackages } = usePackageList()
+
+	const hotOfferPackages = useMemo(() => {
+		const hotOffers = packages.filter(pkg => pkg.hotOffer)
+		if (hotOffers.length < 4) {
+			const nonHotOffers = packages.filter(pkg => !pkg.hotOffer)
+			return [...hotOffers, ...nonHotOffers.slice(0, 4 - hotOffers.length)].slice(0, 4)
+		}
+		return hotOffers.slice(0, 4)
+	}, [packages])
+
+	const handleMoreClick = () => {
+		if (packages.length === 0) {
+			return
+		}
+
+		const defaultPackage = packages[0]
+
+		handleSearch({
+			fromDate: new Date(defaultPackage.destinationFlight.departureDate),
+			toDate: new Date(defaultPackage.returnFlight.arrivalDate),
+			departureFlightId: defaultPackage.destinationFlight.id,
+			returnFlightId: defaultPackage.returnFlight.id,
+			travelersData: {
+				adultsCount: defaultPackage.adultTravelers,
+				childrenCount: 0,
+				childrenAges: []
+			},
+			selectedCities: [defaultPackage.city.id]
+		})
+	}
 
 	return (
 		<Layout {...props}>
 			<OffersSection
-				packages={filteredPackages?.length ? filteredPackages?.slice(0, 4) : MOCK_PACKAGES}
-				isLoading={loading}
+				packages={hotOfferPackages}
+				isLoading={isLoadingPackages}
+				onMoreClick={handleMoreClick}
 			/>
 		</Layout>
 	)
