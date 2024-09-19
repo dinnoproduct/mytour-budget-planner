@@ -33,7 +33,7 @@ export const DatePickerCalendar = ({
 		} else {
 			setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1))
 		}
-	}, [availableDates, startDate, selectedFromDate])
+	}, [JSON.stringify(availableDates), startDate, selectedFromDate])
 
 	const { isMd } = useBreakpoint()
 
@@ -146,7 +146,7 @@ const MonthHeader = ({
 }) => {
 	const { t } = useTranslation()
 
-	const monthName = month.toLocaleString('default', { month: 'long' }).toLowerCase()
+	const monthName = month.toLocaleString('en-US', { month: 'long' }).toLowerCase();
 	const year = month.getFullYear()
 
 	return (

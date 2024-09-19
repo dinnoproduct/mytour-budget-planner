@@ -29,6 +29,14 @@ export const PackageCard = ({ tourPackage = {}, link, ...props }: PackageCardPro
 		return tourPackage['name' + languageSuffix as keyof PackageEntity] as string
 	}, [tourPackage, languageSuffix])
 
+	const childrenTravelers = useMemo(() => {
+		const childrenCount = tourPackage?.childrenTravelers + tourPackage?.infantTravelers
+
+		if (childrenCount === 0) return ''
+
+		return `, ${childrenCount} ${t`child`.toLowerCase()}`
+	},[tourPackage?.childrenTravelers, tourPackage?.infantTravelers, languageSuffix])
+
 
 	return (
 		<Layout
@@ -68,7 +76,7 @@ export const PackageCard = ({ tourPackage = {}, link, ...props }: PackageCardPro
 					</Flex>
 
 					<Text mt="1" size="sm" color="gray.600">
-						{tourPackage.adultTravelers} {t`adult`} • {tourPackage.nights} {t`night`}
+						{tourPackage.adultTravelers} {t`adult`}{childrenTravelers} • {tourPackage.nights} {t`night`}
 					</Text>
 				</Box>
 			</Box>

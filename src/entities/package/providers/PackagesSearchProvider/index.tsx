@@ -39,16 +39,15 @@ export const PackagesSearchProvider: React.FC<{children: React.ReactNode}> = ({ 
 
 	useEffect(() => {
 		const packageItem = packageList?.[0]
-		if (packageItem?.offerId) {
-			setSearchData({
-				fromDate: new Date(packageItem.destinationFlight.departureDate),
-				toDate: new Date(packageItem.returnFlight.arrivalDate),
-				departureFlightId: packageItem.destinationFlight.id,
-				returnFlightId: packageItem.returnFlight.id
-			})
+			if (packageItem?.offerId && !searchData.fromDate && !searchData.toDate && !searchData.departureFlightId && !searchData.returnFlightId) {
+				setSearchData({
+					fromDate: new Date(packageItem.destinationFlight.departureDate),
+					toDate: new Date(packageItem.returnFlight.arrivalDate),
+					departureFlightId: packageItem.destinationFlight.id,
+					returnFlightId: packageItem.returnFlight.id
+				})
 		}
-	}, [packageList])
-
+	}, [packageList?.length, searchData])
 
 	const { data: departureFlights } = useAvailableFlights({ city: 1 })
 	const {

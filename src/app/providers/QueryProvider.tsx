@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: true
+      refetchOnWindowFocus: false
     }
   }
 })

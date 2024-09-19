@@ -13,28 +13,29 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 	const [tempAdultsCount, setTempAdultsCount] = useState(1)
 	const [tempChildrenCount, setTempChildrenCount] = useState(0)
 	const [tempChildrenAges, setTempChildrenAges] = useState<number[]>([])
-	const [adultsCount, setAdultsCount] = useState(2);
-	const [childrenCount, setChildrenCount] = useState(0);
-	const [childrenAges, setChildrenAges] = useState<number[]>([]);
+	const [adultsCount, setAdultsCount] = useState(2)
+	const [childrenCount, setChildrenCount] = useState(0)
+	const [childrenAges, setChildrenAges] = useState<number[]>([])
 
 	useEffect(() => {
 		if (defaultData) {
-			if (defaultData.adultsCount !== undefined) setAdultsCount(defaultData.adultsCount);
-			if (defaultData.childrenCount !== undefined) setChildrenCount(defaultData.childrenCount);
-			if (defaultData.childrenAges !== undefined) setChildrenAges(defaultData.childrenAges);
+			if (defaultData.adultsCount !== undefined) setAdultsCount(defaultData.adultsCount)
+			if (defaultData.childrenCount !== undefined) setChildrenCount(defaultData.childrenCount)
+			if (defaultData.childrenAges !== undefined) setChildrenAges(defaultData.childrenAges)
 		}
-	}, [JSON.stringify(defaultData)]);
+	}, [JSON.stringify(defaultData)])
 
 	const handleConfirm = () => {
 		setAdultsCount(tempAdultsCount)
 		setChildrenCount(tempChildrenCount)
-		setChildrenAges(tempChildrenAges.slice(0, tempChildrenCount))
+		const childAges = tempChildrenAges.slice(0, tempChildrenCount)
+		setChildrenAges(childAges)
 		setDropdownOpen(false)
 
 		onChange && onChange({
 			adultsCount: tempAdultsCount,
 			childrenCount: tempChildrenCount,
-			childrenAges: tempChildrenAges
+			childrenAges: childAges
 		})
 	}
 
@@ -225,6 +226,14 @@ const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
 	const { t } = useTranslation()
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
 
+	const normalizedValue = useMemo(() => {
+		if (value === 1) {
+			return t`under2`
+		}
+
+		return value
+	}, [value])
+
 	return (
 		<Menu
 			isOpen={isDropdownOpen} onClose={() => setDropdownOpen(false)}
@@ -243,7 +252,7 @@ const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
 			>
 				<Input
 					type="text"
-					value={value}
+					value={normalizedValue}
 					placeholder={t`ageAtReturn`}
 					width="full"
 					borderColor={isDropdownOpen ? 'blue.500' : undefined}
@@ -260,7 +269,37 @@ const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
 				overflowY="auto"
 				py="4"
 			>
-				{Array.from({ length: 13 }, (_, i) => i + 1).map((age) => (
+				<Flex
+					key={`children-age-under2`}
+					width="full"
+					align="center"
+					bgColor="white"
+					height="40px"
+					px="4"
+					_hover={{
+						bgColor: 'gray.50'
+					}}
+					_active={{
+						bgColor: 'gray.100'
+					}}
+					_focus={{
+						bgColor: 'gray.100'
+					}}
+					_focusVisible={{
+						bgColor: 'gray.100'
+					}}
+					fontSize="text-md"
+					lineHeight="text-md"
+					cursor="pointer"
+					onClick={() => {
+						onChange(1)
+						setDropdownOpen(false)
+					}}
+				>
+					<Text size="md">{t`under2`}</Text>
+				</Flex>
+
+				{Array.from({ length: 12 }, (_, i) => i + 2).map((age) => (
 					<Flex
 						key={age}
 						width="full"
