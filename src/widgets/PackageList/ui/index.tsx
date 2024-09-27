@@ -2,14 +2,19 @@ import { LayoutProps } from './types'
 import { Box, Container, Grid } from '@chakra-ui/react'
 import { PackageCardSkeleton, PackageEntity, usePackagesSearchContext } from '@entities/package'
 import { PackageCard } from '@features/PackageCard'
+import { EmptyState, Illustration } from '@ui'
+import { useTranslation } from 'react-i18next'
 
 export const PackageList = () => {
-	const { filteredPackages, isLoadingFilteredPackages, searchData } = usePackagesSearchContext()
+	const {t} = useTranslation()
+	const { filteredPackages, isLoadingFilteredPackages, searchData, isSearchError } = usePackagesSearchContext()
 	const generateLink = (tourPackage: PackageEntity) => {
+		const childrenTravelers = tourPackage.childrenTravelers + tourPackage.infantTravelers
+
 		const queryParams = new URLSearchParams({
 			city: tourPackage.city.id.toString(),
 			adultsCount: tourPackage.adultTravelers.toString(),
-			childrenCount: tourPackage.childrenTravelers.toString(),
+			childrenCount: childrenTravelers.toString(),
 			childrenAges: searchData.travelersData.childrenAges.join(','),
 			departureFlightId: tourPackage.destinationFlight.id.toString(),
 			returnFlightId: tourPackage.returnFlight.id.toString(),
@@ -17,7 +22,25 @@ export const PackageList = () => {
 			roomId: tourPackage.roomType.toString()
 		})
 
-		return `/egypt/package?${queryParams.toString()}`
+		return `/package?${queryParams.toString()}`
+	}
+
+	// empty view
+	if (!isLoadingFilteredPackages) {
+		// if (isSearchError) {
+		// 	return (
+		// 		<EmptyState illustrationName="no-result" mt={{base: '160px', md: '200px'}}>
+		// 			Տեխնիկական խնդիր, խնդրում ենք փորձել մի փոքր ուշ:
+		// 		</EmptyState>
+		// 	)
+		// } else
+			if (!filteredPackages?.length) {
+			return (
+				<EmptyState illustrationName="error" mt={{base: '160px', md: '200px'}}>
+					{t`packagesNotFoundText`}
+				</EmptyState>
+			)
+		}
 	}
 
 	return (

@@ -19,7 +19,7 @@ const ImageSlider = ({ images, starsCount, isPackageList }: any) => {
 		swipeToSlide: false,
 		draggable: false,
 		speed: slideTime,
-		// lazyLoad: 'ondemand' as LazyLoadTypes,
+		lazyLoad: 'ondemand',
 		beforeChange: (current: number, next: number) => setTimeout(() => setCurrentSlide(next), slideTime),
 		arrows: true
 	}

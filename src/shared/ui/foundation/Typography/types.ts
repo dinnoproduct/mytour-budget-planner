@@ -16,7 +16,7 @@ export type TextProps = {
 
 export type HeadingProps = {
   children: ReactNode | ReactNode[]
-  size?: HeadingFontSizeType
+  size?: HeadingFontSizeType | Record<string, HeadingFontSizeType>
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   color?: string
 } & ChakraHeadingProps

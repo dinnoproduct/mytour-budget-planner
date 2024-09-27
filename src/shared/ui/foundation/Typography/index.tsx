@@ -34,7 +34,7 @@ export const Text = forwardRef(
 )
 Text.displayName = 'Text'
 
-export const Heading = forwardRef(
+export const  Heading = forwardRef(
 	(
 		{ children, fontWeight, size = 'md', as = 'h2', color, ...props }: HeadingProps,
 		ref: Ref<any>

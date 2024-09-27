@@ -11,6 +11,7 @@ import { buttonComponentTheme } from '@components/Button'
 import { inputComponentTheme } from '@components/Input'
 import { formComponentsTheme } from '@components/Form'
 import { menuComponentTheme } from '@components/Menu/theme.ts'
+import { tooltipComponentTheme } from '@components/Tooltip'
 
 export const breakpoints = {
 	base: '0px',
@@ -31,6 +32,7 @@ export const theme = extendTheme({
 		...buttonComponentTheme,
 		...inputComponentTheme,
 		...formComponentsTheme,
-		...menuComponentTheme
+		...menuComponentTheme,
+		...tooltipComponentTheme
 	}
 })

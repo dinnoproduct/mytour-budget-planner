@@ -3,7 +3,7 @@ import { PackageEntity, packageUseCases } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
 export const usePackageList = (
-	options?: UseQueryOptions<PackageEntity[]>
+	options?: Omit<UseQueryOptions<PackageEntity[]>, 'queryFn' | 'queryKey'>
 ) => {
 	return useQuery({
 	  ...(options || {}),

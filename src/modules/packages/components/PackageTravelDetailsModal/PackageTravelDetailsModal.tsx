@@ -42,6 +42,7 @@ const PackageTravelDetailsModal: FC<{ onClose: () => void; modalRef?: MutableRef
     flightsByDate,
     returnFlightLoading,
   } = useFlight();
+  // todo: back to this
   const { generateOffers, generatedOffers, loading } = useOffer();
 
   const [packageTravelDetails, setPackageTravelDetails] = useRecoilState(packageTravelDetailsAtom);

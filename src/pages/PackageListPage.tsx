@@ -7,9 +7,7 @@ export const PackageListPage = () => {
 	return (
 		<Box overflowX="hidden">
 			<Header/>
-
 			<PackageSearch variant="fixed"/>
-
 			<PackageList/>
 		</Box>
 	)

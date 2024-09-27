@@ -8,15 +8,15 @@ export const useSearchPackage = (
 	options?: Omit<UseQueryOptions<PackageEntity[]>, 'queryKey' | 'queryFn'>
 ) => {
 	const location = useLocation()
-
 	const searchParams = new URLSearchParams(location.search)
+
 	const searchData = {
 		flightId: parseInt(searchParams.get('departureFlightId') || '0', 10),
 		returnFlightId: parseInt(searchParams.get('returnFlightId') || '0', 10),
 		city: parseInt(searchParams.get('city') || '0', 10),
 		adults: parseInt(searchParams.get('adultsCount') || '0', 10),
 		childs: searchParams.get('childrenAges')
-			? searchParams.get('childrenAges')!.split(',').map(age => parseInt(age, 10)).filter(age => !isNaN(age))
+			? searchParams.get('childrenAges')?.split(',').filter(Boolean).map(Number) || []
 			: []
 	}
 
@@ -32,5 +32,7 @@ export const useSearchPackage = (
 		pkg.hotel.id === hotelId && pkg.roomType === roomId
 	) || {}
 
-	return { packageDetails, isLoading }
+	return {
+		packageDetails,
+		isLoading }
 }

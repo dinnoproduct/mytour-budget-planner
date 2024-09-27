@@ -1,8 +1,8 @@
-import { Header } from '../widgets/Header'
+import { Header } from '@widgets/Header'
 import { Box, Link, HStack, Image, Flex } from '@chakra-ui/react'
 import { Footer, Text } from '@ui'
-import { PackageSearch } from '../widgets/PackageSearch'
-import { HotOffersSection } from '../widgets/HotOffersSection'
+import { PackageSearch } from '@widgets/PackageSearch'
+import { HotOffersSection } from '@widgets/HotOffersSection'
 import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
 
@@ -23,6 +23,7 @@ export const HomePage = () => {
 			<PackageSearch variant="centered"/>
 			<HotOffersSection mt={{ base: '62px', md: '84px' }}/>
 			<AppSection/>
+
 			<div className="embedsocial-hashtag" data-ref="f348cf39b90fa99e65cfce589513e45493bd6815"></div>
 
 			<Footer/>

@@ -3,6 +3,7 @@ import React from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment'
 
 export const DatePickerHeader = ({ fromDate, toDate, dateSelectState, onFromTabClick }: DatePickerHeaderProps) => {
 	const { t } = useTranslation()
@@ -40,11 +41,12 @@ const DateTab = ({ date, label, isActive, onClick }: {date?: Date | null, label:
 			return ''
 		}
 
-		const longMonthName = date.toLocaleString('default', { month: 'long' }).toLowerCase()
+		const momentDate = moment(date)
 
+		const longMonthName = momentDate.locale('en').format('MMMM').toLowerCase()
 		const shortMonthName = t(`${longMonthName}Short`)
 
-		return `${shortMonthName} ${date.getDate()},  ${date.getFullYear()}`
+		return `${shortMonthName} ${momentDate.format('D')}, ${momentDate.format('YYYY')}`
 	}
 
 	return (

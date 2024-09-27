@@ -3,12 +3,12 @@ import { Icon, Input, Text } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SearchCitiesProps } from './types.ts'
-import { CITIES } from '@entities/package'
+import { PACKAGE_CITIES } from '@entities/package'
 
 export const SearchCities = ({ defaultSelectedCities = [], onChange }: SearchCitiesProps) => {
 	const { t } = useTranslation()
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
-	const [selectedCities, setSelectedCities] = useState<number[]>([CITIES[0].id])
+	const [selectedCities, setSelectedCities] = useState<number[]>([PACKAGE_CITIES[0].id])
 
 	useEffect(() => {
 		if (defaultSelectedCities.length && JSON.stringify(defaultSelectedCities) !== JSON.stringify(selectedCities)) {
@@ -53,7 +53,7 @@ export const SearchCities = ({ defaultSelectedCities = [], onChange }: SearchCit
 				<Input
 					type="text"
 					value={
-						CITIES
+						PACKAGE_CITIES
 							.filter(city => selectedCities.includes(city.id))
 							.map(city => t(city.value)).join(', ')
 					}
@@ -77,7 +77,7 @@ export const SearchCities = ({ defaultSelectedCities = [], onChange }: SearchCit
 			>
 				<Box>
 					<VStack width="full" spacing="1" align="stretch">
-						{CITIES.map((city) => (
+						{PACKAGE_CITIES.map((city) => (
 							<Flex
 								key={city.value}
 								width="full"

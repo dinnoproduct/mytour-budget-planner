@@ -2,9 +2,11 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 import { DatePickerCalendarProps } from './types'
 import { DatePickerMonth } from './DatePickerMonth'
-import { Text, Button } from '@ui'
+import { Text, Button, EmptyState, Illustration } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
+import { EmptyView } from '@widgets/PackageList/ui/EmptyView.tsx'
+import { LoadingView } from '@features/DatePicker/ui/LoadingView.tsx'
 
 const MAX_MONTHS = 8
 
@@ -78,7 +80,8 @@ export const DatePickerCalendar = ({
 				px={{ md: 4 }}
 				pb="4"
 			>
-				{!isMd ? (
+				{isLoading ? <LoadingView />
+				: !isMd ? (
 					Array.from({ length: MAX_MONTHS }).map((_, index) => {
 						const monthDate = new Date(
 							startDate ? startDate.getFullYear() : currentMonth.getFullYear(),
@@ -114,15 +117,16 @@ export const DatePickerCalendar = ({
 								isNextDisabled={isNextDisabled}
 							/>
 
-							<DatePickerMonth
-								currentMonth={currentMonth}
-								availableDates={availableDates}
-								isLoading={isLoading}
-								onDayClick={onDayClick}
-								selectedFromDate={selectedFromDate}
-								selectedToDate={selectedToDate}
-								dateSelectState={dateSelectState}
-							/>
+
+								<DatePickerMonth
+									currentMonth={currentMonth}
+									availableDates={availableDates}
+									isLoading={isLoading}
+									onDayClick={onDayClick}
+									selectedFromDate={selectedFromDate}
+									selectedToDate={selectedToDate}
+									dateSelectState={dateSelectState}
+								/>
 						</Box>
 					</>
 				)}
@@ -146,7 +150,7 @@ const MonthHeader = ({
 }) => {
 	const { t } = useTranslation()
 
-	const monthName = month.toLocaleString('en-US', { month: 'long' }).toLowerCase();
+	const monthName = month.toLocaleString('en-US', { month: 'long' }).toLowerCase()
 	const year = month.getFullYear()
 
 	return (

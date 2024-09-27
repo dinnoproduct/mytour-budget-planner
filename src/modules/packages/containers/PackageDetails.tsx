@@ -38,11 +38,6 @@ const PackageDetails = () => {
 	const navigate = useNavigate()
 	const { packageDetails, loading } = usePackages(+id!)
 	const { filteredPackages } = usePackagesSearchContext()
-	console.log('PackageDetails : ', {
-		packageDetails,
-		loading,
-		filteredPackages
-	})
 
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 	const [isBookModalOpen, setIsBookModalOpen] = useRecoilState(isBookModalOpenAtom)
@@ -73,7 +68,6 @@ const PackageDetails = () => {
 	}, [packageDetails, loading])
 
 	const handleBackClick = () => {
-		console.log('filteredPackages : ', filteredPackages)
 		if (filteredPackages?.length) {
 			navigate(-1)
 		} else {

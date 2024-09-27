@@ -9,6 +9,7 @@ import { Text } from '@ui'
 import { Link as ReactLink } from 'react-router-dom'
 import { PackageCardProps } from '@features/PackageCard/ui/types.ts'
 import { PackageCity, PackageCountry, PackageEntity } from '@entities/package'
+import { getPluralForm } from '@shared/helpers'
 
 export const PackageCard = ({ tourPackage = {}, link, ...props }: PackageCardProps) => {
 	const { i18n, t } = useTranslation()
@@ -34,7 +35,7 @@ export const PackageCard = ({ tourPackage = {}, link, ...props }: PackageCardPro
 
 		if (childrenCount === 0) return ''
 
-		return `, ${childrenCount} ${t`child`.toLowerCase()}`
+		return `, ${childrenCount} ${t(getPluralForm(childrenCount, 'children'))}`
 	},[tourPackage?.childrenTravelers, tourPackage?.infantTravelers, languageSuffix])
 
 
@@ -76,7 +77,7 @@ export const PackageCard = ({ tourPackage = {}, link, ...props }: PackageCardPro
 					</Flex>
 
 					<Text mt="1" size="sm" color="gray.600">
-						{tourPackage.adultTravelers} {t`adult`}{childrenTravelers} • {tourPackage.nights} {t`night`}
+						{tourPackage.adultTravelers} {t(getPluralForm(tourPackage.adultTravelers, 'adults'))}{childrenTravelers} • {tourPackage.nights} {t(getPluralForm(tourPackage.nights, 'nights'))}
 					</Text>
 				</Box>
 			</Box>

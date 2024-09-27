@@ -13,19 +13,3 @@ export type LayoutProps = {
 	variant: PackageSearchVariant
 	children: ReactNode | ReactNode[]
 }
-
-export type SearchCitiesProps = {
-	defaultSelectedCities?: number[]
-	onChange?: (cities: number[]) => void
-}
-
-export type SearchTravelersProps = {
-	defaultData?: SearchTravelersData,
-	onChange?: (data: SearchTravelersData) => void
-}
-
-export type SearchTravelersData = {
-	childrenCount: number
-	adultsCount: number
-	childrenAges: number[]
-}

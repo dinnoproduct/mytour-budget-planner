@@ -1,10 +1,10 @@
 import React from 'react'
-import { SearchCities } from './SearchCities.tsx'
 import { DatePicker } from '@features/DatePicker'
-import { SearchTravelers } from './SearchTravelers.tsx'
 import { useTranslation } from 'react-i18next'
 import { usePackagesSearchContext } from '@entities/package'
 import { Button } from '@ui'
+import { SearchCities } from '@features/SearchCities'
+import { SearchTravelers } from '@features/SearchTravelers'
 
 export const PackageSearchForm = ({ onSearch }: {onSearch?: () => void}) => {
 	const { t } = useTranslation()

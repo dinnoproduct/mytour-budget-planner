@@ -8,8 +8,8 @@ export type ButtonProps = {
   size?: ButtonSize
   href?: string
   isDisabled?: boolean
-  iconBefore?: string
-  iconAfter?: string
+  iconBefore?: IconName
+  iconAfter?: IconName
   icon?: IconName
   isLoading?: boolean
   onMouseDown?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void
@@ -24,7 +24,7 @@ export type ButtonVariant =
 | 'solid-red'
 | 'outline-blue'
 | 'outline-red'
-| 'transparent-blue'
+| 'text-blue'
 
 export type ButtonSize = 'lg' | 'md' | 'sm' | 'xs'
 

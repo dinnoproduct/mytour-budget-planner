@@ -109,7 +109,7 @@ const MDatePicker: FC<IMDatePicker> = ({
             {t('close')}
           </button>
           <button className="btn-main m-l-12" onClick={onSave} type="button">
-            {t('save')}
+            {t('confirm')}
           </button>
         </div>
       </DatePicker>

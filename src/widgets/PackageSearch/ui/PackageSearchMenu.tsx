@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { PackageSearchForm } from './PackageSearchForm.tsx'
-import { CITIES, usePackagesSearchContext } from '@entities/package'
+import { PACKAGE_CITIES, usePackagesSearchContext } from '@entities/package'
 import { useTranslation } from 'react-i18next'
 import { Icon, Text } from '@ui'
 import { capitalize } from '@shared/utils'
@@ -30,7 +30,7 @@ export const PackageSearchMenu = () => {
 	}, [isFormOpen])
 
 	const cityLabel = useMemo(() => {
-			const value  = CITIES.find(city => searchData.selectedCities.includes(city.id))?.value
+			const value  = PACKAGE_CITIES.find(city => searchData.selectedCities.includes(city.id))?.value
 			return value ? t(value) : ''
 		},
 		[searchData.selectedCities]

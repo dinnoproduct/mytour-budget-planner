@@ -55,7 +55,7 @@ export const typographyTheme = {
 		'heading-lg-4xl': '4.5rem',
 
 		'heading-sm-xs': '1.05rem',
-		'heading-sm-sm': '1.2rem',
+		'heading-sm-sm': '1.4rem',
 		'heading-sm-md': '1.5rem',
 		'heading-sm-lg': '2rem',
 		'heading-sm-xl': '2.5rem',
@@ -68,7 +68,7 @@ export const typographyTheme = {
 export const typographyComponentTheme = {
 	Text: {
 		baseStyle: {
-			color: 'black',
+			color: 'gray.800',
 			fontWeight: 'normal'
 		},
 		variants: {
@@ -118,7 +118,7 @@ export const typographyComponentTheme = {
 	},
 	Heading: {
 		baseStyle: {
-			color: 'black',
+			color: 'gray.800',
 			fontWeight: 'bold'
 		},
 		variants: {

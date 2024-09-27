@@ -8,7 +8,7 @@ export const Alert = ({ title, description, ...props }: AlertProps) => {
 			{...props}
 			{...STATUS_THEME[props?.status as Status]}
 		>
-			<AlertIcon />
+			<AlertIcon/>
 
 			<Flex direction="column" align="start">
 				<AlertTitle>{title}</AlertTitle>
@@ -28,16 +28,18 @@ type Status = 'success' | 'error' | 'warning' | 'info'
 
 const STATUS_THEME = {
 	success: {
-		borderColor: 'green.500',
+		borderColor: 'green.500'
 	},
 	error: {
-		borderColor: 'red.500',
+		borderColor: 'red.500'
 	},
 	warning: {
-		borderColor: 'orange.500',
+		borderColor: 'orange.500'
 	},
 	info: {
-		borderColor: 'blue.500',
-	},
+		borderColor: 'blue.500'
+	}
 }
+
+export * from './AlertCardMessage'
 

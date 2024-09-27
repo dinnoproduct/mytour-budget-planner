@@ -1,3 +1,2 @@
-export * from './package-entity.ts'
-export * from './flight-entity.ts'
+export * from './entities'
 export * from './constants.ts'

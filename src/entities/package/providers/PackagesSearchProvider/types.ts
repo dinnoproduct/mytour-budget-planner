@@ -20,6 +20,7 @@ export type SearchContextType = {
 	filteredPackages: PackageEntity[]
 	isLoadingFilteredPackages?: boolean
 	generateSearchQueryParams: (searchData: SearchData) => URLSearchParams
+	isSearchError?: boolean
 }
 
 

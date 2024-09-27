@@ -62,7 +62,7 @@ const PackagesList = ({ packages }: any) => {
 			roomId: tourPackage.roomType.toString()
 		})
 
-		return `/egypt/package?${queryParams.toString()}`
+		return `/package?${queryParams.toString()}`
 	}
 
 	return (

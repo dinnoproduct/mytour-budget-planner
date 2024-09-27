@@ -217,6 +217,62 @@ export const buttonComponentTheme = {
 					fill: 'gray.300'
 				}
 			},
+			'text-blue': {
+				...variantCommonStyles,
+				background: 'transparent',
+				color: 'blue.500',
+				border: 'none',
+				borderColor: 'none',
+				'svg[data-fill=true]>path': {
+					fill: 'blue.500'
+				},
+				_hover: {
+					color: 'blue.600',
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.600'
+					},
+					_disabled: {
+						background: 'transparent'
+					}
+				},
+				_active: {
+					color: 'blue.700',
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.700'
+					},
+					_disabled: {
+						background: 'transparent'
+					}
+				},
+				_focus: {
+					color: 'blue.700',
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.700'
+					},
+				},
+				_focusVisible: {
+					color: 'blue.700',
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.700'
+					},
+				},
+				_disabled: {
+					background: 'transparent',
+					borderColor: 'none',
+					color: 'gray.300',
+					'svg[data-fill=true]>path': {
+						fill: 'gray.300'
+					}
+				}
+			},
 			'outline-red': {
 				...variantCommonStyles,
 				background: 'transparent',
@@ -527,7 +583,57 @@ export const buttonComponentTheme = {
 				'svg[data-fill=true]>path': {
 					fill: 'red.500'
 				}
-			}
+			},
+			'text-blue-icon': {
+				...variantCommonStyles,
+				background: 'transparent',
+				border: 'none',
+				borderColor: 'none',
+				'svg[data-fill=true]>path': {
+					fill: 'blue.500'
+				},
+				_hover: {
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.600'
+					},
+					_disabled: {
+						background: 'transparent'
+					}
+				},
+				_active: {
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.700'
+					},
+					_disabled: {
+						background: 'transparent'
+					}
+				},
+				_focus: {
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.700'
+					},
+				},
+				_focusVisible: {
+					borderColor: 'none',
+					background: 'transparent',
+					'svg[data-fill=true]>path': {
+						fill: 'blue.700'
+					},
+				},
+				_disabled: {
+					background: 'transparent',
+					borderColor: 'none',
+					'svg[data-fill=true]>path': {
+						fill: 'gray.300'
+					}
+				}
+			},
 		},
 		sizes: {
 			lg: {
@@ -598,8 +704,8 @@ export const buttonComponentTheme = {
 				height: '8',
 				px: '9px',
 				svg: {
-					height: '14px',
-					width: '14px'
+					height: '16px',
+					width: '16px'
 				}
 			},
 			'xs-icon': {

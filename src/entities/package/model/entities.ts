@@ -1,3 +1,6 @@
+// package
+import type { DictionaryFields } from '@/modules/packages/data/packagesEnums.ts'
+
 export interface PackageEntity {
 	id: number;
 	offerId: number;
@@ -101,7 +104,33 @@ export interface PackageFlight {
 	fLightCode: string;
 }
 
-export interface PackageAirCompany {
-	id: number;
-	name: string;
+export interface OfferEntity {
+	offerId: number
+	roomType: number
+	price: number
+	nights: number
+	checkin: string
+	checkout: string
+}
+
+// flight
+export interface FlightEntity {
+	id: number
+	departureDate: string
+	arrivalDate: string
+	airCompany: PackageAirCompany
+	ticketClass: number
+	flightType: number
+	fLightCode: string
+}
+
+interface PackageAirCompany {
+	id: number
+	name: string
+}
+
+// dictionary
+export interface DictionaryEntity {
+	key: number
+	value: string
 }

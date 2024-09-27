@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { FlightEntity } from '@entities/package'
+import { FlightEntity, GetFlightsByDateParams } from '@entities/package'
 import { GetAvailableFlightsParams, GetReturnFlightsParams } from '@entities/package/api/types.ts'
 
 export class FlightService {
@@ -30,6 +30,12 @@ export class FlightService {
 			params: {
 				id: flightId
 			}
+		})
+	}
+
+	async getFlightsByDate(params: GetFlightsByDateParams): Promise<FlightEntity[]> {
+		return this.api('getAirTicketsByDate', {
+			params
 		})
 	}
 }

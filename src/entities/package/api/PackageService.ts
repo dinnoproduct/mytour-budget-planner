@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { PackageEntity, SearchPackagesParams } from '@entities/package'
+import { GenerateOffersInput, OfferEntity, PackageEntity, SearchPackagesParams } from '@entities/package'
 
 export class PackageService {
 	private readonly apiVersion = 'V2'
@@ -22,5 +22,13 @@ export class PackageService {
 
 	async searchPackages(search: SearchPackagesParams): Promise<PackageEntity[]> {
 		return this.api.post('searchPackages', search)
+	}
+
+	async getPackage(offerId: number): Promise<PackageEntity> {
+		return this.api(`/getPackage/?id=${offerId}`)
+	}
+
+	async generateOffers(input: GenerateOffersInput): Promise<OfferEntity[]> {
+		return this.api.post('generateOffers', input)
 	}
 }

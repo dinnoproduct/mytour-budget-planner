@@ -1,18 +1,20 @@
 import { Box, Flex, Menu, MenuButton, MenuList, Portal, useMediaQuery, VStack } from '@chakra-ui/react'
-import { Button, Icon, Input, Text } from '@ui'
+import { AlertCardMessage, Button, Icon, Input, Text } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SearchTravelersProps } from './types.ts'
+import { ChildAge, SearchTravelersProps } from './types.ts'
+import { getPluralForm } from '@shared/helpers'
+import { FormState } from '@components/Form'
 
 const MAX_TRAVELERS = 6
 
-export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps) => {
+export const SearchTravelers = ({ defaultData, onChange, CustomButton, menuProps = {} }: SearchTravelersProps) => {
 	const { t } = useTranslation()
 
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
 	const [tempAdultsCount, setTempAdultsCount] = useState(1)
 	const [tempChildrenCount, setTempChildrenCount] = useState(0)
-	const [tempChildrenAges, setTempChildrenAges] = useState<number[]>([])
+	const [tempChildrenAges, setTempChildrenAges] = useState<ChildAge[]>([])
 	const [adultsCount, setAdultsCount] = useState(2)
 	const [childrenCount, setChildrenCount] = useState(0)
 	const [childrenAges, setChildrenAges] = useState<number[]>([])
@@ -26,24 +28,59 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 	}, [JSON.stringify(defaultData)])
 
 	const handleConfirm = () => {
+		let hasError = false
+		console.log('tempChildrenAges', tempChildrenAges)
+		const newChildrenAges = tempChildrenAges.slice(0, tempChildrenCount)
+
+		console.log('newChildrenAges', newChildrenAges)
+
+		newChildrenAges.forEach((child, index) => {
+			if (!child.age) {
+				setTempChildrenAges(prev => {
+					const newAges = [...prev]
+					newAges[index] = { age: null, isRequiredError: true }
+					return newAges
+				})
+				hasError = true
+			}
+		})
+
+		if (hasError) return
+
+		setChildrenAges(newChildrenAges.map(item => item.age as number))
 		setAdultsCount(tempAdultsCount)
 		setChildrenCount(tempChildrenCount)
-		const childAges = tempChildrenAges.slice(0, tempChildrenCount)
-		setChildrenAges(childAges)
 		setDropdownOpen(false)
 
 		onChange && onChange({
 			adultsCount: tempAdultsCount,
 			childrenCount: tempChildrenCount,
-			childrenAges: childAges
+			childrenAges: newChildrenAges.map(item => item.age as number)
 		})
 	}
 
 	const handleAgeChange = (index: number, age: number) => {
 		const newAges = [...tempChildrenAges]
-		newAges[index] = age
+		newAges[index] = { age, isRequiredError: false }
 		setTempChildrenAges(newAges)
 	}
+
+	const handleChildrenCountChange = (count: number) => {
+		setTempChildrenCount(count);
+		setTempChildrenAges(prev => {
+			const newAges = [...prev];
+			if (count > prev.length) {
+				// Add new elements if count is increased
+				for (let i = prev.length; i < count; i++) {
+					newAges.push({ age: null, isRequiredError: false });
+				}
+			} else {
+				// Remove elements if count is decreased
+				newAges.length = count;
+			}
+			return newAges;
+		});
+	};
 
 	const totalTravelers = useMemo(
 		() => adultsCount + childrenCount,
@@ -83,6 +120,13 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 		}
 	}, [isMobile, isDropdownOpen])
 
+	const handleMenuOpen = () => {
+		setTempAdultsCount(adultsCount)
+		setTempChildrenCount(childrenCount)
+		setTempChildrenAges(childrenAges.map(age => ({ age, isRequiredError: false })))
+		setDropdownOpen(!isDropdownOpen)
+	}
+
 	return (
 		<Menu
 			offset={[0, 4]}
@@ -90,30 +134,44 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 			onClose={() => {
 				setTempAdultsCount(adultsCount)
 				setTempChildrenCount(childrenCount)
-				setTempChildrenAges(childrenAges)
+				setTempChildrenAges(childrenAges.map(age => ({ age, isRequiredError: false })))
 				setDropdownOpen(false)
 			}}
+			{...menuProps}
 		>
-			<MenuButton
-				as={Box}
-				width={{
-					base: 'full',
-					md: '320px'
-				}}
-				onClick={() => {
-					setTempAdultsCount(adultsCount)
-					setTempChildrenCount(childrenCount)
-					setTempChildrenAges(childrenAges)
-					setDropdownOpen(!isDropdownOpen)
-				}}
-				cursor="pointer"
-			>
-				<SearchInput
-					travelersCount={totalTravelers}
-					roomsCount={1}
-					isFocused={isDropdownOpen}
-				/>
-			</MenuButton>
+			{CustomButton ? (
+				<MenuButton
+					as={Box}
+					sx={{
+						'span': {
+							pointerEvents: 'auto'
+						}
+					}}
+				>
+					<CustomButton
+						travelersCount={totalTravelers}
+						roomsCount={1}
+						isFocused={isDropdownOpen}
+						onClick={handleMenuOpen}
+					/>
+				</MenuButton>
+			) : (
+				<MenuButton
+					as={Box}
+					width={{
+						base: 'full',
+						md: '320px'
+					}}
+					onClick={handleMenuOpen}
+					cursor="pointer"
+				>
+					<SearchInput
+						travelersCount={totalTravelers}
+						roomsCount={1}
+						isFocused={isDropdownOpen}
+					/>
+				</MenuButton>
+			)}
 
 			<Portal>
 				<MenuList
@@ -144,6 +202,8 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 							height="64px"
 							align="center"
 							width="full"
+							borderBottom="1px solid"
+							borderColor="gray.100"
 						>
 							<Text size="md" fontWeight="semibold">{t`travelers`}</Text>
 
@@ -161,15 +221,11 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 							overflowY={{ base: 'scroll', md: 'unset' }}
 							height={{ base: 'calc(100% - 138px)', md: 'auto' }}
 							pb={{ base: 4, md: 0 }}
+							pt={{ base: 4, md: 0 }}
 						>
-							{/*<Flex height="32px">*/}
-							{/*	<Text size="md" color="gray.800">{t`room`} 1</Text>*/}
-							{/*</Flex>*/}
-
 							<VStack
 								width="full"
 								spacing="4"
-								// mt="4"
 								align="stretch"
 							>
 								<PeopleCounter
@@ -183,7 +239,7 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 
 								<PeopleCounter
 									count={tempChildrenCount}
-									onChange={setTempChildrenCount}
+									onChange={handleChildrenCountChange}
 									label={t`children`}
 									subLabel={t`age0-13`}
 									minCount={0}
@@ -193,9 +249,10 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 								{Array.from({ length: tempChildrenCount }).map((_, index) => (
 									<ChildrenAgeSelect
 										key={index}
-										value={tempChildrenAges[index]}
+										value={tempChildrenAges[index]?.age as number}
 										onChange={(age) => handleAgeChange(index, age)}
 										childrenIndex={index + 1}
+										isRequiredError={tempChildrenAges[index]?.isRequiredError}
 									/>
 								))}
 							</VStack>
@@ -218,21 +275,33 @@ export const SearchTravelers = ({ defaultData, onChange }: SearchTravelersProps)
 	)
 }
 
-const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
-	value: number,
+const ChildrenAgeSelect = ({ value, onChange, childrenIndex, isRequiredError }: {
+	value: number | null,
 	onChange: (age: number) => void,
-	childrenIndex: number
+	childrenIndex: number,
+	isRequiredError: boolean
 }) => {
 	const { t } = useTranslation()
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
+	const [inputState, setInputState] = useState<FormState>('default')
+	const [errorMessage, setErrorMessage] = useState('')
 
 	const normalizedValue = useMemo(() => {
 		if (value === 1) {
 			return t`under2`
 		}
-
 		return value
 	}, [value])
+
+	useEffect(() => {
+		if (isRequiredError) {
+			setInputState('invalid')
+			setErrorMessage(t`requiredField`)
+		} else {
+			setInputState('default')
+			setErrorMessage('')
+		}
+	}, [isRequiredError])
 
 	return (
 		<Menu
@@ -242,22 +311,20 @@ const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
 		>
 			<MenuButton
 				as={Box}
-				width={{
-					base: 'full',
-					md: '350px',
-					lg: '320px'
-				}}
+				width="full"
 				onClick={() => setDropdownOpen(!isDropdownOpen)}
 				cursor="pointer"
 			>
 				<Input
 					type="text"
-					value={normalizedValue}
+					value={normalizedValue as string}
 					placeholder={t`ageAtReturn`}
 					width="full"
 					borderColor={isDropdownOpen ? 'blue.500' : undefined}
 					rightIconName={isDropdownOpen ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
 					label={`${t`child`} ${childrenIndex}*`}
+					helperText={errorMessage}
+					state={inputState}
 				/>
 			</MenuButton>
 
@@ -337,22 +404,13 @@ const ChildrenAgeSelect = ({ value, onChange, childrenIndex }: {
 
 const AlertMessage = ({ show = false }: {show?: boolean}) => {
 	return (
-		<Flex
-			display={show ? 'flex' : 'none'}
-			width="full"
-			py="2"
-			px="4"
-			bgColor="orange.50"
-			rounded="md"
-			align="center"
+		<AlertCardMessage
+			show={show}
 			mt="4"
+			status="warning"
 		>
-			<Icon name="status-warning" color="orange.500" size="24"/>
-
-			<Text color="orange.500" size="xs" ml="2">
-				Սենյակում ճանապարհորդողների թիվը չի կարող գերազանցել {MAX_TRAVELERS}-ը
-			</Text>
-		</Flex>
+			Սենյակում ճանապարհորդողների թիվը չի կարող գերազանցել {MAX_TRAVELERS}-ը
+		</AlertCardMessage>
 	)
 }
 
@@ -394,7 +452,7 @@ const PeopleCounter = ({ count, onChange, label, subLabel, minCount, maxCount }:
 	)
 }
 
-const SearchInput = ({ travelersCount, roomsCount, isFocused }: {
+const SearchInput = ({ travelersCount, isFocused, roomsCount }: {
 	travelersCount: number,
 	roomsCount: number,
 	isFocused?: boolean
@@ -404,7 +462,7 @@ const SearchInput = ({ travelersCount, roomsCount, isFocused }: {
 	return (
 		<Input
 			type="text"
-			value={`${travelersCount} ${t`traveler`}`}
+			value={`${travelersCount} ${t(getPluralForm(travelersCount, 'travelers')).toLowerCase()}`}
 			width="full"
 			borderColor={isFocused ? 'blue.500' : undefined}
 			leftIconName="people-alt"

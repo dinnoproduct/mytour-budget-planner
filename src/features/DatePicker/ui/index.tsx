@@ -16,7 +16,9 @@ export const DatePicker = ({
 	                           availableDepartureDates,
 	                           availableReturnDates,
 	                           isLoadingReturnDates,
-	                           onFromDateClick // Added prop
+	                           onFromDateClick,
+	                           menuProps = {},
+	                           CustomButton
                            }: DatePickerProps) => {
 	const { t } = useTranslation()
 	const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(null)
@@ -97,23 +99,42 @@ export const DatePicker = ({
 			isOpen={isCalendarOpen}
 			onClose={() => setCalendarOpen(false)}
 			offset={[0, 4]}
+			{...menuProps}
 		>
-			<MenuButton
-				as={Box}
-				width={{
-					base: 'full',
-					md: '350px',
-					lg: '320px'
-				}}
-				onClick={handleCalendarOpen}
-				cursor="pointer"
-			>
-				<DatePickerInput
-					fromDate={inputFromDate as any}
-					toDate={inputToDate as any}
-					isFocused={isCalendarOpen}
-				/>
-			</MenuButton>
+			{CustomButton ? (
+				<MenuButton
+					as={Box}
+					sx={{
+						'span': {
+							pointerEvents: 'auto'
+						}
+					}}
+				>
+					<CustomButton
+						fromDate={inputFromDate as any}
+						toDate={inputToDate as any}
+						isFocused={isCalendarOpen}
+						onClick={handleCalendarOpen}
+					/>
+				</MenuButton>
+			) : (
+				<MenuButton
+					as={Box}
+					width={{
+						base: 'full',
+						md: '350px',
+						lg: '320px'
+					}}
+					onClick={handleCalendarOpen}
+					cursor="pointer"
+				>
+					<DatePickerInput
+						fromDate={inputFromDate as any}
+						toDate={inputToDate as any}
+						isFocused={isCalendarOpen}
+					/>
+				</MenuButton>
+			)}
 
 			<Portal>
 				<MenuList

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { DatePickerInputProps } from './types.ts'
 import { Input } from '@ui'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment/moment'
 
 export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInputProps) => {
 	const {t, i18n} = useTranslation()
@@ -11,9 +12,11 @@ export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInput
 			return ''
 		}
 
-		const longMonthName = date.toLocaleString('en-US', { month: 'long' }).toLowerCase();
+		const momentDate = moment(date)
+
+		const longMonthName = momentDate.locale('en').format('MMMM').toLowerCase()
 		const shortMonthName = t(`${longMonthName}Short`)
-		return `${shortMonthName} ${date.getDate()}`
+		return `${shortMonthName} ${momentDate.format('D')}`
 	}
 
 	const inputValue = useMemo(() => {

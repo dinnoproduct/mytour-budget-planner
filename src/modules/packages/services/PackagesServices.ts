@@ -63,6 +63,7 @@ export const generateOfferService = (data: IGenerateOffer): Promise<{ data: IGen
     data,
   });
 
+
 export const updateUserService = (token: string): Promise<{ data: { [CustomFields.email]: string } }> =>
   request(Methods.POST, `/${ApiUrls.api}/${ApiUrls.user}`, { headers: { Authorization: `Bearer ${token}` } });
 

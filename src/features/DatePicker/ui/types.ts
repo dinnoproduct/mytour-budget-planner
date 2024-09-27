@@ -1,4 +1,6 @@
 import { ButtonProps } from '@components/Button'
+import { ComponentType, ReactNode } from 'react'
+import { MenuProps } from '@chakra-ui/react'
 
 export interface DatePickerProps {
 	fromDate?: Date | null;
@@ -8,6 +10,9 @@ export interface DatePickerProps {
 	isLoadingReturnDates?: boolean
 	availableDepartureDates: Date[];
 	availableReturnDates: Date[];
+
+	menuProps?: Omit<MenuProps, 'children'>
+	CustomButton?: ComponentType<DatePickerCustomButtonProps>;
 }
 
 
@@ -15,6 +20,13 @@ export interface DatePickerInputProps {
 	fromDate?: Date;
 	toDate?: Date;
 	isFocused?: boolean;
+}
+
+export type DatePickerCustomButtonProps = {
+	fromDate?: Date;
+	toDate?: Date;
+	isFocused?: boolean;
+	onClick: () => void;
 }
 
 export interface DatePickerCalendarProps {
