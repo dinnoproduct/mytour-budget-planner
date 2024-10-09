@@ -22,4 +22,12 @@ export class UserService {
 			}
 		})
 	}
+
+	getUser(token: string): Promise<UserEntity> {
+		return this.api.get('getUser', {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		})
+	}
 }

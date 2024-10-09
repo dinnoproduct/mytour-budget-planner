@@ -1,10 +1,10 @@
-import { Box, Flex, HStack } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { Button, Footer } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { PackageImagesGallery, PackageImagesSliderModal } from '@features/PackageImagesGallery'
 import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
 import {
-	PackageEntity, useCurrentOfferPackage,
+	PackageEntity, useBookPackage, useCurrentOfferPackage, useGetCurrentOfferPackage,
 	usePackagesSearchContext,
 	useSearchPackage
 } from '@entities/package'
@@ -14,28 +14,39 @@ import { PackageBookingConfig } from '@widgets/PackageBookingConfig'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '@shared/hooks'
-import Modal from '@/components/Modal/Modal'
-import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
-import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
-import { GoogleLogin } from '@react-oauth/google'
-import { overDaysFromNow } from '@/utils/methods.ts'
-import { useRecoilState } from 'recoil'
-import { isBookModalOpenAtom, userTokenAtom } from '@/modules/packages/store/store.ts'
-import useUser from '@/modules/packages/hooks/useUser.ts'
-import BookModal from '@/modules/packages/components/BookModal/BookModal.tsx'
-import ReactModal from 'react-modal'
+import { CustomFields, PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
+import type { ITraveler } from '@/modules/packages/data/packagesTypes.ts'
+import { useUserContext } from '@/entities/user'
+import { PaymentModal } from '@widgets/PaymentModal'
+import { TravelersModal } from '@widgets/TravelersModal'
+import { useModalContext } from '@app/providers'
 
 export const PackageDetailsPage = () => {
 	const navigate = useNavigate()
+	const { mutateAsync: bookPackageAsync } = useBookPackage()
+	const { user, clearUserData } = useUserContext()
 	const { t } = useTranslation()
 	const { isMd } = useBreakpoint()
+	const { dispatchModal } = useModalContext()
 	const [isModalOpen, setModalOpen] = useState(false)
+	const [isPaymentModalOpen, setPaymentModalOpen] = useState(false)
+	const [isTravelersModalOpen, setTravelersModalOpen] = useState(false)
 	const { packageDetails, isLoading } = useSearchPackage()
-	const { data: currentOfferPackage } = useCurrentOfferPackage()
+	const currentOfferPackage = useGetCurrentOfferPackage()
+	console.log('PackageDetailsPage@currentOfferPackage : ', currentOfferPackage)
 	const { filteredPackages } = usePackagesSearchContext()
 	const [isLateCheckout, setLateCheckout] = useState(false)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0)
+	const [travelers, setTravelers] = useState<any>({
+		adults: [],
+		children: []
+	})
+	const travelersRef = useRef<ITraveler[]>([])
+	useEffect(() => {
+		travelersRef.current = travelers
+	}, [travelers])
+	const [amountToBePaid, setAmountToBePaid] = useState(0)
 
 	const uniqueImageUrls = useMemo(() => {
 		return packageDetails.hotel?.images.filter(img => img.size === 3).map(img => img.url)
@@ -66,27 +77,94 @@ export const PackageDetailsPage = () => {
 		}
 	}, [isMd])
 
-
-	// temp booking logic
-	const [paymentInfoModalIsOpen, setPaymentInfoModalIsOpen] = useState(false)
-	const [registerModalIsOpen, setRegisterModalIsOpen] = useState(false)
-
-	const onPaymentInfoModalContinue = () => {
-		setPaymentInfoModalIsOpen(false)
-		setRegisterModalIsOpen(true)
+	const openAuthModal = () => {
+		dispatchModal({
+			type: 'open',
+			modalType: 'auth',
+			props: {
+				view: 'signUp',
+				isCloseOnSuccess: true,
+				onSuccess: () => {
+					openTravelersModal()
+				}
+			}
+		})
 	}
 
-	const under21DaysFromNow = useMemo(() => {
-		return !overDaysFromNow(
-			packageDetails?.[PackagesFields.destinationFlight]?.[PackagesFields.departureDate],
-			21
-		)
-	}, [JSON.stringify(packageDetails || {})])
+	const openTravelersModal = () => {
+		setTravelersModalOpen(true)
+	}
 
-	const [userToken, setUserToken] = useRecoilState(userTokenAtom)
-	const [isBookModalOpen, setIsBookModalOpen] = useRecoilState(isBookModalOpenAtom)
-	const { updateUser, loading } = useUser()
+	const onTravelersModalSuccess = (travelers: any) => {
+		setTravelers(travelers)
+		setTravelersModalOpen(false)
+		openPaymentModal()
+	}
 
+	const openPaymentModal = () => {
+		setPaymentModalOpen(true)
+	}
+
+	const onPaymentModalSuccess = (paymentAmount: number) => {
+		console.log('paymentAmount : ', paymentAmount)
+		setAmountToBePaid(paymentAmount)
+		onBook()
+	}
+
+	const onBook = async () => {
+		if (!packageDetails) {
+			return
+		}
+
+		try {
+			const bookInput = {
+				[CustomFields.cityId]: packageDetails[PackagesFields.city][PackagesFields.id],
+				[PackagesFields.price]: packageDetails[PackagesFields.price],
+				[CustomFields.hotelId]: packageDetails[PackagesFields.hotel][PackagesFields.id],
+				[CustomFields.startDate]: packageDetails[PackagesFields.destinationFlight][PackagesFields.departureDate],
+				[CustomFields.endDate]: packageDetails[PackagesFields.returnFlight][PackagesFields.departureDate],
+				[CustomFields.travelAgencyId]: packageDetails[PackagesFields.travelAgency][PackagesFields.id],
+				[CustomFields.notes]: '',
+				[PackagesFields.offerId]: packageDetails[PackagesFields.offerId],
+				[CustomFields.destinationFlightId]: packageDetails[PackagesFields.destinationFlight][PackagesFields.id],
+				[CustomFields.returnFlightId]: packageDetails[PackagesFields.returnFlight][PackagesFields.id]!,
+				[PackagesFields.roomType]: packageDetails[PackagesFields.roomType],
+				[CustomFields.email]: user?.email || '',
+				[CustomFields.phoneNumber]: user?.phoneNumber || '',
+				[PackagesFields.amountToBePaid]: +amountToBePaid,
+				[PackagesFields.usdRate]: packageDetails[PackagesFields.usdRate]!,
+				[CustomFields.travelers]: [...travelers.adults, ...travelers.children]
+			}
+			await bookPackageAsync(bookInput)
+		} catch (error) {
+		} finally {
+			clearUserData()
+		}
+	}
+
+	useEffect(() => {
+		if (user?.firstName && packageDetails?.offerId) {
+			setTravelers((prevState: any) => ({
+				adults: [
+					{
+						firstName: user.firstName,
+						lastName: user.lastName
+					},
+					...Array(packageDetails.adultTravelers - 1).fill({
+						firstName: '',
+						lastName: '',
+						dateOfBirth: ''
+					})
+				],
+				children: Array(packageDetails.childrenTravelers + packageDetails.infantTravelers).fill({
+					firstName: '',
+					lastName: '',
+					dateOfBirth: ''
+				})
+			}))
+		}
+	}, [user?.id, packageDetails.adultTravelers, packageDetails.childrenTravelers, packageDetails.infantTravelers])
+	console.log('travelers : ', currentOfferPackage)
 
 	if (!packageDetails?.offerId || isLoading) {
 		return <Loader loading={isLoading}/>
@@ -128,7 +206,7 @@ export const PackageDetailsPage = () => {
 						flexShrink={0}
 						onLateCheckoutChange={setLateCheckout}
 						containerRef={containerRef}
-						onBookClick={() => setPaymentInfoModalIsOpen(true)}
+						onBookClick={openAuthModal}
 					/>
 				</Flex>
 			</PackageDetailsLayout>
@@ -142,84 +220,25 @@ export const PackageDetailsPage = () => {
 				activeIndex={imageModalActiveIndex}
 			/>
 
-			<ReactModal
-				isOpen={paymentInfoModalIsOpen}
-				onRequestClose={() => setPaymentInfoModalIsOpen(false)}
-				ariaHideApp={false}
-			>
-				<div className="flex space-between m-b-16">
-					<div className="modal-title font-bold">{t('book')}</div>
-					<button onClick={() => setPaymentInfoModalIsOpen(false)}>
-						<img src="/images/close.svg" alt=""/>
-					</button>
-				</div>
-				<div className="payment-info-modal">
-					<div className="payment-info-text">
-						{t('bookingRegisterText', {
-							// percent: under21DaysFromNow ? 100 : 50,
-							paymentAmount: numberWithCommaNormalizer(
-								under21DaysFromNow
-									? currentOfferPackage?.[PackagesFields.price]
-									: Math.ceil(((currentOfferPackage?.[PackagesFields.price] || 1) * 50) / 100)
-							)
-						})}
-					</div>
-					<HStack mt="2" spacing="2">
-						<img src="/images/visa.svg" alt=""/>
-						<img src="/images/arca.svg" alt=""/>
-						<img src="/images/master.svg" alt=""/>
-					</HStack>
-				</div>
-				<div className="modal-buttons text-right p-t-16">
-					<button
-						className="btn-outline btn-modal m-r-8 close_disclaimer"
-						onClick={() => setPaymentInfoModalIsOpen(false)}
-					>
-						{t('close')}
-					</button>
-					<button className="btn-main btn-modal continue_disclaimer" onClick={onPaymentInfoModalContinue}>
-						{t('continue')}
-					</button>
-				</div>
-			</ReactModal>
+			{isPaymentModalOpen && (
+				<PaymentModal
+					isOpen={isPaymentModalOpen}
+					closeModal={() => setPaymentModalOpen(false)}
+					packageDetails={currentOfferPackage as any}
+					onSuccess={onPaymentModalSuccess}
+					onBackClick={openTravelersModal}
+				/>
+			)}
 
-			<ReactModal
-				isOpen={registerModalIsOpen}
-				ariaHideApp={false}
-				onRequestClose={() => setRegisterModalIsOpen(false)}
-			>
-				<div className="flex space-between m-b-16">
-					<div className="modal-title font-bold">{t`signUp`}</div>
-					<button onClick={() => setRegisterModalIsOpen(false)} className="close_signup">
-						<img src="/images/close.svg" alt=""/>
-					</button>
-				</div>
-				<div className="register-wrapper p-t-32 p-b-16">
-					<GoogleLogin
-						onSuccess={(data) => {
-							setUserToken(data.credential!)
-							updateUser(data.credential!, () => {
-								setRegisterModalIsOpen(false)
-								setIsBookModalOpen(true)
-							})
-						}}
-						onError={() => {
-							console.error('Login Failed')
-							setUserToken('')
-						}}
-						containerProps={{ className: 'sign_in_button' }}
-						// containerProps={{ style: { width: '100%' } }}
-					/>
-				</div>
-			</ReactModal>
-
-			<Modal
-				isOpen={isBookModalOpen}
-				onClose={() => setIsBookModalOpen(false)}
-				title="book"
-			>
-				<BookModal isLateCheckout={isLateCheckout}/>
-			</Modal>
+			{isTravelersModalOpen && (
+				<TravelersModal
+					isOpen={isTravelersModalOpen}
+					closeModal={() => setTravelersModalOpen(false)}
+					packageDetails={currentOfferPackage as any}
+					travelers={travelers}
+					onSuccess={onTravelersModalSuccess}
+				/>
+			)}
 		</Box>
 	)
 }
@@ -251,7 +270,11 @@ const Header = ({ onBackClick }: {onBackClick: () => void}) => {
 	)
 }
 
-const PackageDetailsLayout = ({ children, ...props }: LayoutProps) => {
+const PackageDetailsLayout = ({
+	                              children,
+	                              ...
+		                              props
+                              }: LayoutProps) => {
 	return (
 		<Box
 			maxWidth="1188px"

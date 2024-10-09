@@ -1,6 +1,3 @@
-// package
-import type { DictionaryFields } from '@/modules/packages/data/packagesEnums.ts'
-
 export interface PackageEntity {
 	id: number;
 	offerId: number;

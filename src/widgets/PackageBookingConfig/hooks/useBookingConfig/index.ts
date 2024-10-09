@@ -124,15 +124,18 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 	}, [bookingData.roomId, JSON.stringify(offers)])
 
 
+	console.log('')
 	const {
 		data: currentOfferPackage,
-		refetch: refetchCurrentOfferPackage
+		refetch: refetchCurrentOfferPackage,
+		isFetching: isFetchingCurrentOfferPackage
 	} = useCurrentOfferPackage(
-		selectedOffer?.offerId,
+		selectedOffer?.offerId || 0,
 		{
 			enabled: !!selectedOffer?.offerId
 		}
 	)
+
 
 	useEffect(() => {
 		refetchCurrentOfferPackage()
@@ -160,6 +163,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 			rooms: roomOffers,
 			defaultRoom: defaultRoomOffer?.id,
 			onChange: handleRoomSelect
-		} as RoomsMenuProps
+		} as RoomsMenuProps,
+		isLoadingTourPackage: isFetchingCurrentOfferPackage
 	}
 }

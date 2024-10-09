@@ -59,6 +59,8 @@ export type IconName =
 	| 'water'
 	| 'yard'
   | 'edit'
+  | 'dram'
+  | 'more'
 
 export type IconSize = '12' | '14' | '16' | '18' | '20' | '24' | '30' | '32' | '40'
 export const ICON_SIZES: IconSize[] = ['12', '14', '16', '18', '20', '24', '30', '32', '40']

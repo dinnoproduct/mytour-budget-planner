@@ -48,6 +48,7 @@ export type GenerateOffersInput = {
 
 export type BookPackageInput = {
 	price: number
+	cityId: number
 	startDate: string
 	endDate: string
 	travelAgencyId: number

@@ -29,10 +29,8 @@ export const SearchTravelers = ({ defaultData, onChange, CustomButton, menuProps
 
 	const handleConfirm = () => {
 		let hasError = false
-		console.log('tempChildrenAges', tempChildrenAges)
 		const newChildrenAges = tempChildrenAges.slice(0, tempChildrenCount)
 
-		console.log('newChildrenAges', newChildrenAges)
 
 		newChildrenAges.forEach((child, index) => {
 			if (!child.age) {
@@ -408,9 +406,8 @@ const AlertMessage = ({ show = false }: {show?: boolean}) => {
 			show={show}
 			mt="4"
 			status="warning"
-		>
-			Սենյակում ճանապարհորդողների թիվը չի կարող գերազանցել {MAX_TRAVELERS}-ը
-		</AlertCardMessage>
+			message="Սենյակում ճանապարհորդողների թիվը չի կարող գերազանցել {MAX_TRAVELERS}-ը"
+		/>
 	)
 }
 

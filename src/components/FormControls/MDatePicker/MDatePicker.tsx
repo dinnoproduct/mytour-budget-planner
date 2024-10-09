@@ -9,6 +9,9 @@ import './index.scss';
 import classnames from 'classnames';
 import { useRecoilValue } from 'recoil';
 import { screenBreakpointAtom } from '../../../modules/packages/store/store.ts';
+import { Box } from '@chakra-ui/react'
+import { Button } from '@ui'
+import { FormLabel } from '@components/Form'
 
 interface IMDatePicker {
   name: string;
@@ -65,7 +68,7 @@ const MDatePicker: FC<IMDatePicker> = ({
   };
 
   return (
-    <div
+    <Box
       className={classnames({
         // TODO fix styling of opened datepicker menu
         'menu-to-left': datePickerMenuToLeft,
@@ -73,7 +76,8 @@ const MDatePicker: FC<IMDatePicker> = ({
         'react-datepicker-error': error?.message,
       })}
     >
-      <div className="datepicker-label">{label}</div>
+      <FormLabel>{label}</FormLabel>
+
       <DatePicker
         {...restField}
         {...rest}
@@ -104,17 +108,19 @@ const MDatePicker: FC<IMDatePicker> = ({
         scrollableYearDropdown
         // locale="hy"
       >
-        <div className="datepicker-footer">
-          <button className="btn-outline" onClick={onClose} type="button">
+        <Box className="datepicker-footer">
+          <Button size="md" onClick={onClose} type="button" variant="text-blue" px="0">
             {t('close')}
-          </button>
-          <button className="btn-main m-l-12" onClick={onSave} type="button">
+          </Button>
+
+          <Button size="md"  onClick={onSave} type="button" ml="6" px="4">
             {t('confirm')}
-          </button>
-        </div>
+          </Button>
+        </Box>
       </DatePicker>
+
       <div className="error-message">{error?.message}</div>
-    </div>
+    </Box>
   );
 };
 

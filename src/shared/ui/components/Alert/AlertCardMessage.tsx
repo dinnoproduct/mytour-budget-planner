@@ -4,7 +4,7 @@ import React from 'react'
 import { CardAlertMessageProps, CardAlertMessageStatus } from '@components/Alert/types.ts'
 import { IconName } from '@foundation/Iconography'
 
-export const AlertCardMessage = ({ children, show = true, status, ...props }: CardAlertMessageProps) => {
+export const AlertCardMessage = ({ message, show = true, status, ...props }: CardAlertMessageProps) => {
 	return (
 		<Flex
 			display={show ? 'flex' : 'none'}
@@ -27,7 +27,7 @@ export const AlertCardMessage = ({ children, show = true, status, ...props }: Ca
 				size="xs"
 				ml="2"
 			>
-				{children}
+				{message}
 			</Text>
 		</Flex>
 	)

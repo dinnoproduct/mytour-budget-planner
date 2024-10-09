@@ -8,7 +8,7 @@ export type AlertProps = {
 
 export type CardAlertMessageProps = {
 	show?: boolean
-	children: ReactNode
+	message: string
 	status: CardAlertMessageStatus
 } & FlexProps
 

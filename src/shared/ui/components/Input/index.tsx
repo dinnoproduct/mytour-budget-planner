@@ -134,9 +134,11 @@ const InputRightElement = ({
 			right="12px"
 			justifyContent="space-between"
 			onClick={handleClick}
+			top="unset"
+			bottom="0"
 		>
 			{iconName ? (
-				<Icon name={iconName} size="24" color="gray.500"/>
+				<Icon name={iconName} size="20" color="gray.500"/>
 			) : (
 				<Text
 					size="sm" color="dark"
@@ -168,6 +170,8 @@ const InputLeftElement = ({
 			left="12px"
 			justifyContent="space-between"
 			onClick={handleClick}
+			top="unset"
+			bottom="0"
 		>
 			{iconName ? (
 				<Icon name={iconName} size="24" color="gray.500"/>

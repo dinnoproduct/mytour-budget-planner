@@ -4,7 +4,7 @@ import { FormControlProps, FormState } from '@components/Form'
 import { InputProps as ChakraInputProps } from '@chakra-ui/react'
 
 export type InputProps = {
-	value: string | number
+	value?: string | number
 	placeholder?: string
 	label?: string
 	helperText?: string

@@ -7,17 +7,45 @@ import {
 import { Avatar, Icon } from '@ui'
 import { Menu, MenuList } from './Menu'
 import { useTranslation } from 'react-i18next'
+import { useModalContext } from '@app/providers'
 
 export const AccountMenu = ({}) => {
 	const { t } = useTranslation()
+
+	const { dispatchModal } = useModalContext()
+
+	const handleSignInClick = () => {
+		dispatchModal({
+			type: 'open',
+			modalType: 'auth',
+			props: {
+				view: 'signIn'
+			}
+		})
+	}
+
+	const handleSignUpClick = () => {
+		dispatchModal({
+			type: 'open',
+			modalType: 'auth',
+			props: {
+				view: 'signUp'
+			}
+		})
+	}
+
 
 	return (
 		<Menu offset={[0, 4]}>
 			<MenuButton/>
 
 			<MenuList menuButtonSize={86}>
-				<MenuItem>{t`sign-in`}</MenuItem>
-				<MenuItem>{t`sign-up`}</MenuItem>
+				<MenuItem
+					onClick={handleSignInClick}
+				>{t`sign-in`}</MenuItem>
+				<MenuItem
+					onClick={handleSignUpClick}
+				>{t`sign-up`}</MenuItem>
 			</MenuList>
 		</Menu>
 	)

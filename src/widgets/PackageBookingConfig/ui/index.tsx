@@ -32,7 +32,8 @@ export const PackageBookingConfig = ({
 		flightsDatePickerProps,
 		searchTravelersProps,
 		roomsMenuProps,
-		isNotFound
+		isNotFound,
+		isLoadingTourPackage
 	} = useBookingConfig(tourPackage)
 	const { showFreeCancellation, freeCancellationDate } = useFreeCancellation(bookingData.fromDate, bookingData.toDate)
 
@@ -101,9 +102,8 @@ export const PackageBookingConfig = ({
 					<Box px="4">
 						<AlertCardMessage
 							status="error"
-						>
-							{t`noRoomsFoundWithParams`}
-						</AlertCardMessage>
+							message={t`noRoomsFoundWithParams`}
+						/>
 					</Box>
 				) : null}
 			</VStack>
@@ -177,6 +177,7 @@ export const PackageBookingConfig = ({
 					mt="2"
 					width="full"
 					isDisabled={isNotFound}
+					isLoading={isLoadingTourPackage}
 					onClick={onBookClick}
 					size="lg"
 				>

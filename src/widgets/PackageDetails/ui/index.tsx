@@ -58,7 +58,7 @@ export const PackageDetails = ({ tourPackage, isLateCheckout }: PackageDetailsPr
 					{ key: t`airCompany`, value: tourPackage.destinationFlight.airCompany.name },
 					{ key: t`class`, value: ticketClass },
 					{ key: t`departure`, value: formatDate(tourPackage.destinationFlight.departureDate) },
-					{ key: t`returning`, value: formatDate(tourPackage.destinationFlight.departureDate) },
+					{ key: t`returning`, value: formatDate(tourPackage.returnFlight.departureDate) },
 					{ key: t`carryOnBag`, value: '1 x 5' + t`kg` },
 					{ key: t`checkedInBag`, value: '1 x 20' + t`kg` }
 				]}

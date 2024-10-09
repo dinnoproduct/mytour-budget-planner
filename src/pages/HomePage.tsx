@@ -5,17 +5,40 @@ import { PackageSearch } from '@widgets/PackageSearch'
 import { HotOffersSection } from '@widgets/HotOffersSection'
 import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
+import { useModalContext } from '@app/providers'
+import { useLocation } from 'react-router-dom'
+
 
 export const HomePage = () => {
+	const { dispatchModal } = useModalContext()
+	const location = useLocation()
+
 	useEffect(() => {
 		const scriptId = 'EmbedSocialHashtagScript'
-		if (document.getElementById(scriptId)) return
+		if (document.getElementById(scriptId)) {
+			return
+		}
 
 		const script = document.createElement('script')
 		script.id = scriptId
 		script.src = 'https://embedsocial.com/cdn/ht.js'
 		document.head.appendChild(script)
 	}, [])
+
+	useEffect(() => {
+		const queryParams = new URLSearchParams(location.search)
+		console.log('queryParams', queryParams.get('success'))
+		if (queryParams.get('success')?.toLowerCase() === 'true') {
+			console.log('open payment success modal')
+			setTimeout(() => {
+				dispatchModal({
+					type: 'open',
+					modalType: 'paymentSuccess'
+				})
+			}, 0)
+		}
+	}, [JSON.stringify(location.search), dispatchModal])
+
 
 	return (
 		<Box overflowX="hidden">

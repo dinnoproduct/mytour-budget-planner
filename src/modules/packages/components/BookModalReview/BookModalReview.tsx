@@ -14,7 +14,7 @@ import { PackagesFields, PackagesNestedFields } from '../../data/packagesEnums.t
 import { DictionaryTypes, TermsAndConditionTypes } from '../../data/dictionaryEnum.ts'
 import { getDateMinusDays, overDaysFromNow } from '../../../../utils/methods.ts'
 import TermsAndConditionsModal from '../TermsAndConditionsModal/TermsAndConditionsModal.tsx'
-import { useCurrentOfferPackage, useDictionary } from '@entities/package'
+import { useCurrentOfferPackage, useDictionary, useGetCurrentOfferPackage } from '@entities/package'
 import { capitalize } from '@shared/utils'
 
 interface IBookModalReview {
@@ -30,7 +30,7 @@ const BookModalReview: FC<IBookModalReview> = ({ travelersInfo, amountToBePaid, 
 	const [termsAndConditionType, setTermsAndConditionType] = useState<TermsAndConditionTypes | string>('')
 	const setPreventSideModalClose = useSetRecoilState(preventSideModalCloseAtom)
 
-	const { data: packageDetails } = useCurrentOfferPackage()
+	const packageDetails = useGetCurrentOfferPackage()
 
 	const under21DaysFromNow = !overDaysFromNow(
 		packageDetails?.[PackagesFields.destinationFlight][PackagesFields.departureDate] as string,

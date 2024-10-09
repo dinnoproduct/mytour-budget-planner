@@ -19,14 +19,14 @@ import Loader from '../../../../components/Loader/Loader.tsx'
 import { ALPHABETIC_REGEXP } from '../../../../utils/regex.ts'
 import 'react-tabs/style/react-tabs.css'
 import './index.scss'
-import { useCurrentOfferPackage } from '@entities/package'
+import { useCurrentOfferPackage, useGetCurrentOfferPackage } from '@entities/package'
 
 const BookModal = ({ isLateCheckout }: {isLateCheckout?: boolean}) => {
 	const { t } = useTranslation()
 
 	const { loading, bookPackage } = useBook()
 
-	const { data: packageDetails } = useCurrentOfferPackage()
+	const packageDetails = useGetCurrentOfferPackage()
 	const packageTravelDetails = useRecoilValue(packageTravelDetailsAtom)
 	const userInfo = useRecoilValue(userInfoAtom)
 

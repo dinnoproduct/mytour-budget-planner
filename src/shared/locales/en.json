@@ -106,7 +106,7 @@
   "payment": "Payment",
   "payedAmount": "Payment",
   "back": "Back",
-  "minPrePaymentText": "Minimum prepayment: {{percent}}% of the package price",
+  "minPrePaymentText": "Minimum prepayment: {{amount}} of the package price",
   "payInFull": "Pay in full",
   "partialPaymentText": "In case of partial payment, the remaining part of the amount may change at the time of payment due to fluctuations in the exchange rate of the US dollar. The calculation is based on the US dollar exchange rate set by the travel agency at the time of payment.",
   "dataCheck": "Preview",
@@ -154,5 +154,16 @@
   "confirmNights.one": "Confirm ({{count}} night)",
   "confirmNights.few": "Confirm ({{count}} nights)",
   "confirmNights.many": "Confirm ({{count}} nights)",
-  "confirmNights.other": "Confirm ({{count}} nights)"
+  "confirmNights.other": "Confirm ({{count}} nights)",
+  "incorrectOTPErrorMessage": "The OTP is incorrect, please try again",
+  "invalidFormatErrorMessage": "Invalid format",
+  "otpEnterText": "Enter the one-time password (OTP) that was sent to the phone number {{phoneNumber}}.",
+  "enterEmailAddress": "Enter the email address.",
+  "kidsMaxAge": "Kid’s maximum age {{age}}",
+  "verification": "Verification",
+  "thankYouForBookingText": "Thank you for your booking. The request has been sent for hotel confirmation.",
+  "resend": "Resend",
+  "resendIn": "Resend in {{seconds}} seconds",
+  "chooseTheDate": "Choose the date",
+  "minPrePayment": "Minimum down payment"
 }

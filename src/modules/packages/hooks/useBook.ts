@@ -10,7 +10,7 @@ const useBook = () => {
 
   const bookPackage = (data: IBookRequest) => {
     setLoading(true);
-    void bookPackageService(data, userToken)
+    bookPackageService(data, userToken)
       .then(({ data }) => {
         window.location.href = data.bookingPaymentUrl;
       })
