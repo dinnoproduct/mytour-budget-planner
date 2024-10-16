@@ -8,7 +8,7 @@ export type AuthModalProps = {
 	isCloseOnSuccess?: boolean
 }
 
-export type ViewType = 'signIn' | 'signUp' | 'verify'
+export type ViewType = 'signIn' | 'signUp' | 'verify' | 'signInError' | 'otpError'
 export type VerifyType = ViewType
 
 export type LayoutProps = {
@@ -31,7 +31,7 @@ export type ContentLayoutProps = {
 
 export type SignUpViewProps = {
 	onSuccess: (payload?: any) => void
-	onViewChange?: (view: 'signIn' | 'verify') => void
+	onViewChange?: (view: 'signIn' | 'verify', payload?: any) => void
 	formData?: {
 		firstname: string
 		lastname: string
@@ -42,14 +42,20 @@ export type SignUpViewProps = {
 
 export type SignInViewProps = {
 	onSuccess: (payload?: any) => void
-	onViewChange?: (view: 'signUp' | 'verify') => void,
+	onViewChange?: (view: 'signUp' | 'verify' | 'signInError', payload?: any) => void,
 	formData?: {
 		phoneNumber: string
-	}
+	},
+	isAlreadyRegistered?: boolean
+}
+
+export type SignInErrorViewProps = {
+	onViewChange?: (view: 'signUp') => void,
 }
 
 export type VerifyViewProps = {
 	type: VerifyType
 	onSuccess: () => void
 	payload: any
+	onViewChange?: (view: 'otpError') => void
 }

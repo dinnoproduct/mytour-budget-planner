@@ -30,6 +30,11 @@ export const ContentLayout = ({
 				height={{ base: 'calc(100dvh - 160px)', md: 'calc(480px - 160px)' }}
 				maxWidth="402px"
 				{...contentContainerProps}
+				sx={{
+					'&::-webkit-scrollbar': {
+						width: '0'
+					},
+				}}
 			>
 				{children}
 			</VStack>

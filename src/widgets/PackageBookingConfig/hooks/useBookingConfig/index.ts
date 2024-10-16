@@ -124,7 +124,6 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 	}, [bookingData.roomId, JSON.stringify(offers)])
 
 
-	console.log('')
 	const {
 		data: currentOfferPackage,
 		refetch: refetchCurrentOfferPackage,

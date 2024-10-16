@@ -35,7 +35,9 @@ export const Layout = (
 				<ModalHeader p="4" borderBottom="1px solid" borderColor="gray.100">
 					<Flex width="full" justify="space-between" align="center">
 						<Flex align="center">
-							<Button icon="arrow-back" variant="text-blue" size="lg" onClick={onBackClick}/>
+							{onBackClick ? (
+								<Button icon="arrow-back" variant="text-blue" size="lg" onClick={onBackClick}/>
+							) : null}
 							<Text size="lg" fontWeight="medium">{title}</Text>
 						</Flex>
 

@@ -17,13 +17,12 @@ export const TravelersModal = ({
 	                               isOpen = false
                                }: TravelersModalProps) => {
 	const { t } = useTranslation()
-	console.log('TravelersModal@packageDetails : ', packageDetails)
 
 	const methods = useForm<FormData>({
 		defaultValues: {
-			adults: Array(packageDetails.adultTravelers).fill({ firstMame: '', lastName: '', dateOfBirth: '' }),
+			adults: Array(packageDetails.adultTravelers).fill({ firstName: '', lastName: '', dateOfBirth: '' }),
 			children: Array(packageDetails.childrenTravelers + packageDetails.infantTravelers).fill({
-				firstMame: '',
+				firstName: '',
 				lastName: '',
 				dateOfBirth: ''
 			})
@@ -65,8 +64,15 @@ export const TravelersModal = ({
 					width="full"
 					height="full"
 				>
-					<VStack spacing="6" width="full" py="6" px="4" overflowY="scroll"
-					        maxHeight={{ base: 'calc(100dvh - 160px)', md: 'calc(600px - 160px)' }}>
+					<VStack
+						spacing="6" width="full" py="6" px="4" overflowY="scroll"
+						maxHeight={{ base: 'calc(100dvh - 160px)', md: 'calc(600px - 160px)' }}
+						sx={{
+							'&::-webkit-scrollbar': {
+								width: '0'
+							}
+						}}
+					>
 						{adultsFields.map((field, index) => (
 							<VStack key={field.id} spacing="4" width="full" align="stretch">
 								<Text size="sm" fontWeight="bold">{capitalize(t`adult`)} {index + 1}</Text>
@@ -76,10 +82,19 @@ export const TravelersModal = ({
 									placeholder={t`writeNameLatinWords`}
 									label={t`name`}
 									size="lg"
-									{...register(`adults.${index}.firstName`, { required: t`requiredField` })}
+									{...register(`adults.${index}.firstName`, {
+										required: t`requiredField`,
+										pattern: {
+											value: /^[A-Za-z]{2,}$/,
+											message: t`invalidFormatErrorMessage`
+										}
+									})}
 									helperText={errors.adults?.[index]?.firstName?.message}
 									state={errors.adults?.[index]?.firstName ? 'invalid' : 'default'}
-									onChange={(e) => e.target.value = e.target.value.replace(/\s+/g, '')}
+									onChange={(e) => {
+										const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+										e.target.value = value
+									}}
 								/>
 
 								<Input
@@ -87,10 +102,19 @@ export const TravelersModal = ({
 									placeholder={t`writeSurnameLatinWords`}
 									label={t`surname`}
 									size="lg"
-									{...register(`adults.${index}.lastName`, { required: t`requiredField` })}
+									{...register(`adults.${index}.lastName`, {
+										required: t`requiredField`,
+										pattern: {
+											value: /^[A-Za-z]{2,}$/,
+											message: t`invalidFormatErrorMessage`
+										}
+									})}
 									helperText={errors.adults?.[index]?.lastName?.message}
 									state={errors.adults?.[index]?.lastName ? 'invalid' : 'default'}
-									onChange={(e) => e.target.value = e.target.value.replace(/\s+/g, '')}
+									onChange={(e) => {
+										const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+										e.target.value = value
+									}}
 								/>
 
 								<MDatePicker
@@ -100,7 +124,7 @@ export const TravelersModal = ({
 									maxDate={
 										new Date(
 											new Date().setFullYear(
-												new Date().getFullYear() - (packageDetails?.childMaxAge || 1) + 1
+												new Date().getFullYear() - (packageDetails?.childMaxAge || 1) - 1
 											)
 										)
 									}
@@ -117,10 +141,19 @@ export const TravelersModal = ({
 									placeholder={t`writeNameLatinWords`}
 									label={t`name`}
 									size="lg"
-									{...register(`children.${index}.firstName`, { required: t`requiredField` })}
+									{...register(`children.${index}.firstName`, {
+										required: t`requiredField`,
+										pattern: {
+											value: /^[A-Za-z]{2,}$/,
+											message: t`invalidFormatErrorMessage`
+										}
+									})}
 									helperText={errors.children?.[index]?.firstName?.message}
 									state={errors.children?.[index]?.firstName ? 'invalid' : 'default'}
-									onChange={(e) => e.target.value = e.target.value.replace(/\s+/g, '')}
+									onChange={(e) => {
+										const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+										e.target.value = value
+									}}
 								/>
 
 								<Input
@@ -128,10 +161,19 @@ export const TravelersModal = ({
 									placeholder={t`writeSurnameLatinWords`}
 									label={t`surname`}
 									size="lg"
-									{...register(`children.${index}.lastName`, { required: t`requiredField` })}
+									{...register(`children.${index}.lastName`, {
+										required: t`requiredField`,
+										pattern: {
+											value: /^[A-Za-z]{2,}$/,
+											message: t`invalidFormatErrorMessage`
+										}
+									})}
 									helperText={errors.children?.[index]?.lastName?.message}
 									state={errors.children?.[index]?.lastName ? 'invalid' : 'default'}
-									onChange={(e) => e.target.value = e.target.value.replace(/\s+/g, '')}
+									onChange={(e) => {
+										const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+										e.target.value = value
+									}}
 								/>
 
 								<MDatePicker

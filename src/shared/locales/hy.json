@@ -224,6 +224,9 @@
   "confirmNights.many": "Confirm ({{count}} nights)",
   "confirmNights.other": "Confirm ({{count}} nights)",
   "incorrectOTPErrorMessage": "Մեկանգամյա գաղտնաբառը սխալ է, խնդրում ենք կրկին փորձել",
+  "otpUserBlockedErrorMessage": "Դուք գերազանցել եք Ձեր մեկանգամյա գաղտնաբառի քանակը: Խնդրում ենք կապ հաստատեք մեզ հետ +374 93 24 07 32 հեռախոսահամարով մանրամասների համար.",
+  "noAccountErrorMessage": "Նշված հեռախոսահամարով հաշիվ գոյություն չունի:",
+  "paymentFailedErrorMessage": "Վճարումը ձախողվել է խնդրում ենք կապ հաստատել +374 93 24 07 32 հեռախոսահամարով մանրամասների համար",
   "invalidFormatErrorMessage": "Մուտքագրման սխալ ֆորմատ",
   "otpEnterText": "Մուտքագրեք մեկանգամյա գաղտնաբառը, որը ուղարկվել է {{phoneNumber}} հեռախոսահամարին",
   "enterEmailAddress": "Մուտքագրեք Էլեկտրոնային հասցեն",
@@ -233,5 +236,7 @@
   "resend": "Կրկին ուղարկել",
   "resendIn": "Կրկին ուղարկել {{seconds}} վայրկյանից",
   "chooseTheDate": "Ընտրել ծննդյան ամսաթիվը",
-  "minPrePayment": "Նվաղագույն կանխավճար"
+  "minPrePayment": "Նվաղագույն կանխավճար",
+  "alreadyRegisteredText": "Դուք արդեն իսկ գրանցված եք այս հեռախոսահամարով: Խնդրում ենք մուտք գործել:",
+  "call": "Զանգահարել"
 }

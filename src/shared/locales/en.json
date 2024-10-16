@@ -156,6 +156,9 @@
   "confirmNights.many": "Confirm ({{count}} nights)",
   "confirmNights.other": "Confirm ({{count}} nights)",
   "incorrectOTPErrorMessage": "The OTP is incorrect, please try again",
+  "otpUserBlockedErrorMessage": "You have exceeded the limit for requesting a one-time password. Please contact us at +374 93 24 07 32 for further details.",
+  "noAccountErrorMessage": "There is no account with the specified phone number.",
+  "paymentFailedErrorMessage": "Payment failed. Please contact +374 93 24 07 32 for details.",
   "invalidFormatErrorMessage": "Invalid format",
   "otpEnterText": "Enter the one-time password (OTP) that was sent to the phone number {{phoneNumber}}.",
   "enterEmailAddress": "Enter the email address.",
@@ -165,5 +168,7 @@
   "resend": "Resend",
   "resendIn": "Resend in {{seconds}} seconds",
   "chooseTheDate": "Choose the date",
-  "minPrePayment": "Minimum down payment"
+  "minPrePayment": "Minimum down payment",
+  "alreadyRegisteredText": "You are already registered with this phone number. Please login.",
+  "call": "Call"
 }

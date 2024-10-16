@@ -17,7 +17,7 @@
   color: rgba(0, 0, 0, 0.92);
 
   &::placeholder {
-    color: #A0AEC0;
+    color: #718096;
   }
 
   &:hover {
@@ -48,6 +48,11 @@
 .react-datepicker-error {
   .react-datepicker-wrapper {
     border: 1px solid var(--semanticTokens-outlineError, #FA3434) !important;
+
+    input {
+      background: #FFF3F5 !important;
+
+    }
 
     &::placeholder {
       color: var(--semanticTokens-outlineError, #FA3434) !important;

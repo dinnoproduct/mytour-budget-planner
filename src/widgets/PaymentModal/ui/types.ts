@@ -3,10 +3,16 @@ import { PackageEntity } from '@entities/package'
 
 export type PaymentModalProps = {
 	closeModal: () => void
-	onSuccess: (paymentAmount:number) => void
+	onSuccess: (paymentAmount: number) => void
 	onBackClick: () => void
 	packageDetails: PackageEntity
 	isOpen?: boolean
+	view?: PaymentModalView
+}
+
+export type PaymentFormViewProps = {
+	onSuccess: (paymentAmount: number) => void
+	packageDetails: PackageEntity,
 }
 
 export type LayoutProps = {
@@ -16,3 +22,5 @@ export type LayoutProps = {
 	title: string
 	onBackClick?: () => void
 }
+
+export type PaymentModalView = 'paymentForm' | 'paymentError'

@@ -7,3 +7,11 @@ export const LANGUAGE_PREFIX: {
 	'rus': 'Rus',
 	'eng': 'Eng'
 }
+
+export const LANGUAGE_NAME_MAP: {
+	[key in Language['name']]: string
+} = {
+	'arm': 'am',
+	'rus': 'ru',
+	'eng': 'en'
+}

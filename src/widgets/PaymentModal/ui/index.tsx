@@ -1,11 +1,10 @@
 import { Layout } from './Layout.tsx'
-import { Box, Flex, Text } from '@chakra-ui/react'
+import { PaymentModalProps, PaymentModalView } from '@widgets/PaymentModal/ui/types.ts'
 import { useTranslation } from 'react-i18next'
-import { capitalize } from '@shared/utils'
-import { Button, Checkbox, Input } from '@/shared/ui/index.ts'
-import { PaymentModalProps } from '@widgets/PaymentModal/ui/types.ts'
-import { overDaysFromNow } from '@/utils/methods.ts'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { VIEW_CONTENT_MAP } from '@widgets/PaymentModal/model'
+import { PaymentFormView } from '@widgets/PaymentModal/ui/PaymentFormView.tsx'
+import { PaymentErrorView } from '@widgets/PaymentModal/ui/PaymentErrorView.tsx'
 
 export const PaymentModal = ({
 	                             closeModal,
@@ -13,124 +12,46 @@ export const PaymentModal = ({
 	                             onBackClick,
 	                             packageDetails,
 	                             isOpen = false,
+	                             view
                              }: PaymentModalProps) => {
 	const { t } = useTranslation()
-	const under21DaysFromNow = useMemo(() => {
-		return !overDaysFromNow(
-			packageDetails?.destinationFlight?.departureDate as string,
-			21
-		)
-	}, [packageDetails?.destinationFlight?.departureDate])
-	const [isPaymentInFull, setIsPaymentInFull] = useState(under21DaysFromNow)
-	const minPrePaymentAmount = useMemo(() => {
-		return under21DaysFromNow ? packageDetails.price : packageDetails.price * 0.5
-	}, [under21DaysFromNow, packageDetails.price])
-	const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
-	const [errorMessage, setErrorMessage] = useState<string | null>(null)
-	const [isDisabled, setIsDisabled] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
+	const [activeView, setActiveView] = useState<PaymentModalView>(view || 'paymentForm')
 
-	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const number = Number(e.target.value)
-		if (isNaN(number)) {
-			return
+	const ViewComponent = useMemo(() => {
+		const ViewComponentMap = {
+			paymentForm: () => <PaymentFormView
+				onSuccess={onSuccess}
+				packageDetails={packageDetails}
+			/>,
+			paymentError: () => <PaymentErrorView/>
 		}
 
-		if (number < minPrePaymentAmount) {
-			setErrorMessage(`${t`minPrePayment`} ${minPrePaymentAmount}`)
-			setPaymentAmount(number)
-			setIsDisabled(true)
-		} else if (number > packageDetails.price) {
-			setErrorMessage(null)
-			setPaymentAmount(packageDetails.price)
-			setIsDisabled(false)
-		} else {
-			setErrorMessage(null)
-			setPaymentAmount(number)
-			setIsDisabled(false)
-		}
-	}
+		return ViewComponentMap[activeView]
+	}, [activeView])
 
-	const handlePayInFullChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (!under21DaysFromNow) {
-			setIsPaymentInFull(e.target.checked)
-			setPaymentAmount(e.target.checked ? packageDetails.price : minPrePaymentAmount)
+	useEffect(() => {
+		if (view) {
+			setActiveView(view)
 		}
-	}
+	}, [view])
 
-	const handleFormSubmit = (e: React.FormEvent<HTMLDivElement>) => {
-		if (errorMessage) {
-			return
+	const handleBackClick = useMemo(() => {
+		if (activeView === 'paymentForm') {
+			return () => onBackClick()
 		}
 
-		e.preventDefault()
-		onSuccess(+paymentAmount)
-		setIsLoading(true)
-	}
+		return undefined
+	}, [activeView])
+
 
 	return (
 		<Layout
-			title={capitalize(t`payment`)}
-			isOpen={isOpen} closeModal={closeModal}
-			onBackClick={onBackClick}
+			title={t(VIEW_CONTENT_MAP[activeView].title)}
+			isOpen={isOpen}
+			closeModal={closeModal}
+			onBackClick={handleBackClick}
 		>
-			<Flex
-				direction="column"
-				justify="space-between"
-				as="form"
-				onSubmit={handleFormSubmit}
-				width="full"
-				height="full"
-			>
-				<Flex width="full" py="6" px="4" overflowY="scroll"
-				      maxHeight={{ base: 'calc(100dvh - 160px)', md: 'calc(464px - 160px)' }}
-				      direction="column"
-				      maxWidth="402px"
-				      mx="auto"
-				>
-					<Text size="sm" fontWeight="semibold" align="center">
-						{t('minPrePaymentText', {
-							amount: minPrePaymentAmount
-						})}
-					</Text>
-
-					<Input
-						value={paymentAmount}
-						onChange={handleAmountChange}
-						mt="6"
-						isDisabled={isPaymentInFull || under21DaysFromNow}
-						suffix
-						helperText={errorMessage || ''}
-						state={errorMessage ? 'invalid' : 'default'}
-						rightIconName="dram"
-					/>
-
-					<Checkbox
-						size="lg"
-						mt="4"
-						isDisabled={under21DaysFromNow}
-						onChange={handlePayInFullChange}
-						isChecked={isPaymentInFull}
-					>
-						{t`payInFull`}
-					</Checkbox>
-
-					<Text size="xs" color="gray.600" mt="6">
-						{t`partialPaymentText`}
-					</Text>
-				</Flex>
-
-				<Box
-					p="4" width="full" borderTop="1px solid" borderColor="gray.100" backgroundColor="white" mt="auto"
-				>
-					<Button
-						variant="solid-blue" type="submit" size="lg" width="full"
-						isLoading={isLoading} isDisabled={isDisabled}
-					>
-						{t`pay`}
-					</Button>
-				</Box>
-			</Flex>
+			<ViewComponent/>
 		</Layout>
 	)
 }

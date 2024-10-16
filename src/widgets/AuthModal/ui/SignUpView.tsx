@@ -26,6 +26,18 @@ export const SignUpView = ({ onSuccess, onViewChange, formData }: SignUpViewProp
 					phoneNumber: getValues('phoneNumber')
 				}
 			})
+		},
+		onError: (error: any) => {
+			const code = error?.response?.data?.Code
+			// console.log('registerUser@error', error)
+			if (code === 7) {
+				onViewChange?.('signIn', {
+					formData: {
+						phoneNumber: getValues('phoneNumber')
+					},
+					isAlreadyRegistered: true,
+				})
+			}
 		}
 	})
 
@@ -62,6 +74,10 @@ export const SignUpView = ({ onSuccess, onViewChange, formData }: SignUpViewProp
 				})}
 				helperText={errors.firstname?.message}
 				state={errors.firstname?.message ? 'invalid' : 'default'}
+				onChange={(e) => {
+					const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+					e.target.value = value;
+				}}
 			/>
 
 			<Input
@@ -81,6 +97,10 @@ export const SignUpView = ({ onSuccess, onViewChange, formData }: SignUpViewProp
 				})}
 				helperText={errors.lastname?.message}
 				state={errors.lastname?.message ? 'invalid' : 'default'}
+				onChange={(e) => {
+					const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+					e.target.value = value;
+				}}
 			/>
 
 			<Input
@@ -114,7 +134,11 @@ export const SignUpView = ({ onSuccess, onViewChange, formData }: SignUpViewProp
 						message: t`invalidFormatErrorMessage`
 					},
 					onChange: (e) => {
-						e.target.value = e.target.value.replace(/\s+/g, '')
+						let sanitizedValue = e.target.value.replace(/\s+/g, '')
+						if (sanitizedValue.length > 16) {
+							sanitizedValue = sanitizedValue.slice(0, 16)
+						}
+						e.target.value = sanitizedValue
 					}
 				})}
 				helperText={errors.phoneNumber?.message}

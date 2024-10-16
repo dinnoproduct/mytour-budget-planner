@@ -6,6 +6,8 @@ import { VerifyView } from '@widgets/AuthModal/ui/VerifyView.tsx'
 import { SignInView } from '@widgets/AuthModal/ui/SignInView.tsx'
 import { useTranslation } from 'react-i18next'
 import { VIEW_CONTENT_MAP } from '@widgets/AuthModal/model'
+import { SignInErrorView } from './SignInErrorView.tsx'
+import { OTPErrorView } from '@widgets/AuthModal/ui/OTPErrorView.tsx'
 
 export const AuthModal = ({ view, closeModal, onSuccess, isCloseOnSuccess = true }: AuthModalProps) => {
 	const {t} = useTranslation()
@@ -17,18 +19,26 @@ export const AuthModal = ({ view, closeModal, onSuccess, isCloseOnSuccess = true
 		const ViewComponentMap = {
 			signUp: () => <SignUpView
 				onSuccess={(payload: any) => handleSuccess('signUp', payload)}
-				onViewChange={setActiveView}
+				onViewChange={handleViewChange}
 				formData={payload?.formData || {}}
 			/>,
-			verify: () => <VerifyView type={verifyType} payload={payload} onSuccess={handleVerifySuccess}/>,
+			verify: () => <VerifyView
+				type={verifyType}
+				payload={payload}
+				onSuccess={handleVerifySuccess}
+				onViewChange={handleViewChange}
+			/>,
 			signIn: () => <SignInView
 				onSuccess={(payload: any) => handleSuccess('signIn', payload)}
-				onViewChange={setActiveView}
+				onViewChange={handleViewChange}
 				formData={payload?.formData || {}}
-			/>
+				isAlreadyRegistered={!!payload?.isAlreadyRegistered}
+			/>,
+			signInError: () => <SignInErrorView onViewChange={handleViewChange}/>,
+			otpError: () => <OTPErrorView/>
 		}
 		return ViewComponentMap[activeView]
-	}, [activeView, verifyType])
+	}, [activeView, verifyType, payload])
 
 	const handleBackClick = useMemo(() => {
 		if (activeView === 'verify') {
@@ -37,6 +47,13 @@ export const AuthModal = ({ view, closeModal, onSuccess, isCloseOnSuccess = true
 
 		return undefined
 	}, [activeView, verifyType])
+
+	const handleViewChange = (view: ViewType, payload?: any) => {
+		setActiveView(view)
+		if (payload) {
+			setPayload(payload)
+		}
+	}
 
 	const handleSuccess = (type: VerifyType, payload: any) => {
 		setVerifyType(type)

@@ -18,6 +18,11 @@ export const PaymentSuccessModal = ({
 				maxWidth="402px"
 				mx="auto"
 				align="center"
+				sx={{
+					'&::-webkit-scrollbar': {
+						width: '0'
+					},
+				}}
 			>
 				<Illustration name="success"/>
 

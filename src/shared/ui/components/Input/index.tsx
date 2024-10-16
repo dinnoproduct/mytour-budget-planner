@@ -174,7 +174,7 @@ const InputLeftElement = ({
 			bottom="0"
 		>
 			{iconName ? (
-				<Icon name={iconName} size="24" color="gray.500"/>
+				<Icon name={iconName} size="20" color="gray.500"/>
 			) : (
 				<Text
 					size="sm" color="dark"

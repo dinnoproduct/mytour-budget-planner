@@ -12,7 +12,7 @@ export const FlightsConfigButton = ({ fromDate, toDate, onClick, isFocused }: Da
 			return ''
 		}
 
-		const longMonthName = date.toLocaleString('default', { month: 'long' }).toLowerCase()
+		const longMonthName = date.toLocaleString('en-US', { month: 'long' }).toLowerCase()
 		const shortMonthName = t(`${longMonthName}Short`)
 		return `${shortMonthName} ${date.getDate()}, ${date.getFullYear()}`
 	}

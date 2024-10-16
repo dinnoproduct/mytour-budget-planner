@@ -16,7 +16,7 @@ export const inputComponentTheme = {
           lineHeight: 'text-sm',
           px: '3',
           _placeholder: {
-            color: 'gray.400'
+            color: 'gray.500'
           },
           _hover: {
             borderColor: 'blue.600',
@@ -34,7 +34,7 @@ export const inputComponentTheme = {
             borderColor: 'gray.300',
             opacity: '1',
             _placeholder: {
-              color: 'gray.300'
+              color: 'gray.400'
             },
             _hover: {
               borderColor: 'gray.300'

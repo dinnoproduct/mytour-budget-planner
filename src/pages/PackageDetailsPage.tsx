@@ -17,7 +17,7 @@ import { useBreakpoint } from '@shared/hooks'
 import { CustomFields, PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
 import type { ITraveler } from '@/modules/packages/data/packagesTypes.ts'
 import { useUserContext } from '@/entities/user'
-import { PaymentModal } from '@widgets/PaymentModal'
+import { PaymentModal, PaymentModalView } from '@widgets/PaymentModal'
 import { TravelersModal } from '@widgets/TravelersModal'
 import { useModalContext } from '@app/providers'
 
@@ -29,11 +29,11 @@ export const PackageDetailsPage = () => {
 	const { isMd } = useBreakpoint()
 	const { dispatchModal } = useModalContext()
 	const [isModalOpen, setModalOpen] = useState(false)
-	const [isPaymentModalOpen, setPaymentModalOpen] = useState(false)
+	const [paymentModalView, setPaymentModalView] = useState<PaymentModalView | ''>('')
 	const [isTravelersModalOpen, setTravelersModalOpen] = useState(false)
 	const { packageDetails, isLoading } = useSearchPackage()
 	const currentOfferPackage = useGetCurrentOfferPackage()
-	console.log('PackageDetailsPage@currentOfferPackage : ', currentOfferPackage)
+	// console.log('PackageDetailsPage@currentOfferPackage : ', currentOfferPackage)
 	const { filteredPackages } = usePackagesSearchContext()
 	const [isLateCheckout, setLateCheckout] = useState(false)
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -102,16 +102,12 @@ export const PackageDetailsPage = () => {
 	}
 
 	const openPaymentModal = () => {
-		setPaymentModalOpen(true)
+		setPaymentModalView('paymentForm')
 	}
 
-	const onPaymentModalSuccess = (paymentAmount: number) => {
-		console.log('paymentAmount : ', paymentAmount)
+	const onPaymentModalSuccess = async (paymentAmount: number) => {
 		setAmountToBePaid(paymentAmount)
-		onBook()
-	}
 
-	const onBook = async () => {
 		if (!packageDetails) {
 			return
 		}
@@ -131,40 +127,42 @@ export const PackageDetailsPage = () => {
 				[PackagesFields.roomType]: packageDetails[PackagesFields.roomType],
 				[CustomFields.email]: user?.email || '',
 				[CustomFields.phoneNumber]: user?.phoneNumber || '',
-				[PackagesFields.amountToBePaid]: +amountToBePaid,
+				[PackagesFields.amountToBePaid]: +paymentAmount,
 				[PackagesFields.usdRate]: packageDetails[PackagesFields.usdRate]!,
 				[CustomFields.travelers]: [...travelers.adults, ...travelers.children]
 			}
+			// console.log('bookInput : ', bookInput)
 			await bookPackageAsync(bookInput)
-		} catch (error) {
+		} catch (e) {
+			setPaymentModalView('paymentError')
 		} finally {
 			clearUserData()
 		}
 	}
 
 	useEffect(() => {
-		if (user?.firstName && packageDetails?.offerId) {
+		if (user?.firstName && currentOfferPackage?.offerId) {
 			setTravelers((prevState: any) => ({
 				adults: [
 					{
 						firstName: user.firstName,
 						lastName: user.lastName
 					},
-					...Array(packageDetails.adultTravelers - 1).fill({
+					...Array(currentOfferPackage.adultTravelers - 1).fill({
 						firstName: '',
 						lastName: '',
 						dateOfBirth: ''
 					})
 				],
-				children: Array(packageDetails.childrenTravelers + packageDetails.infantTravelers).fill({
+				children: Array(currentOfferPackage.childrenTravelers + currentOfferPackage.infantTravelers).fill({
 					firstName: '',
 					lastName: '',
 					dateOfBirth: ''
 				})
 			}))
 		}
-	}, [user?.id, packageDetails.adultTravelers, packageDetails.childrenTravelers, packageDetails.infantTravelers])
-	console.log('travelers : ', currentOfferPackage)
+	}, [user?.id, currentOfferPackage?.adultTravelers, currentOfferPackage?.childrenTravelers, currentOfferPackage?.infantTravelers])
+	// console.log('travelers : ', currentOfferPackage)
 
 	if (!packageDetails?.offerId || isLoading) {
 		return <Loader loading={isLoading}/>
@@ -220,13 +218,17 @@ export const PackageDetailsPage = () => {
 				activeIndex={imageModalActiveIndex}
 			/>
 
-			{isPaymentModalOpen && (
+			{paymentModalView && (
 				<PaymentModal
-					isOpen={isPaymentModalOpen}
-					closeModal={() => setPaymentModalOpen(false)}
+					isOpen={!!paymentModalView}
+					closeModal={() => setPaymentModalView('')}
 					packageDetails={currentOfferPackage as any}
 					onSuccess={onPaymentModalSuccess}
-					onBackClick={openTravelersModal}
+					view={paymentModalView}
+					onBackClick={() => {
+						setPaymentModalView('')
+						openTravelersModal()
+					}}
 				/>
 			)}
 

@@ -8,12 +8,13 @@ import { ContentLayout } from '@widgets/AuthModal/ui/ContentLayout.tsx'
 
 const FIELD_COUNT = 4
 
-export const VerifyView = ({ onSuccess, type, payload }: VerifyViewProps) => {
+export const VerifyView = ({ onSuccess, type, payload, onViewChange }: VerifyViewProps) => {
 	const { t } = useTranslation()
 	const [verificationCode, setVerificationCode] = useState(Array(FIELD_COUNT).fill(''))
 	const { setUserToken } = useUserContext()
 	const refs = Array(FIELD_COUNT).fill(0).map(() => useRef<HTMLInputElement>(null))
 	const [showError, setShowError] = useState(false)
+	const [errorMessage, setErrorMessage] = useState('')
 
 	const { mutateAsync: confirmRegistrationAsync, isPending: isLoadingConfirmRegistration } = useConfirmRegistration()
 	const { mutateAsync: confirmLoginAsync, isPending: isLoadingConfirmLogin } = useConfirmLogin()
@@ -70,8 +71,14 @@ export const VerifyView = ({ onSuccess, type, payload }: VerifyViewProps) => {
 				onSuccess?.()
 				setUserToken(token)
 			}
-		} catch(error) {
+		} catch (error: any) {
+			const errorCode = error?.response?.data?.Code
 			setShowError(true)
+			setErrorMessage(t`incorrectOTPErrorMessage`)
+
+			if (errorCode === 9) {
+				onViewChange?.('otpError')
+			}
 		}
 	}
 
@@ -112,7 +119,7 @@ export const VerifyView = ({ onSuccess, type, payload }: VerifyViewProps) => {
 
 				<AlertCardMessage
 					status="error"
-					message={t`incorrectOTPErrorMessage`}
+					message={errorMessage}
 					show={showError}
 				/>
 

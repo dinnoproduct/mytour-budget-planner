@@ -7,5 +7,11 @@ export const VIEW_CONTENT_MAP = {
 	},
 	verify: {
 		title: 'verification'
+	},
+	signInError: {
+		title: ''
+	},
+	otpError: {
+		title: ''
 	}
 }
