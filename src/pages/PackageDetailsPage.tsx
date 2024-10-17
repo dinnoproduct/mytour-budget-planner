@@ -108,27 +108,27 @@ export const PackageDetailsPage = () => {
 	const onPaymentModalSuccess = async (paymentAmount: number) => {
 		setAmountToBePaid(paymentAmount)
 
-		if (!packageDetails) {
+		if (!currentOfferPackage) {
 			return
 		}
 
 		try {
 			const bookInput = {
-				[CustomFields.cityId]: packageDetails[PackagesFields.city][PackagesFields.id],
-				[PackagesFields.price]: packageDetails[PackagesFields.price],
-				[CustomFields.hotelId]: packageDetails[PackagesFields.hotel][PackagesFields.id],
-				[CustomFields.startDate]: packageDetails[PackagesFields.destinationFlight][PackagesFields.departureDate],
-				[CustomFields.endDate]: packageDetails[PackagesFields.returnFlight][PackagesFields.departureDate],
-				[CustomFields.travelAgencyId]: packageDetails[PackagesFields.travelAgency][PackagesFields.id],
+				[CustomFields.cityId]: currentOfferPackage[PackagesFields.city][PackagesFields.id],
+				[PackagesFields.price]: currentOfferPackage[PackagesFields.price],
+				[CustomFields.hotelId]: currentOfferPackage[PackagesFields.hotel][PackagesFields.id],
+				[CustomFields.startDate]: currentOfferPackage[PackagesFields.destinationFlight][PackagesFields.departureDate],
+				[CustomFields.endDate]: currentOfferPackage[PackagesFields.returnFlight][PackagesFields.departureDate],
+				[CustomFields.travelAgencyId]: currentOfferPackage[PackagesFields.travelAgency][PackagesFields.id],
 				[CustomFields.notes]: '',
-				[PackagesFields.offerId]: packageDetails[PackagesFields.offerId],
-				[CustomFields.destinationFlightId]: packageDetails[PackagesFields.destinationFlight][PackagesFields.id],
-				[CustomFields.returnFlightId]: packageDetails[PackagesFields.returnFlight][PackagesFields.id]!,
-				[PackagesFields.roomType]: packageDetails[PackagesFields.roomType],
+				[PackagesFields.offerId]: currentOfferPackage[PackagesFields.offerId],
+				[CustomFields.destinationFlightId]: currentOfferPackage[PackagesFields.destinationFlight][PackagesFields.id],
+				[CustomFields.returnFlightId]: currentOfferPackage[PackagesFields.returnFlight][PackagesFields.id]!,
+				[PackagesFields.roomType]: currentOfferPackage[PackagesFields.roomType],
 				[CustomFields.email]: user?.email || '',
 				[CustomFields.phoneNumber]: user?.phoneNumber || '',
 				[PackagesFields.amountToBePaid]: +paymentAmount,
-				[PackagesFields.usdRate]: packageDetails[PackagesFields.usdRate]!,
+				[PackagesFields.usdRate]: currentOfferPackage[PackagesFields.usdRate]!,
 				[CustomFields.travelers]: [...travelers.adults, ...travelers.children]
 			}
 			// console.log('bookInput : ', bookInput)
