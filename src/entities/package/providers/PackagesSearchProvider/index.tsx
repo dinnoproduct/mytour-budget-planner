@@ -211,11 +211,11 @@ export const PackagesSearchProvider: React.FC<{children: React.ReactNode}> = ({ 
 		if (citiesParam) {
 			currentData.selectedCities = citiesParam.split(',').map(city => parseInt(city, 10))
 		}
-		if (childrenCountParam && childrenAgesParam && adultsCountParam) {
+		if (childrenCountParam || childrenAgesParam || adultsCountParam) {
 			currentData.travelersData = {
-				adultsCount: parseInt(adultsCountParam, 10),
-				childrenCount: parseInt(childrenCountParam, 10),
-				childrenAges: childrenAgesParam.split(',').filter(Boolean).map(Number) || []
+				adultsCount: parseInt(adultsCountParam || '0', 10),
+				childrenCount: parseInt(childrenCountParam || '0', 10),
+				childrenAges: (childrenAgesParam || '').split(',').filter(Boolean).map(Number) || []
 			}
 		}
 		if (departureFlightIdParam) {
