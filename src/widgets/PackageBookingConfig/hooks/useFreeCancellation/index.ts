@@ -1,58 +1,66 @@
-import { useMemo } from 'react'
-import moment from 'moment'
-import { useTranslation } from 'react-i18next'
+import { useMemo } from 'react';
+import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
-const specialDays = ['12-30', '12-31', '01-01', '01-02']
+const SPECIAL_DAYS = ['12-30', '12-31', '01-01', '01-02'];
 
-export const useFreeCancellation = (arrivalDate: Date, departureDate: Date) => {
-	const {t} = useTranslation()
-	const formatDate = (date?: moment.Moment) => {
-		if (!date) return ''
+export const useFreeCancellation = (fromDate: Date, toDate: Date) => {
+  const { t } = useTranslation();
 
-		const longMonthName = date.locale('en').format('MMMM').toLowerCase() // Get month name in English
-		const shortMonthName = t(`${longMonthName}Short`)
-		return `${shortMonthName} ${date.format('D')}, ${date.format('YYYY')}`
-	}
+  const formatDate = (dateMoment?: moment.Moment) => {
+    if (!dateMoment) return '';
 
-	const isSpecialDayInRange = (arrivalDate: moment.Moment, departureDate: moment.Moment) => {
-		let currentDate = moment(arrivalDate)
+    const longMonthName = dateMoment.locale('en').format('MMMM').toLowerCase(); // Get month name in English
+    const shortMonthName = t(`${longMonthName}Short`);
 
-		while (currentDate.isSameOrBefore(departureDate, 'day')) {
-			const monthDay = currentDate.format('MM-DD')
-			if (specialDays.includes(monthDay)) return true
-			currentDate = currentDate.add(1, 'day')
-		}
-		return false
-	}
+    return `${shortMonthName} ${dateMoment.format('D')}, ${dateMoment.format('YYYY')}`;
+  };
 
-	const shouldShowCancellationMessage = (departureDate: moment.Moment) => {
-		const currentDate = moment()
-		const daysDifference = departureDate.diff(currentDate, 'days')
+  const isSpecialDayInRange = (fromDateMoment: moment.Moment, toDateMoment: moment.Moment) => {
+    let currentDate = moment(fromDateMoment);
 
-		return daysDifference >= 31
-	}
+    while (currentDate.isSameOrBefore(toDateMoment, 'day')) {
+      const monthDay = currentDate.format('MM-DD');
+      if (SPECIAL_DAYS.includes(monthDay)) return true;
+      currentDate = currentDate.add(1, 'day');
+    }
 
-	const getCancellationDate = (arrivalDate: moment.Moment, departureDate: moment.Moment) => {
-		if (isSpecialDayInRange(arrivalDate, departureDate)) return null
+    return false;
+  };
 
-		if (shouldShowCancellationMessage(departureDate)) {
-			const freeCancellationDate = departureDate.clone().subtract(31, 'days')
-			return formatDate(freeCancellationDate)
-		}
+  const shouldShowCancellationMessage = (fromDateMoment: moment.Moment) => {
+    const currentDate = moment();
+    const daysDifference = fromDateMoment.diff(currentDate, 'days');
 
-		return null
-	}
+    return daysDifference >= 31;
+  };
 
-	return useMemo(() => {
-		const arrivalMoment = moment(arrivalDate)
-		const departureMoment = moment(departureDate)
+  const getCancellationDate = (fromDateMoment: moment.Moment, toDateMoment: moment.Moment) => {
+    if (isSpecialDayInRange(fromDateMoment, toDateMoment)) {
+      return null;
+    }
 
-		const freeCancellationDate = getCancellationDate(arrivalMoment, departureMoment)
-		const showFreeCancellation = !!freeCancellationDate
+    if (shouldShowCancellationMessage(fromDateMoment)) {
+      const freeCancellationDate = fromDateMoment.clone().subtract(31, 'days');
 
-		return {
-			showFreeCancellation,
-			freeCancellationDate,
-		}
-	}, [arrivalDate, departureDate])
-}
+      return formatDate(freeCancellationDate);
+    }
+
+    return null;
+  };
+
+  const cancellationDate = useMemo(() => {
+    const fromDateMoment = moment(fromDate);
+    const toDateMoment = moment(toDate);
+
+    const freeCancellationDate = getCancellationDate(fromDateMoment, toDateMoment);
+    const showFreeCancellation = !!freeCancellationDate;
+
+    return {
+      showFreeCancellation,
+      freeCancellationDate,
+    };
+  }, [fromDate, toDate]);
+
+  return cancellationDate;
+};
