@@ -16,5 +16,7 @@ export { Footer } from '@components/Footer'
 export { Tooltip } from '@components/Tooltip'
 export { Illustration } from '@components/Illustration'
 export { EmptyState } from '@components/EmptyState'
+export { Tabs } from '@components/Tabs'
 export * from '@components/Badge'
-
+export * from '@components/SnackBar'
+export * from '@components/Container'

@@ -6,6 +6,7 @@ export type ModalType =
   | 'travelers'
   | 'payment'
   | 'paymentSuccess'
+  | 'requestCancel'
 
 export type modalReducerType = Reducer<
 	IModalReducerState,

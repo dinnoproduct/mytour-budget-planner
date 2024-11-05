@@ -62,7 +62,7 @@ export const AuthModal = ({ view, closeModal, onSuccess, isCloseOnSuccess = true
 	}
 
 	const handleVerifySuccess = () => {
-		onSuccess()
+		onSuccess?.()
 		isCloseOnSuccess && closeModal()
 	}
 

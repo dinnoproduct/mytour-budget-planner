@@ -27,7 +27,7 @@ export const Header = () => {
 					onChange={handleChangeLanguage}
 				/>
 
-				{/*<AccountMenu/>*/}
+				<AccountMenu/>
 			</HStack>
 		</Layout>
 	)

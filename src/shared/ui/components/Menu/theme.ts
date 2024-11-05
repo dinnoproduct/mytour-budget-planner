@@ -5,7 +5,14 @@ export const menuComponentTheme = {
 				boxShadow: 'md',
 				rounded: 'xl',
 				border: 'none',
-				zIndex: 10
+				zIndex: 10,
+				bgColor:"white",
+				width:"fit-content",
+				minWidth:"max-content"
+			},
+			item: {
+				px: 4,
+				py: 2,
 			}
 		},
 		defaultProps: {

@@ -2,7 +2,7 @@ import Slider, { Settings } from 'react-slick'
 import React, { useRef, useState } from 'react'
 import { Box, BoxProps, Image } from '@chakra-ui/react'
 import classnames from 'classnames'
-import { HotelStarBadge, PaginationBadge, StatusBadge } from './Badge.tsx'
+import { HotelStarBadge, PaginationBadge, StatusOnImageBadge } from '@ui'
 
 const slideTime = 300
 
@@ -46,6 +46,7 @@ const ImageSlider = ({ images, starsCount, isPackageList }: any) => {
 				{sliderImages?.map(({ url }: {url: string}) => (
 					<Box
 						outline="none"
+						key={url}
 					>
 						<Image
 							src={url}
@@ -65,9 +66,9 @@ const ImageSlider = ({ images, starsCount, isPackageList }: any) => {
 				imagesCount={sliderImages?.length}
 			/>
 
-			<HotelStarBadge starsCount={starsCount}/>
+			<HotelStarBadge starsCount={starsCount} isPositionAbsolute/>
 
-			<StatusBadge />
+			<StatusOnImageBadge status="allInclusive"/>
 		</Layout>
 	)
 }

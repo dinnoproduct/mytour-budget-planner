@@ -36,9 +36,10 @@ export const PackageList = () => {
 		// } else
 			if (!filteredPackages?.length) {
 			return (
-				<EmptyState illustrationName="error" mt={{base: '160px', md: '200px'}}>
-					{t`packagesNotFoundText`}
-				</EmptyState>
+				<EmptyState
+					illustrationName="error" mt={{base: '160px', md: '200px'}}
+					text={t`packagesNotFoundText`}
+				/>
 			)
 		}
 	}

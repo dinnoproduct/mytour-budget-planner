@@ -18,7 +18,7 @@ export const SignUpView = ({ onSuccess, onViewChange, formData }: SignUpViewProp
 
 	const { mutate: registerUser, isPending } = useRegister({
 		onSuccess: (user) => {
-			onSuccess?.({
+			onSuccess && onSuccess?.({
 				user, formData: {
 					firstname: getValues('firstname'),
 					lastname: getValues('lastname'),

@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 import { UserEntity, userUseCases } from '@entities/user'
 
 export const useUser = (
@@ -10,4 +10,12 @@ export const useUser = (
 		queryFn: () => userUseCases.getUser(token as string),
 		queryKey: ['user']
 	})
+}
+
+export const useSetUser = () => {
+	const queryClient = useQueryClient()
+
+	return (newUser: UserEntity | null) => {
+		queryClient.setQueryData(['user'], newUser)
+	}
 }

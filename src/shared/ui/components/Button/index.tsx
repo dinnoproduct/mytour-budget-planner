@@ -1,10 +1,9 @@
-import React, { useMemo, forwardRef, Ref } from 'react'
+import React, { useMemo, forwardRef, type Ref } from 'react'
 import { Button as ChakraButton, Box } from '@chakra-ui/react'
 import { Icon } from '@foundation/Iconography'
-import {
-  ICON_BUTTON_SIZE_MAP, ICON_SIZE_MAP,
-} from './constants'
-import { ButtonProps, ButtonSize, LinkProps } from './types'
+import { ICON_BUTTON_SIZE_MAP, ICON_SIZE_MAP } from './constants'
+import { type ButtonProps, type ButtonSize, type LinkProps } from './types'
+import { Link as RouterLink } from 'react-router-dom'
 
 export const Button = forwardRef(
   (
@@ -17,6 +16,7 @@ export const Button = forwardRef(
       iconAfter,
       iconBefore,
       icon,
+      to,
       isLoading = false,
       onMouseDown,
       onMouseUp,
@@ -32,7 +32,13 @@ export const Button = forwardRef(
           href,
           as: 'a'
         }
+      } else if (to) {
+        return {
+          as: RouterLink,
+          to
+        }
       }
+
       return {}
     }, [href])
 
@@ -68,20 +74,16 @@ export const Button = forwardRef(
         isLoading={isLoading}
         variant={variant}
         size={buttonSize}
-        leftIcon={
-          iconBefore ? (
+        {...(iconBefore && {
+          leftIcon: (
             <Icon name={iconBefore} size={ICON_SIZE_MAP[size as ButtonSize]} />
-          ) : (
-            <></>
           )
-        }
-        rightIcon={
-          iconAfter ? (
+        })}
+        {...(iconAfter && {
+          rightIcon: (
             <Icon name={iconAfter} size={ICON_SIZE_MAP[size as ButtonSize]} />
-          ) : (
-            <></>
           )
-        }
+        })}
         {...linkProps}
         {...props}
       >

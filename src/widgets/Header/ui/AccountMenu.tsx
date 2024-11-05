@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import {
-	Button,
+	Button, Divider,
 	MenuButton as ChakraMenuButton,
 	MenuItem as ChakraMenuItem
 } from '@chakra-ui/react'
@@ -8,10 +8,36 @@ import { Avatar, Icon } from '@ui'
 import { Menu, MenuList } from './Menu'
 import { useTranslation } from 'react-i18next'
 import { useModalContext } from '@app/providers'
+import { useUserContext } from '@entities/user'
+import { Link as RouterLink } from 'react-router-dom'
 
 export const AccountMenu = ({}) => {
-	const { t } = useTranslation()
+	const { user } = useUserContext()
+	const userFullName = useMemo(() => {
+		if (user?.firstName) {
+			return `${user.firstName} ${user.lastName}`
+		}
 
+		return ''
+	}, [user?.firstName])
+
+	return (
+		<Menu offset={[0, 4]}>
+			<MenuButton userFullName={userFullName}/>
+
+			<MenuList menuButtonSize={86}>
+				{user ? (
+					<MenuItemsUser/>
+				) : (
+					<MenuItemsGuest/>
+				)}
+			</MenuList>
+		</Menu>
+	)
+}
+
+const MenuItemsGuest = ({}) => {
+	const { t } = useTranslation()
 	const { dispatchModal } = useModalContext()
 
 	const handleSignInClick = () => {
@@ -34,20 +60,32 @@ export const AccountMenu = ({}) => {
 		})
 	}
 
+	return (
+		<>
+			<MenuItem
+				onClick={handleSignInClick}
+			>{t`sign-in`}</MenuItem>
+			<MenuItem
+				onClick={handleSignUpClick}
+			>{t`sign-up`}</MenuItem>
+		</>
+	)
+}
+
+const MenuItemsUser = ({}) => {
+	const { t } = useTranslation()
+	const { signOut } = useUserContext()
+
+	const handleSignOutClick = () => {
+		signOut()
+	}
 
 	return (
-		<Menu offset={[0, 4]}>
-			<MenuButton/>
-
-			<MenuList menuButtonSize={86}>
-				<MenuItem
-					onClick={handleSignInClick}
-				>{t`sign-in`}</MenuItem>
-				<MenuItem
-					onClick={handleSignUpClick}
-				>{t`sign-up`}</MenuItem>
-			</MenuList>
-		</Menu>
+		<>
+			<MenuItem to="/my-packages">{t`myPackages`}</MenuItem>
+			<Divider color="gray.100"/>
+			<MenuItem onClick={handleSignOutClick}>{t`signОut`}</MenuItem>
+		</>
 	)
 }
 
@@ -55,6 +93,17 @@ const MenuItem = ({
 	                  children,
 	                  ...props
                   }: any) => {
+	const linkProps = useMemo(() => {
+		if (props.to) {
+			return {
+				as: RouterLink,
+				to: props.to
+			}
+		}
+
+		return {}
+	}, [props.to])
+
 	return (
 		<ChakraMenuItem
 			bgColor="white"
@@ -75,13 +124,14 @@ const MenuItem = ({
 			fontSize="text-md"
 			lineHeight="text-md"
 			{...props}
+			{...linkProps}
 		>
 			{children}
 		</ChakraMenuItem>
 	)
 }
 
-const MenuButton = ({ isGuest = true, ...props }: any) => {
+const MenuButton = ({ isGuest = true, userFullName, ...props }: any) => {
 	return (
 		<ChakraMenuButton
 			as={Button}
@@ -113,7 +163,7 @@ const MenuButton = ({ isGuest = true, ...props }: any) => {
 		>
 			<Icon name="menu" size="24" color="gray.500"/>
 
-			<Avatar size="sm" ml="3"/>
+			<Avatar size="sm" ml="3" name={userFullName}/>
 		</ChakraMenuButton>
 	)
 }

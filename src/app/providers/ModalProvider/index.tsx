@@ -4,7 +4,6 @@ import React, {
 	createContext,
 	useContext,
 	useEffect,
-	useMemo,
 	useReducer
 } from 'react'
 import {
@@ -18,13 +17,14 @@ import {
 import { AuthModal } from '@widgets/AuthModal'
 import { TravelersModal } from '@widgets/TravelersModal'
 import { PaymentModal } from '@widgets/PaymentModal'
-import { PaymentSuccessModal } from '@entities/package'
+import { PaymentSuccessModal, RequestCancelModal } from '@entities/package'
 
 const modals = {
 	auth: AuthModal,
 	travelers: TravelersModal,
 	payment: PaymentModal,
-	paymentSuccess: PaymentSuccessModal
+	paymentSuccess: PaymentSuccessModal,
+	requestCancel: RequestCancelModal
 }
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {

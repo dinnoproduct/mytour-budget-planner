@@ -6,7 +6,8 @@ export type ButtonProps = {
   children?: ReactNode
   variant?: ButtonVariant
   size?: ButtonSize
-  href?: string
+  href?: string,
+  to?: string
   isDisabled?: boolean
   iconBefore?: IconName
   iconAfter?: IconName
