@@ -1,13 +1,16 @@
-import { type RequestEntity, type RequestStatus } from '@entities/package'
+import { type RequestStatus } from '@entities/package'
 import { type BoxProps } from '@chakra-ui/react'
-import { type EmptyObject } from 'react-hook-form'
+import { type RequestsGroupStatus } from '@widgets/UserPackages/ui/types.ts'
+import { type NormalizedRequestEntity } from '@widgets/UserPackages/model/types.ts'
 
 export type RequestCardProps = {
-  request: RequestEntity | EmptyObject
+  request: NormalizedRequestEntity
   onRemainingPaymentClick?: (requestId: number) => void
   isLoadingRemainingPayment?: boolean
-  status: 'upcoming' | 'incomplete' | 'past' | 'canceled'
+  status: RequestsGroupStatus
   onCancelClick?: (requestId: number) => void
+  onContinueClick?: (request: NormalizedRequestEntity) => void
+  isLoadingContinue?: boolean
 } & BoxProps
 
 export type DetailsListItemProps = {

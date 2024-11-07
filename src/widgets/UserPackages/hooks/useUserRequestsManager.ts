@@ -1,7 +1,10 @@
 import {
+  type PackageEntity,
   type RequestEntity,
   RequestStatus,
   usePayRemainingAmount,
+  useSearchPackage,
+  useUpdateRequest,
   useUserRequests
 } from '@entities/package'
 import { useEffect, useMemo, useState } from 'react'
@@ -10,19 +13,28 @@ import { useModalContext } from '@app/providers'
 import { useSnackBar } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
+import { type NormalizedRequestEntity } from '@widgets/UserPackages/model/types.ts'
+import { type EmptyObject } from 'global'
 
 export const useUserRequestsManager = () => {
   const { t } = useTranslation()
   const { emitSnackBar } = useSnackBar()
+  const { mutate: updateRequest } = useUpdateRequest()
   const { data: userRequests, isLoading: isLoadingUserRequests } =
     useUserRequests()
   const [isLoadingRequests, setIsLoadingRequests] = useState(true)
-  const [activeRequests, setActiveRequests] = useState<RequestEntity[]>([])
-  const [pendingRequests, setPendingRequests] = useState<RequestEntity[]>([])
-  const [passedRequests, setPassedRequests] = useState<RequestEntity[]>([])
-  const [cancelledRequests, setCancelledRequests] = useState<RequestEntity[]>(
-    []
-  )
+  const [activeRequests, setActiveRequests] = useState<
+    NormalizedRequestEntity[]
+  >([])
+  const [pendingRequests, setPendingRequests] = useState<
+    NormalizedRequestEntity[]
+  >([])
+  const [passedRequests, setPassedRequests] = useState<
+    NormalizedRequestEntity[]
+  >([])
+  const [cancelledRequests, setCancelledRequests] = useState<
+    NormalizedRequestEntity[]
+  >([])
   const [searchParams, setSearchParams] = useSearchParams()
   const tab = useMemo(
     () => parseInt(searchParams.get('tab') || '0'),
@@ -35,7 +47,9 @@ export const useUserRequestsManager = () => {
     if (userRequests?.length) {
       const today = moment()
 
-      const active = userRequests.filter(
+      const normalUserRequests = userRequests.map(normalizeRequest)
+
+      const active = normalUserRequests.filter(
         request =>
           [
             RequestStatus.InProcess,
@@ -47,17 +61,34 @@ export const useUserRequestsManager = () => {
             moment(request.endDate).isAfter(today))
       )
 
-      const pending = userRequests.filter(request =>
-        [RequestStatus.Draft, RequestStatus.NotPaid].includes(request.status)
-      )
+      const pending = normalUserRequests
+        .filter(request =>
+          [RequestStatus.Draft, RequestStatus.NotPaid].includes(request.status)
+        )
+        .map(request => {
+          if (request.status === RequestStatus.Draft) {
+            const customStatus = request.notes?.isSoldOut
+              ? 11
+              : moment(request.startDate).isBefore(today)
+                ? 10
+                : 1
 
-      const passed = userRequests.filter(
+            return {
+              ...request,
+              status: customStatus
+            }
+          }
+
+          return request
+        })
+
+      const passed = normalUserRequests.filter(
         request =>
           request.status === RequestStatus.Purchased &&
           moment(request.endDate).isBefore(today)
       )
 
-      const cancelled = userRequests.filter(
+      const cancelled = normalUserRequests.filter(
         request => request.status === RequestStatus.Cancelled
       )
 
@@ -69,6 +100,23 @@ export const useUserRequestsManager = () => {
 
     setIsLoadingRequests(false)
   }, [userRequests, isLoadingUserRequests])
+
+  const normalizeRequest = (
+    request: RequestEntity
+  ): NormalizedRequestEntity => {
+    let notes = {}
+
+    try {
+      notes = JSON.parse(request.notes)
+    } catch (e) {
+      console.error('Failed to parse request notes', e)
+    }
+
+    return {
+      ...request,
+      notes: notes as NormalizedRequestEntity['notes']
+    }
+  }
 
   const {
     mutateAsync: payRemainingAmountAsync,
@@ -111,6 +159,75 @@ export const useUserRequestsManager = () => {
     setSearchParams({ tab: index.toString() })
   }
 
+  // incomplete requests
+  const [incompleteInitialView, setIncompleteInitialView] = useState<
+    'travelers' | 'payment'
+  >('travelers')
+  const [activeRequest, setActiveRequest] =
+    useState<NormalizedRequestEntity | null>(null)
+
+  const handlePackageDetailsSuccess = (
+    packageDetails: PackageEntity | EmptyObject
+  ) => {
+    if (!packageDetails.offerId && activeRequest?.id) {
+      emitSnackBar({
+        status: 'error',
+        title: 'sold out'
+      })
+      const updatedRequest = {
+        ...activeRequest,
+        notes: {
+          ...activeRequest.notes,
+          isSoldOut: true
+        }
+      }
+      updateRequest({
+        id: activeRequest.id,
+        notes: JSON.stringify(updatedRequest.notes)
+      })
+      const newPendingRequests = pendingRequests.map(request =>
+        request.id === activeRequest.id
+          ? { ...updatedRequest, status: 11 }
+          : request
+      )
+      setPendingRequests(newPendingRequests)
+    }
+  }
+
+  const {
+    packageDetails: activeRequestPackage,
+    isLoading: isLoadingActiveRequestPackage
+  } = useSearchPackage(
+    {
+      enabled:
+        !!activeRequest?.id && !!activeRequest?.notes.adultTravelersCount,
+      onSuccess: handlePackageDetailsSuccess
+    },
+    {
+      adultsCount: activeRequest?.notes.adultTravelersCount || 0,
+      childrenAges: activeRequest?.notes.childrenAges || [],
+      city: activeRequest?.hotel.city.id || 0,
+      flightId: activeRequest?.destinationFlightId || 0,
+      returnFlightId: activeRequest?.returnFlightId || 0,
+      hotelId: activeRequest?.hotel.id || 0,
+      roomId: activeRequest?.roomType || 0
+    }
+  )
+
+  const handleContinueClick = (request: NormalizedRequestEntity) => {
+    if (request.status === RequestStatus.Draft) {
+      setIncompleteInitialView('travelers')
+    } else if (request.status === RequestStatus.NotPaid) {
+      setIncompleteInitialView('payment')
+    }
+
+    setActiveRequest(request)
+  }
+
+  const handleBookingFlowClose = () => {
+    setActiveRequest(null)
+  }
+
   return {
     activeRequests,
     pendingRequests,
@@ -122,6 +239,12 @@ export const useUserRequestsManager = () => {
     handleCancelClick,
     tab,
     handleTabChange,
-    isLoadingUserRequests: isLoadingRequests
+    isLoadingUserRequests: isLoadingRequests,
+    handleContinueClick,
+    activeRequest,
+    handleBookingFlowClose,
+    activeRequestPackage,
+    isLoadingActiveRequestPackage,
+    incompleteInitialView
   }
 }

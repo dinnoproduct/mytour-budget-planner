@@ -53,7 +53,7 @@ export type BookPackageInput = {
   startDate: string
   endDate: string
   travelAgencyId: number
-  notes: string
+  notes?: string
   travelers: BookPackageTraveler[]
   offerId: number
   usdRate: number

@@ -3,14 +3,16 @@ import { type PackageEntity } from '@entities/package'
 
 export type TravelersModalProps = {
   closeModal: () => void
-  onSuccess: (data: { adults: Traveler[]; children: Traveler[] }) => void
+  onSuccess: (data: Travelers) => void
   packageDetails: PackageEntity
-  travelers: {
-    adults: Traveler[]
-    children: Traveler[]
-  }
+  travelers: Travelers
   isOpen?: boolean
-  onChange?: (data: Traveler[]) => void
+  onChange?: (data: Travelers) => void
+}
+
+export type Travelers = {
+  adults: Traveler[]
+  children: Traveler[]
 }
 
 export type VerifyType = 'signIn' | 'signUp'

@@ -4,11 +4,13 @@ import type { BookingFlowProps } from '@widgets/BookingFlow/ui/types.ts'
 import { useBookingFlow } from '../hooks'
 
 export const BookingFlow = ({
-  currentOfferPackage,
+  packageDetails,
   initialView,
   childrenAges,
+  requestId,
   isOpen,
-  onClose
+  onClose,
+  defaultTravelers
 }: BookingFlowProps) => {
   const {
     paymentModalView,
@@ -21,32 +23,38 @@ export const BookingFlow = ({
     handleTravelersChange
   } = useBookingFlow({
     initialView,
-    currentOfferPackage,
+    packageDetails,
     onClose,
     isOpen,
-    childrenAges
+    childrenAges,
+    requestId,
+    defaultTravelers
   })
+
+  if (!packageDetails?.offerId || !isOpen) {
+    return null
+  }
 
   return (
     <>
-      {modalView === 'payment' && isOpen && (
+      {modalView === 'payment' && (
         <PaymentModal
           isOpen={true}
           closeModal={() => closeModal()}
-          packageDetails={currentOfferPackage}
+          packageDetails={packageDetails}
           onSuccess={onPaymentModalSuccess}
           view={paymentModalView}
-          onBackClick={() => {
-            openTravelersModal()
-          }}
+          onBackClick={
+            initialView === 'payment' ? undefined : openTravelersModal
+          }
         />
       )}
 
-      {modalView === 'travelers' && isOpen && (
+      {modalView === 'travelers' && (
         <TravelersModal
           isOpen={true}
           closeModal={() => closeModal()}
-          packageDetails={currentOfferPackage}
+          packageDetails={packageDetails}
           travelers={travelers}
           onSuccess={onTravelersModalSuccess}
           onChange={handleTravelersChange}

@@ -7,3 +7,10 @@ export type LayoutProps = {
 export type EmptyStateProps = {
   isLoading?: boolean
 }
+
+export enum RequestsGroupStatus {
+  Upcoming = 'upcoming',
+  Incomplete = 'incomplete',
+  Past = 'past',
+  Canceled = 'canceled'
+}

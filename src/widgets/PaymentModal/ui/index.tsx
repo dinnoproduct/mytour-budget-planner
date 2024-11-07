@@ -43,12 +43,12 @@ export const PaymentModal = ({
   }, [view])
 
   const handleBackClick = useMemo(() => {
-    if (activeView === 'paymentForm') {
+    if (activeView === 'paymentForm' && onBackClick) {
       return () => onBackClick()
     }
 
     return undefined
-  }, [activeView])
+  }, [activeView, onBackClick])
 
   return (
     <Layout

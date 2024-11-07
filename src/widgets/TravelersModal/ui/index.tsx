@@ -5,13 +5,15 @@ import { useState, useEffect, useCallback } from 'react'
 import {
   type TravelersModalProps,
   type FormData,
-  type Traveler
+  type Traveler,
+  type Travelers
 } from '@widgets/TravelersModal/ui/types.ts'
 import { useTranslation } from 'react-i18next'
 import { capitalize, debounce } from '@shared/utils'
 import MDatePicker from '@/components/FormControls/MDatePicker/MDatePicker.tsx'
 import { Button, Input } from '@/shared/ui/index.ts'
 import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
+import { validateTraveler } from '@widgets/TravelersModal/helpers'
 
 export const TravelersModal = ({
   closeModal,
@@ -79,21 +81,14 @@ export const TravelersModal = ({
   }, [travelers, setValue])
 
   const updateNormalizedTravelers = useCallback(
-    debounce((data: Traveler[]) => {
-      console.log('onChange : ', data)
+    debounce((data: Travelers) => {
       onChange && onChange(data)
-    }, 2000),
+    }, 1500),
     []
   )
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      console.log('watch : ', {
-        value,
-        name,
-        type
-      })
-
       if (!name) {
         return
       }
@@ -102,29 +97,20 @@ export const TravelersModal = ({
       const groupValue = value[group as keyof typeof value] as Traveler[]
       const traveler = groupValue[parseInt(index)]
       const updatedTraveler = { ...traveler }
-      console.log('updatedTraveler : ', updatedTraveler)
 
       if (
-        updatedTraveler.firstName?.length >= 2 &&
-        updatedTraveler.lastName?.length >= 2 &&
-        updatedTraveler.dateOfBirth
+        validateTraveler(updatedTraveler) ||
+        (!updatedTraveler.firstName &&
+          !updatedTraveler.lastName &&
+          !updatedTraveler.dateOfBirth)
       ) {
-        const updatedTravelers: Traveler[] = [...normalizedTravelers]
+        const adults = (value.adults || []) as Traveler[]
+        const children = (value.children || []) as Traveler[]
 
-        while (updatedTravelers.length <= parseInt(index)) {
-          updatedTravelers.push({
-            firstName: '',
-            lastName: '',
-            dateOfBirth: ''
-          })
-        }
-
-        updatedTravelers[parseInt(index)] = updatedTraveler
-        setNormalizedTravelers(updatedTravelers)
-        const filledTravelers = updatedTravelers.filter(
-          (traveler: any) => traveler.dateOfBirth
-        )
-        updateNormalizedTravelers(filledTravelers)
+        updateNormalizedTravelers({
+          adults: adults.filter(validateTraveler),
+          children: children.filter(validateTraveler)
+        })
       }
     })
 

@@ -7,7 +7,6 @@ import {
 } from '@features/PackageImagesGallery'
 import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
 import {
-  type PackageEntity,
   useGetCurrentOfferPackage,
   usePackagesSearchContext,
   useSearchPackage
@@ -42,9 +41,9 @@ export const PackageDetailsPage = () => {
 
   const uniqueImageUrls = useMemo(
     () =>
-      packageDetails.hotel?.images
+      packageDetails?.hotel?.images
         .filter(img => img.size === 3)
-        .map(img => img.url),
+        .map(img => img.url) || [],
     [JSON.stringify(packageDetails?.hotel?.images)]
   )
 
@@ -74,9 +73,7 @@ export const PackageDetailsPage = () => {
   }, [isMd])
 
   const openAuthModal = () => {
-    console.log('PackageDetailsPage@openAuthModal : ', user)
-
-    if (user?.phoneNumber) {
+    if (user?.id) {
       setBookingFlowOpen(true)
 
       return
@@ -96,12 +93,9 @@ export const PackageDetailsPage = () => {
   }
 
   const handleBookClick = ({ childrenAges }: { childrenAges: number[] }) => {
-    console.log('handleBookClick : ', childrenAges)
     setChildrenAges(childrenAges)
     openAuthModal()
   }
-
-  console.log('PackageDetailsPage@childrenAges : ', childrenAges)
 
   if (!packageDetails?.offerId || isLoading) {
     return <Loader loading={isLoading} />
@@ -119,7 +113,7 @@ export const PackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <PackageDetailsHeader
-          tourPackage={packageDetails as PackageEntity}
+          tourPackage={packageDetails}
           onMoreImagesClick={() => setModalOpen(true)}
         />
 
@@ -129,12 +123,12 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
         >
           <PackageDetails
-            tourPackage={packageDetails as PackageEntity}
+            tourPackage={packageDetails}
             isLateCheckout={isLateCheckout}
           />
 
           <PackageBookingConfig
-            tourPackage={packageDetails as PackageEntity}
+            tourPackage={packageDetails}
             ml={{ md: '20' }}
             mt={{ base: '5', md: '0' }}
             flexShrink={0}
@@ -155,7 +149,7 @@ export const PackageDetailsPage = () => {
       />
 
       <BookingFlow
-        currentOfferPackage={currentOfferPackage}
+        packageDetails={currentOfferPackage}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}

@@ -29,9 +29,7 @@ export const HomePage = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
 
-    // console.log('queryParams', queryParams.get('success'))
     if (queryParams.get('success')?.toLowerCase() === 'true') {
-      // console.log('open payment success modal')
       setTimeout(() => {
         dispatchModal({
           type: 'open',

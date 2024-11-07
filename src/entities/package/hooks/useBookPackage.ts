@@ -23,7 +23,6 @@ export const useBookPackage = (
     mutationFn: (data: BookPackageInput) =>
       packageUseCases.bookPackage(data, userToken),
     onSuccess: (data: BookPackageResponse) => {
-      // console.log('useBookPackage@onSuccess : ', data)
       window.location.href =
         data.bookingPaymentUrl +
         `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`

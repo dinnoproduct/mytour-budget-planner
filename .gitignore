@@ -24,3 +24,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+!/src/widgets/PaymentModal/ui/index.tsx

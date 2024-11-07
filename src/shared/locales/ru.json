@@ -195,6 +195,7 @@
   "draft": "Черновик",
   "inProgress": "Разрабатывается",
   "rejected": "Отклонено",
+  "notAvailable": "Недоступный",
   "cancel": "Отменить",
   "bookingCanceledSnackbar": "Ваше бронирование было отменено.",
   "packageBanner.title": "Новый Год в Грузии",

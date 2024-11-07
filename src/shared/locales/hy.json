@@ -263,6 +263,7 @@
   "draft": "Անավարտ",
   "inProgress": "Մշակվում է",
   "rejected": "Մերժված",
+  "notAvailable": "Առկա չէ",
   "cancel": "Չեղարկել",
   "bookingCanceledSnackbar": "Ամրագրումը չեղարկված է",
   "packageBanner.title": "Ամանորը Վրաստանում",

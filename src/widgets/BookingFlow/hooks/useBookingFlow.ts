@@ -1,39 +1,40 @@
 import { useUserContext } from '@entities/user'
 import {
   type PackageEntity,
-  type RequestEntity,
-  useBookPackage
+  useBookPackage,
+  useCreateRequest,
+  useUpdateRequest
 } from '@entities/package'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PaymentModalView } from '@widgets/PaymentModal'
-import type { ITraveler } from '@/modules/packages/data/packagesTypes.ts'
-import {
-  CustomFields,
-  PackagesFields
-} from '@/modules/packages/data/packagesEnums.ts'
-import { type Traveler } from '@widgets/TravelersModal/ui/types.ts'
+
+import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
 
 export const useBookingFlow = ({
-  currentOfferPackage,
+  packageDetails,
   initialView,
   onClose,
   isOpen,
-  childrenAges
+  requestId,
+  childrenAges,
+  defaultTravelers
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
+  const { mutateAsync: createRequestAsync } = useCreateRequest()
+  const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
   const requestIdRef = useRef<number | null>(null)
   const [modalView, setModalView] = useState('')
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
   const [travelers, setTravelers] = useState<any>({ adults: [], children: [] })
-  const travelersRef = useRef<ITraveler[]>([])
-
-  useEffect(() => {}, [])
-
+  // const travelersRef = useRef<ITraveler[]>([])
+  //
   useEffect(() => {
-    travelersRef.current = travelers
-  }, [travelers])
+    if (requestId) {
+      requestIdRef.current = requestId
+    }
+  }, [requestId])
 
   useEffect(() => {
     setModalView(initialView)
@@ -48,12 +49,10 @@ export const useBookingFlow = ({
     onClose && onClose()
     setTravelers({ adults: [], children: [] })
     requestIdRef.current = null
-    console.log('closeModal')
     setPaymentModalView('paymentForm')
   }
 
-  const onTravelersModalSuccess = (travelers: any) => {
-    console.log('onTravelersModalSuccess : ', travelers)
+  const onTravelersModalSuccess = (travelers: Travelers) => {
     setTravelers(travelers)
     setModalView('payment')
   }
@@ -64,73 +63,85 @@ export const useBookingFlow = ({
 
   const onPaymentModalSuccess = useCallback(
     async (paymentAmount: number) => {
-      console.log('onPaymentModalSuccess : ', {
-        currentOfferPackage,
-        travelers
-      })
-
-      if (!currentOfferPackage) {
+      if (!packageDetails || !requestIdRef.current) {
         return
       }
 
       try {
         const bookInput = {
-          [CustomFields.cityId]:
-            currentOfferPackage[PackagesFields.city][PackagesFields.id],
-          [PackagesFields.price]: currentOfferPackage[PackagesFields.price],
-          [CustomFields.hotelId]:
-            currentOfferPackage[PackagesFields.hotel][PackagesFields.id],
-          [CustomFields.startDate]:
-            currentOfferPackage[PackagesFields.destinationFlight][
-              PackagesFields.departureDate
-            ],
-          [CustomFields.endDate]:
-            currentOfferPackage[PackagesFields.returnFlight][
-              PackagesFields.departureDate
-            ],
-          [CustomFields.travelAgencyId]:
-            currentOfferPackage[PackagesFields.travelAgency][PackagesFields.id],
-          [CustomFields.notes]: '',
-          [PackagesFields.offerId]: currentOfferPackage[PackagesFields.offerId],
-          [CustomFields.destinationFlightId]:
-            currentOfferPackage[PackagesFields.destinationFlight][
-              PackagesFields.id
-            ],
-          [CustomFields.returnFlightId]:
-            currentOfferPackage[PackagesFields.returnFlight][PackagesFields.id],
-          [PackagesFields.roomType]:
-            currentOfferPackage[PackagesFields.roomType],
-          [CustomFields.email]: user?.email || '',
-          [CustomFields.phoneNumber]: user?.phoneNumber || '',
-          [PackagesFields.amountToBePaid]: +paymentAmount,
-          [PackagesFields.usdRate]: currentOfferPackage[PackagesFields.usdRate],
-          [CustomFields.travelers]: [...travelers.adults, ...travelers.children]
+          requestId: requestIdRef.current,
+          cityId: packageDetails.city.id,
+          price: packageDetails.price,
+          hotelId: packageDetails.hotel.id,
+          startDate: packageDetails.destinationFlight.departureDate,
+          endDate: packageDetails.returnFlight.departureDate,
+          travelAgencyId: packageDetails.travelAgency.id,
+          offerId: packageDetails.offerId,
+          destinationFlightId: packageDetails.destinationFlight.id,
+          returnFlightId: packageDetails.returnFlight.id,
+          roomType: packageDetails.roomType,
+          email: user?.email || '',
+          phoneNumber: user?.phoneNumber || '',
+          amountToBePaid: +paymentAmount,
+          usdRate: packageDetails.usdRate,
+          travelers: [...travelers.adults, ...travelers.children]
         }
         await bookPackageAsync(bookInput)
       } catch (e) {
         setPaymentModalView('paymentError')
       }
     },
-    [currentOfferPackage?.offerId, travelers]
+    [requestIdRef.current, packageDetails?.offerId, travelers]
   )
 
   useEffect(() => {
-    if (user?.firstName && currentOfferPackage?.offerId) {
+    if (!packageDetails?.offerId) {
+      return
+    }
+
+    if (defaultTravelers) {
+      const filledTravelers = {
+        adults: [
+          ...defaultTravelers.adults,
+          ...Array(
+            packageDetails.adultTravelers -
+              (defaultTravelers.adults.length || 0)
+          ).fill({
+            firstName: '',
+            lastName: '',
+            dateOfBirth: ''
+          })
+        ],
+        children: [
+          ...defaultTravelers.children,
+          ...Array(
+            packageDetails?.childrenTravelers +
+              packageDetails?.infantTravelers -
+              (defaultTravelers.children.length || 0)
+          ).fill({
+            firstName: '',
+            lastName: '',
+            dateOfBirth: ''
+          })
+        ]
+      }
+
+      setTravelers(filledTravelers)
+    } else if (user?.firstName) {
       setTravelers((prevState: any) => ({
         adults: [
           {
             firstName: user.firstName,
             lastName: user.lastName
           },
-          ...Array(currentOfferPackage.adultTravelers - 1).fill({
+          ...Array(packageDetails.adultTravelers - 1).fill({
             firstName: '',
             lastName: '',
             dateOfBirth: ''
           })
         ],
         children: Array(
-          currentOfferPackage.childrenTravelers +
-            currentOfferPackage.infantTravelers
+          packageDetails.childrenTravelers + packageDetails.infantTravelers
         ).fill({
           firstName: '',
           lastName: '',
@@ -140,21 +151,62 @@ export const useBookingFlow = ({
     }
   }, [
     user?.id,
-    currentOfferPackage?.adultTravelers,
-    currentOfferPackage?.childrenTravelers,
-    currentOfferPackage?.infantTravelers,
-    isOpen
+    packageDetails?.adultTravelers,
+    packageDetails?.childrenTravelers,
+    packageDetails?.infantTravelers,
+    isOpen,
+    defaultTravelers
   ])
 
   // draft request sync
 
   const handleTravelersChange = useCallback(
-    (data: Traveler[]) => {
-      console.log('handleTravelersChange : ', data)
+    async (data: Travelers) => {
+      if (!packageDetails?.offerId) {
+        return
+      }
 
-      return null
+      const notesJson = JSON.stringify({
+        childrenAges: childrenAges || [],
+        totalTravelersCount:
+          packageDetails.adultTravelers +
+          packageDetails.childrenTravelers +
+          packageDetails.infantTravelers,
+        adultTravelersCount: packageDetails.adultTravelers,
+        travelers: data,
+        isSoldOut: false
+      })
+
+      const requestInput = {
+        offerId: packageDetails.offerId,
+        travelers: [...data.adults, ...data.children],
+        cityId: packageDetails.city.id,
+        hotelId: packageDetails.hotel.id,
+        price: packageDetails.price,
+        roomType: packageDetails.roomType,
+        travelAgencyId: packageDetails.travelAgency.id,
+        startDate: packageDetails.destinationFlight.departureDate,
+        endDate: packageDetails.returnFlight.departureDate,
+        destinationFlightId: packageDetails.destinationFlight.id,
+        returnFlightId: packageDetails.returnFlight.id,
+        notes: notesJson
+      }
+
+      if (!requestIdRef.current) {
+        const newRequestId = await createRequestAsync({
+          ...requestInput
+        })
+        requestIdRef.current = newRequestId
+
+        return
+      }
+
+      const res = await updateRequestAsync({
+        id: requestIdRef.current,
+        ...requestInput
+      })
     },
-    [requestIdRef.current, currentOfferPackage?.offerId, childrenAges]
+    [requestIdRef.current, packageDetails?.offerId, childrenAges]
   )
 
   return {
@@ -171,10 +223,11 @@ export const useBookingFlow = ({
 }
 
 type useBookingFlowProps = {
-  currentOfferPackage: PackageEntity | null
+  packageDetails?: PackageEntity | null
   initialView: 'travelers' | 'payment'
   onClose?: () => void
   isOpen?: boolean
-  request?: RequestEntity
+  requestId?: number
   childrenAges?: number[]
+  defaultTravelers?: Travelers
 }

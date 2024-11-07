@@ -194,6 +194,7 @@
   "draft": "Draft",
   "inProgress": "In process",
   "rejected": "Rejected",
+  "notAvailable": "Not available",
   "cancel": "Cancel",
   "bookingCanceledSnackbar": "Your booking has been canceled.",
   "packageBanner.title": "New Year in Georgia",

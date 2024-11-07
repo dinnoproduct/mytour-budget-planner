@@ -27,13 +27,16 @@ import {
 import { capitalize, formatNumber } from '@shared/utils'
 import moment from 'moment'
 import { ImagesSlider } from './ImagesSlider'
+import { RequestsGroupStatus } from '@widgets/UserPackages/ui/types.ts'
 
 export const RequestCard = ({
-  request = {},
+  request,
   onRemainingPaymentClick,
   isLoadingRemainingPayment,
   onCancelClick,
   status,
+  isLoadingContinue,
+  onContinueClick,
   ...props
 }: RequestCardProps) => {
   const { i18n, t } = useTranslation()
@@ -48,25 +51,40 @@ export const RequestCard = ({
     [roomTypes, request.roomType]
   )
 
-  const showRequestActions = useMemo(
+  const showPayButton = useMemo(
     () =>
-      ['upcoming'].includes(status) &&
-      ![
-        RequestStatus.InProcess,
-        RequestStatus.Rejected,
-        RequestStatus.Overdue
-      ].includes(request.status),
-    [status]
+      status === RequestsGroupStatus.Upcoming &&
+      request.status === RequestStatus.Booked,
+    [status, request.remainingPaymentAmount]
   )
 
-  const showPayButton = useMemo(
-    () => status === 'upcoming' && request.status === RequestStatus.Booked,
-    [status, request.remainingPaymentAmount]
+  const showContinueButton = useMemo(
+    () =>
+      status === RequestsGroupStatus.Incomplete &&
+      request.status === RequestStatus.Draft &&
+      new Date(request.startDate) > new Date(),
+    [status, request.status, request.startDate]
+  )
+
+  const showNotPaidButton = useMemo(
+    () =>
+      status === RequestsGroupStatus.Incomplete &&
+      request.status === RequestStatus.NotPaid,
+    [status, request.status]
+  )
+
+  const showCancelButton = useMemo(
+    () =>
+      ['upcoming'].includes(status) &&
+      ![RequestStatus.InProcess, RequestStatus.Rejected].includes(
+        request.status
+      ),
+    [status, request.status]
   )
 
   const showNextPaymentFields = useMemo(
     () =>
-      (status === 'upcoming' &&
+      (status === RequestsGroupStatus.Upcoming &&
         [
           RequestStatus.InProcess,
           RequestStatus.Rejected,
@@ -104,6 +122,11 @@ export const RequestCard = ({
   )
 
   const packageName = useMemo(() => request.hotel.name, [request.hotel.name])
+
+  const totalTravelers = useMemo(
+    () => request.notes?.totalTravelersCount || request.travelers.length,
+    [request.notes?.totalTravelersCount, request.travelers.length]
+  )
 
   return (
     <Layout {...props}>
@@ -150,7 +173,7 @@ export const RequestCard = ({
 
             <DetailsListItem
               label={capitalize(t`traveler`)}
-              value={request.travelers.length}
+              value={totalTravelers}
             />
             <DetailsListItem label={t`room`} value={roomType} />
             <DetailsListItem
@@ -162,7 +185,10 @@ export const RequestCard = ({
         </Box>
       </Box>
 
-      {showRequestActions && (
+      {(showCancelButton ||
+        showContinueButton ||
+        showCancelButton ||
+        showNotPaidButton) && (
         <VStack px="4" pb="4" align="stretch" spacing="2">
           {showPayButton ? (
             <Button
@@ -176,13 +202,35 @@ export const RequestCard = ({
             </Button>
           ) : null}
 
-          <Button
-            variant="solid-gray"
-            onClick={() => onCancelClick && onCancelClick(request.id)}
-            width="full"
-          >
-            {t`cancel`}
-          </Button>
+          {showContinueButton ? (
+            <Button
+              width="full"
+              onClick={() => onContinueClick && onContinueClick(request)}
+              isLoading={isLoadingContinue}
+            >
+              {t`continue`}
+            </Button>
+          ) : null}
+
+          {showNotPaidButton ? (
+            <Button
+              width="full"
+              onClick={() => onContinueClick && onContinueClick(request)}
+              isLoading={isLoadingContinue}
+            >
+              {t`pay`}
+            </Button>
+          ) : null}
+
+          {showCancelButton && (
+            <Button
+              variant="solid-gray"
+              onClick={() => onCancelClick && onCancelClick(request.id)}
+              width="full"
+            >
+              {t`cancel`}
+            </Button>
+          )}
         </VStack>
       )}
     </Layout>

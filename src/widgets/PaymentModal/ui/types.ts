@@ -4,7 +4,7 @@ import { type PackageEntity } from '@entities/package'
 export type PaymentModalProps = {
   closeModal: () => void
   onSuccess: (paymentAmount: number) => void
-  onBackClick: () => void
+  onBackClick?: () => void
   packageDetails: PackageEntity
   isOpen?: boolean
   view?: PaymentModalView

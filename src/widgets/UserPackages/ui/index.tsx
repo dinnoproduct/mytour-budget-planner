@@ -1,14 +1,16 @@
 import { Box, Grid } from '@chakra-ui/react'
-import { type LayoutProps } from './types'
+import { type LayoutProps, RequestsGroupStatus } from './types'
 import { Container, Heading, Tabs } from '@ui'
 import { useUserRequestsManager } from '@widgets/UserPackages/hooks'
 import { RequestCard } from '@widgets/UserPackages/ui/RequestCard'
 import {
   CanceledTabEmptyState,
+  IncompleteTabEmptyState,
   PastTabEmptyState,
   UpcomingTabEmptyState
 } from '@widgets/UserPackages/ui/EmptyStates.tsx'
 import { useTranslation } from 'react-i18next'
+import { BookingFlow } from '@widgets/BookingFlow'
 
 export const UserPackages = () => {
   const { t } = useTranslation()
@@ -23,7 +25,13 @@ export const UserPackages = () => {
     handleCancelClick,
     tab,
     handleTabChange,
-    isLoadingUserRequests
+    isLoadingUserRequests,
+    handleContinueClick,
+    activeRequest,
+    handleBookingFlowClose,
+    activeRequestPackage,
+    isLoadingActiveRequestPackage,
+    incompleteInitialView
   } = useUserRequestsManager()
 
   return (
@@ -31,7 +39,7 @@ export const UserPackages = () => {
       <Heading size="sm-md">{t`myPackages`}</Heading>
 
       <Tabs
-        labels={[t`upcoming`, t`past`, t`canceled`]}
+        labels={[t`upcoming`, t`incomplete`, t`past`, t`canceled`]}
         mt="10"
         index={tab}
         onChange={handleTabChange}
@@ -49,7 +57,27 @@ export const UserPackages = () => {
                   currentRequestId === request.id && isLoadingRemainingPayment
                 }
                 onCancelClick={handleCancelClick}
-                status="upcoming"
+                status={RequestsGroupStatus.Upcoming}
+              />
+            ))}
+          </TabContentLayout>
+        )}
+
+        {!pendingRequests?.length ? (
+          <IncompleteTabEmptyState isLoading={isLoadingUserRequests} />
+        ) : (
+          <TabContentLayout>
+            {pendingRequests.map(request => (
+              <RequestCard
+                request={request}
+                key={request.id}
+                onCancelClick={handleCancelClick}
+                status={RequestsGroupStatus.Incomplete}
+                onContinueClick={handleContinueClick}
+                isLoadingContinue={
+                  request.id === activeRequest?.id &&
+                  isLoadingActiveRequestPackage
+                }
               />
             ))}
           </TabContentLayout>
@@ -60,7 +88,11 @@ export const UserPackages = () => {
         ) : (
           <TabContentLayout>
             {passedRequests.map(request => (
-              <RequestCard request={request} key={request.id} status="past" />
+              <RequestCard
+                request={request}
+                key={request.id}
+                status={RequestsGroupStatus.Past}
+              />
             ))}
           </TabContentLayout>
         )}
@@ -73,12 +105,23 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                status="canceled"
+                status={RequestsGroupStatus.Canceled}
               />
             ))}
           </TabContentLayout>
         )}
       </Tabs>
+
+      <BookingFlow
+        initialView={incompleteInitialView}
+        childrenAges={activeRequest?.notes.childrenAges || []}
+        // onBookingSuccess={handleBackClick}
+        isOpen={!!activeRequestPackage?.offerId}
+        onClose={handleBookingFlowClose}
+        packageDetails={activeRequestPackage}
+        requestId={activeRequest?.id}
+        defaultTravelers={activeRequest?.notes.travelers}
+      />
     </Layout>
   )
 }

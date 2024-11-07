@@ -17,8 +17,6 @@ export const useCancelRequest = (
     mutationFn: (requestId: number) =>
       packageUseCases.cancelRequest(requestId, userToken),
     onSuccess: (data, requestId, context) => {
-      console.log('Request canceled', requestId)
-
       queryClient.setQueryData<RequestEntity[]>(
         ['user-requests'],
         oldRequests =>
