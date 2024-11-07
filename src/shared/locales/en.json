@@ -201,6 +201,8 @@
   "packageBanner.subtitle1": "Make this New Year more magical and unforgettable by celebrating it with your loved ones in Tbilisi.",
   "packageBanner.subtitle2": "Limited spots available!",
   "packageBanner.buttonLabel": "Book your package now",
-  "paymentSuccessModalText": "Thank you. Your package is successfully booked."
-
+  "paymentSuccessModalText": "Thank you. Your package is successfully booked.",
+  "personalInformation": "Personal information",
+  "save": "Save",
+  "personalInformationUpdated": "Your information has been updated"
 }

@@ -46,7 +46,6 @@
   "whatIncludesInPackage": "Ինչ է ներառված փաթեթի մեջ",
   "packageDetails": "Ինչ է ներառված փաթեթի մեջ",
   "close": "Փակել",
-  "save": "Պահպանել",
   "edit": "Խմբագրել",
   "reserve": "Ամրագրել",
   "flightDetails": "Թռիչքի մանրամասներ",
@@ -270,5 +269,8 @@
   "packageBanner.subtitle1": "Դարձրեք այս Նոր տարին ավելի կախարդական և անմոռանալի՝ նշելով այն ձեր սիրելիների հետ Թբիլիսիում:",
   "packageBanner.subtitle2": "Տեղերը սահմանափակ են:",
   "packageBanner.buttonLabel": "Ամրագրիր փաթեթդ հիմա",
-  "paymentSuccessModalText": "Շնորհակալություն։ Ձեր փաթեթը հաջողությամբ ամրագրվել է:"
+  "paymentSuccessModalText": "Շնորհակալություն։ Ձեր փաթեթը հաջողությամբ ամրագրվել է:",
+  "personalInformation": "Անձնական տվյալներ",
+  "save": "Պահպանել",
+  "personalInformationUpdated": "Ձեր տվյալները թարմացվել են"
 }

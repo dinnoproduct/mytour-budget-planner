@@ -1,46 +1,38 @@
 import {
-	ConfirmLoginParams, ConfirmRegistrationParams, LoginParams, RegisterParams,
-	ResendOtpParams,
-	UserUseCaseParams
-
+  type ConfirmLoginParams,
+  type ConfirmRegistrationParams,
+  type LoginParams,
+  type RegisterParams,
+  type ResendOtpParams,
+  type UpdateUserInput,
+  type UserUseCaseParams
 } from './types.ts'
-import { UserService } from './UserService.ts'
-import { AuthService } from './AuthService.ts'
+import { type UserService } from './UserService.ts'
+import { type AuthService } from './AuthService.ts'
 
 export class UserUseCases {
-	private readonly userService: UserService
-	private readonly authService: AuthService
+  private readonly userService: UserService
+  private readonly authService: AuthService
 
-	constructor({ userService, authService }: UserUseCaseParams) {
-		this.userService = userService
-		this.authService = authService
-	}
+  constructor({ userService, authService }: UserUseCaseParams) {
+    this.userService = userService
+    this.authService = authService
+  }
 
-	getUser = async (token: string) => {
-		return this.userService.getUser(token)
-	}
+  getUser = async (token: string) => this.userService.getUser(token)
 
-	updateUser = async (token: string) => {
-		return this.userService.updateUser(token)
-	}
+  updateUser = async (token: string, input: UpdateUserInput) =>
+    this.userService.updateUser(token, input)
 
-	register = async (data: RegisterParams) => {
-		return this.authService.register(data)
-	}
+  register = async (data: RegisterParams) => this.authService.register(data)
 
-	confirmRegistration = async (data: ConfirmRegistrationParams) => {
-		return this.authService.confirmRegistration(data)
-	}
+  confirmRegistration = async (data: ConfirmRegistrationParams) =>
+    this.authService.confirmRegistration(data)
 
-	login = async (data: LoginParams) => {
-		return this.authService.login(data)
-	}
+  login = async (data: LoginParams) => this.authService.login(data)
 
-	confirmLogin = async (data: ConfirmLoginParams) => {
-		return this.authService.confirmLogin(data)
-	}
+  confirmLogin = async (data: ConfirmLoginParams) =>
+    this.authService.confirmLogin(data)
 
-	resendOTP = async (data: ResendOtpParams) => {
-		return this.authService.resendOTP(data)
-	}
+  resendOTP = async (data: ResendOtpParams) => this.authService.resendOTP(data)
 }

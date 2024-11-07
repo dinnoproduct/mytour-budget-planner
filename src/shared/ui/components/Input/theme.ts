@@ -33,6 +33,7 @@ export const inputComponentTheme = {
           _disabled: {
             borderColor: 'gray.300',
             opacity: '1',
+            color: 'gray.400',
             _placeholder: {
               color: 'gray.400'
             },

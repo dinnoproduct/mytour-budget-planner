@@ -1,25 +1,31 @@
-import { AnyObject } from 'global'
-import { Dispatch, ReactNode, Reducer, ComponentType } from 'react'
+import { type AnyObject } from 'global'
+import {
+  type Dispatch,
+  type ReactNode,
+  type Reducer,
+  type ComponentType
+} from 'react'
 
 export type ModalType =
-	| 'auth'
+  | 'auth'
   | 'travelers'
   | 'payment'
   | 'paymentSuccess'
   | 'requestCancel'
+  | 'profileDetails'
 
 export type modalReducerType = Reducer<
-	IModalReducerState,
-	Partial<IModalReducerState>
+  IModalReducerState,
+  Partial<IModalReducerState>
 >
 
 export interface IModalReducerState {
-	modalType: ModalType | null
-	type: ModalActionType
-	props: AnyObject
-	attributes: AnyObject
-	activeModal: ReactNode
-	onClose: (options?: any) => void
+  modalType: ModalType | null
+  type: ModalActionType
+  props: AnyObject
+  attributes: AnyObject
+  activeModal: ReactNode
+  onClose: (options?: any) => void
 }
 
 export type ModalActionType = 'open' | 'close' | 'update'
@@ -27,14 +33,14 @@ export type ModalActionType = 'open' | 'close' | 'update'
 export type ModalReducerAction = Partial<IModalReducerState>
 
 export type ModalTypes = {
-	[key in ModalType]: ComponentType<any>
+  [key in ModalType]: ComponentType<any>
 }
 
 export interface ModalProviderProps {
-	children?: ReactNode
+  children?: ReactNode
 }
 
 export type ModalContext = {
-	modalState: IModalReducerState
-	dispatchModal: Dispatch<Partial<IModalReducerState>>
+  modalState: IModalReducerState
+  dispatchModal: Dispatch<Partial<IModalReducerState>>
 }

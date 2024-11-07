@@ -202,5 +202,8 @@
   "packageBanner.subtitle1": "Сделайте этот Новый год волшебным и незабываемым, отмечая его с любимыми в Тбилиси.",
   "packageBanner.subtitle2": "Количество мест ограничено!",
   "packageBanner.buttonLabel": "Забронируйте свой пакет сейчас",
-  "paymentSuccessModalText": "Спасибо. Ваш пакет успешно забронирован."
+  "paymentSuccessModalText": "Спасибо. Ваш пакет успешно забронирован.",
+  "personalInformation": "Персональная информация",
+  "save": "Сохранять",
+  "personalInformationUpdated": "Ваша информация обновлена"
 }
