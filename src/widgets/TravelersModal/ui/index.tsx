@@ -12,6 +12,7 @@ import { capitalize, debounce } from '@shared/utils'
 import MDatePicker from '@/components/FormControls/MDatePicker/MDatePicker.tsx'
 import { Button, Input } from '@/shared/ui/index.ts'
 import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
+import moment from 'moment'
 
 export const TravelersModal = ({
   closeModal,
@@ -218,15 +219,9 @@ export const TravelersModal = ({
                   name={`adults.${index}.dateOfBirth`}
                   placeholderText={t`dateOfBirth`}
                   label={t`dateOfBirth`}
-                  maxDate={
-                    new Date(
-                      new Date().setFullYear(
-                        new Date().getFullYear() -
-                          (packageDetails?.childMaxAge || 1) -
-                          1
-                      )
-                    )
-                  }
+                  maxDate={moment()
+                    .subtract((packageDetails?.childMaxAge || 1) + 1, 'years')
+                    .toDate()}
                 />
               </VStack>
             ))}
@@ -287,14 +282,15 @@ export const TravelersModal = ({
                   name={`children.${index}.dateOfBirth`}
                   placeholderText={t`dateOfBirth`}
                   label={t`dateOfBirth`}
-                  minDate={
-                    new Date(
-                      new Date().setFullYear(
-                        new Date().getFullYear() -
-                          (packageDetails?.[PackagesFields.childMaxAge] || 1)
-                      )
+                  minDate={moment()
+                    .subtract(
+                      packageDetails?.[PackagesFields.childMaxAge] || 1,
+                      'years'
                     )
-                  }
+                    .subtract(1, 'years')
+                    .add(1, 'day')
+                    .toDate()}
+                  maxDate={moment().subtract(1, 'days').toDate()}
                 />
               </VStack>
             ))}
