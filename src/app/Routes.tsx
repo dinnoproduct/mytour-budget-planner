@@ -11,9 +11,13 @@ import { PackageListPage } from '@pages/PackageListPage'
 import { PackageDetailsPage } from '@pages/PackageDetailsPage'
 import { useScrollToTop } from '@shared/hooks'
 import { MyPackagesPage } from '@pages/MyPackagesPage.tsx'
-import { PackagesSearchProvider } from '@entities/package'
+import {
+  HotelPackagesSearchProvider,
+  PackagesSearchProvider
+} from '@entities/package'
 import { useUserContext } from '@entities/user'
 import { useEffect } from 'react'
+import { HotelPackageDetailsPage } from '@pages/HotelPackageDetailsPage.tsx'
 
 const Routes = () => {
   useBreakpoint()
@@ -24,14 +28,18 @@ const Routes = () => {
       <Route element={<Outlet />}>
         <Route
           element={
+            // todo: create component for all search providers
             <PackagesSearchProvider>
-              <Outlet />
+              <HotelPackagesSearchProvider>
+                <Outlet />
+              </HotelPackagesSearchProvider>
             </PackagesSearchProvider>
           }
         >
           <Route path="/" element={<HomePage />} />
           <Route path="/packages" element={<PackageListPage />} />
           <Route path="/package" element={<PackageDetailsPage />} />
+          <Route path="/hotel" element={<HotelPackageDetailsPage />} />
         </Route>
 
         <Route

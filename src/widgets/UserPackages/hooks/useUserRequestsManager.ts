@@ -3,6 +3,7 @@ import {
   type RequestEntity,
   RequestStatus,
   usePayRemainingAmount,
+  useSearchHotelPackage,
   useSearchPackage,
   useUpdateRequest,
   useUserRequests
@@ -194,13 +195,23 @@ export const useUserRequestsManager = () => {
     }
   }
 
+  const activeRequestPackageType = useMemo(() => {
+    if (activeRequest?.destinationFlightId) {
+      return 'package'
+    }
+
+    return 'hotel'
+  }, [activeRequest?.destinationFlightId])
+
   const {
-    packageDetails: activeRequestPackage,
-    isLoading: isLoadingActiveRequestPackage
+    packageDetails: requestPackageData,
+    isLoading: isLoadingRequestPackage
   } = useSearchPackage(
     {
       enabled:
-        !!activeRequest?.id && !!activeRequest?.notes.adultTravelersCount,
+        !!activeRequest?.id &&
+        !!activeRequest?.notes.adultTravelersCount &&
+        activeRequestPackageType === 'package',
       onSuccess: handlePackageDetailsSuccess
     },
     {
@@ -212,6 +223,48 @@ export const useUserRequestsManager = () => {
       hotelId: activeRequest?.hotel.id || 0,
       roomId: activeRequest?.roomType || 0
     }
+  )
+
+  const {
+    packageDetails: requestHotelPackage,
+    isLoading: isLoadingRequestHotelPackage
+  } = useSearchHotelPackage(
+    {
+      enabled:
+        !!activeRequest?.id &&
+        !!activeRequest?.notes.adultTravelersCount &&
+        activeRequestPackageType === 'hotel',
+      onSuccess: handlePackageDetailsSuccess
+    },
+    {
+      adultsCount: activeRequest?.notes.adultTravelersCount || 0,
+      childrenAges: activeRequest?.notes.childrenAges || [],
+      city: activeRequest?.hotel.city.id || 0,
+      from: activeRequest?.startDate || '',
+      to: activeRequest?.endDate || '',
+      hotelId: activeRequest?.hotel.id || 0,
+      roomId: activeRequest?.roomType || 0
+    }
+  )
+
+  const activeRequestPackage = useMemo(
+    () =>
+      activeRequestPackageType === 'package'
+        ? requestPackageData
+        : requestHotelPackage,
+    [requestHotelPackage, requestPackageData, activeRequestPackageType]
+  )
+
+  const isLoadingActiveRequestPackage = useMemo(
+    () =>
+      activeRequestPackageType === 'package'
+        ? isLoadingRequestPackage
+        : isLoadingRequestHotelPackage,
+    [
+      isLoadingRequestHotelPackage,
+      isLoadingRequestPackage,
+      activeRequestPackageType
+    ]
   )
 
   const handleContinueClick = (request: NormalizedRequestEntity) => {

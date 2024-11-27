@@ -7,7 +7,7 @@ import {
 } from '@features/PackageImagesGallery'
 import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
 import {
-  useGetCurrentOfferPackage,
+  useCurrentPackageOfferValue,
   usePackagesSearchContext,
   useSearchPackage
 } from '@entities/package'
@@ -29,7 +29,7 @@ export const PackageDetailsPage = () => {
   const [isModalOpen, setModalOpen] = useState(false)
   const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
   const { packageDetails, isLoading } = useSearchPackage()
-  const currentOfferPackage = useGetCurrentOfferPackage()
+  const currentOfferPackage = useCurrentPackageOfferValue()
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
 

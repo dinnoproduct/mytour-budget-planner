@@ -4,11 +4,13 @@ import {
   type BookPackageInput,
   type CreateRequestInput,
   type DictionaryTypes,
+  type GenerateHotelOffersInput,
   type GenerateOffersInput,
   type GetAvailableFlightsParams,
   type GetFlightsByDateParams,
   type GetReturnFlightsParams,
   type PackageUseCasesParams,
+  type SearchHotelPackagesParams,
   type SearchPackagesParams,
   type UpdateRequestInput
 } from './types.ts'
@@ -52,6 +54,22 @@ export class PackageUseCases {
 
   async getPackage(offerId: number) {
     return this.packageService.getPackage(offerId)
+  }
+
+  // hotel
+  async searchHotelPackages(search: SearchHotelPackagesParams) {
+    return this.packageService.searchHotelPackages({
+      travelAgencyId: 1,
+      ...search
+    })
+  }
+
+  async generateHotelOffers(input: GenerateHotelOffersInput) {
+    return this.packageService.generateHotelOffers(input)
+  }
+
+  async getHotelPackage(offerId: number) {
+    return this.packageService.getHotelPackage(offerId)
   }
 
   // flight

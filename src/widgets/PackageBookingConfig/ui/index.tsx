@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { AlertCardMessage, Button, Checkbox, Icon, Text, Tooltip } from '@ui'
-import { DatePicker } from '@features/DatePicker'
+import { DatePickerFlights } from '@features/DatePickerFlights'
 import { FlightsConfigButton } from '@widgets/PackageBookingConfig/ui/FlightsConfigButton.tsx'
 import { SearchTravelers } from '@features/SearchTravelers'
 import { TravelersConfigButton } from '@widgets/PackageBookingConfig/ui/TravelersConfigButton.tsx'
@@ -103,7 +103,7 @@ export const PackageBookingConfig = ({
         borderTop="1px solid"
         borderColor={{ base: 'gray.100', md: 'transparent' }}
       >
-        <DatePicker
+        <DatePickerFlights
           CustomButton={FlightsConfigButton}
           menuProps={{ offset: [-4, -28] }}
           {...flightsDatePickerProps}

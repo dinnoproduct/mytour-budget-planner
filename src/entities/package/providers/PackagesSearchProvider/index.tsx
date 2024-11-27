@@ -22,7 +22,7 @@ const LOCAL_STORAGE_KEY = 'package_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCities: [PACKAGE_CITIES[0].id],
+  selectedCity: PACKAGE_CITIES[0].id,
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
@@ -32,6 +32,10 @@ const defaultSearchData: SearchData = {
   returnFlightId: null
 }
 
+const ALLOWED_SEARCH_ROUTES = [
+  { path: '/packages', query: [['tab', 'packages']] }
+]
+
 const SearchContext = createContext<SearchContextType | undefined>(undefined)
 
 export const PackagesSearchProvider: React.FC<{
@@ -39,13 +43,30 @@ export const PackagesSearchProvider: React.FC<{
 }> = ({ children }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const isHomepage = useMemo(
-    () => location.pathname === '/',
-    [location.pathname]
-  )
   const [searchParams] = useSearchParams()
+
+  const isAllowedSearchRoute = useMemo(() => {
+    const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
+      if (route.path === location.pathname) {
+        if (route.query.length === 0) {
+          return true
+        }
+
+        return route.query.every(query => {
+          const value = searchParams.get(query[0])
+
+          return value && value === query[1]
+        })
+      }
+
+      return false
+    })
+
+    return isAllowed
+  }, [location.pathname, searchParams])
+
   const { data: packageList = [] } = usePackageList({
-    enabled: isHomepage
+    enabled: isAllowedSearchRoute
   })
   const [filteredPackages, setFilteredPackages] = useState<PackageEntity[]>([])
   const [isLoadingFilteredPackages, setIsLoadingFilteredPackages] =
@@ -168,12 +189,13 @@ export const PackagesSearchProvider: React.FC<{
     const queryParams = new URLSearchParams({
       from: formatDate(searchData.fromDate),
       to: formatDate(searchData.toDate),
-      cities: searchData.selectedCities.join(','),
+      city: searchData.selectedCity + '',
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
       childrenAges: searchData.travelersData.childrenAges.join(','),
       departureFlightId: searchData.departureFlightId?.toString() || '',
-      returnFlightId: searchData.returnFlightId?.toString() || ''
+      returnFlightId: searchData.returnFlightId?.toString() || '',
+      tab: 'packages'
     })
 
     return queryParams
@@ -185,7 +207,7 @@ export const PackagesSearchProvider: React.FC<{
       const {
         fromDate,
         toDate,
-        selectedCities,
+        selectedCity,
         travelersData,
         departureFlightId,
         returnFlightId
@@ -214,9 +236,14 @@ export const PackagesSearchProvider: React.FC<{
     setSearchDataState(prevData => ({ ...prevData, ...data }))
   }
 
+  const navigateToDefaultSearch = () => {
+    const queryParams = generateSearchQueryParams(searchData)
+    navigate(`/packages?${queryParams.toString()}`)
+  }
+
   useEffect(() => {
     if (
-      location.pathname === '/packages' &&
+      isAllowedSearchRoute &&
       searchData.departureFlightId &&
       searchData.returnFlightId &&
       filteredPackages.length === 0
@@ -226,10 +253,15 @@ export const PackagesSearchProvider: React.FC<{
   }, [
     searchData.departureFlightId,
     searchData.returnFlightId,
-    filteredPackages.length
+    filteredPackages.length,
+    isAllowedSearchRoute
   ])
 
   useEffect(() => {
+    if (!isAllowedSearchRoute) {
+      return
+    }
+
     const getDateFromParam = (param: string | null) =>
       param ? new Date(param) : null
 
@@ -237,7 +269,7 @@ export const PackagesSearchProvider: React.FC<{
 
     const fromParam = searchParams.get('from')
     const toParam = searchParams.get('to')
-    const citiesParam = searchParams.get('cities')
+    const cityParam = searchParams.get('city')
     const adultsCountParam = searchParams.get('adultsCount')
     const childrenCountParam = searchParams.get('childrenCount')
     const childrenAgesParam = searchParams.get('childrenAges')
@@ -252,10 +284,8 @@ export const PackagesSearchProvider: React.FC<{
       currentData.toDate = getDateFromParam(toParam)
     }
 
-    if (citiesParam) {
-      currentData.selectedCities = citiesParam
-        .split(',')
-        .map(city => parseInt(city, 10))
+    if (cityParam) {
+      currentData.selectedCity = parseInt(cityParam, 10)
     }
 
     if (childrenCountParam || childrenAgesParam || adultsCountParam) {
@@ -276,7 +306,9 @@ export const PackagesSearchProvider: React.FC<{
     }
 
     setSearchData(currentData)
-  }, [searchParams])
+  }, [searchParams, isAllowedSearchRoute])
+
+  // todo: on tab change go to search page
 
   return (
     <SearchContext.Provider
@@ -291,7 +323,9 @@ export const PackagesSearchProvider: React.FC<{
         filteredPackages,
         isLoadingFilteredPackages,
         isSearchError,
-        generateSearchQueryParams
+        generateSearchQueryParams,
+        isAllowedSearchRoute,
+        navigateToDefaultSearch
       }}
     >
       {children}

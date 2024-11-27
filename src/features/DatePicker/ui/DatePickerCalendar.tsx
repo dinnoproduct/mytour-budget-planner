@@ -1,186 +1,170 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import { Box, Flex } from '@chakra-ui/react'
-import { DatePickerCalendarProps } from './types'
+import { Box, Flex, useMediaQuery } from '@chakra-ui/react'
+import { type DatePickerCalendarProps } from './types'
 import { DatePickerMonth } from './DatePickerMonth'
-import { Text, Button, EmptyState, Illustration } from '@ui'
+import { Text, Button } from '@ui'
 import { useTranslation } from 'react-i18next'
-import { useBreakpoint } from '@shared/hooks'
-import { EmptyView } from '@widgets/PackageList/ui/EmptyView.tsx'
-import { LoadingView } from '@features/DatePicker/ui/LoadingView.tsx'
+import moment from 'moment'
 
-const MAX_MONTHS = 8
+const MAX_MONTHS = 6
 
 export const DatePickerCalendar = ({
-	                                   availableDates,
-	                                   startDate,
-	                                   onDayClick,
-	                                   selectedFromDate,
-	                                   selectedToDate,
-	                                   isLoading,
-	                                   dateSelectState
-                                   }: DatePickerCalendarProps) => {
-	const today = new Date()
-	const [currentMonth, setCurrentMonth] = useState(startDate || today)
+  onDayClick,
+  selectedFromDate,
+  selectedToDate,
+  isLoading
+}: DatePickerCalendarProps) => {
+  const [currentMonthDate, setCurrentMonthDate] = useState(moment().toDate())
 
-	useEffect(() => {
-		if (selectedFromDate && dateSelectState === 'from') {
-			setCurrentMonth(new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1))
-		} else if (availableDates.length > 0) {
-			const earliestAvailableDate = new Date(availableDates[0])
-			setCurrentMonth(new Date(earliestAvailableDate.getFullYear(), earliestAvailableDate.getMonth(), 1))
-		} else if (selectedFromDate) {
-			setCurrentMonth(new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1))
-		} else if (startDate) {
-			setCurrentMonth(new Date(startDate.getFullYear(), startDate.getMonth(), 1))
-		} else {
-			setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1))
-		}
-	}, [JSON.stringify(availableDates), startDate, selectedFromDate])
+  useEffect(() => {
+    if (selectedFromDate) {
+      setCurrentMonthDate(selectedFromDate)
+    }
+  }, [selectedFromDate])
 
-	const { isMd } = useBreakpoint()
+  const isMobile = useMediaQuery('(max-width: 1280px)')[0]
 
-	const maxDate = useMemo(
-		() => new Date(today.getFullYear(), today.getMonth() + (MAX_MONTHS - 2), 1),
-		[today]
-	)
+  const maxMonthDate = useMemo(
+    () => moment().add(MAX_MONTHS, 'months').toDate(),
+    []
+  )
 
-	const handlePrevMonth = () => {
-		if (currentMonth > new Date(today.getFullYear(), today.getMonth(), 1)) {
-			const prevMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
-			setCurrentMonth(prevMonth)
-		}
-	}
+  const handlePrevMonth = () => {
+    if (moment(currentMonthDate) > moment()) {
+      const prevMonthDate = moment(currentMonthDate)
+        .subtract(1, 'month')
+        .toDate()
+      setCurrentMonthDate(prevMonthDate)
+    }
+  }
 
-	const handleNextMonth = () => {
-		if (currentMonth < maxDate) {
-			const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
-			setCurrentMonth(nextMonth)
-		}
-	}
+  const handleNextMonth = () => {
+    if (moment(currentMonthDate) < moment(maxMonthDate)) {
+      const nextMonth = moment(currentMonthDate).add(1, 'month').toDate()
+      setCurrentMonthDate(nextMonth)
+    }
+  }
 
-	const isPrevDisabled = useMemo(
-		() => currentMonth <= new Date(today.getFullYear(), today.getMonth(), 1),
-		[currentMonth, today]
-	)
+  const isPrevDisabled = useMemo(
+    () => moment(currentMonthDate) <= moment(),
+    [currentMonthDate]
+  )
 
-	const isNextDisabled = useMemo(
-		() => currentMonth >= maxDate,
-		[currentMonth, maxDate]
-	)
+  const isNextDisabled = useMemo(
+    () => moment(currentMonthDate) >= moment(maxMonthDate),
+    [currentMonthDate]
+  )
 
-	return (
-		<Box
-			width="full"
-			overflowY={{ base: 'scroll', md: 'unset' }}
-			height={{ base: 'calc(100% - 192px)', md: 'auto' }}
-		>
-			<Flex
-				alignItems={{ base: 'center', md: 'flex-start' }}
-				direction={{ base: 'column', md: 'row' }}
-				px={{ md: 4 }}
-				pb="4"
-			>
-				{isLoading ? <LoadingView />
-				: !isMd ? (
-					Array.from({ length: MAX_MONTHS }).map((_, index) => {
-						const monthDate = new Date(
-							startDate ? startDate.getFullYear() : currentMonth.getFullYear(),
-							startDate ? startDate.getMonth() + index : currentMonth.getMonth() + index,
-							1
-						)
-						return (
-							<Box key={index} pt="4" px="4">
-								<MonthHeader
-									month={monthDate}
-								/>
+  return (
+    <Box
+      width="full"
+      overflowY={{ base: 'scroll', md: 'unset' }}
+      height={{ base: 'calc(100% - 143px)', md: 'auto' }}
+    >
+      <Flex
+        alignItems={{ base: 'center', md: 'flex-start' }}
+        direction={{ base: 'column', md: 'row' }}
+        pb="4"
+        pt={{ base: 0, md: 3 }}
+      >
+        {isMobile ? (
+          // Render MAX_MONTHS count of months stacked vertically on mobile
+          Array.from({ length: MAX_MONTHS }).map((_, index) => {
+            const monthDate = moment(moment().toDate())
+              .add(index, 'months')
+              .toDate()
 
-								<DatePickerMonth
-									currentMonth={monthDate}
-									availableDates={availableDates}
-									isLoading={isLoading}
-									onDayClick={onDayClick}
-									selectedFromDate={selectedFromDate}
-									selectedToDate={selectedToDate}
-									dateSelectState={dateSelectState}
-								/>
-							</Box>
-						)
-					})
-				) : (
-					<>
-						<Box pt="4" px="4">
-							<MonthHeader
-								month={currentMonth}
-								onPrevClick={handlePrevMonth}
-								onNextClick={handleNextMonth}
-								isPrevDisabled={isPrevDisabled}
-								isNextDisabled={isNextDisabled}
-							/>
+            return (
+              <Box key={index} pt="4" px="4">
+                <MonthHeader month={monthDate} />
 
+                <DatePickerMonth
+                  currentMonth={monthDate}
+                  isLoading={isLoading}
+                  onDayClick={onDayClick}
+                  selectedFromDate={selectedFromDate}
+                  selectedToDate={selectedToDate}
+                />
+              </Box>
+            )
+          })
+        ) : (
+          <Box pt="4" px="4">
+            <MonthHeader
+              month={currentMonthDate}
+              onPrevClick={handlePrevMonth}
+              onNextClick={handleNextMonth}
+              isPrevDisabled={isPrevDisabled}
+              isNextDisabled={isNextDisabled}
+            />
 
-								<DatePickerMonth
-									currentMonth={currentMonth}
-									availableDates={availableDates}
-									isLoading={isLoading}
-									onDayClick={onDayClick}
-									selectedFromDate={selectedFromDate}
-									selectedToDate={selectedToDate}
-									dateSelectState={dateSelectState}
-								/>
-						</Box>
-					</>
-				)}
-			</Flex>
-		</Box>
-	)
+            <DatePickerMonth
+              currentMonth={currentMonthDate}
+              isLoading={isLoading}
+              onDayClick={onDayClick}
+              selectedFromDate={selectedFromDate}
+              selectedToDate={selectedToDate}
+            />
+          </Box>
+        )}
+      </Flex>
+    </Box>
+  )
 }
 
 const MonthHeader = ({
-	                     month,
-	                     onPrevClick,
-	                     onNextClick,
-	                     isPrevDisabled,
-	                     isNextDisabled
-                     }: {
-	month: Date;
-	onPrevClick?: () => void;
-	onNextClick?: () => void;
-	isPrevDisabled?: boolean;
-	isNextDisabled?: boolean;
+  month,
+  isNextDisabled,
+  isPrevDisabled,
+  onNextClick,
+  onPrevClick
+}: {
+  month: Date
+  onPrevClick?: () => void
+  onNextClick?: () => void
+  isPrevDisabled?: boolean
+  isNextDisabled?: boolean
 }) => {
-	const { t } = useTranslation()
+  const { t } = useTranslation()
 
-	const monthName = month.toLocaleString('en-US', { month: 'long' }).toLowerCase()
-	const year = month.getFullYear()
+  const monthName = month
+    .toLocaleString('default', { month: 'long' })
+    .toLowerCase()
 
-	return (
-		<Flex
-			width="full"
-			justify="space-between"
-			mb="4"
-			align="center"
-		>
-			<Button
-				onClick={() => onPrevClick && onPrevClick()}
-				icon="chevron-left"
-				variant="solid-gray"
-				size="sm"
-				isDisabled={isPrevDisabled}
-				display={{ base: 'none', md: 'inline-flex' }}
-			/>
+  return (
+    <Flex
+      width="full"
+      justify="space-between"
+      mb="4"
+      align="center"
+      // pl={{ md: '8' }}
+      // pr={{ md: '8' }}
+    >
+      {onPrevClick && (
+        <Button
+          onClick={() => onPrevClick()}
+          icon="chevron-left"
+          variant="solid-gray"
+          size="sm"
+          isDisabled={isPrevDisabled}
+          display={{ base: 'none', md: 'inline-flex' }}
+        />
+      )}
 
-			<Text size="md" color="gray.800" align="center" flexGrow="1">
-				{`${t(monthName)} ${year}`}
-			</Text>
+      <Text size="md" color="gray.800" align="center" flexGrow="1">
+        {t(monthName)}
+      </Text>
 
-			<Button
-				onClick={() => onNextClick && onNextClick()}
-				icon="chevron-right"
-				variant="solid-gray"
-				size="sm"
-				isDisabled={isNextDisabled}
-				display={{ base: 'none', md: 'inline-flex' }}
-			/>
-		</Flex>
-	)
+      {onNextClick && (
+        <Button
+          onClick={() => onNextClick()}
+          icon="chevron-right"
+          variant="solid-gray"
+          size="sm"
+          isDisabled={isNextDisabled}
+          display={{ base: 'none', md: 'inline-flex' }}
+        />
+      )}
+    </Flex>
+  )
 }

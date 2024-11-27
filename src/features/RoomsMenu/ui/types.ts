@@ -1,13 +1,12 @@
-import { DictionaryEntity } from '@entities/package'
-
 export type RoomsMenuProps = {
-	defaultRoom?: number
-	onChange?: (roomId: number) => void
-	rooms: RoomItem[]
+  defaultRoom?: number
+  onChange?: (roomId: number) => void
+  rooms: RoomItem[]
+  priceType?: 'room' | 'package'
 }
 
 type RoomItem = {
-	id: number
-	name: string
-	price: number
+  id: number
+  name: string
+  price: number
 }

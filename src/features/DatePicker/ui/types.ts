@@ -1,75 +1,55 @@
-import { ButtonProps } from '@components/Button'
-import { ComponentType, ReactNode } from 'react'
-import { MenuProps } from '@chakra-ui/react'
+import { type ButtonProps, type MenuProps } from '@chakra-ui/react'
+import type { ComponentType } from 'react'
 
-export interface DatePickerProps {
-	fromDate?: Date | null;
-	toDate?: Date | null;
-	onAccept: (fromDate: Date, toDate?: Date | null) => void;
-	onFromDateClick: (date: Date) => void
-	isLoadingReturnDates?: boolean
-	availableDepartureDates: Date[];
-	availableReturnDates: Date[];
-
-	menuProps?: Omit<MenuProps, 'children'>
-	CustomButton?: ComponentType<DatePickerCustomButtonProps>;
+export type DatePickerProps = {
+  fromDate?: Date | null
+  toDate?: Date | null
+  onAccept: (fromDate: Date, toDate?: Date | null) => void
+  CustomButton?: ComponentType<DatePickerCustomButtonProps>
+  menuProps?: Omit<MenuProps, 'children'>
 }
 
-
-export interface DatePickerInputProps {
-	fromDate?: Date;
-	toDate?: Date;
-	isFocused?: boolean;
+export type DatePickerInputProps = {
+  fromDate?: Date
+  toDate?: Date
+  isFocused?: boolean
 }
 
 export type DatePickerCustomButtonProps = {
-	fromDate?: Date;
-	toDate?: Date;
-	isFocused?: boolean;
-	onClick: () => void;
+  fromDate?: Date
+  toDate?: Date
+  isFocused?: boolean
+  onClick: () => void
 }
 
-export interface DatePickerCalendarProps {
-	availableDates: Date[];
-	startDate?: Date
-	onDayClick: (date: Date) => void;
-	selectedFromDate?: Date | null;
-	selectedToDate?: Date | null;
-	isLoading?: boolean;
-	dateSelectState?: DateSelectState;
+export type DatePickerCalendarProps = {
+  onDayClick: (date: Date) => void
+  selectedFromDate?: Date | null
+  selectedToDate?: Date | null
+  isLoading?: boolean
 }
 
-export interface DatePickerMonthProps {
-	currentMonth: Date;
-	availableDates: Date[];
-	onDayClick: (date: Date) => void;
-	selectedFromDate?: Date | null;
-	selectedToDate?: Date | null;
-	isLoading?: boolean
-	dateSelectState?: DateSelectState;
+export type DatePickerMonthProps = {
+  currentMonth: Date
+  onDayClick: (date: Date) => void
+  selectedFromDate?: Date | null
+  selectedToDate?: Date | null
+  isLoading?: boolean
 }
 
 export type DateButtonProps = {
-	isAvailable: boolean;
-	isActive?: boolean;
-	isInRange?: boolean;
-	isSelected: boolean;
-	onClick: (date: Date) => void;
-	date: Date
-} & Omit<ButtonProps, 'onClick'>;
+  isInRange: boolean
+  isSelected: boolean
+  isAvailable: boolean
+  onClick: (date: Date) => void
+  date: Date
+} & Omit<ButtonProps, 'onClick'>
 
-export interface DatePickerFooterProps {
-	onConfirm: () => void;
-	isConfirmDisabled: boolean;
-	fromDate: Date | null;
-	toDate: Date | null;
+export type DatePickerConfirmButtonProps = {
+  onClick: () => void
 }
 
 export type DatePickerHeaderProps = {
-	fromDate?: Date | null;
-	toDate?: Date | null;
-	dateSelectState?: DateSelectState;
-	onFromTabClick: () => void;
-};
-
-export type DateSelectState = 'from' | 'to'
+  fromDate?: Date | null
+  toDate?: Date | null
+}

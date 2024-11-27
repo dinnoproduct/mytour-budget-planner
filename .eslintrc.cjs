@@ -97,6 +97,7 @@ module.exports = {
       'warn',
       { ignoreRestSiblings: true, args: 'after-used' }
     ],
+    '@typescript-eslint/unbound-method': 'off',
     'import/no-named-as-default-member': 'off',
     'import/no-named-as-default': 'off',
     'linebreak-style': ['error', 'unix'],

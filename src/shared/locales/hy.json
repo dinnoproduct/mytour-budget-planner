@@ -10,6 +10,7 @@
   "night": "գիշեր",
   "packageIncludes": "Փաթեթում ներառված է",
   "hotel": "Հյուրանոց",
+  "package": "Փաթեթ",
   "airTicket": "Ավիատոմս",
   "airCompany": "Ավիաընկերություն",
   "departure": "Մեկնում",
@@ -78,6 +79,7 @@
   "backToDetails": "Վերադարձ թռիչքի մանրամասներ",
   "rooms": "Սենյակներ",
   "packagePrice": "Փաթեթի գինը",
+  "roomPrice": "Սենյակի գինը",
   "chooseRoom": "Ընտրել սենյակ",
   "birthDateCount": "Ծննդյան ամսաթիվ {{number}}",
   "buyer": "Գնորդ",
@@ -122,6 +124,8 @@
   "traveler": "ճանապարհորդ",
   "ageAtReturn": "Տարիքը վերադարձի պահին",
   "sharmElSheikh": "Շարմ էլ Շեյխ",
+  "abuDhabi": "Աբու Դաբի",
+  "dubai": "Դուբայ",
 
   "duration": "Ժամանակահատված",
 

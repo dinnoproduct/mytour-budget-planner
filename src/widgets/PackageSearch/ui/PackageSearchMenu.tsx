@@ -1,92 +1,144 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { PackageSearchForm } from './PackageSearchForm.tsx'
 import { PACKAGE_CITIES, usePackagesSearchContext } from '@entities/package'
 import { useTranslation } from 'react-i18next'
-import { Icon, Text } from '@ui'
+import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
+import {
+  HotelTabItem,
+  PackageTabItem
+} from '@widgets/PackageSearch/ui/TabItem.tsx'
 
-export const PackageSearchMenu = () => {
-	const { t } = useTranslation()
-	const { searchData } = usePackagesSearchContext()
-	const [isFormOpen, setFormOpen] = useState(false)
+export const PackageSearchMenu = ({
+  onTabChange,
+  onFormOpen,
+  onFormClose,
+  isFormOpen
+}: any) => {
+  const { t } = useTranslation()
+  const { searchData } = usePackagesSearchContext()
 
-	const formatDate = (date?: Date | null) => {
-		if (!date) {
-			return ''
-		}
+  const formatDate = (date?: Date | null) => {
+    if (!date) {
+      return ''
+    }
 
-		const longMonthName = date.toLocaleString('en-US', { month: 'long' }).toLowerCase();
-		const shortMonthName = t(`${longMonthName}Short`)
-		return `${shortMonthName} ${date.getDate()}`
-	}
+    const longMonthName = date
+      .toLocaleString('en-US', { month: 'long' })
+      .toLowerCase()
+    const shortMonthName = t(`${longMonthName}Short`)
 
-	useEffect(() => {
-		if (isFormOpen) {
-			document.body.style.overflow = 'hidden'
-		} else {
-			document.body.style.overflow = ''
-		}
-	}, [isFormOpen])
+    return `${shortMonthName} ${date.getDate()}`
+  }
 
-	const cityLabel = useMemo(() => {
-			const value  = PACKAGE_CITIES.find(city => searchData.selectedCities.includes(city.id))?.value
-			return value ? t(value) : ''
-		},
-		[searchData.selectedCities]
-	)
+  useEffect(() => {
+    if (isFormOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+  }, [isFormOpen])
 
-	return (
-		<Box height="full">
-			{isFormOpen && (
-				<Box
-					position="absolute"
-					top="310px"
-					left="0"
-					width="100vw"
-					height="100vh"
-					bgColor="whiteAlpha.600"
-					zIndex="-1"
-					onClick={() => setFormOpen(false)}
-				/>
-			)}
+  const cityLabel = useMemo(() => {
+    const value = PACKAGE_CITIES.find(
+      city => searchData.selectedCity === city.id
+    )?.value
 
-			<Box
-				width="368px"
-			>
-				<Box display={isFormOpen ? 'block' : 'none'}>
-					<Flex justify="space-between" align="center">
-						<Text size="sm" color="black">{t`edit`}</Text>
+    return value ? t(value) : ''
+  }, [searchData.selectedCity])
 
-						<Box
-							onClick={() => setFormOpen(false)}
-							cursor="pointer"
-						>
-							<Icon name="close" size="24" color="blue.500"/>
-						</Box>
-					</Flex>
+  const handleFormOpen = () => {
+    onFormOpen()
+  }
 
-					<VStack spacing="4" align="stretch" mt="4">
-						<PackageSearchForm onSearch={() => setFormOpen(false)}/>
-					</VStack>
-				</Box>
+  const handleFormClose = () => {
+    onFormClose()
+  }
 
-				<Box
-					display={isFormOpen ? 'none' : 'block'}
-					onClick={() => setFormOpen(true)}
-					cursor="pointer"
-				>
-					<Flex width="full" justify="space-between">
-						<Text size="sm" color="black" noOfLines={1}>
-							{cityLabel}
-						</Text>
-						<Icon name="edit-note" size="24" color="blue.500"/>
-					</Flex>
-					<Text size="sm" color="gray.500" mt="2" noOfLines={1}>
-						{formatDate(searchData.fromDate)} - {formatDate(searchData.toDate)} • {searchData.travelersData.adultsCount + searchData.travelersData.childrenCount} {capitalize(t`traveler`)}
-					</Text>
-				</Box>
-			</Box>
-		</Box>
-	)
+  return (
+    <Box height="full" width="full">
+      {isFormOpen && (
+        <Box
+          position="absolute"
+          top="310px"
+          left="0"
+          width="100vw"
+          height="100vh"
+          bgColor="whiteAlpha.600"
+          zIndex="-1"
+          onClick={handleFormClose}
+        />
+      )}
+
+      <Box width="full">
+        <Box display={isFormOpen ? 'block' : 'none'}>
+          <Flex
+            justify="space-between"
+            align="center"
+            borderBottom="1px solid"
+            borderColor="gray.100"
+            width="full"
+            p="3"
+          >
+            <Text size="sm" color="black">{t`edit`}</Text>
+
+            <Box onClick={handleFormClose} cursor="pointer">
+              <Icon name="close" size="24" color="blue.500" />
+            </Box>
+          </Flex>
+
+          <Tabs
+            labels={[
+              <PackageTabItem key="package-tab" />,
+              <HotelTabItem key="hotel-tab" />
+            ]}
+            variant="line"
+            align="center"
+            mt="2"
+            defaultIndex={0}
+            onChange={onTabChange}
+          >
+            <></>
+            <></>
+          </Tabs>
+
+          <VStack
+            spacing="4"
+            align="center"
+            mt="-2"
+            pb="3"
+            maxWidth="368px"
+            mx="auto"
+          >
+            <PackageSearchForm onSearch={handleFormClose} />
+          </VStack>
+        </Box>
+
+        <Box
+          display={isFormOpen ? 'none' : 'block'}
+          onClick={handleFormOpen}
+          cursor="pointer"
+          p="3"
+          maxWidth="368px"
+          mx="auto"
+        >
+          <Flex width="full" justify="space-between">
+            <Text size="sm" color="black" noOfLines={1}>
+              {cityLabel}
+            </Text>
+            <Icon name="edit-note" size="24" color="blue.500" />
+          </Flex>
+
+          <Text size="sm" color="gray.500" mt="2" noOfLines={1} align="left">
+            {formatDate(searchData.fromDate)} - {formatDate(searchData.toDate)}{' '}
+            •{' '}
+            {searchData.travelersData.adultsCount +
+              searchData.travelersData.childrenCount}{' '}
+            {capitalize(t`traveler`)}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
+  )
 }

@@ -28,6 +28,8 @@ export const useBookingFlow = ({
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
   const [travelers, setTravelers] = useState<any>({ adults: [], children: [] })
+
+  const [notesJson, setNotesJson] = useState('')
   // const travelersRef = useRef<ITraveler[]>([])
   //
   useEffect(() => {
@@ -63,35 +65,47 @@ export const useBookingFlow = ({
 
   const onPaymentModalSuccess = useCallback(
     async (paymentAmount: number) => {
+      console.log('start booking')
+
       if (!packageDetails || !requestIdRef.current) {
         return
       }
 
       try {
-        const bookInput = {
+        const bookInput: any = {
           requestId: requestIdRef.current,
           cityId: packageDetails.city.id,
           price: packageDetails.price,
           hotelId: packageDetails.hotel.id,
-          startDate: packageDetails.destinationFlight.departureDate,
-          endDate: packageDetails.returnFlight.departureDate,
           travelAgencyId: packageDetails.travelAgency.id,
           offerId: packageDetails.offerId,
-          destinationFlightId: packageDetails.destinationFlight.id,
-          returnFlightId: packageDetails.returnFlight.id,
           roomType: packageDetails.roomType,
           email: user?.email || '',
+          notes: notesJson,
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
           travelers: [...travelers.adults, ...travelers.children]
         }
+
+        if (packageDetails.destinationFlight?.departureDate) {
+          bookInput.startDate = packageDetails.destinationFlight.departureDate
+          bookInput.endDate = packageDetails.returnFlight.departureDate
+          bookInput.destinationFlightId = packageDetails.destinationFlight.id
+          bookInput.returnFlightId = packageDetails.returnFlight.id
+          bookInput.bookingType = 1
+        } else {
+          bookInput.startDate = packageDetails.checkin
+          bookInput.endDate = packageDetails.checkout
+          bookInput.bookingType = 2
+        }
+
         await bookPackageAsync(bookInput)
       } catch (e) {
         setPaymentModalView('paymentError')
       }
     },
-    [requestIdRef.current, packageDetails?.offerId, travelers]
+    [requestIdRef.current, packageDetails?.offerId, travelers, notesJson]
   )
 
   useEffect(() => {
@@ -176,8 +190,9 @@ export const useBookingFlow = ({
         travelers: data,
         isSoldOut: false
       })
+      setNotesJson(notesJson)
 
-      const requestInput = {
+      const requestInput: any = {
         offerId: packageDetails.offerId,
         travelers: [...data.adults, ...data.children],
         cityId: packageDetails.city.id,
@@ -185,11 +200,21 @@ export const useBookingFlow = ({
         price: packageDetails.price,
         roomType: packageDetails.roomType,
         travelAgencyId: packageDetails.travelAgency.id,
-        startDate: packageDetails.destinationFlight.departureDate,
-        endDate: packageDetails.returnFlight.departureDate,
-        destinationFlightId: packageDetails.destinationFlight.id,
-        returnFlightId: packageDetails.returnFlight.id,
+        // startDate: packageDetails.destinationFlight.departureDate,
+        // endDate: packageDetails.returnFlight.departureDate,
+        // destinationFlightId: packageDetails.destinationFlight.id,
+        // returnFlightId: packageDetails.returnFlight.id,
         notes: notesJson
+      }
+
+      if (packageDetails.destinationFlight?.departureDate) {
+        requestInput.startDate = packageDetails.destinationFlight.departureDate
+        requestInput.endDate = packageDetails.returnFlight.departureDate
+        requestInput.destinationFlightId = packageDetails.destinationFlight.id
+        requestInput.returnFlightId = packageDetails.returnFlight.id
+      } else {
+        requestInput.startDate = packageDetails.checkin
+        requestInput.endDate = packageDetails.checkout
       }
 
       if (!requestIdRef.current) {

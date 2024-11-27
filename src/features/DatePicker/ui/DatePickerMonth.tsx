@@ -1,114 +1,250 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Box, SimpleGrid, Button } from '@chakra-ui/react'
-import { DateButtonProps, DatePickerMonthProps } from './types'
+import { type DateButtonProps, type DatePickerMonthProps } from './types'
 import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 
 export const DatePickerMonth = ({
-	                                currentMonth,
-	                                availableDates,
-	                                onDayClick,
-	                                selectedFromDate,
-	                                selectedToDate,
-	                                isLoading,
-	                                dateSelectState
-                                }: DatePickerMonthProps) => {
-	const { t } = useTranslation()
-	const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
-	const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0)
+  currentMonth,
+  onDayClick,
+  selectedFromDate,
+  selectedToDate
+}: DatePickerMonthProps) => {
+  const { t } = useTranslation()
+  const startOfMonth = useMemo(
+    () => moment(currentMonth).startOf('month').toDate(),
+    [currentMonth]
+  )
+  const endOfMonth = useMemo(
+    () => moment(currentMonth).endOf('month').toDate(),
+    [currentMonth]
+  )
 
-	const daysInMonth = []
-	for (let i = startOfMonth.getDay(); i > 0; i--) {
-		daysInMonth.push(null) // Padding days from the previous month
-	}
+  const daysInMonth = []
 
-	for (let day = 1; day <= endOfMonth.getDate(); day++) {
-		const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
-		daysInMonth.push(date)
-	}
+  for (let i = startOfMonth.getDay(); i > 0; i--) {
+    daysInMonth.push(null) // Padding days from the previous month
+  }
 
-	return (
-		<Box>
-			<SimpleGrid columns={7} spacing="4px" mb="4">
-				{['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
-					<Text key={day} size="xs" align="center" color="gray.500">{t(day)}</Text>
-				))}
-			</SimpleGrid>
+  for (let day = 1; day <= endOfMonth.getDate(); day++) {
+    const date = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      day
+    )
+    daysInMonth.push(date)
+  }
 
-			<SimpleGrid columns={7} spacing="4px">
-				{daysInMonth.map((date, index) => {
-					if (!date) {
-						return <Box key={index}/> // Empty box for padding
-					}
+  return (
+    <Box>
+      <SimpleGrid columns={7} spacing="4px" mb="4">
+        {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
+          <Text key={day} size="xs" align="center" color="gray.500">
+            {t(day)}
+          </Text>
+        ))}
+      </SimpleGrid>
 
-					const isAvailable = !isLoading && availableDates.some(d => moment(d).isSame(date, 'day'))
-					const isSelected =
-						(dateSelectState === 'from' && selectedFromDate && moment(date).isSame(selectedFromDate, 'day')) ||
-						(dateSelectState === 'to' && selectedToDate && moment(date).isSame(selectedToDate, 'day'));
-					const isInRange = false
-					// selectedFromDate && selectedToDate && moment(date).isBetween(selectedFromDate, selectedToDate, 'day', '()')
+      <SimpleGrid columns={7} spacing="4px">
+        {daysInMonth.map((date, index) => {
+          if (!date) {
+            return <Box key={index} /> // Empty box for padding
+          }
 
-					return (
-						<DateButton
-							key={index}
-							date={date}
-							isAvailable={isAvailable}
-							isSelected={!!isSelected}
-							isInRange={isInRange}
-							onClick={onDayClick}
-							isLoading={isLoading}
-						/>
-					)
-				})}
-			</SimpleGrid>
-		</Box>
-	)
+          const isSelected =
+            (selectedFromDate &&
+              moment(date).isSame(selectedFromDate, 'day')) ||
+            (selectedToDate && moment(date).isSame(selectedToDate, 'day'))
+          const isInRange =
+            selectedFromDate &&
+            selectedToDate &&
+            moment(date).isBetween(
+              selectedFromDate,
+              selectedToDate,
+              'day',
+              '()'
+            )
+
+          return (
+            <DateButton
+              key={index}
+              date={date}
+              isSelected={!!isSelected}
+              isInRange={!!isInRange}
+              onClick={onDayClick}
+              isAvailable={moment(date) >= moment().startOf('day')}
+            />
+          )
+        })}
+      </SimpleGrid>
+    </Box>
+  )
 }
 
-const DateButton = ({ date, isAvailable, isSelected, isInRange, isLoading, onClick, ...props }: DateButtonProps) => {
-	return (
-		<Button
-			onClick={() => isAvailable && onClick(date)}
-			isDisabled={!isAvailable || isLoading}
-			border="1px solid"
-			borderColor={isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent'}
-			bgColor={isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50'}
-			color={isSelected ? 'white' : isInRange ? 'blue.500' : isAvailable ? 'gray.500' : 'blackAlpha.300'}
-			rounded="base"
-			height="48px"
-			width="48px"
-			fontSize="text-xs"
-			lineHeight="text-xs"
-			_hover={{
-				borderColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent',
-				bgColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50',
-				color: isSelected ? 'white' : isInRange ? 'blue.500' : isAvailable ? 'gray.500' : 'blackAlpha.300'
-			}}
-			_disabled={{
-				borderColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent',
-				bgColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50',
-				color: isSelected ? 'white' : isInRange ? 'blue.500' : isAvailable ? 'gray.500' : 'blackAlpha.300',
-				cursor: 'not-allowed'
-			}}
-			_focus={{
-				borderColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent',
-				bgColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50',
-				color: isSelected ? 'white' : isInRange ? 'blue.500' : isAvailable ? 'gray.500' : 'blackAlpha.300'
-			}}
-			_focusVisible={{
-				borderColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent',
-				bgColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50',
-				color: isSelected ? 'white' : isInRange ? 'blue.500' : isAvailable ? 'gray.500' : 'blackAlpha.300'
-			}}
-			_active={{
-				borderColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'gray.400' : 'transparent',
-				bgColor: isSelected ? 'blue.500' : isInRange ? 'blue.50' : isAvailable ? 'white' : 'blackAlpha.50',
-				color: isSelected ? 'white' : isInRange ? 'blue.500' : isAvailable ? 'gray.500' : 'blackAlpha.300'
-			}}
-			{...props}
-		>
-			{date.getDate()}
-		</Button>
-	)
-}
+const DateButton = ({
+  date,
+  isAvailable,
+  isSelected,
+  isInRange,
+  isLoading,
+  onClick,
+  ...props
+}: DateButtonProps) => (
+  <Button
+    onClick={() => isAvailable && onClick(date)}
+    isDisabled={!isAvailable || isLoading}
+    border="1px solid"
+    borderColor={
+      isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'gray.400'
+            : 'transparent'
+    }
+    bgColor={
+      isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'white'
+            : 'blackAlpha.50'
+    }
+    color={
+      isSelected
+        ? 'white'
+        : isInRange
+          ? 'blue.500'
+          : isAvailable
+            ? 'gray.500'
+            : 'blackAlpha.300'
+    }
+    rounded="base"
+    height="48px"
+    width="48px"
+    fontSize="text-xs"
+    lineHeight="text-xs"
+    _hover={{
+      borderColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'gray.400'
+            : 'transparent',
+      bgColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'white'
+            : 'blackAlpha.50',
+      color: isSelected
+        ? 'white'
+        : isInRange
+          ? 'blue.500'
+          : isAvailable
+            ? 'gray.500'
+            : 'blackAlpha.300'
+    }}
+    _disabled={{
+      borderColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'gray.400'
+            : 'transparent',
+      bgColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'white'
+            : 'blackAlpha.50',
+      color: isSelected
+        ? 'white'
+        : isInRange
+          ? 'blue.500'
+          : isAvailable
+            ? 'gray.500'
+            : 'blackAlpha.300',
+      cursor: 'not-allowed'
+    }}
+    _focus={{
+      borderColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'gray.400'
+            : 'transparent',
+      bgColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'white'
+            : 'blackAlpha.50',
+      color: isSelected
+        ? 'white'
+        : isInRange
+          ? 'blue.500'
+          : isAvailable
+            ? 'gray.500'
+            : 'blackAlpha.300'
+    }}
+    _focusVisible={{
+      borderColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'gray.400'
+            : 'transparent',
+      bgColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'white'
+            : 'blackAlpha.50',
+      color: isSelected
+        ? 'white'
+        : isInRange
+          ? 'blue.500'
+          : isAvailable
+            ? 'gray.500'
+            : 'blackAlpha.300'
+    }}
+    _active={{
+      borderColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'gray.400'
+            : 'transparent',
+      bgColor: isSelected
+        ? 'blue.500'
+        : isInRange
+          ? 'blue.50'
+          : isAvailable
+            ? 'white'
+            : 'blackAlpha.50',
+      color: isSelected
+        ? 'white'
+        : isInRange
+          ? 'blue.500'
+          : isAvailable
+            ? 'gray.500'
+            : 'blackAlpha.300'
+    }}
+    {...props}
+  >
+    {date.getDate()}
+  </Button>
+)

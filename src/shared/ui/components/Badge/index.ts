@@ -1,3 +1,4 @@
 export * from './HotelStarBadge.tsx'
 export * from './StatusOnImageBadge.tsx'
 export * from './StartDateBadge.tsx'
+export * from './SearchTabBadge.tsx'

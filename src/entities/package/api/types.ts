@@ -31,6 +31,15 @@ export type SearchPackagesParams = {
   dateTo?: string
 }
 
+export type SearchHotelPackagesParams = {
+  travelAgencyId?: number
+  cities: number[]
+  adults: number
+  childs?: number[]
+  dateFrom?: string
+  dateTo?: string
+}
+
 export type GetFlightsByDateParams = {
   date: string
   travelAgency: number
@@ -44,6 +53,14 @@ export type GenerateOffersInput = {
   adults: number
   childs: number[]
   lateCheckout: boolean
+}
+
+export type GenerateHotelOffersInput = {
+  hotelId: number
+  adults: number
+  childs: number[]
+  checkin: string
+  checkout: string
 }
 
 export type BookPackageInput = {

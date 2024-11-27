@@ -1,0 +1,1 @@
+export { HotelPackageBookingConfig } from './ui'

@@ -30,6 +30,7 @@ export const BookingFlow = ({
     requestId,
     defaultTravelers
   })
+  console.log('booking flow packageDetails : ', packageDetails)
 
   if (!packageDetails?.offerId || !isOpen) {
     return null
