@@ -21,7 +21,6 @@ export const SearchCities = ({
   }, [defaultSelectedCity])
 
   const handleCitySelect = (cityId: number) => {
-    console.log('handleCitySelect', cityId)
     setSelectedCity(cityId)
     onChange && onChange(cityId)
     setDropdownOpen(false)

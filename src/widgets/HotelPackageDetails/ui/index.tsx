@@ -10,7 +10,6 @@ import { useMemo } from 'react'
 
 export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
   const { t } = useTranslation()
-  console.log('HotelPackageDetails@tourPackage : ', tourPackage)
 
   const { data: foodTypes = [] } = useDictionary(
     'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary

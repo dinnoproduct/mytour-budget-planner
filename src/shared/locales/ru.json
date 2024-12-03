@@ -209,5 +209,11 @@
   "paymentSuccessModalText": "Спасибо. Ваш пакет успешно забронирован.",
   "personalInformation": "Персональная информация",
   "save": "Сохранять",
-  "personalInformationUpdated": "Ваша информация обновлена"
+  "personalInformationUpdated": "Ваша информация обновлена",
+  "soon": "Скоро",
+  "scanQRText": "Отсканируйте QR-код для завершения оплаты.",
+  "new": "Новый",
+  "bankCard": "Банковская карта",
+  "onlineLoan": "Онлайн-кредит",
+  "paymentMethod": "Способ оплаты"
 }

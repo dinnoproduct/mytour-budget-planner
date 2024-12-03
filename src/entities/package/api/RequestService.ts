@@ -28,7 +28,8 @@ export class RequestService {
   ): Promise<BookPackageResponse> {
     return this.api.post('book', input, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        Platform: 'Web'
       }
     })
   }

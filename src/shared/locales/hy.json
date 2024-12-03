@@ -276,5 +276,11 @@
   "paymentSuccessModalText": "Շնորհակալություն։ Ձեր փաթեթը հաջողությամբ ամրագրվել է:",
   "personalInformation": "Անձնական տվյալներ",
   "save": "Պահպանել",
-  "personalInformationUpdated": "Ձեր տվյալները թարմացվել են"
+  "personalInformationUpdated": "Ձեր տվյալները թարմացվել են",
+  "soon": "Շուտով",
+  "scanQRText": "Խնդրում ենք սկանավորել QR կոդը՝ վճարումը շարունակելու համար։",
+  "new": "Նոր",
+  "bankCard": "Բանկային քարտ",
+  "onlineLoan": "Օնլայն ապառիկ",
+  "paymentMethod": "Վճարման եղանակ"
 }

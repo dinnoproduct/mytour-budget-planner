@@ -33,10 +33,6 @@ export const HotelPackageDetailsPage = () => {
   const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
   const { packageDetails, isLoading } = useSearchHotelPackage()
   const currentOfferPackage = useCurrentHotelPackageOfferValue()
-  console.log(
-    'HotelPackageDetailsPage@currentOfferPackage : ',
-    currentOfferPackage
-  )
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
 

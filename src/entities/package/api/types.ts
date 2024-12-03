@@ -81,6 +81,12 @@ export type BookPackageInput = {
   email: string
   phoneNumber: string
   amountToBePaid: number
+  paymentSystem: PaymentSystem
+}
+
+export enum PaymentSystem {
+  'VPos' = 'VPos',
+  'MyAmeriaPay' = 'MyAmeriaPay'
 }
 
 interface BookPackageTraveler {

@@ -16,8 +16,6 @@ export const Layout = (
 		children,
 		isOpen,
 		closeModal,
-		title,
-		onBackClick
 	}: LayoutProps) => {
 	const modalContentRef = useRef<HTMLDivElement>(null)
 
@@ -26,21 +24,14 @@ export const Layout = (
 			isOpen={isOpen}
 			onClose={closeModal}
 			isCentered
-			size="travelers"
+			size="auth"
 			initialFocusRef={modalContentRef}
 		>
 			<ModalOverlay/>
 
 			<ModalContent ref={modalContentRef}>
 				<ModalHeader p="4" borderBottom="1px solid" borderColor="gray.100">
-					<Flex width="full" justify="space-between" align="center">
-						<Flex align="center">
-							{onBackClick ? (
-								<Button icon="arrow-back" variant="text-blue" size="lg" onClick={onBackClick}/>
-							) : null}
-							<Text size="lg" fontWeight="medium">{title}</Text>
-						</Flex>
-
+					<Flex width="full" justify="end" align="center">
 						<Button
 							variant="text-blue"
 							size="lg"

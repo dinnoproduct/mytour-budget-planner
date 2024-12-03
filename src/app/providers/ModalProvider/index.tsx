@@ -12,9 +12,10 @@ import {
 } from './types'
 import { AuthModal } from '@widgets/AuthModal'
 import { TravelersModal } from '@widgets/TravelersModal'
-import { PaymentModal } from '@widgets/PaymentModal'
+import { PaymentModal } from '@widgets/BookingFlow'
 import { PaymentSuccessModal, RequestCancelModal } from '@entities/package'
 import { ProfileDetailsModal } from '@widgets/ProfileDetailsModal'
+import { PaymentErrorModal } from '@entities/package/ui/PaymentErrorModal'
 
 const modals: {
   [key in ModalType]: React.ComponentType<any>
@@ -24,7 +25,8 @@ const modals: {
   payment: PaymentModal,
   paymentSuccess: PaymentSuccessModal,
   requestCancel: RequestCancelModal,
-  profileDetails: ProfileDetailsModal
+  profileDetails: ProfileDetailsModal,
+  paymentError: PaymentErrorModal
 }
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {

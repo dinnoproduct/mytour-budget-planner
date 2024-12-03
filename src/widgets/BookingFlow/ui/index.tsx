@@ -1,4 +1,4 @@
-import { PaymentModal } from '@widgets/PaymentModal'
+import { PaymentModal } from './PaymentModal'
 import { TravelersModal } from '@widgets/TravelersModal'
 import type { BookingFlowProps } from '@widgets/BookingFlow/ui/types.ts'
 import { useBookingFlow } from '../hooks'
@@ -30,7 +30,6 @@ export const BookingFlow = ({
     requestId,
     defaultTravelers
   })
-  console.log('booking flow packageDetails : ', packageDetails)
 
   if (!packageDetails?.offerId || !isOpen) {
     return null

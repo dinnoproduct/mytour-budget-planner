@@ -28,12 +28,19 @@ export const HomePage = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
+    const successState = queryParams.get('success')?.toLowerCase()
+    const paymentStatusModal =
+      successState === 'true'
+        ? 'paymentSuccess'
+        : successState === 'false'
+          ? 'paymentError'
+          : null
 
-    if (queryParams.get('success')?.toLowerCase() === 'true') {
+    if (paymentStatusModal) {
       setTimeout(() => {
         dispatchModal({
           type: 'open',
-          modalType: 'paymentSuccess'
+          modalType: paymentStatusModal
         })
       }, 0)
     }

@@ -94,11 +94,6 @@ const FixedSearchView = ({
     setActiveTab(index)
   }
 
-  console.log('search data : ', {
-    activeTab,
-    isFormOpen
-  })
-
   return (
     <LayoutFixed
       containerProps={containerProps}

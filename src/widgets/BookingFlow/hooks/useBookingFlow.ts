@@ -1,14 +1,18 @@
 import { useUserContext } from '@entities/user'
 import {
   type PackageEntity,
+  type PaymentSystem,
   useBookPackage,
   useCreateRequest,
   useUpdateRequest
 } from '@entities/package'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { PaymentModalView } from '@widgets/PaymentModal'
+import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
+import { isMobile } from 'react-device-detect'
 
 import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
+import { useTranslation } from 'react-i18next'
+import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
 
 export const useBookingFlow = ({
   packageDetails,
@@ -20,6 +24,7 @@ export const useBookingFlow = ({
   defaultTravelers
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
+  const { i18n } = useTranslation()
   const { mutateAsync: createRequestAsync } = useCreateRequest()
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
@@ -64,9 +69,7 @@ export const useBookingFlow = ({
   }
 
   const onPaymentModalSuccess = useCallback(
-    async (paymentAmount: number) => {
-      console.log('start booking')
-
+    async (paymentAmount: number, paymentSystem: PaymentSystem) => {
       if (!packageDetails || !requestIdRef.current) {
         return
       }
@@ -85,7 +88,8 @@ export const useBookingFlow = ({
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
-          travelers: [...travelers.adults, ...travelers.children]
+          travelers: [...travelers.adults, ...travelers.children],
+          paymentSystem
         }
 
         if (packageDetails.destinationFlight?.departureDate) {
@@ -100,7 +104,25 @@ export const useBookingFlow = ({
           bookInput.bookingType = 2
         }
 
-        await bookPackageAsync(bookInput)
+        const bookResponse = await bookPackageAsync(bookInput)
+
+        if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
+          window.location.href =
+            bookResponse.bookingPaymentUrl +
+            `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`
+
+          return
+        } else if (
+          paymentSystem === ('MyAmeriaPay' as PaymentSystem.MyAmeriaPay)
+        ) {
+          if (isMobile) {
+            window.location.href = bookResponse.bookingPaymentUrl
+
+            return
+          }
+
+          return bookResponse.bookingPaymentUrl
+        }
       } catch (e) {
         setPaymentModalView('paymentError')
       }

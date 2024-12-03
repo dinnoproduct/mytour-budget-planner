@@ -1,0 +1,70 @@
+import { type ReactNode } from 'react'
+import { type PackageEntity, type PaymentSystem } from '@entities/package'
+import { type RadioProps } from '@ui'
+
+export type PaymentModalProps = {
+  closeModal: () => void
+  onSuccess: (
+    paymentAmount: number,
+    paymentSystem: PaymentSystem
+  ) => Promise<string | undefined>
+  onBackClick?: () => void
+  packageDetails: PackageEntity
+  isOpen?: boolean
+  view?: PaymentModalView
+}
+
+export type PaymentFormViewProps = {
+  onSubmit: (paymentAmount: number) => void
+  packageDetails: PackageEntity
+}
+
+export type PaymentMethodViewProps = {
+  onSubmit: (method: PaymentMethod) => Promise<void>
+}
+
+export type LayoutProps = {
+  children: ReactNode
+  isOpen: boolean
+  closeModal: () => void
+  title: string
+  onBackClick?: () => void
+}
+
+export type PaymentModalView =
+  | 'paymentForm'
+  | 'paymentError'
+  | 'paymentMethod'
+  | 'ameriaPay'
+
+export enum PaymentMethod {
+  bankCard = 'bankCard',
+  ameriaPay = 'ameriaPay'
+}
+
+export type PaymentMethodCardProps = {
+  label: string
+  imgSrc: string
+  imgAlt?: string
+  radioProps?: RadioProps
+  isBorder?: boolean
+  isDisabled?: boolean
+  labelSuffix?: ReactNode
+}
+
+export const VIEW_CONTENT_MAP: {
+  [key in PaymentModalView]: { title: string }
+} = {
+  paymentForm: {
+    title: 'payment'
+  },
+  paymentMethod: {
+    title: 'paymentMethod'
+  },
+  paymentError: {
+    title: ''
+  },
+  ameriaPay: {
+    title: 'MyAmeria'
+  }
+}

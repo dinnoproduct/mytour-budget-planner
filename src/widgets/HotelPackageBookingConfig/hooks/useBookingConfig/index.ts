@@ -31,7 +31,6 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     hotelId: defaultTourPackage.hotel.id,
     roomId: defaultTourPackage.roomType
   })
-  console.log('defaultTourPackage : ', defaultTourPackage)
 
   const updateBookingData = (data: Partial<typeof bookingData>) => {
     setBookingData(prevState => ({
@@ -64,7 +63,6 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         enabled: true
       }
     )
-  console.log('offers : ', offers)
 
   // rooms
   const { data: roomTypes = [] } = useDictionary(

@@ -13,6 +13,7 @@ export type ModalType =
   | 'paymentSuccess'
   | 'requestCancel'
   | 'profileDetails'
+  | 'paymentError'
 
 export type modalReducerType = Reducer<
   IModalReducerState,

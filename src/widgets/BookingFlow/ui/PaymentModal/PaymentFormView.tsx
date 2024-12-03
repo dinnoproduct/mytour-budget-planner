@@ -1,12 +1,12 @@
-import { Box, Flex, Text } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { Button, Checkbox, Input } from '@/shared/ui/index.ts'
-import { type PaymentFormViewProps } from '@widgets/PaymentModal/ui/types.ts'
+import { Button, Checkbox, Input, Text } from '@ui'
+import { type PaymentFormViewProps } from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
 import { overDaysFromNow } from '@/utils/methods.ts'
 import { useMemo, useState } from 'react'
 
 export const PaymentFormView = ({
-  onSuccess,
+  onSubmit,
   packageDetails
 }: PaymentFormViewProps) => {
   const { t } = useTranslation()
@@ -26,7 +26,6 @@ export const PaymentFormView = ({
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
 
   const handleAmountChange = (value: string | number) => {
     const number = Number(value)
@@ -68,8 +67,7 @@ export const PaymentFormView = ({
     }
 
     e.preventDefault()
-    onSuccess(+paymentAmount)
-    setIsLoading(true)
+    onSubmit(+paymentAmount)
   }
 
   return (
@@ -123,7 +121,7 @@ export const PaymentFormView = ({
           {t`payInFull`}
         </Checkbox>
 
-        <Text size="xs" color="gray.600" mt="6">
+        <Text size="xs" color="gray.600" mt="6" letterSpacing="-0.31px">
           {t`partialPaymentText`}
         </Text>
       </Flex>
@@ -141,10 +139,9 @@ export const PaymentFormView = ({
           type="submit"
           size="lg"
           width="full"
-          isLoading={isLoading}
           isDisabled={isDisabled}
         >
-          {t`pay`}
+          {t`continue`}
         </Button>
       </Box>
     </Flex>

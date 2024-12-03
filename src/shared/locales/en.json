@@ -208,5 +208,11 @@
   "paymentSuccessModalText": "Thank you. Your package is successfully booked.",
   "personalInformation": "Personal information",
   "save": "Save",
-  "personalInformationUpdated": "Your information has been updated"
+  "personalInformationUpdated": "Your information has been updated",
+  "soon": "Coming soon",
+  "scanQRText": "Please scan the QR code to proceed with payment.",
+  "new": "New",
+  "bankCard": "Bank Card",
+  "onlineLoan": "Online Loan",
+  "paymentMethod": "Payment method"
 }

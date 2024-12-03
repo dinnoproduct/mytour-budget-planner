@@ -19,8 +19,6 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
     setSearchData({ fromDate, toDate })
   }
 
-  console.log('HotelSearchForm', searchData)
-
   const handleSearchClick = () => {
     handleSearch(searchData)
     onSearch && onSearch()
@@ -31,7 +29,6 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
       <SearchCities
         defaultSelectedCity={searchData.selectedCity}
         onChange={selectedCity => {
-          console.log('selectedCity', selectedCity)
           setSearchData({ selectedCity })
         }}
         cities={HOTEL_PACKAGE_CITIES}
