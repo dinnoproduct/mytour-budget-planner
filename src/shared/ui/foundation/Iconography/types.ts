@@ -66,6 +66,7 @@ export type IconName =
   | 'wifi'
   | 'hotels'
   | 'packages'
+  | 'approximate'
 
 export type IconSize =
   | '12'

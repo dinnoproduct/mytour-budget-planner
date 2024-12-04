@@ -16,8 +16,9 @@ import { RoomsMenu } from '@features/RoomsMenu'
 import { useBookingConfig, useFreeCancellation } from '../hooks'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import { useBreakpoint } from '@shared/hooks'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { DatePicker } from '@features/DatePicker'
+import { approximateNumber, formatNumber } from '@shared/utils'
 
 export const HotelPackageBookingConfig = ({
   tourPackage,
@@ -75,6 +76,12 @@ export const HotelPackageBookingConfig = ({
         childrenAges: bookingData.travelersData.childrenAges
       })
   }
+
+  const usdPrice = useMemo(
+    () =>
+      formatNumber(approximateNumber(tourPackage.price, tourPackage.usdRate)),
+    [tourPackage.price, tourPackage.usdRate]
+  )
 
   return (
     <Layout isFixed={isFixed} {...props}>
@@ -154,6 +161,14 @@ export const HotelPackageBookingConfig = ({
 
           <Text size="lg" fontWeight="bold" ml="2">
             {numberWithCommaNormalizer(selectedOffer?.price)} ֏
+          </Text>
+        </Flex>
+
+        <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
+          <Icon name="approximate" size="20" color="gray.500" />
+
+          <Text size="sm" color="gray.500" ml="0.5">
+            $ {usdPrice}
           </Text>
         </Flex>
 

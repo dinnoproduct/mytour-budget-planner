@@ -5,7 +5,7 @@ import ImageSlider from './ImageSlider.tsx'
 import { type ReactNode, useMemo } from 'react'
 import { LANGUAGE_PREFIX } from '@shared/model'
 import { type Language } from '@widgets/Header/model'
-import { Text } from '@ui'
+import { Icon, Text } from '@ui'
 import { Link as ReactLink } from 'react-router-dom'
 import {
   type PackageCity,
@@ -14,6 +14,7 @@ import {
 } from '@entities/package'
 import { getPluralForm } from '@shared/helpers'
 import { type PackageCardProps } from './types.ts'
+import { approximateNumber, formatNumber } from '@shared/utils'
 
 export const PackageCard = ({
   tourPackage = {},
@@ -62,6 +63,12 @@ export const PackageCard = ({
     languageSuffix
   ])
 
+  const usdPrice = useMemo(
+    () =>
+      formatNumber(approximateNumber(tourPackage.price, tourPackage.usdRate)),
+    [tourPackage.price, tourPackage.usdRate]
+  )
+
   return (
     <Layout link={link} {...props}>
       <ImageSlider
@@ -97,6 +104,14 @@ export const PackageCard = ({
             {/*		{numberWithCommaNormalizer(tourPackage.oldPrice)} ֏*/}
             {/*	</Text>*/}
             {/*	: null}*/}
+          </Flex>
+
+          <Flex height="28px" mt="1" align="center">
+            <Icon name="approximate" size="20" color="gray.600" />
+
+            <Text size="sm" color="gray.600" ml="0.5">
+              $ {usdPrice}
+            </Text>
           </Flex>
 
           <Text mt="1" size="sm" color="gray.600">

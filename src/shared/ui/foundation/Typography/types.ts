@@ -1,6 +1,7 @@
 import {
   type HeadingProps as ChakraHeadingProps,
-  type TextProps as ChakraTextProps
+  type TextProps as ChakraTextProps,
+  type LinkProps as ChakraLinkProps
 } from '@chakra-ui/react'
 import { type ReactNode } from 'react'
 
@@ -37,6 +38,7 @@ export type TextProps = {
   children: ReactNode | ReactNode[]
   size?: TextFontSizeType | Record<string, TextFontSizeType>
   as?:
+    | 'a'
     | 'p'
     | 'span'
     | 'div'
@@ -49,7 +51,8 @@ export type TextProps = {
     | 'h5'
     | 'h6'
   color?: string
-} & ChakraTextProps
+} & ChakraTextProps &
+  ChakraLinkProps
 
 export type HeadingProps = {
   children: ReactNode | ReactNode[]
