@@ -214,5 +214,8 @@
   "new": "New",
   "bankCard": "Bank Card",
   "onlineLoan": "Online Loan",
-  "paymentMethod": "Payment method"
+  "paymentMethod": "Payment method",
+  "aboutUs.mainText": "About Us",
+  "aboutUs.subText": "MyTour is a travel platform that helps you plan your next journey by allowing you to find the best tours in one place, explore them, and book online.",
+  "aboutUs.buttonLabel": "Learn More"
 }

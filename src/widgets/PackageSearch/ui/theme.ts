@@ -8,7 +8,7 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
       px: { base: 4, md: '6' }
     },
     contentWrapper: {
-      maxWidth: { base: '400px', md: '1446px' },
+      maxWidth: { base: '400px', md: '1140px' },
       width: 'full',
       mx: 'auto',
       align: 'center'

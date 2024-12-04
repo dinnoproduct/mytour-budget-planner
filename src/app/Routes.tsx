@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom'
 import PackagesRoutes from '../modules/packages/routes/PackagesRoutes'
 import useBreakpoint from '../hooks/useBreakpoint'
-import { HomePage } from '../pages/HomePage.tsx'
+import { HomePage } from '@pages/HomePage'
 import { PackageListPage } from '@pages/PackageListPage'
 import { PackageDetailsPage } from '@pages/PackageDetailsPage'
 import { useScrollToTop } from '@shared/hooks'

@@ -1,12 +1,15 @@
-import { MouseEvent, ReactNode } from 'react'
-import {ButtonProps as ChakraButtonProps} from '@chakra-ui/react'
-import { IconName } from '@foundation/Iconography'
+import { type MouseEvent, type ReactNode } from 'react'
+import {
+  type ButtonProps as ChakraButtonProps,
+  type LinkProps as ChakraLinkProps
+} from '@chakra-ui/react'
+import { type IconName } from '@foundation/Iconography'
 
 export type ButtonProps = {
   children?: ReactNode
   variant?: ButtonVariant
   size?: ButtonSize
-  href?: string,
+  href?: string
   to?: string
   isDisabled?: boolean
   iconBefore?: IconName
@@ -17,15 +20,16 @@ export type ButtonProps = {
   onMouseUp?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void
   onMouseLeave?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void
   onMouseEnter?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void
-} & ChakraButtonProps
+} & ChakraButtonProps &
+  ChakraLinkProps
 
 export type ButtonVariant =
-  'solid-blue'
-| 'solid-gray'
-| 'solid-red'
-| 'outline-blue'
-| 'outline-red'
-| 'text-blue'
+  | 'solid-blue'
+  | 'solid-gray'
+  | 'solid-red'
+  | 'outline-blue'
+  | 'outline-red'
+  | 'text-blue'
 
 export type ButtonSize = 'lg' | 'md' | 'sm' | 'xs'
 

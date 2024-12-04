@@ -1,0 +1,67 @@
+import { Header } from '@widgets/Header'
+import { Box } from '@chakra-ui/react'
+import { Footer } from '@ui'
+import { PackageSearch } from '@widgets/PackageSearch'
+import { HotOffersSection } from '@widgets/HotOffersSection'
+import { useEffect } from 'react'
+import { useModalContext } from '@app/providers'
+import { useLocation } from 'react-router-dom'
+import { PackageBanner } from './PackageBanner'
+import { AppSection } from './AppSection.tsx'
+import { AboutUsBanner } from './AboutUsBanner.tsx'
+
+export const HomePage = () => {
+  const { dispatchModal } = useModalContext()
+  const location = useLocation()
+
+  useEffect(() => {
+    const scriptId = 'EmbedSocialHashtagScript'
+
+    if (document.getElementById(scriptId)) {
+      return
+    }
+
+    const script = document.createElement('script')
+    script.id = scriptId
+    script.src = 'https://embedsocial.com/cdn/ht.js'
+    document.head.appendChild(script)
+  }, [])
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search)
+    const successState = queryParams.get('success')?.toLowerCase()
+    const paymentStatusModal =
+      successState === 'true'
+        ? 'paymentSuccess'
+        : successState === 'false'
+          ? 'paymentError'
+          : null
+
+    if (paymentStatusModal) {
+      setTimeout(() => {
+        dispatchModal({
+          type: 'open',
+          modalType: paymentStatusModal
+        })
+      }, 0)
+    }
+  }, [JSON.stringify(location.search), dispatchModal])
+
+  return (
+    <Box overflowX="hidden">
+      <Header />
+      <PackageSearch variant="centered" />
+      <PackageBanner mt={{ base: '60px', md: 20 }} />
+      <HotOffersSection mt={{ base: '62px', md: '84px' }} />
+      <AppSection />
+      <AboutUsBanner />
+
+      {/*<div*/}
+      {/*  className="embedsocial-hashtag"*/}
+      {/*  data-ref="f348cf39b90fa99e65cfce589513e45493bd6815"*/}
+      {/*></div>*/}
+
+      <Footer />
+    </Box>
+  )
+}
