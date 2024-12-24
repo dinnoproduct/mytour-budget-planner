@@ -1,18 +1,19 @@
 import { Box, Flex, Menu, MenuButton, MenuList, VStack } from '@chakra-ui/react'
 import { Icon, Input, Text } from '@ui'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type SearchCitiesProps } from './types.ts'
-import { type PackageCityOption } from '@entities/package/model/types.ts'
+import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
+import type { PackageCity } from '@entities/package'
 
 export const SearchCities = ({
   defaultSelectedCity,
   cities,
   onChange
 }: SearchCitiesProps) => {
-  const { t } = useTranslation()
+  const { i18n } = useTranslation()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
-  const [selectedCity, setSelectedCity] = useState<number>(cities[0].id)
+  const [selectedCity, setSelectedCity] = useState<number>(cities[0]?.id)
 
   useEffect(() => {
     if (defaultSelectedCity && defaultSelectedCity !== selectedCity) {
@@ -25,6 +26,22 @@ export const SearchCities = ({
     onChange && onChange(cityId)
     setDropdownOpen(false)
   }
+
+  const cityNameField = useMemo(
+    () =>
+      `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity,
+    [i18n.language]
+  )
+
+  const activeCityValue = useMemo(() => {
+    const city = cities.find(city => city.id === selectedCity)
+
+    if (!city) {
+      return ''
+    }
+
+    return city[cityNameField] as string
+  }, [selectedCity, cities, cityNameField])
 
   return (
     <Menu
@@ -44,7 +61,7 @@ export const SearchCities = ({
       >
         <Input
           type="text"
-          value={t(cities.find(city => city.id === selectedCity)?.value || '')}
+          value={activeCityValue}
           width="full"
           borderColor={isDropdownOpen ? 'blue.500' : undefined}
           leftIconName="location-pin"
@@ -65,9 +82,9 @@ export const SearchCities = ({
       >
         <Box>
           <VStack width="full" spacing="1" align="stretch">
-            {cities.map((city: PackageCityOption) => (
+            {cities.map((city: PackageCity) => (
               <Flex
-                key={city.value}
+                key={city.id}
                 width="full"
                 align="center"
                 bgColor="white"
@@ -91,7 +108,7 @@ export const SearchCities = ({
                 cursor="pointer"
                 onClick={() => handleCitySelect(city.id)}
               >
-                <Text size="md">{t(city.value)}</Text>
+                <Text size="md">{city[cityNameField] as string}</Text>
 
                 {selectedCity === city.id && (
                   <Icon name="check" size="20" color="blue.500" />

@@ -17,23 +17,27 @@ import {
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
 import { type LanguageName } from '@shared/model'
+import { type CityService } from './CityService.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
   private readonly flightService: FlightService
   private readonly requestService: RequestService
   private readonly dictionaryService: DictionaryService
+  private readonly cityService: CityService
 
   constructor({
     packageService,
     flightService,
     requestService,
-    dictionaryService
+    dictionaryService,
+    cityService
   }: PackageUseCasesParams) {
     this.packageService = packageService
     this.flightService = flightService
     this.requestService = requestService
     this.dictionaryService = dictionaryService
+    this.cityService = cityService
   }
 
   // package
@@ -125,5 +129,18 @@ export class PackageUseCases {
   // dictionary
   async getDictionary(dictionaryType: DictionaryTypes, language: number) {
     return this.dictionaryService.getDictionary(dictionaryType, language)
+  }
+
+  // city
+  async getCitiesOnlyHotel() {
+    const cities = await this.cityService.getCitiesOnlyHotel()
+
+    return cities
+  }
+
+  async getCities() {
+    const cities = await this.cityService.getCities()
+
+    return cities
   }
 }

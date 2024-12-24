@@ -1,11 +1,9 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export type LayoutProps = {
-	children: ReactNode | ReactNode[]
+  children: ReactNode | ReactNode[]
 }
 
 export type EmptyViewProps = {
-	isLoadingFilteredPackages: boolean
-	isSearchError: boolean
-	isFilteredPackagesEmpty: boolean
+  searchView: 'hotel' | 'packages'
 }

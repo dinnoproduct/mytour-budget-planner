@@ -9,8 +9,8 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import moment from 'moment'
 import { type SearchContextType, type SearchData } from './types'
 import {
-  HOTEL_PACKAGE_CITIES,
   type PackageEntity,
+  useCitiesOnlyHotel,
   useSearchHotelPackagesAsync
 } from '@entities/package'
 
@@ -19,7 +19,7 @@ const LOCAL_STORAGE_KEY = 'hotel_packages_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCity: HOTEL_PACKAGE_CITIES[0].id,
+  selectedCity: 0,
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
@@ -40,10 +40,10 @@ export const HotelPackagesSearchProvider: React.FC<{
   const [isLoadingFilteredHotelPackages, setIsLoadingFilteredHotelPackages] =
     useState(false)
   const [isSearchError, setIsSearchError] = useState(false)
-  // todo: change to hotel search
   const [filteredHotelPackages, setFilteredHotelPackages] = useState<
     PackageEntity[]
   >([])
+  const { data: cities = [] } = useCitiesOnlyHotel()
   const searchHotelsAsync = useSearchHotelPackagesAsync()
   const [searchData, setSearchDataState] =
     useState<SearchData>(defaultSearchData)
@@ -97,15 +97,14 @@ export const HotelPackagesSearchProvider: React.FC<{
         fromDate: new Date(savedSearchData.fromDate),
         toDate: new Date(savedSearchData.toDate)
       })
-    }
-    // todo: handle hotels get request
-    else {
+    } else {
       setSearchData({
         fromDate: moment().toDate(),
-        toDate: moment().add(1, 'day').toDate()
+        toDate: moment().add(1, 'day').toDate(),
+        selectedCity: cities[0]?.id || 0
       })
     }
-  }, [])
+  }, [cities])
 
   const generateSearchQueryParams = (searchData: SearchData) => {
     const formatDate = (date: Date | null) =>
@@ -136,8 +135,8 @@ export const HotelPackagesSearchProvider: React.FC<{
         cities: [selectedCity],
         adults: travelersData.adultsCount,
         childs: travelersData.childrenAges,
-        dateFrom: moment(fromDate).add(1, 'day').format(),
-        dateTo: moment(toDate).add(1, 'day').format()
+        dateFrom: moment(fromDate).set({ hour: 14 }).format(),
+        dateTo: moment(toDate).set({ hour: 12 }).format()
       })
       setFilteredHotelPackages(searchPackagesResponse)
       saveSearchDataToLocalStorage(searchData)
@@ -214,7 +213,8 @@ export const HotelPackagesSearchProvider: React.FC<{
         isSearchError,
         generateSearchQueryParams,
         isAllowedSearchRoute,
-        navigateToDefaultSearch
+        navigateToDefaultSearch,
+        cities
       }}
     >
       {children}

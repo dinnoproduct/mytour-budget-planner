@@ -1,22 +1,25 @@
 import { EmptyState } from '@ui'
-import { EmptyViewProps } from '@widgets/PackageList/ui/types.ts'
+import { type EmptyViewProps } from '@widgets/PackageList/ui/types.ts'
+import { useTranslation } from 'react-i18next'
 
-export const EmptyView = ({ isFilteredPackagesEmpty, isLoadingFilteredPackages, isSearchError }: EmptyViewProps) => {
-	if (!isLoadingFilteredPackages) {
-		if (isSearchError) {
-			return (
-				<EmptyState
-					illustrationName="no-result" mt={{base: '160px', md: '200px'}}
-					text="Տեխնիկական խնդիր, խնդրում ենք փորձել մի փոքր ուշ:"
-				/>
-			)
-		} else if (isFilteredPackagesEmpty) {
-			return (
-				<EmptyState
-					illustrationName="error"
-					text="Նշված պարամետրերով փաթեթներ չեն գտնվել։ Փորձեք փնտրել այլ պարամետրերով:"
-					mt={{base: '160px', md: '200px'}}/>
-			)
-		}
-	}
+export const EmptyView = ({ searchView }: EmptyViewProps) => {
+  const { t } = useTranslation()
+
+  if (searchView === 'packages') {
+    return (
+      <EmptyState
+        illustrationName="error"
+        mt={{ base: '160px', md: '200px' }}
+        text={t`packagesNotFoundText`}
+      />
+    )
+  } else {
+    return (
+      <EmptyState
+        illustrationName="error"
+        mt={{ base: '160px', md: '200px' }}
+        text={t`hotelPackagesNotFoundText`}
+      />
+    )
+  }
 }

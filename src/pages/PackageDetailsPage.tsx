@@ -7,6 +7,7 @@ import {
 } from '@features/PackageImagesGallery'
 import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
 import {
+  type PackageEntity,
   useCurrentPackageOfferValue,
   usePackagesSearchContext,
   useSearchPackage
@@ -41,17 +42,21 @@ export const PackageDetailsPage = () => {
 
   const uniqueImageUrls = useMemo(
     () =>
-      packageDetails?.hotel?.images
+      (currentOfferPackage || packageDetails)?.hotel?.images
         .filter(img => img.size === 3)
         .map(img => img.url) || [],
-    [JSON.stringify(packageDetails?.hotel?.images)]
+    [packageDetails?.offerId, currentOfferPackage?.offerId]
   )
 
   useEffect(() => {
-    if (!packageDetails?.offerId && !isLoading) {
+    if (
+      !currentOfferPackage?.offerId &&
+      !packageDetails?.offerId &&
+      !isLoading
+    ) {
       handleBackClick()
     }
-  }, [packageDetails, isLoading])
+  }, [packageDetails?.offerId, isLoading, currentOfferPackage?.offerId])
 
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index)
@@ -97,7 +102,7 @@ export const PackageDetailsPage = () => {
     openAuthModal()
   }
 
-  if (!packageDetails?.offerId || isLoading) {
+  if ((!packageDetails?.offerId || isLoading) && !currentOfferPackage) {
     return <Loader loading={isLoading} />
   }
 
@@ -113,7 +118,7 @@ export const PackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <PackageDetailsHeader
-          tourPackage={packageDetails}
+          tourPackage={(currentOfferPackage || packageDetails) as PackageEntity}
           onMoreImagesClick={() => setModalOpen(true)}
         />
 
@@ -123,12 +128,16 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
         >
           <PackageDetails
-            tourPackage={packageDetails}
+            tourPackage={
+              (currentOfferPackage || packageDetails) as PackageEntity
+            }
             isLateCheckout={isLateCheckout}
           />
 
           <PackageBookingConfig
-            tourPackage={packageDetails}
+            tourPackage={
+              (currentOfferPackage || packageDetails) as PackageEntity
+            }
             ml={{ md: '20' }}
             mt={{ base: '5', md: '0' }}
             flexShrink={0}

@@ -1,16 +1,8 @@
 import { type LanguageName } from '@shared/model'
 import { type IconName } from '@foundation/Iconography'
-import { type PackageCityOption } from '@entities/package/model/types.ts'
 
-export const PACKAGE_CITIES: PackageCityOption[] = [
-  // { value: 'hurghada', isDisabled: true },
-  { value: 'sharmElSheikh', id: 1 }
-]
-
-export const HOTEL_PACKAGE_CITIES: PackageCityOption[] = [
-  { value: 'abuDhabi', id: 16 },
-  { value: 'dubai', id: 18 }
-]
+export const CURRENT_PACKAGE_CITIES = [1]
+export const CURRENT_HOTEL_PACKAGE_CITIES = [16, 18]
 
 export const PACKAGE_LANGUAGE_MAP: {
   [key in LanguageName]: number

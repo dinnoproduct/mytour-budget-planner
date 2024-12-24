@@ -1,9 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  HOTEL_PACKAGE_CITIES,
-  useHotelPackagesSearchContext
-} from '@entities/package'
+import { useHotelPackagesSearchContext } from '@entities/package'
 import { Button } from '@ui'
 import { SearchCities } from '@features/SearchCities'
 import { SearchTravelers } from '@features/SearchTravelers'
@@ -12,7 +9,7 @@ import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
 
 export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
   const { t } = useTranslation()
-  const { searchData, handleSearch, setSearchData } =
+  const { searchData, handleSearch, setSearchData, cities } =
     useHotelPackagesSearchContext()
 
   const handleAccept = (fromDate: Date | null, toDate?: Date | null) => {
@@ -31,7 +28,7 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
         onChange={selectedCity => {
           setSearchData({ selectedCity })
         }}
-        cities={HOTEL_PACKAGE_CITIES}
+        cities={cities}
       />
 
       <DatePicker

@@ -7,10 +7,11 @@ import {
   usePackagesSearchContext
 } from '@entities/package'
 import { PackageCard } from '@features/PackageCard'
-import { EmptyState } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import { useQueryParams } from '@/hooks/useQueryParams.ts'
+import { EmptyView } from '@widgets/PackageList/ui/EmptyView.tsx'
+import moment from 'moment/moment'
 
 export const PackageList = () => {
   const { t } = useTranslation()
@@ -27,7 +28,7 @@ export const PackageList = () => {
   const {
     filteredPackages,
     isLoadingFilteredPackages,
-    searchData,
+    searchData: packagesSearchData,
     isSearchError,
     isAllowedSearchRoute: isPackagesSearchView
   } = usePackagesSearchContext()
@@ -35,7 +36,8 @@ export const PackageList = () => {
   const {
     filteredHotelPackages,
     isLoadingFilteredHotelPackages,
-    isAllowedSearchRoute: isHotelSearchView
+    isAllowedSearchRoute: isHotelSearchView,
+    searchData: hotelSearchData
   } = useHotelPackagesSearchContext()
 
   const generateLink = (tourPackage: PackageEntity) => {
@@ -47,7 +49,6 @@ export const PackageList = () => {
       city: tourPackage.city.id.toString(),
       adultsCount: tourPackage.adultTravelers.toString(),
       childrenCount: childrenTravelers.toString(),
-      childrenAges: searchData.travelersData.childrenAges.join(','),
       hotelId: tourPackage.hotel.id.toString(),
       roomId: tourPackage.roomType.toString()
     }
@@ -56,10 +57,14 @@ export const PackageList = () => {
       queryParams.departureFlightId =
         tourPackage.destinationFlight.id.toString()
       queryParams.returnFlightId = tourPackage.returnFlight.id.toString()
+      queryParams.childrenAges =
+        packagesSearchData.travelersData.childrenAges.join(',')
       pagePath = 'package'
     } else {
-      queryParams.from = tourPackage.checkin
-      queryParams.to = tourPackage.checkout
+      queryParams.childrenAges =
+        hotelSearchData.travelersData.childrenAges.join(',')
+      queryParams.from = moment(tourPackage.checkin).format('YYYY-MM-DD')
+      queryParams.to = moment(tourPackage.checkout).format('YYYY-MM-DD')
     }
 
     const searchParams = new URLSearchParams(queryParams).toString()
@@ -87,23 +92,10 @@ export const PackageList = () => {
   )
 
   // empty view
-  if (!isLoadingPackages) {
-    // if (isSearchError) {
-    // 	return (
-    // 		<EmptyState illustrationName="no-result" mt={{base: '160px', md: '200px'}}>
-    // 			Տեխնիկական խնդիր, խնդրում ենք փորձել մի փոքր ուշ:
-    // 		</EmptyState>
-    // 	)
-    // } else
-    if (!activePackages?.length) {
-      return (
-        <EmptyState
-          illustrationName="error"
-          mt={{ base: '160px', md: '200px' }}
-          text={t`packagesNotFoundText`}
-        />
-      )
-    }
+  if (!isLoadingPackages && !activePackages?.length) {
+    return (
+      <EmptyView searchView={isPackagesSearchView ? 'packages' : 'hotel'} />
+    )
   }
 
   return (

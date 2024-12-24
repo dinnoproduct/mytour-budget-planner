@@ -1,7 +1,7 @@
 import React from 'react'
 import { DatePickerFlights } from '@features/DatePickerFlights'
 import { useTranslation } from 'react-i18next'
-import { PACKAGE_CITIES, usePackagesSearchContext } from '@entities/package'
+import { useCities, usePackagesSearchContext } from '@entities/package'
 import { Button } from '@ui'
 import { SearchCities } from '@features/SearchCities'
 import { SearchTravelers } from '@features/SearchTravelers'
@@ -18,6 +18,7 @@ export const PackageSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
     isLoadingReturnDates,
     handleFromDateClick
   } = usePackagesSearchContext()
+  const { data: cities = [] } = useCities()
 
   const handleAccept = (fromDate: Date | null, toDate?: Date | null) => {
     setSearchData({ fromDate, toDate })
@@ -33,7 +34,7 @@ export const PackageSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
       <SearchCities
         defaultSelectedCity={searchData.selectedCity}
         onChange={selectedCity => setSearchData({ selectedCity })}
-        cities={PACKAGE_CITIES}
+        cities={cities}
       />
 
       <DatePickerFlights

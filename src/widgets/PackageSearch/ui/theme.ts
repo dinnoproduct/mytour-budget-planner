@@ -4,17 +4,17 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   centered: {
     container: {
       bgImage: '/assets/images/search-hero-image.jpg',
-      height: { base: '352px', md: '240px' },
+      height: { base: '432px', md: '240px' },
       px: { base: 4, md: '6' }
     },
     contentWrapper: {
-      maxWidth: { base: '400px', md: '1140px' },
+      maxWidth: { base: '362px', md: '1140px' },
       width: 'full',
       mx: 'auto',
       align: 'center'
     },
     content: {
-      width: { base: '362px', md: 'full' },
+      width: 'full',
       background: 'white',
       border: '2px solid',
       borderColor: 'gray.200',

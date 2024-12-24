@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import {
-  HOTEL_PACKAGE_CITIES,
+  type PackageCity,
   useHotelPackagesSearchContext
 } from '@entities/package'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +12,7 @@ import {
   HotelTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
+import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
 export const HotelSearchMenu = ({
   onTabChange,
@@ -19,8 +20,8 @@ export const HotelSearchMenu = ({
   onFormClose,
   isFormOpen
 }: any) => {
-  const { t } = useTranslation()
-  const { searchData } = useHotelPackagesSearchContext()
+  const { t, i18n } = useTranslation()
+  const { searchData, cities } = useHotelPackagesSearchContext()
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
@@ -43,13 +44,13 @@ export const HotelSearchMenu = ({
     }
   }, [isFormOpen])
 
-  const cityLabel = useMemo(() => {
-    const value = HOTEL_PACKAGE_CITIES.find(
-      city => searchData.selectedCity === city.id
-    )?.value
-
-    return value ? t(value) : ''
-  }, [searchData.selectedCity])
+  const cityLabel = useMemo(
+    () =>
+      (cities.find(city => searchData.selectedCity === city.id)?.[
+        `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
+      ] || '') as string,
+    [searchData.selectedCity, cities, i18n.language]
+  )
 
   const handleFormOpen = () => {
     onFormOpen()

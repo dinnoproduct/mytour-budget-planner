@@ -4,6 +4,7 @@ import { type PackageEntity, useSearchHotelPackages } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 import { type EmptyObject } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
+import moment from 'moment'
 
 type PassedSearchData = {
   from: string
@@ -27,7 +28,7 @@ export const useSearchHotelPackage = (
   const searchParams = new URLSearchParams(location.search)
 
   const getDateFromParam = (param: string | null) =>
-    param ? new Date(param).toDateString() : null
+    param ? moment(param).format() : null
 
   const searchData = useMemo(() => {
     if (passedSearchData) {
@@ -55,6 +56,9 @@ export const useSearchHotelPackage = (
     }
   }, [passedSearchData, searchParams])
 
+  searchData.dateFrom = moment(searchData.dateFrom).set({ hour: 14 }).format()
+  searchData.dateTo = moment(searchData.dateTo).set({ hour: 12 }).format()
+
   const { data: packages, isLoading } = useSearchHotelPackages(searchData, {
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
     ...options
@@ -74,10 +78,7 @@ export const useSearchHotelPackage = (
   )
 
   const packageDetails: PackageEntity | null = useMemo(
-    () =>
-      packages?.find(
-        pkg => pkg.hotel.id === hotelId && pkg.roomType === roomId
-      ) || null,
+    () => packages?.find(pkg => pkg.hotel.id === hotelId) || null,
     [packages, hotelId, roomId]
   )
 

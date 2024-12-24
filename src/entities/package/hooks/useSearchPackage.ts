@@ -71,10 +71,7 @@ export const useSearchPackage = (
   )
 
   const packageDetails: PackageEntity | null = useMemo(
-    () =>
-      packages?.find(
-        pkg => pkg.hotel.id === hotelId && pkg.roomType === roomId
-      ) || null,
+    () => packages?.find(pkg => pkg.hotel.id === hotelId) || null,
     [packages, hotelId, roomId]
   )
 

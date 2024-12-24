@@ -96,8 +96,10 @@ export const PackageBookingConfig = ({
 
   const usdPrice = useMemo(
     () =>
-      formatNumber(approximateNumber(tourPackage.price, tourPackage.usdRate)),
-    [tourPackage.price, tourPackage.usdRate]
+      formatNumber(
+        approximateNumber(selectedOffer?.price || 0, tourPackage?.usdRate || 0)
+      ),
+    [selectedOffer?.price, tourPackage?.usdRate]
   )
 
   return (
@@ -201,11 +203,15 @@ export const PackageBookingConfig = ({
         </Flex>
 
         <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
-          <Icon name="approximate" size="20" color="gray.500" />
+          {usdPrice !== '0' ? (
+            <>
+              <Icon name="approximate" size="20" color="gray.500" />
 
-          <Text size="sm" color="gray.500" ml="0.5">
-            $ {usdPrice}
-          </Text>
+              <Text size="sm" color="gray.500" ml="0.5">
+                $ {usdPrice}
+              </Text>
+            </>
+          ) : null}
         </Flex>
 
         <Button

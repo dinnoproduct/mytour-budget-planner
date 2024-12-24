@@ -1,4 +1,4 @@
-import { type PackageEntity } from '@entities/package'
+import { type PackageCity, type PackageEntity } from '@entities/package'
 
 export type SearchData = {
   fromDate: Date | null
@@ -17,6 +17,7 @@ export type SearchContextType = {
   isSearchError?: boolean
   isAllowedSearchRoute?: boolean
   navigateToDefaultSearch: () => void
+  cities: PackageCity[]
 }
 
 type SearchTravelersData = {

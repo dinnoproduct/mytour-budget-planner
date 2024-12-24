@@ -9,9 +9,9 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import moment from 'moment'
 import { type SearchContextType, type SearchData } from './types'
 import {
-  PACKAGE_CITIES,
   type PackageEntity,
   useAvailableFlights,
+  useCities,
   usePackageList,
   useReturnFlights,
   useSearchPackagesAsync
@@ -22,7 +22,7 @@ const LOCAL_STORAGE_KEY = 'package_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCity: PACKAGE_CITIES[0].id,
+  selectedCity: 0,
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
@@ -44,6 +44,7 @@ export const PackagesSearchProvider: React.FC<{
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
+  const { data: cities = [] } = useCities()
 
   const isAllowedSearchRoute = useMemo(() => {
     const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
@@ -125,7 +126,8 @@ export const PackagesSearchProvider: React.FC<{
           fromDate: new Date(packageItem.destinationFlight.departureDate),
           toDate: new Date(packageItem.returnFlight.arrivalDate),
           departureFlightId: packageItem.destinationFlight.id,
-          returnFlightId: packageItem.returnFlight.id
+          returnFlightId: packageItem.returnFlight.id,
+          selectedCity: packageItem.city.id
         })
       }
     }
@@ -219,7 +221,7 @@ export const PackagesSearchProvider: React.FC<{
       const searchPackagesResponse = await searchPackagesAsync({
         flightId: departureFlightId as number,
         returnFlightId: returnFlightId as number,
-        city: 1,
+        city: selectedCity,
         adults: travelersData.adultsCount,
         childs: travelersData.childrenAges
       })
@@ -308,8 +310,6 @@ export const PackagesSearchProvider: React.FC<{
     setSearchData(currentData)
   }, [searchParams, isAllowedSearchRoute])
 
-  // todo: on tab change go to search page
-
   return (
     <SearchContext.Provider
       value={{
@@ -325,7 +325,8 @@ export const PackagesSearchProvider: React.FC<{
         isSearchError,
         generateSearchQueryParams,
         isAllowedSearchRoute,
-        navigateToDefaultSearch
+        navigateToDefaultSearch,
+        cities
       }}
     >
       {children}

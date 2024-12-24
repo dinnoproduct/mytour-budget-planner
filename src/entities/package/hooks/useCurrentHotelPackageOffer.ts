@@ -4,7 +4,6 @@ import {
   type UseQueryOptions
 } from '@tanstack/react-query'
 import { type PackageEntity, packageUseCases } from '@entities/package'
-import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 import { useEffect, useState } from 'react'
 
 const QUERY_KEY = 'current-hotel-package-offer'
@@ -15,7 +14,7 @@ export const useCurrentHotelPackageOffer = (
 ) =>
   useQuery({
     ...(options || {}),
-    refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
+    // refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
     queryFn: () => packageUseCases.getHotelPackage(offerId),
     queryKey: [QUERY_KEY]
   })

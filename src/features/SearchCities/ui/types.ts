@@ -1,7 +1,7 @@
-import { type PackageCityOption } from '@entities/package/model/types.ts'
+import { type PackageCity } from '@entities/package'
 
 export type SearchCitiesProps = {
   defaultSelectedCity?: number
   onChange?: (city: number) => void
-  cities: PackageCityOption[]
+  cities: PackageCity[]
 }

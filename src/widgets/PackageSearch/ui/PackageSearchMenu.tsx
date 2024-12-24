@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { PackageSearchForm } from './PackageSearchForm.tsx'
-import { PACKAGE_CITIES, usePackagesSearchContext } from '@entities/package'
+import { type PackageCity, usePackagesSearchContext } from '@entities/package'
 import { useTranslation } from 'react-i18next'
 import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
@@ -9,6 +9,7 @@ import {
   HotelTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
+import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
 export const PackageSearchMenu = ({
   onTabChange,
@@ -16,8 +17,8 @@ export const PackageSearchMenu = ({
   onFormClose,
   isFormOpen
 }: any) => {
-  const { t } = useTranslation()
-  const { searchData } = usePackagesSearchContext()
+  const { t, i18n } = useTranslation()
+  const { searchData, cities } = usePackagesSearchContext()
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
@@ -40,13 +41,13 @@ export const PackageSearchMenu = ({
     }
   }, [isFormOpen])
 
-  const cityLabel = useMemo(() => {
-    const value = PACKAGE_CITIES.find(
-      city => searchData.selectedCity === city.id
-    )?.value
-
-    return value ? t(value) : ''
-  }, [searchData.selectedCity])
+  const cityLabel = useMemo(
+    () =>
+      (cities.find(city => searchData.selectedCity === city.id)?.[
+        `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
+      ] || '') as string,
+    [searchData.selectedCity, cities, i18n.language]
+  )
 
   const handleFormOpen = () => {
     onFormOpen()

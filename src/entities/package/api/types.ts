@@ -2,12 +2,14 @@ import { type PackageService } from './PackageService.ts'
 import { type FlightService } from './FlightService.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
+import { type CityService } from './CityService.ts'
 
 export type PackageUseCasesParams = {
   packageService: PackageService
   flightService: FlightService
   requestService: RequestService
   dictionaryService: DictionaryService
+  cityService: CityService
 }
 
 export type GetAvailableFlightsParams = {

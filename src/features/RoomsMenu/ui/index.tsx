@@ -31,14 +31,9 @@ export const RoomsMenu = ({
 
   const handleRoomSelect = (roomValue: number) => {
     setSelectedRoom(roomValue)
+    onChange && onChange(roomValue)
     setDropdownOpen(false)
   }
-
-  useEffect(() => {
-    if (selectedRoom && onChange) {
-      onChange && onChange(selectedRoom)
-    }
-  }, [selectedRoom])
 
   const roomValue = useMemo(() => {
     const room = rooms.find(room => room.id === selectedRoom)

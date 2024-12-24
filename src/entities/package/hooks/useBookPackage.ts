@@ -5,7 +5,6 @@ import {
   packageUseCases
 } from '@entities/package'
 import { useUserContext } from '@entities/user'
-import { useTranslation } from 'react-i18next'
 
 export const useBookPackage = (
   options: UseMutationOptions<
@@ -15,7 +14,6 @@ export const useBookPackage = (
   > = {}
 ) => {
   const { userToken } = useUserContext()
-  const { i18n } = useTranslation()
 
   return useMutation({
     mutationKey: ['book-package'],

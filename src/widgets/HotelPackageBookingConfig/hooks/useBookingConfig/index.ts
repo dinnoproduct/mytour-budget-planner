@@ -10,9 +10,16 @@ import { type DatePickerProps } from '@features/DatePicker/ui/types.ts'
 import { useSearchParams } from 'react-router-dom'
 import { type SearchTravelersProps } from '@features/SearchTravelers/ui/types.ts'
 import { type RoomsMenuProps } from '@features/RoomsMenu/ui/types.ts'
+import moment from 'moment'
 
 export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const roomId = useMemo(() => {
+    const roomId = searchParams.get('roomId')
+
+    return roomId ? parseInt(roomId, 10) : 0
+  }, [searchParams])
+
   const [bookingData, setBookingData] = useState({
     checkIn: new Date(defaultTourPackage.checkin),
     checkOut: new Date(defaultTourPackage.checkout),
@@ -29,14 +36,26 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
           .map(Number) || []
     },
     hotelId: defaultTourPackage.hotel.id,
-    roomId: defaultTourPackage.roomType
+    roomId
   })
 
   const updateBookingData = (data: Partial<typeof bookingData>) => {
-    setBookingData(prevState => ({
-      ...prevState,
-      ...data
-    }))
+    setBookingData(prevState => {
+      const updatedData = { ...prevState, ...data }
+
+      setSearchParams({
+        city: searchParams.get('city') || '0',
+        adultsCount: String(updatedData.travelersData.adultsCount),
+        childrenCount: String(updatedData.travelersData.childrenCount),
+        childrenAges: updatedData.travelersData.childrenAges.join(','),
+        hotelId: String(updatedData.hotelId),
+        roomId: String(updatedData.roomId),
+        from: moment(updatedData.checkIn).format('YYYY-MM-DD'),
+        to: moment(updatedData.checkOut).format('YYYY-MM-DD')
+      })
+
+      return updatedData
+    })
   }
 
   // flight
@@ -119,7 +138,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   })
 
   useEffect(() => {
-    refetchCurrentOfferPackage()
+    selectedOffer?.offerId && refetchCurrentOfferPackage()
   }, [selectedOffer?.offerId, refetchCurrentOfferPackage])
 
   return {
@@ -141,6 +160,6 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
       defaultRoom: defaultRoomOffer?.id,
       onChange: handleRoomSelect
     } as RoomsMenuProps,
-    isLoadingTourPackage: isFetchingCurrentOfferPackage
+    isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage
   }
 }
