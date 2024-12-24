@@ -59,7 +59,7 @@ export const AboutUsBanner = (props: LinkBoxProps) => {
             variant="solid-blue"
             mt="8"
             width="fit-content"
-            href="https://www.mytour.am/about-us "
+            href="https://www.mytourpackages.am/team"
             target="_blank"
             rel="noopener noreferrer"
           >

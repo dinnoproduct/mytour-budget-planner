@@ -72,7 +72,7 @@ export const PackageBanner = (props: LinkBoxProps) => {
               variant="solid-blue"
               mt="6"
               width="fit-content"
-              href="https://www.mytour.am/tbilisi-newyear"
+              href="https://www.mytourpackages.am/tbilisi-newyear"
             >
               {t`packageBanner.buttonLabel`}
             </Button>
