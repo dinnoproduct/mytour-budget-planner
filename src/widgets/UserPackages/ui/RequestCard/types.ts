@@ -17,6 +17,7 @@ export type DetailsListItemProps = {
   label: string
   value: string | number
   isWithoutBorder?: boolean
+  tooltipText?: string
 }
 
 export type RequestCardStatus =

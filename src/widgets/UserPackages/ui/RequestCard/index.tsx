@@ -1,6 +1,7 @@
 import {
   Box,
   type BoxProps,
+  Flex,
   ListItem,
   MenuItem as ChakraMenuItem,
   type MenuItemProps,
@@ -11,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import React, { type ReactNode, useMemo } from 'react'
 import { LANGUAGE_PREFIX } from '@shared/model'
 import { type Language } from '@widgets/Header/model'
-import { Button, Text } from '@ui'
+import { Button, Icon, Text, Tooltip } from '@ui'
 import {
   type DictionaryTypes,
   type PackageCity,
@@ -152,6 +153,7 @@ export const RequestCard = ({
             <DetailsListItem
               label={t`price`}
               value={`${formatNumber(request.price)} ֏`}
+              tooltipText={t`priceChangeText`}
             />
 
             {showNextPaymentFields && (
@@ -240,7 +242,8 @@ export const RequestCard = ({
 const DetailsListItem = ({
   isWithoutBorder,
   label,
-  value
+  value,
+  tooltipText
 }: DetailsListItemProps) => (
   <ListItem
     display="flex"
@@ -253,9 +256,19 @@ const DetailsListItem = ({
       {label}
     </Text>
 
-    <Text size="xs" color="gray.800" ml="2" align="end">
-      {value}
-    </Text>
+    <Flex align="center">
+      <Text size="xs" color="gray.800" ml="2" align="end">
+        {value}
+      </Text>
+
+      {tooltipText ? (
+        <Tooltip label={tooltipText}>
+          <Flex justify="center" align="center">
+            <Icon name="info-outline" size="16" color="gray.800" ml="1" />
+          </Flex>
+        </Tooltip>
+      ) : null}
+    </Flex>
   </ListItem>
 )
 
