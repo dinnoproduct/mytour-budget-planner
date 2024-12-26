@@ -156,7 +156,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     [roomOffers?.length, isLoadingOffers]
   )
 
-  const defaultRoomOffer = useMemo(
+  const selectedRoomOffer = useMemo(
     () =>
       roomOffers.find(room => room.id === bookingData.roomId) || roomOffers[0],
     [JSON.stringify(roomOffers), bookingData.roomId]
@@ -169,8 +169,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   }
 
   const selectedOffer = useMemo(
-    () => offers.find(offer => offer.roomType === bookingData.roomId),
-    [bookingData.roomId, JSON.stringify(offers)]
+    () => offers.find(offer => offer.roomType === selectedRoomOffer.id),
+    [selectedRoomOffer, JSON.stringify(offers)]
   )
 
   const {
@@ -206,7 +206,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     currentOfferPackage,
     roomsMenuProps: {
       rooms: roomOffers,
-      defaultRoom: defaultRoomOffer?.id,
+      defaultRoom: selectedRoomOffer?.id,
       onChange: handleRoomSelect
     } as RoomsMenuProps,
     isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage
