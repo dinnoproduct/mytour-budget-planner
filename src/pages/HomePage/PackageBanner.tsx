@@ -9,8 +9,8 @@ export const PackageBanner = (props: LinkBoxProps) => {
     <LinkBox
       height={{
         base: '440px', // height at base size
-        xs: '230px',
-        smd: '296px',
+        // xs: '230px',
+        sm: '296px',
         lg: '330px'
       }}
       rounded="2xl"
@@ -18,28 +18,28 @@ export const PackageBanner = (props: LinkBoxProps) => {
       mx={{ base: 4, md: 6 }}
       bgImage={{
         base: 'url(/assets/package-banner/package-banner-sm.jpg)',
-        xs: 'url(/assets/package-banner/package-banner-lg.jpg)'
+        sm: 'url(/assets/package-banner/package-banner-lg.jpg)'
       }}
       bgSize="cover"
       bgPosition={{
         base: 'bottom',
-        xs: 'right center'
+        sm: 'right center'
       }}
       bgRepeat="no-repeat"
       {...props}
     >
       <Flex
         height="full"
-        align={{ base: 'start', smd: 'center' }}
-        px={{ base: 5, smd: 10 }}
-        pt={{ base: 5, smd: 0 }}
+        align={{ base: 'start', sm: 'center' }}
+        px={{ base: 5, sm: 10 }}
+        pt={{ base: 5, sm: 0 }}
       >
         <Flex
           direction="column"
           maxWidth={{
             base: 'full',
-            xs: '52%',
-            smd: '53%',
+            // xs: '52%',
+            sm: '53%',
             lg: '701px'
           }}
           width="full"
@@ -47,24 +47,24 @@ export const PackageBanner = (props: LinkBoxProps) => {
           <Heading
             fontSize={{
               base: 'text-lg',
-              smd: 'heading-sm-lg'
+              sm: 'heading-sm-lg'
             }}
             lineHeight={{
               base: 'text-lg',
-              smd: 'heading-sm-lg'
+              sm: 'heading-sm-lg'
             }}
             as="h2"
           >
             {t`packageBanner.title`}
           </Heading>
 
-          <Text size={{ base: 'sm', smd: 'md' }} mt="4">
+          <Text size={{ base: 'sm', sm: 'md' }} mt="4">
             {t`packageBanner.subtitle1`}
           </Text>
 
-          <Text size={{ base: 'sm', smd: 'md' }} mt="4">
-            {t`packageBanner.subtitle2`}
-          </Text>
+          {/*<Text size={{ base: 'sm', sm: 'md' }} mt="4">*/}
+          {/*  {t`packageBanner.subtitle2`}*/}
+          {/*</Text>*/}
 
           <LinkOverlay>
             <Button
@@ -72,7 +72,9 @@ export const PackageBanner = (props: LinkBoxProps) => {
               variant="solid-blue"
               mt="6"
               width="fit-content"
-              href="https://www.mytourpackages.am/tbilisi-newyear"
+              href="https://www.mytourpackages.am/booking-no-prepayment?utm_source=meta&utm_medium=web&utm_campaign=spring_no_downpayment"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {t`packageBanner.buttonLabel`}
             </Button>
