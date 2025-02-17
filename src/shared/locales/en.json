@@ -120,6 +120,8 @@
   "amount": "Amount",
   "transfer": "Transfer",
   "pay": "Pay",
+  "noPrepayment": "No prepayment",
+  "noPrepaymentText": "Since your flight is more than 40 days away, you can make booking without prepayment. The first payment of AMD {{amount}} must be made by {{dueDate}}.",
   "writeSurnameLatinWords": "FIll in the field in Latin letters",
   "writeNameLatinWords": "FIll in the field in Latin letters",
   "name": "Name",

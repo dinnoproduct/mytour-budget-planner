@@ -63,7 +63,7 @@ export class PackageUseCases {
   // hotel
   async searchHotelPackages(search: SearchHotelPackagesParams) {
     return this.packageService.searchHotelPackages({
-      travelAgencyId: 1,
+      travelAgencyId: 3,
       ...search
     })
   }

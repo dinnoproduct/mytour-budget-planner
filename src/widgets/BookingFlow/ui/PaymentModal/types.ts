@@ -12,11 +12,15 @@ export type PaymentModalProps = {
   packageDetails: PackageEntity
   isOpen?: boolean
   view?: PaymentModalView
+  isLoadingBooking?: boolean
+  isBooked?: boolean
 }
 
 export type PaymentFormViewProps = {
-  onSubmit: (paymentAmount: number) => void
+  onSubmit: (paymentAmount: number, selectedOption: PaymentOption) => void
   packageDetails: PackageEntity
+  isLoadingBooking?: boolean
+  isBooked?: boolean
 }
 
 export type PaymentMethodViewProps = {
@@ -41,6 +45,8 @@ export enum PaymentMethod {
   bankCard = 'bankCard',
   ameriaPay = 'ameriaPay'
 }
+
+export type PaymentOption = 'noPrepayment' | 'pay'
 
 export type PaymentMethodCardProps = {
   label: string

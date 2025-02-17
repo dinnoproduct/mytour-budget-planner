@@ -1,10 +1,10 @@
 import { type PackageDetailsProps } from './types.ts'
 import { Divider, Flex } from '@chakra-ui/react'
-import { SectionLayout } from '@widgets/PackageDetails/ui/SectionLayout.tsx'
-import { formatDate } from '@widgets/PackageDetails/utils'
+import { SectionLayout } from './SectionLayout.tsx'
+import { formatDate } from '../utils'
 import { useTranslation } from 'react-i18next'
-import { PackageDescription } from '@widgets/PackageDetails/ui/PackageDescription.tsx'
-import { CompanyPolicy } from '@widgets/PackageDetails/ui/CompanyPolicy.tsx'
+import { HotelPackageDescription } from './HotelPackageDescription.tsx'
+import { CompanyPolicy } from './CompanyPolicy.tsx'
 import { type DictionaryTypes, useDictionary } from '@entities/package'
 import { useMemo } from 'react'
 
@@ -40,7 +40,7 @@ export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
         ]}
       />
 
-      <PackageDescription tourPackage={tourPackage} />
+      <HotelPackageDescription tourPackage={tourPackage} />
 
       <Divider my={{ base: 5, md: 10 }} />
 

@@ -50,10 +50,10 @@ export class PackageService {
   async generateHotelOffers(
     input: GenerateHotelOffersInput
   ): Promise<OfferEntity[]> {
-    return this.api.post('generateHotelOffers', input)
+    return this.api.post('/generateHotelOffers/?travelAgancy=3', input)
   }
 
   async getHotelPackage(offerId: number): Promise<PackageEntity> {
-    return this.api(`/getHotelPackage/?id=${offerId}`)
+    return this.api(`/getHotelPackage/?id=${offerId}&travelAgancy=3`)
   }
 }

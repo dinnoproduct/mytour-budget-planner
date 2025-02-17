@@ -1,15 +1,22 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, RadioGroup, Radio } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { Button, Checkbox, Input, Text } from '@ui'
-import { type PaymentFormViewProps } from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
+import { AlertCardMessage, Button, Checkbox, Input, Text } from '@ui'
+import {
+  type PaymentFormViewProps,
+  type PaymentOption
+} from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
 import { overDaysFromNow } from '@/utils/methods.ts'
 import { useMemo, useState } from 'react'
+import moment from 'moment'
 
 export const PaymentFormView = ({
   onSubmit,
-  packageDetails
+  packageDetails,
+  isLoadingBooking,
+  isBooked
 }: PaymentFormViewProps) => {
   const { t } = useTranslation()
+
   const under21DaysFromNow = useMemo(() => {
     const departureDate =
       packageDetails?.destinationFlight?.departureDate ||
@@ -17,15 +24,19 @@ export const PaymentFormView = ({
 
     return !overDaysFromNow(departureDate, 21)
   }, [packageDetails?.destinationFlight?.departureDate])
+
   const [isPaymentInFull, setIsPaymentInFull] = useState(under21DaysFromNow)
   const minPrePaymentAmount = useMemo(
     () =>
-      under21DaysFromNow ? packageDetails.price : packageDetails.price * 0.5,
+      under21DaysFromNow
+        ? packageDetails.price
+        : Math.ceil(packageDetails.price / 2),
     [under21DaysFromNow, packageDetails.price]
   )
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState(false)
+  const [selectedOption, setSelectedOption] = useState<PaymentOption>('pay')
 
   const handleAmountChange = (value: string | number) => {
     const number = Number(value)
@@ -67,8 +78,23 @@ export const PaymentFormView = ({
     }
 
     e.preventDefault()
-    onSubmit(+paymentAmount)
+    onSubmit(+paymentAmount, selectedOption)
   }
+
+  // 40 days no prepayment for package
+  const noPrepaymentData = useMemo(() => {
+    const departureDate =
+      packageDetails?.destinationFlight?.departureDate ||
+      packageDetails?.checkin
+
+    return {
+      isEnabled: overDaysFromNow(departureDate, 40) && !isBooked,
+      paymentDueDate: moment(departureDate)
+        .subtract(35, 'days')
+        .format('DD/MM/YYYY'),
+      paymentAmount: minPrePaymentAmount
+    }
+  }, [packageDetails?.destinationFlight?.departureDate])
 
   return (
     <Flex
@@ -84,7 +110,7 @@ export const PaymentFormView = ({
         py="6"
         px="4"
         overflowY="scroll"
-        maxHeight={{ base: 'calc(100dvh - 160px)', md: 'calc(464px - 160px)' }}
+        height={{ base: 'calc(100dvh - 160px)', md: 'calc(464px - 160px)' }}
         direction="column"
         maxWidth="402px"
         mx="auto"
@@ -94,36 +120,63 @@ export const PaymentFormView = ({
           }
         }}
       >
-        <Text size="sm" fontWeight="semibold" align="center">
-          {t('minPrePaymentText', {
-            amount: minPrePaymentAmount
-          })}
-        </Text>
+        {noPrepaymentData.isEnabled ? (
+          <RadioGroup
+            onChange={(value: PaymentOption) => setSelectedOption(value)}
+            value={selectedOption}
+          >
+            <Radio value="pay">{t`pay`}</Radio>
+            <Radio value="noPrepayment" ml="4">{t`noPrepayment`}</Radio>
+          </RadioGroup>
+        ) : (
+          <Text size="sm" fontWeight="semibold" align="center">
+            {t('minPrePaymentText', {
+              amount: minPrePaymentAmount
+            })}
+          </Text>
+        )}
 
-        <Input
-          value={paymentAmount}
-          onChange={e => handleAmountChange(e.target.value)}
-          mt="6"
-          isDisabled={isPaymentInFull || under21DaysFromNow}
-          suffix
-          helperText={errorMessage || ''}
-          state={errorMessage ? 'invalid' : 'default'}
-          rightIconName="dram"
-        />
+        <Box mt="6">
+          {selectedOption === 'pay' && (
+            <>
+              <Input
+                value={paymentAmount}
+                onChange={e => handleAmountChange(e.target.value)}
+                isDisabled={isPaymentInFull || under21DaysFromNow}
+                suffix
+                helperText={errorMessage || ''}
+                state={errorMessage ? 'invalid' : 'default'}
+                rightIconName="dram"
+              />
 
-        <Checkbox
-          size="lg"
-          mt="4"
-          isDisabled={under21DaysFromNow}
-          onChange={handlePayInFullChange}
-          isChecked={isPaymentInFull}
-        >
-          {t`payInFull`}
-        </Checkbox>
+              <Checkbox
+                size="lg"
+                mt="4"
+                isDisabled={under21DaysFromNow}
+                onChange={handlePayInFullChange}
+                isChecked={isPaymentInFull}
+              >
+                {t`payInFull`}
+              </Checkbox>
 
-        <Text size="xs" color="gray.600" mt="6" letterSpacing="-0.31px">
-          {t`partialPaymentText`}
-        </Text>
+              <Text size="xs" color="gray.600" mt="6" letterSpacing="-0.31px">
+                {t`partialPaymentText`}
+              </Text>
+            </>
+          )}
+
+          {selectedOption === 'noPrepayment' && (
+            <AlertCardMessage
+              message={t('noPrepaymentText', {
+                amount: noPrepaymentData.paymentAmount,
+                dueDate: noPrepaymentData.paymentDueDate
+              })}
+              status="info"
+              textSize="md"
+              iconPlacement="start"
+            />
+          )}
+        </Box>
       </Flex>
 
       <Box
@@ -140,6 +193,7 @@ export const PaymentFormView = ({
           size="lg"
           width="full"
           isDisabled={isDisabled}
+          isLoading={isLoadingBooking}
         >
           {t`continue`}
         </Button>

@@ -25,9 +25,12 @@ export const useBookingFlow = ({
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
-  const { mutateAsync: createRequestAsync } = useCreateRequest()
-  const { mutateAsync: updateRequestAsync } = useUpdateRequest()
+  const { mutateAsync: createRequestAsync, isPending: isPendingCreateRequest } =
+    useCreateRequest()
+  const { mutateAsync: updateRequestAsync, isPending: isPendingUpdateRequest } =
+    useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
+  const [isLoadingBooking, setIsLoadingBooking] = useState(false)
   const requestIdRef = useRef<number | null>(null)
   const [modalView, setModalView] = useState('')
   const [paymentModalView, setPaymentModalView] =
@@ -74,6 +77,8 @@ export const useBookingFlow = ({
         return
       }
 
+      setIsLoadingBooking(true)
+
       try {
         const bookInput: any = {
           requestId: requestIdRef.current,
@@ -88,7 +93,6 @@ export const useBookingFlow = ({
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
-          travelers: [...travelers.adults, ...travelers.children],
           paymentSystem
         }
 
@@ -105,6 +109,14 @@ export const useBookingFlow = ({
         }
 
         const bookResponse = await bookPackageAsync(bookInput)
+
+        setIsLoadingBooking(false)
+
+        if (+paymentAmount === 0) {
+          setModalView('success')
+
+          return
+        }
 
         if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
           window.location.href =
@@ -198,7 +210,11 @@ export const useBookingFlow = ({
 
   const handleTravelersChange = useCallback(
     async (data: Travelers) => {
-      if (!packageDetails?.offerId) {
+      if (
+        !packageDetails?.offerId ||
+        isPendingCreateRequest ||
+        isPendingUpdateRequest
+      ) {
         return
       }
 
@@ -216,7 +232,7 @@ export const useBookingFlow = ({
 
       const requestInput: any = {
         offerId: packageDetails.offerId,
-        travelers: [...data.adults, ...data.children],
+        travelers: [],
         cityId: packageDetails.city.id,
         hotelId: packageDetails.hotel.id,
         price: packageDetails.price,
@@ -253,7 +269,13 @@ export const useBookingFlow = ({
         ...requestInput
       })
     },
-    [requestIdRef.current, packageDetails?.offerId, childrenAges]
+    [
+      requestIdRef.current,
+      packageDetails?.offerId,
+      childrenAges,
+      isPendingCreateRequest,
+      isPendingUpdateRequest
+    ]
   )
 
   return {
@@ -262,6 +284,7 @@ export const useBookingFlow = ({
     openPaymentModal,
     onPaymentModalSuccess,
     paymentModalView,
+    isLoadingBooking,
     travelers,
     modalView,
     closeModal,

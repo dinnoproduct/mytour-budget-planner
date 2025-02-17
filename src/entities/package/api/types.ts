@@ -14,6 +14,7 @@ export type PackageUseCasesParams = {
 
 export type GetAvailableFlightsParams = {
   city?: number
+  travelAgency?: number
 }
 
 export type GetReturnFlightsParams = {

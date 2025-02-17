@@ -99,19 +99,27 @@ export const PackagesSearchProvider: React.FC<{
       : null
     const today = moment().startOf('day')
 
+    let updatedSearchData = { ...searchData }
+
+    if (!updatedSearchData.selectedCity && cities[0]?.id) {
+      updatedSearchData.selectedCity = cities[0]?.id
+    }
+
     if (
       savedSearchData?.fromDate &&
       savedSearchData?.toDate &&
       savedSearchData?.departureFlightId &&
       savedSearchData?.returnFlightId &&
       fromDate &&
-      fromDate.isSameOrAfter(today)
+      fromDate.isSameOrAfter(today) &&
+      savedSearchData.selectedCity
     ) {
-      setSearchData({
+      updatedSearchData = {
+        ...updatedSearchData,
         ...savedSearchData,
         fromDate: new Date(savedSearchData.fromDate),
         toDate: new Date(savedSearchData.toDate)
-      })
+      }
     } else {
       const packageItem = packageList?.[0]
 
@@ -122,18 +130,23 @@ export const PackagesSearchProvider: React.FC<{
         !searchData.departureFlightId &&
         !searchData.returnFlightId
       ) {
-        setSearchData({
+        updatedSearchData = {
+          ...updatedSearchData,
           fromDate: new Date(packageItem.destinationFlight.departureDate),
           toDate: new Date(packageItem.returnFlight.arrivalDate),
           departureFlightId: packageItem.destinationFlight.id,
           returnFlightId: packageItem.returnFlight.id,
           selectedCity: packageItem.city.id
-        })
+        }
       }
     }
-  }, [JSON.stringify(packageList)])
 
-  const { data: departureFlights } = useAvailableFlights({ city: 1 })
+    setSearchData(updatedSearchData)
+  }, [JSON.stringify(packageList), cities])
+
+  const { data: departureFlights } = useAvailableFlights({
+    city: searchData.selectedCity
+  })
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
       {
@@ -145,7 +158,7 @@ export const PackagesSearchProvider: React.FC<{
     )
 
   useEffect(() => {
-    if (departureFlights) {
+    if (Array.isArray(departureFlights)) {
       const dates = departureFlights.map(
         flight => new Date(flight.departureDate)
       )

@@ -2,6 +2,7 @@ import { PaymentModal } from './PaymentModal'
 import { TravelersModal } from '@widgets/TravelersModal'
 import type { BookingFlowProps } from '@widgets/BookingFlow/ui/types.ts'
 import { useBookingFlow } from '../hooks'
+import { PaymentSuccessModal } from '@entities/package'
 
 export const BookingFlow = ({
   packageDetails,
@@ -20,7 +21,8 @@ export const BookingFlow = ({
     travelers,
     modalView,
     closeModal,
-    handleTravelersChange
+    handleTravelersChange,
+    isLoadingBooking
   } = useBookingFlow({
     initialView,
     packageDetails,
@@ -37,6 +39,17 @@ export const BookingFlow = ({
 
   return (
     <>
+      {modalView === 'travelers' && (
+        <TravelersModal
+          isOpen={true}
+          closeModal={() => closeModal()}
+          packageDetails={packageDetails}
+          travelers={travelers}
+          onSuccess={onTravelersModalSuccess}
+          onChange={handleTravelersChange}
+        />
+      )}
+
       {modalView === 'payment' && (
         <PaymentModal
           isOpen={true}
@@ -47,18 +60,13 @@ export const BookingFlow = ({
           onBackClick={
             initialView === 'payment' ? undefined : openTravelersModal
           }
+          isLoadingBooking={isLoadingBooking}
+          isBooked={!!requestId}
         />
       )}
 
-      {modalView === 'travelers' && (
-        <TravelersModal
-          isOpen={true}
-          closeModal={() => closeModal()}
-          packageDetails={packageDetails}
-          travelers={travelers}
-          onSuccess={onTravelersModalSuccess}
-          onChange={handleTravelersChange}
-        />
+      {modalView === 'success' && (
+        <PaymentSuccessModal closeModal={() => closeModal()} />
       )}
     </>
   )

@@ -69,12 +69,17 @@ export const PackageCard = ({
     [tourPackage.price, tourPackage.usdRate]
   )
 
+  const isHotelPackage = useMemo(
+    () => !tourPackage.destinationFlight?.departureDate,
+    [tourPackage.destinationFlight?.departureDate]
+  )
+
   return (
     <Layout link={link} {...props}>
       <ImageSlider
         images={tourPackage.hotel.images}
         starsCount={tourPackage.hotel.stars}
-        allInclusive={!!tourPackage.foodType}
+        allInclusive={!isHotelPackage && !!tourPackage.foodType}
       />
 
       <Box py="4">

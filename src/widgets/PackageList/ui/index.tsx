@@ -118,7 +118,7 @@ const SkeletonLoading = ({ carsCount = 8 }) =>
   Array(carsCount)
     .fill(1)
     .map((_data, index) => (
-      <PackageCardSkeleton key={`package-card-skeleton-${1}`} />
+      <PackageCardSkeleton key={`package-card-skeleton-${index}`} />
     ))
 
 const Layout = ({ children }: LayoutProps) => (

@@ -3,6 +3,7 @@ import {
   PaymentMethod,
   type PaymentModalProps,
   type PaymentModalView,
+  type PaymentOption,
   VIEW_CONTENT_MAP
 } from './types.ts'
 import { useTranslation } from 'react-i18next'
@@ -19,9 +20,15 @@ export const PaymentModal = ({
   onBackClick,
   packageDetails,
   isOpen = false,
-  view
+  isLoadingBooking,
+  view,
+  isBooked
 }: PaymentModalProps) => {
   const { t } = useTranslation()
+  const isHotelPackage = useMemo(
+    () => !packageDetails.destinationFlight?.departureDate,
+    [packageDetails.destinationFlight?.departureDate]
+  )
   const [activeView, setActiveView] = useState<PaymentModalView>(
     view || 'paymentForm'
   )
@@ -36,6 +43,8 @@ export const PaymentModal = ({
         <PaymentFormView
           onSubmit={handleContinue}
           packageDetails={packageDetails}
+          isLoadingBooking={isLoadingBooking}
+          isBooked={isBooked}
         />
       ),
       paymentError: () => <PaymentErrorView />
@@ -45,16 +54,20 @@ export const PaymentModal = ({
   }, [activeView, ameriaPayUrl, packageDetails])
 
   useEffect(() => {
-    if (view) {
+    if (isHotelPackage && view === 'paymentForm') {
+      setActiveView('paymentMethod')
+    } else if (view) {
       setActiveView(view)
     }
-  }, [view])
+  }, [view, isHotelPackage])
 
   const handlePay = async (paymentMethod: PaymentMethod) => {
+    const amount = isHotelPackage ? packageDetails.price : paymentAmount
+
     try {
       if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {
         const url = await onSuccess(
-          paymentAmount,
+          amount,
           'MyAmeriaPay' as PaymentSystem.MyAmeriaPay
         )
 
@@ -63,16 +76,21 @@ export const PaymentModal = ({
           setActiveView('ameriaPay')
         }
       } else if (paymentMethod === PaymentMethod.bankCard) {
-        await onSuccess(paymentAmount, 'VPos' as PaymentSystem.VPos)
+        await onSuccess(amount, 'VPos' as PaymentSystem.VPos)
       }
     } catch (error) {
       setActiveView('paymentError')
     }
   }
 
-  const handleContinue = (amount: number) => {
-    setPaymentAmount(amount)
-    setActiveView('paymentMethod')
+  const handleContinue = (amount: number, paymentOption: PaymentOption) => {
+    if (paymentOption === 'pay') {
+      setPaymentAmount(amount)
+      setActiveView('paymentMethod')
+    } else if (paymentOption === 'noPrepayment') {
+      setPaymentAmount(0)
+      handlePay(PaymentMethod.bankCard)
+    }
   }
 
   const handleBackClick = useMemo(() => {

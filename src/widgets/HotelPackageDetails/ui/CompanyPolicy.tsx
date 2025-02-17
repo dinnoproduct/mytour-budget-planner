@@ -55,10 +55,10 @@ export const CompanyPolicy = ({
         <Text size="lg" fontWeight="bold" as="h2">{t`agency`}</Text>
 
         <Img
-          src="/assets/images/sky-tour-logo.svg"
-          alt="Sky Tour"
+          src="/assets/images/adventures-logo.svg"
+          alt="Advertures"
           ml="4"
-          height="24px"
+          height="20px"
         />
       </Flex>
 
