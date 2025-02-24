@@ -29,6 +29,7 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
           setSearchData({ selectedCity })
         }}
         cities={cities}
+        placeholder="City"
       />
 
       <DatePicker

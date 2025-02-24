@@ -9,9 +9,10 @@ import type { PackageCity } from '@entities/package'
 export const SearchCities = ({
   defaultSelectedCity,
   cities,
-  onChange
+  onChange,
+  placeholder = ''
 }: SearchCitiesProps) => {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [selectedCity, setSelectedCity] = useState<number>(cities[0]?.id)
 
@@ -65,6 +66,10 @@ export const SearchCities = ({
           width="full"
           borderColor={isDropdownOpen ? 'blue.500' : undefined}
           leftIconName="location-pin"
+          placeholder={t(placeholder)}
+          _placeholder={{
+            color: 'blackAlpha.900'
+          }}
         />
       </MenuButton>
 

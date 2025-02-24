@@ -221,5 +221,6 @@
   "aboutUs.mainText": "About Us",
   "aboutUs.subText": "MyTour is a travel platform that helps you plan your next journey by allowing you to find the best tours in one place, explore them, and book online.",
   "aboutUs.buttonLabel": "Learn More",
-  "priceChangeText": "The price is subject to change depending on the period when you make the final purchase"
+  "priceChangeText": "The price is subject to change depending on the period when you make the final purchase",
+  "City": "City"
 }
