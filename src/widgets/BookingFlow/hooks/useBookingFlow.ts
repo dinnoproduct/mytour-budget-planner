@@ -21,7 +21,8 @@ export const useBookingFlow = ({
   isOpen,
   requestId,
   childrenAges,
-  defaultTravelers
+  defaultTravelers,
+  isLateCheckout
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
@@ -218,7 +219,7 @@ export const useBookingFlow = ({
         return
       }
 
-      const notesJson = JSON.stringify({
+      const notes = {
         childrenAges: childrenAges || [],
         totalTravelersCount:
           packageDetails.adultTravelers +
@@ -227,7 +228,14 @@ export const useBookingFlow = ({
         adultTravelersCount: packageDetails.adultTravelers,
         travelers: data,
         isSoldOut: false
-      })
+      } as any
+
+      if (typeof isLateCheckout === 'boolean') {
+        notes.isLateCheckout = isLateCheckout
+      }
+
+      const notesJson = JSON.stringify(notes)
+
       setNotesJson(notesJson)
 
       const requestInput: any = {
@@ -300,4 +308,5 @@ type useBookingFlowProps = {
   requestId?: number
   childrenAges?: number[]
   defaultTravelers?: Travelers
+  isLateCheckout?: boolean
 }

@@ -3,8 +3,8 @@ import {
   type RequestEntity,
   RequestStatus,
   usePayRemainingAmount,
-  useSearchHotelPackage,
-  useSearchPackage,
+  useSearchHotelOfferPackage,
+  useSearchOfferPackage,
   useUpdateRequest,
   useUserRequests
 } from '@entities/package'
@@ -206,44 +206,43 @@ export const useUserRequestsManager = () => {
   const {
     packageDetails: requestPackageData,
     isLoading: isLoadingRequestPackage
-  } = useSearchPackage(
+  } = useSearchOfferPackage(
+    {
+      adultsCount: activeRequest?.notes.adultTravelersCount || 0,
+      childrenAges: activeRequest?.notes.childrenAges || [],
+      flightId: activeRequest?.destinationFlightId || 0,
+      returnFlightId: activeRequest?.returnFlightId || 0,
+      hotelId: activeRequest?.hotel.id || 0,
+      roomId: activeRequest?.roomType || 0,
+      lateCheckout: activeRequest?.notes.isLateCheckout || false
+    },
     {
       enabled:
         !!activeRequest?.id &&
         !!activeRequest?.notes.adultTravelersCount &&
         activeRequestPackageType === 'package',
       onSuccess: handlePackageDetailsSuccess
-    },
-    {
-      adultsCount: activeRequest?.notes.adultTravelersCount || 0,
-      childrenAges: activeRequest?.notes.childrenAges || [],
-      city: activeRequest?.hotel.city.id || 0,
-      flightId: activeRequest?.destinationFlightId || 0,
-      returnFlightId: activeRequest?.returnFlightId || 0,
-      hotelId: activeRequest?.hotel.id || 0,
-      roomId: activeRequest?.roomType || 0
     }
   )
 
   const {
     packageDetails: requestHotelPackage,
     isLoading: isLoadingRequestHotelPackage
-  } = useSearchHotelPackage(
+  } = useSearchHotelOfferPackage(
+    {
+      adultsCount: activeRequest?.notes.adultTravelersCount || 0,
+      childrenAges: activeRequest?.notes.childrenAges || [],
+      from: activeRequest?.startDate || '',
+      to: activeRequest?.endDate || '',
+      hotelId: activeRequest?.hotel.id || 0,
+      roomId: activeRequest?.roomType || 0
+    },
     {
       enabled:
         !!activeRequest?.id &&
         !!activeRequest?.notes.adultTravelersCount &&
         activeRequestPackageType === 'hotel',
       onSuccess: handlePackageDetailsSuccess
-    },
-    {
-      adultsCount: activeRequest?.notes.adultTravelersCount || 0,
-      childrenAges: activeRequest?.notes.childrenAges || [],
-      city: activeRequest?.hotel.city.id || 0,
-      from: activeRequest?.startDate || '',
-      to: activeRequest?.endDate || '',
-      hotelId: activeRequest?.hotel.id || 0,
-      roomId: activeRequest?.roomType || 0
     }
   )
 

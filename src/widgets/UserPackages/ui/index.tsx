@@ -121,6 +121,7 @@ export const UserPackages = () => {
         packageDetails={activeRequestPackage}
         requestId={activeRequest?.id}
         defaultTravelers={activeRequest?.notes.travelers}
+        isLateCheckout={activeRequest?.notes.isLateCheckout}
       />
     </Layout>
   )

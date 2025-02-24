@@ -164,6 +164,7 @@ export const PackageDetailsPage = () => {
         // onBookingSuccess={handleBackClick}
         isOpen={isBookingFlowOpen}
         onClose={() => setBookingFlowOpen(false)}
+        isLateCheckout={isLateCheckout}
       />
     </Box>
   )

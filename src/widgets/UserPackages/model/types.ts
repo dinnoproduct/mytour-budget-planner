@@ -8,5 +8,6 @@ export type NormalizedRequestEntity = Omit<RequestEntity, 'notes'> & {
     totalTravelersCount: number
     adultTravelersCount: number
     travelers: Travelers
+    isLateCheckout?: boolean
   }
 }

@@ -11,7 +11,8 @@ export const BookingFlow = ({
   requestId,
   isOpen,
   onClose,
-  defaultTravelers
+  defaultTravelers,
+  isLateCheckout
 }: BookingFlowProps) => {
   const {
     paymentModalView,
@@ -30,7 +31,8 @@ export const BookingFlow = ({
     isOpen,
     childrenAges,
     requestId,
-    defaultTravelers
+    defaultTravelers,
+    isLateCheckout
   })
 
   if (!packageDetails?.offerId || !isOpen) {

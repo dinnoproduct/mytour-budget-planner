@@ -9,4 +9,5 @@ export type BookingFlowProps = {
   childrenAges?: number[]
   requestId?: number
   defaultTravelers?: Travelers
+  isLateCheckout?: boolean
 }

@@ -1,12 +1,5 @@
 import { type LayoutProps, type PackageBookingConfigProps } from './types.ts'
-import {
-  Box,
-  type BoxProps,
-  Flex,
-  Grid,
-  HStack,
-  VStack
-} from '@chakra-ui/react'
+import { Box, type BoxProps, Flex, Grid, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { AlertCardMessage, Button, Icon, Text } from '@ui'
 import { FlightsConfigButton } from '@widgets/PackageBookingConfig/ui/FlightsConfigButton.tsx'
@@ -117,32 +110,32 @@ export const HotelPackageBookingConfig = ({
         ) : null}
       </VStack>
 
-      {showFreeCancellation ? (
-        <SectionLayout
-          gridArea="availability"
-          borderColor={{ base: 'transparent', md: 'gray.100' }}
-        >
-          {/*<HStack px="4" spacing="2">*/}
-          {/*	<Icon name="status-info" size="20"/>*/}
-          {/*	<Text size="sm">*/}
-          {/*		{t('availableSeats', { count: availableSeats as any })}*/}
-          {/*	</Text>*/}
-          {/*</HStack>*/}
+      {/*{showFreeCancellation ? (*/}
+      {/*  <SectionLayout*/}
+      {/*    gridArea="availability"*/}
+      {/*    borderColor={{ base: 'transparent', md: 'gray.100' }}*/}
+      {/*  >*/}
+      {/*<HStack px="4" spacing="2">*/}
+      {/*	<Icon name="status-info" size="20"/>*/}
+      {/*	<Text size="sm">*/}
+      {/*		{t('availableSeats', { count: availableSeats as any })}*/}
+      {/*	</Text>*/}
+      {/*</HStack>*/}
 
-          {showFreeCancellation ? (
-            <HStack
-              px="4"
-              spacing="2"
-              // mt="4"
-            >
-              <Icon name="status-success" size="20" />
-              <Text size="sm">
-                {t`freeCancellationUntil`} {freeCancellationDate}
-              </Text>
-            </HStack>
-          ) : null}
-        </SectionLayout>
-      ) : null}
+      {/*{showFreeCancellation ? (*/}
+      {/*  <HStack*/}
+      {/*    px="4"*/}
+      {/*    spacing="2"*/}
+      {/*    // mt="4"*/}
+      {/*  >*/}
+      {/*    <Icon name="status-success" size="20" />*/}
+      {/*    <Text size="sm">*/}
+      {/*      {t`freeCancellationUntil`} {freeCancellationDate}*/}
+      {/*    </Text>*/}
+      {/*  </HStack>*/}
+      {/*) : null}*/}
+      {/*</SectionLayout>*/}
+      {/*) : null}*/}
 
       <SectionLayout
         px="4"
