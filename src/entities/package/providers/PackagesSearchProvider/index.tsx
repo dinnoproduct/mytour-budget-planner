@@ -44,6 +44,8 @@ export const PackagesSearchProvider: React.FC<{
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
+  const [isCityChanged, setIsCityChanged] = useState(false)
+  useState(false)
   const { data: cities = [] } = useCities()
 
   const isAllowedSearchRoute = useMemo(() => {
@@ -141,7 +143,7 @@ export const PackagesSearchProvider: React.FC<{
       }
     }
 
-    setSearchData(updatedSearchData)
+    setSearchData(updatedSearchData, true)
   }, [JSON.stringify(packageList), cities])
 
   const { data: departureFlights } = useAvailableFlights({
@@ -163,6 +165,13 @@ export const PackagesSearchProvider: React.FC<{
         flight => new Date(flight.departureDate)
       )
       setAvailableDepartureDates(dates)
+
+      // set first flight on city change
+      if (isCityChanged) {
+        setSearchData({
+          departureFlightId: departureFlights[0].id
+        })
+      }
     }
   }, [departureFlights])
 
@@ -170,6 +179,15 @@ export const PackagesSearchProvider: React.FC<{
     if (returnFlights) {
       const dates = returnFlights.map(flight => new Date(flight.arrivalDate))
       setAvailableReturnDates(dates)
+
+      if (isCityChanged && departureFlights) {
+        setSearchData({
+          returnFlightId: returnFlights[0].id,
+          toDate: dates[0],
+          fromDate: new Date(departureFlights[0].departureDate)
+        })
+        setIsCityChanged(false)
+      }
     }
   }, [JSON.stringify(returnFlights)])
 
@@ -231,6 +249,7 @@ export const PackagesSearchProvider: React.FC<{
       navigate(`/packages?${queryParams.toString()}`)
 
       setIsLoadingFilteredPackages(true)
+      saveSearchDataToLocalStorage(searchData)
       const searchPackagesResponse = await searchPackagesAsync({
         flightId: departureFlightId as number,
         returnFlightId: returnFlightId as number,
@@ -239,7 +258,6 @@ export const PackagesSearchProvider: React.FC<{
         childs: travelersData.childrenAges
       })
       setFilteredPackages(searchPackagesResponse)
-      saveSearchDataToLocalStorage(searchData)
     } catch (error) {
       setIsSearchError(true)
     } finally {
@@ -247,7 +265,11 @@ export const PackagesSearchProvider: React.FC<{
     }
   }
 
-  const setSearchData = (data: Partial<SearchData>) => {
+  const setSearchData = (data: Partial<SearchData>, isDefautData?: boolean) => {
+    if (!isDefautData && data.selectedCity) {
+      setIsCityChanged(true)
+    }
+
     setSearchDataState(prevData => ({ ...prevData, ...data }))
   }
 
