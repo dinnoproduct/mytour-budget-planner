@@ -26,7 +26,6 @@ export const useSearchOfferPackage = (
         enabled: typeof options?.enabled === 'boolean' ? options.enabled : true
       }
     )
-  console.log('offers', offers)
 
   const offerId = useMemo(() => {
     const roomId = searchData?.roomId
@@ -34,7 +33,6 @@ export const useSearchOfferPackage = (
     return offers?.find(offer => offer.roomType === roomId)?.offerId || 0
   }, [offers, searchData?.roomId])
 
-  console.log('offerId', offerId)
   const { data: packageDetails, isLoading: isLoadingPackage } =
     usePackageByOfferId(offerId, {
       enabled: !!offerId

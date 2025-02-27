@@ -96,6 +96,10 @@ export const PackagesSearchProvider: React.FC<{
   }
 
   useEffect(() => {
+    if (searchData.fromDate && searchData.toDate) {
+      return
+    }
+
     const savedSearchData = loadSearchDataFromLocalStorage()
     const fromDate = savedSearchData?.fromDate
       ? moment(savedSearchData?.fromDate)
@@ -281,8 +285,11 @@ export const PackagesSearchProvider: React.FC<{
     }
   }
 
-  const setSearchData = (data: Partial<SearchData>, isDefautData?: boolean) => {
-    if (!isDefautData && data.selectedCity) {
+  const setSearchData = (
+    data: Partial<SearchData>,
+    isDefaultData?: boolean
+  ) => {
+    if (!isDefaultData && data.selectedCity) {
       setIsCityChanged(true)
     }
 
@@ -302,12 +309,6 @@ export const PackagesSearchProvider: React.FC<{
       filteredPackages.length === 0 &&
       !isDefaultSearchDone
     ) {
-      console.log('Searching packages : ', {
-        isAllowedSearchRoute,
-        searchDataDepartureFlightId: searchData.departureFlightId,
-        searchDataReturnFlightId: searchData.returnFlightId,
-        filteredPackagesLength: filteredPackages.length
-      })
       handleSearch(searchData)
       setIsDefaultSearchDone(true)
     }
@@ -366,7 +367,7 @@ export const PackagesSearchProvider: React.FC<{
       currentData.returnFlightId = parseInt(returnFlightIdParam, 10)
     }
 
-    setSearchData(currentData)
+    setSearchData(currentData, true)
   }, [searchParams, isAllowedSearchRoute])
 
   return (

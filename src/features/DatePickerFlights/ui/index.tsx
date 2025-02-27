@@ -81,7 +81,7 @@ export const DatePickerFlights = ({
       setSelectedFromDate(date)
       onFromDateClick(date)
       setSelectedToDate(null)
-      setDateSelectState('to') // Automatically switch focus to 'to' date after selecting 'from'
+      setDateSelectState('to')
     } else if (dateSelectState === 'to' && date >= selectedFromDate!) {
       setSelectedToDate(date)
     }
@@ -209,7 +209,6 @@ export const DatePickerFlights = ({
             selectedFromDate={selectedFromDate}
             selectedToDate={selectedToDate}
             isLoading={isLoadingReturnDates}
-            startDate={availableDepartureDates[0]}
             dateSelectState={dateSelectState}
           />
 

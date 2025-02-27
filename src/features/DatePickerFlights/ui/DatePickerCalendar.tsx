@@ -6,12 +6,12 @@ import { Text, Button } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
 import { LoadingView } from '@features/DatePickerFlights/ui/LoadingView.tsx'
+import moment from 'moment'
 
 const MAX_MONTHS = 8
 
 export const DatePickerCalendar = ({
   availableDates,
-  startDate,
   onDayClick,
   selectedFromDate,
   selectedToDate,
@@ -19,7 +19,11 @@ export const DatePickerCalendar = ({
   dateSelectState
 }: DatePickerCalendarProps) => {
   const today = new Date()
-  const [currentMonth, setCurrentMonth] = useState(startDate || today)
+  const startDate = useMemo(() => availableDates[0] || today, [availableDates])
+  const [currentMonth, setCurrentMonth] = useState(today)
+  useEffect(() => {
+    setCurrentMonth(startDate)
+  }, [startDate])
 
   useEffect(() => {
     if (selectedFromDate && dateSelectState === 'from') {
@@ -50,10 +54,19 @@ export const DatePickerCalendar = ({
 
   const { isMd } = useBreakpoint()
 
-  const maxDate = useMemo(
-    () => new Date(today.getFullYear(), today.getMonth() + (MAX_MONTHS - 2), 1),
-    [today]
-  )
+  const maxDate = useMemo(() => {
+    if (availableDates.length > 0) {
+      const lastAvailableDate = moment(
+        availableDates[availableDates.length - 1]
+      ).startOf('month')
+
+      return lastAvailableDate
+    }
+
+    return moment(today)
+      .add(MAX_MONTHS - 2, 'months')
+      .startOf('month')
+  }, [availableDates, today])
 
   const handlePrevMonth = () => {
     if (currentMonth > new Date(today.getFullYear(), today.getMonth(), 1)) {
@@ -67,23 +80,23 @@ export const DatePickerCalendar = ({
   }
 
   const handleNextMonth = () => {
-    if (currentMonth < maxDate) {
-      const nextMonth = new Date(
-        currentMonth.getFullYear(),
-        currentMonth.getMonth() + 1,
-        1
-      )
+    if (moment(currentMonth).isBefore(maxDate)) {
+      const nextMonth = moment(currentMonth).add(1, 'month').toDate()
       setCurrentMonth(nextMonth)
     }
   }
 
-  const isPrevDisabled = useMemo(
-    () => currentMonth <= new Date(today.getFullYear(), today.getMonth(), 1),
-    [currentMonth, today]
-  )
+  const isPrevDisabled = useMemo(() => {
+    const minDate =
+      startDate && moment(startDate).isAfter(today)
+        ? moment(startDate).startOf('month')
+        : moment(today).startOf('month')
+
+    return moment(currentMonth).isSameOrBefore(minDate)
+  }, [currentMonth, today, startDate])
 
   const isNextDisabled = useMemo(
-    () => currentMonth >= maxDate,
+    () => moment(currentMonth).isSameOrAfter(maxDate),
     [currentMonth, maxDate]
   )
 

@@ -37,7 +37,6 @@ export const HotelPackageDetailsPage = () => {
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
 
-  // console.log('PackageDetailsPage@currentOfferPackage : ', currentOfferPackage)
   const { filteredHotelPackages } = useHotelPackagesSearchContext()
   const containerRef = useRef<HTMLDivElement>(null)
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0)

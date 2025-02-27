@@ -34,7 +34,6 @@ export const PackageDetailsPage = () => {
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
 
-  // console.log('PackageDetailsPage@currentOfferPackage : ', currentOfferPackage)
   const { filteredPackages } = usePackagesSearchContext()
   const [isLateCheckout, setLateCheckout] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)

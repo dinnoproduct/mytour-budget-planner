@@ -80,6 +80,10 @@ export const HotelPackagesSearchProvider: React.FC<{
   }
 
   useEffect(() => {
+    if (searchData.fromDate && searchData.toDate) {
+      return
+    }
+
     const savedSearchData = loadSearchDataFromLocalStorage()
     const fromDate = savedSearchData?.fromDate
       ? moment(savedSearchData?.fromDate)
