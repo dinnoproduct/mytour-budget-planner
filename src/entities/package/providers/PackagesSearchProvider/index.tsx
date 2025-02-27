@@ -45,6 +45,7 @@ export const PackagesSearchProvider: React.FC<{
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const [isCityChanged, setIsCityChanged] = useState(false)
+  const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false)
   useState(false)
   const { data: cities = [] } = useCities()
 
@@ -181,11 +182,26 @@ export const PackagesSearchProvider: React.FC<{
       setAvailableReturnDates(dates)
 
       if (isCityChanged && departureFlights) {
-        setSearchData({
-          returnFlightId: returnFlights[0].id,
-          toDate: dates[0],
-          fromDate: new Date(departureFlights[0].departureDate)
-        })
+        const packageItem = packageList?.[0]
+
+        if (returnFlights[0]) {
+          setSearchData({
+            returnFlightId: returnFlights[0].id,
+            toDate: dates[0],
+            fromDate: new Date(departureFlights[0].departureDate)
+          })
+        } else if (
+          packageItem &&
+          searchData.selectedCity === packageItem.city.id
+        ) {
+          setSearchData({
+            departureFlightId: packageItem.destinationFlight.id,
+            returnFlightId: packageItem.returnFlight.id,
+            toDate: new Date(packageItem.returnFlight.arrivalDate),
+            fromDate: new Date(packageItem.destinationFlight.departureDate)
+          })
+        }
+
         setIsCityChanged(false)
       }
     }
@@ -283,9 +299,17 @@ export const PackagesSearchProvider: React.FC<{
       isAllowedSearchRoute &&
       searchData.departureFlightId &&
       searchData.returnFlightId &&
-      filteredPackages.length === 0
+      filteredPackages.length === 0 &&
+      !isDefaultSearchDone
     ) {
+      console.log('Searching packages : ', {
+        isAllowedSearchRoute,
+        searchDataDepartureFlightId: searchData.departureFlightId,
+        searchDataReturnFlightId: searchData.returnFlightId,
+        filteredPackagesLength: filteredPackages.length
+      })
       handleSearch(searchData)
+      setIsDefaultSearchDone(true)
     }
   }, [
     searchData.departureFlightId,
