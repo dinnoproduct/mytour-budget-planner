@@ -10,6 +10,7 @@ import {
   type GetFlightsByDateParams,
   type GetReturnFlightsParams,
   type PackageUseCasesParams,
+  type ReservePackageInput,
   type SearchHotelPackagesParams,
   type SearchPackagesParams,
   type UpdateRequestInput
@@ -92,6 +93,10 @@ export class PackageUseCases {
   // request
   async bookPackage(input: BookPackageInput, token: string) {
     return this.requestService.bookPackage(input, token)
+  }
+
+  async reservePackage(input: ReservePackageInput, token: string) {
+    return this.requestService.reservePackage(input, token)
   }
 
   async payRemainingAmount(requestId: number, token: string) {

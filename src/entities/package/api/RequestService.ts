@@ -4,6 +4,8 @@ import {
   type BookPackageResponse,
   type CreateRequestInput,
   type RequestEntity,
+  type ReservePackageInput,
+  type ReservePackageResponse,
   type UpdateRequestInput
 } from '@entities/package'
 import { type LanguageName } from '@shared/model'
@@ -32,6 +34,25 @@ export class RequestService {
         Platform: 'Web'
       }
     })
+  }
+
+  reservePackage(
+    input: ReservePackageInput,
+    token: string
+  ): Promise<ReservePackageResponse> {
+    return this.api.post(
+      'reserve',
+      {
+        ...input,
+        isLateCheckout: false
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Platform: 'Web'
+        }
+      }
+    )
   }
 
   payRemainingAmount(

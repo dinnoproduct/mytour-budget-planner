@@ -87,6 +87,8 @@ export type BookPackageInput = {
   paymentSystem: PaymentSystem
 }
 
+export interface ReservePackageInput extends BookPackageInput {}
+
 export enum PaymentSystem {
   'VPos' = 'VPos',
   'MyAmeriaPay' = 'MyAmeriaPay'
@@ -104,6 +106,8 @@ export type BookPackageResponse = {
   message: string
   bookingPaymentUrl: string
 }
+
+export interface ReservePackageResponse extends BookPackageResponse {}
 
 export type CreateRequestInput = {
   offerId: number

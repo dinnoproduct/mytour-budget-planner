@@ -4,6 +4,7 @@ import {
   type PaymentSystem,
   useBookPackage,
   useCreateRequest,
+  useReservePackage,
   useUpdateRequest
 } from '@entities/package'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -31,6 +32,7 @@ export const useBookingFlow = ({
   const { mutateAsync: updateRequestAsync, isPending: isPendingUpdateRequest } =
     useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
+  const { mutateAsync: reservePackageAsync } = useReservePackage()
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
   const requestIdRef = useRef<number | null>(null)
   const [modalView, setModalView] = useState('')
@@ -94,6 +96,7 @@ export const useBookingFlow = ({
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
+          travelers: [...travelers.adults, ...travelers.children],
           paymentSystem
         }
 
@@ -109,15 +112,16 @@ export const useBookingFlow = ({
           bookInput.bookingType = 2
         }
 
-        const bookResponse = await bookPackageAsync(bookInput)
-
-        setIsLoadingBooking(false)
-
-        if (+paymentAmount === 0) {
+        if (paymentAmount === 0) {
+          const reserveResponse = await reservePackageAsync(bookInput)
+          setIsLoadingBooking(false)
           setModalView('success')
 
           return
         }
+
+        const bookResponse = await bookPackageAsync(bookInput)
+        setIsLoadingBooking(false)
 
         if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
           window.location.href =
