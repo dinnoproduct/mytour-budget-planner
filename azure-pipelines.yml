@@ -51,7 +51,7 @@ stages:
         sshEndpoint: 'TestVM-SSH'  # Use the SSH Service Connection Name
         runOptions: 'commands'
         commands: |  
-          docker login dinnomytour.azurecr.io -u $(ACR_USERNAME) -p $(ACR_PASSWORD) --password-stdin        
+          echo $(ACR_PASSWORD) docker login dinnomytour.azurecr.io -u $(ACR_USERNAME) --password-stdin        
           docker pull dinnomytour.azurecr.io/mytourweb:test
           docker stop mytour-web || true
           docker rm mytour-web || true
