@@ -36,3 +36,22 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: 'test'
+
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+  - job: DeployToVM
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: SSH@0
+      inputs:
+        sshEndpoint: 'TestVM-SSH'  # Use the SSH Service Connection Name
+        runOptions: 'commands'
+        commands: |          
+          docker pull dinnomytour.azurecr.io/mytourweb:test
+          docker stop mytour-web || true
+          docker rm mytour-web || true
+          docker run -d -p 3004:5173 --name mytour-web dinnomytour.azurecr.io/mytourweb:test
+          docker system prune -f
+        failOnStderr: true        
