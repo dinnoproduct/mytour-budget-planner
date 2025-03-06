@@ -79,7 +79,13 @@ export const PackageCard = ({
       <ImageSlider
         images={tourPackage.hotel.images}
         starsCount={tourPackage.hotel.stars}
-        allInclusive={!isHotelPackage && !!tourPackage.foodType}
+        badgeStatus={
+          isHotelPackage
+            ? 'breakfastOnly'
+            : tourPackage.foodType
+              ? 'allInclusive'
+              : undefined
+        }
       />
 
       <Box py="4">

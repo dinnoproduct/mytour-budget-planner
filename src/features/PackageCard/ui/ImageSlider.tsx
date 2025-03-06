@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react'
 import { Box, type BoxProps, Image } from '@chakra-ui/react'
 import classnames from 'classnames'
 import { HotelStarBadge, PaginationBadge, StatusOnImageBadge } from '@ui'
+import { type BadgeStatus } from '@components/Badge/types.ts'
 
 const slideTime = 300
 
@@ -10,8 +11,13 @@ const ImageSlider = ({
   images,
   starsCount,
   isPackageList,
-  allInclusive
-}: any) => {
+  badgeStatus
+}: {
+  images: any[]
+  starsCount: number
+  isPackageList?: boolean
+  badgeStatus?: BadgeStatus
+}) => {
   const sliderRef = useRef<Slider>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
@@ -71,7 +77,7 @@ const ImageSlider = ({
 
       <HotelStarBadge starsCount={starsCount} isPositionAbsolute />
 
-      {allInclusive ? <StatusOnImageBadge status="allInclusive" /> : null}
+      {badgeStatus ? <StatusOnImageBadge status={badgeStatus} /> : null}
     </Layout>
   )
 }

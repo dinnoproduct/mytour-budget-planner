@@ -1,22 +1,23 @@
-import { FlexProps } from '@chakra-ui/react'
+import { type FlexProps } from '@chakra-ui/react'
 
 export type StatusOnImageBadgeProps = {
-	status: BadgeStatus
+  status: BadgeStatus
 } & BadgeProps
 
 export type BadgeProps = {
-	isPositionAbsolute?: boolean
+  isPositionAbsolute?: boolean
 } & FlexProps
 
 export type BadgeStatus =
-	'allInclusive'
-	| 'specialOffer'
-	| 'notFinished'
-	| 'paid'
-	| 'canceled'
-	| 'rejected'
-	| 'paidPartially'
-	| 'unfinished'
+  | 'allInclusive'
+  | 'breakfastOnly'
+  | 'specialOffer'
+  | 'notFinished'
+  | 'paid'
+  | 'canceled'
+  | 'rejected'
+  | 'paidPartially'
+  | 'unfinished'
   | 'expired'
   | 'soldOut'
   | 'inProgress'
