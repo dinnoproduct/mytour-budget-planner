@@ -18,7 +18,10 @@ variables:
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+  
+variables:
 - group: ACR-Credentials
+
 
 stages:
 - stage: Build
