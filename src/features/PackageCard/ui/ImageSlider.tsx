@@ -1,5 +1,5 @@
 import Slider, { type Settings } from 'react-slick'
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { Box, type BoxProps, Image } from '@chakra-ui/react'
 import classnames from 'classnames'
 import { HotelStarBadge, PaginationBadge, StatusOnImageBadge } from '@ui'
@@ -36,11 +36,20 @@ const ImageSlider = ({
     arrows: true
   }
 
-  const sliderImages = images?.filter((image: any) => {
-    if (isPackageList) {
-      return image?.size === 1
-    } else return image?.size === 3
-  })
+  const sliderImages = useMemo(() => {
+    const filteredImages =
+      images?.filter((image: any) => {
+        if (isPackageList) {
+          return image?.size === 1
+        } else return image?.size === 3
+      }) || []
+
+    return filteredImages.length
+      ? filteredImages
+      : images?.length > 0
+        ? images
+        : []
+  }, [images?.length, isPackageList])
 
   return (
     <Layout

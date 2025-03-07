@@ -41,13 +41,18 @@ export const HotelPackageDetailsPage = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0)
 
-  const uniqueImageUrls = useMemo(
-    () =>
-      (currentOfferPackage || packageDetails)?.hotel?.images
-        .filter(img => img.size === 3)
-        .map(img => img.url) || [],
-    [packageDetails?.offerId, currentOfferPackage?.offerId]
-  )
+  const uniqueImageUrls = useMemo(() => {
+    const imagesArr =
+      (currentOfferPackage || packageDetails)?.hotel?.images || []
+
+    let filteredImages = imagesArr.filter(img => img.size === 3)
+
+    if (!filteredImages.length && imagesArr.length) {
+      filteredImages = imagesArr.filter(img => img.size === 1)
+    }
+
+    return filteredImages.map(img => img.url)
+  }, [packageDetails?.offerId, currentOfferPackage?.offerId])
 
   useEffect(() => {
     if (
