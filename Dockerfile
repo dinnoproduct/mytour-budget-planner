@@ -19,9 +19,6 @@ EXPOSE 3000
 # Build the React app for production
 RUN npm run build
 
-# Remove unnecessary files to reduce image size
-RUN npm prune --production
-
 # -------------------------
 # Production runtime image
 # -------------------------
