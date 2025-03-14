@@ -19,5 +19,22 @@ EXPOSE 3000
 # Build the React app for production
 RUN npm run build
 
+# Remove unnecessary files to reduce image size
+RUN npm prune --production
+
+# -------------------------
+# Production runtime image
+# -------------------------
+FROM node:18-alpine AS runner
+
+# Set working directory
+WORKDIR /app
+
+# Copy built files and dependencies from builder stage
+COPY --from=builder /app/.next .next
+COPY --from=builder /app/node_modules node_modules
+COPY --from=builder /app/package.json package.json
+COPY --from=builder /app/public public
+
 # Start app
 CMD ["npm", "start"]
