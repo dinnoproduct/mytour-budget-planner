@@ -1,5 +1,5 @@
 # Use the official Node.js image from Docker Hub
-FROM node:18 AS builder
+FROM node:latest
 
 # Set the working directory for your app inside the container
 WORKDIR /app
@@ -18,20 +18,6 @@ EXPOSE 3000
 
 # Build the React app for production
 RUN npm run build
-
-# -------------------------
-# Production runtime image
-# -------------------------
-FROM node:18-alpine AS runner
-
-# Set working directory
-WORKDIR /app
-
-# Copy built files and dependencies from builder stage
-COPY --from=builder /app/.next .next
-COPY --from=builder /app/node_modules node_modules
-COPY --from=builder /app/package.json package.json
-COPY --from=builder /app/public public
 
 # Start app
 CMD ["npm", "start"]
