@@ -207,6 +207,7 @@ export const TravelersModal = ({
                   label={t`dateOfBirth`}
                   maxDate={moment()
                     .subtract((packageDetails?.childMaxAge || 1) + 1, 'years')
+                    .add(packageDetails.nights, 'days')
                     .toDate()}
                 />
               </VStack>
