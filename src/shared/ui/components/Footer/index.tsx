@@ -35,8 +35,13 @@ const Contact = () => {
 
       <UnorderedList listStyleType="none" spacing="2" mx="0">
         <ListItem>
-          <Text size="md" color="gray.600" as="a" href="mailto:info@mytour.am">
-            info@mytour.am
+          <Text
+            size="md"
+            color="gray.600"
+            as="a"
+            href="mailto:bookings@mytour.am"
+          >
+            bookings@mytour.am
           </Text>
         </ListItem>
         <ListItem>

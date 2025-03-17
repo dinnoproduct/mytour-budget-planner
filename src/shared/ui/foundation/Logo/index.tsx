@@ -1,5 +1,5 @@
-import React, { forwardRef, LegacyRef } from 'react'
-import { Img, ImgProps } from '@chakra-ui/react'
+import React, { forwardRef, type LegacyRef } from 'react'
+import { Img, type ImgProps } from '@chakra-ui/react'
 import LogoImage from './logos/logo.svg'
 import SymbolImage from './logos/symbol.svg'
 
@@ -9,14 +9,14 @@ export type LogoProps = {
 
 export const Logo = forwardRef(
   (
-    { type='logo', ...props }: LogoProps,
+    { type = 'logo', ...props }: LogoProps,
     ref: LegacyRef<HTMLImageElement>
   ) => (
     <Img
       ref={ref}
       src={type === 'logo' ? LogoImage : SymbolImage}
       alt="My Tour"
-      height="40px"
+      height="auto"
       {...props}
     />
   )
