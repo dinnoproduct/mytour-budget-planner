@@ -5,9 +5,10 @@ import {
   useBookPackage,
   useCreateRequest,
   useReservePackage,
-  useUpdateRequest
+  useUpdateRequest,
+  type NormalizedRequestEntity
 } from '@entities/package'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
 import { isMobile } from 'react-device-detect'
 
@@ -20,11 +21,15 @@ export const useBookingFlow = ({
   initialView,
   onClose,
   isOpen,
-  requestId,
+  request: initialRequest,
   childrenAges,
   defaultTravelers,
   isLateCheckout
 }: useBookingFlowProps) => {
+  console.log('useBookingFlow@packageDetails', packageDetails)
+  console.log('defaultTravelers', defaultTravelers)
+  console.log('childrenAges', childrenAges)
+
   const { user } = useUserContext()
   const { i18n } = useTranslation()
   const { mutateAsync: createRequestAsync, isPending: isPendingCreateRequest } =
@@ -34,20 +39,17 @@ export const useBookingFlow = ({
   const { mutateAsync: bookPackageAsync } = useBookPackage()
   const { mutateAsync: reservePackageAsync } = useReservePackage()
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
-  const requestIdRef = useRef<number | null>(null)
+  const [request, setRequest] = useState<NormalizedRequestEntity | null>(initialRequest || null)
   const [modalView, setModalView] = useState('')
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
   const [travelers, setTravelers] = useState<any>({ adults: [], children: [] })
 
   const [notesJson, setNotesJson] = useState('')
-  // const travelersRef = useRef<ITraveler[]>([])
-  //
+
   useEffect(() => {
-    if (requestId) {
-      requestIdRef.current = requestId
-    }
-  }, [requestId])
+    setRequest(initialRequest || null)
+  }, [initialRequest])
 
   useEffect(() => {
     setModalView(initialView)
@@ -61,7 +63,7 @@ export const useBookingFlow = ({
     setModalView('')
     onClose && onClose()
     setTravelers({ adults: [], children: [] })
-    requestIdRef.current = null
+    setRequest(null)
     setPaymentModalView('paymentForm')
   }
 
@@ -76,7 +78,7 @@ export const useBookingFlow = ({
 
   const onPaymentModalSuccess = useCallback(
     async (paymentAmount: number, paymentSystem: PaymentSystem) => {
-      if (!packageDetails || !requestIdRef.current) {
+      if (!packageDetails || !request?.id) {
         return
       }
 
@@ -84,7 +86,7 @@ export const useBookingFlow = ({
 
       try {
         const bookInput: any = {
-          requestId: requestIdRef.current,
+          requestId: request.id,
           cityId: packageDetails.city.id,
           price: packageDetails.price,
           hotelId: packageDetails.hotel.id,
@@ -92,7 +94,7 @@ export const useBookingFlow = ({
           offerId: packageDetails.offerId,
           roomType: packageDetails.roomType,
           email: user?.email || '',
-          notes: notesJson,
+          notes: JSON.stringify(request.notes) || notesJson,
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
@@ -144,7 +146,7 @@ export const useBookingFlow = ({
         setPaymentModalView('paymentError')
       }
     },
-    [requestIdRef.current, packageDetails?.offerId, travelers, notesJson]
+    [request, packageDetails?.offerId, travelers, notesJson]
   )
 
   useEffect(() => {
@@ -267,22 +269,31 @@ export const useBookingFlow = ({
         requestInput.endDate = packageDetails.checkout
       }
 
-      if (!requestIdRef.current) {
+      if (!request?.id) {
         const newRequestId = await createRequestAsync({
           ...requestInput
         })
-        requestIdRef.current = newRequestId
-
+        setRequest({
+          id: newRequestId,
+          ...requestInput
+        } as NormalizedRequestEntity)
         return
       }
 
-      const res = await updateRequestAsync({
-        id: requestIdRef.current,
+      const success = await updateRequestAsync({
+        id: request.id,
         ...requestInput
       })
+      
+      if (success) {
+        setRequest({
+          ...request,
+          ...requestInput
+        } as NormalizedRequestEntity)
+      }
     },
     [
-      requestIdRef.current,
+      request,
       packageDetails?.offerId,
       childrenAges,
       isPendingCreateRequest,
@@ -309,7 +320,7 @@ type useBookingFlowProps = {
   initialView: 'travelers' | 'payment'
   onClose?: () => void
   isOpen?: boolean
-  requestId?: number
+  request?: NormalizedRequestEntity | null
   childrenAges?: number[]
   defaultTravelers?: Travelers
   isLateCheckout?: boolean

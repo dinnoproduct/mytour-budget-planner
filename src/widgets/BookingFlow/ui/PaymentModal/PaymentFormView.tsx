@@ -22,8 +22,8 @@ export const PaymentFormView = ({
       packageDetails?.destinationFlight?.departureDate ||
       packageDetails?.checkin
 
-    return !overDaysFromNow(departureDate, 21)
-  }, [packageDetails?.destinationFlight?.departureDate])
+    return !overDaysFromNow(departureDate, 21) && !isBooked
+  }, [packageDetails?.destinationFlight?.departureDate, isBooked])
 
   const [isPaymentInFull, setIsPaymentInFull] = useState(under21DaysFromNow)
   const minPrePaymentAmount = useMemo(

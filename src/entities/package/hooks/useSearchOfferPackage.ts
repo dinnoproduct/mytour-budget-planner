@@ -23,19 +23,23 @@ export const useSearchOfferPackage = (
       },
       {
         refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-        enabled: typeof options?.enabled === 'boolean' ? options.enabled : true
+        enabled: typeof options?.enabled === 'boolean' ? options.enabled : true,
+        gcTime: 0
       }
     )
 
   const offerId = useMemo(() => {
+    if (isLoadingGenerateOffers) return 0
+
     const roomId = searchData?.roomId
 
     return offers?.find(offer => offer.roomType === roomId)?.offerId || 0
-  }, [offers, searchData?.roomId])
+  }, [offers, searchData?.roomId, isLoadingGenerateOffers])
 
   const { data: packageDetails, isLoading: isLoadingPackage } =
     usePackageByOfferId(offerId, {
-      enabled: !!offerId
+      enabled: !!offerId,
+      gcTime: 0
     })
 
   useEffect(() => {

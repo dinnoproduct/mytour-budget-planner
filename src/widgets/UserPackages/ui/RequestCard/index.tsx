@@ -52,10 +52,10 @@ export const RequestCard = ({
     [roomTypes, request.roomType]
   )
 
-  const showPayButton = useMemo(
+  const showRemainingPaymentButton = useMemo(
     () =>
       status === RequestsGroupStatus.Upcoming &&
-      request.status === RequestStatus.Booked,
+      [RequestStatus.Booked].includes(request.status),
     [status, request.remainingPaymentAmount]
   )
 
@@ -69,8 +69,10 @@ export const RequestCard = ({
 
   const showNotPaidButton = useMemo(
     () =>
-      status === RequestsGroupStatus.Incomplete &&
-      request.status === RequestStatus.NotPaid,
+      (status === RequestsGroupStatus.Incomplete &&
+        request.status === RequestStatus.NotPaid) ||
+      (request.status === RequestStatus.Reserved &&
+        status === RequestsGroupStatus.Upcoming),
     [status, request.status]
   )
 
@@ -92,7 +94,7 @@ export const RequestCard = ({
           RequestStatus.Overdue
         ].includes(request.status) &&
         request.remainingPaymentAmount > 0) ||
-      RequestStatus.Booked === request.status,
+      [RequestStatus.Booked, RequestStatus.Reserved].includes(request.status),
     [status, request.status, request.remainingPaymentAmount]
   )
 
@@ -192,7 +194,7 @@ export const RequestCard = ({
         showCancelButton ||
         showNotPaidButton) && (
         <VStack px="4" pb="4" align="stretch" spacing="2">
-          {showPayButton ? (
+          {showRemainingPaymentButton ? (
             <Button
               width="full"
               onClick={() =>

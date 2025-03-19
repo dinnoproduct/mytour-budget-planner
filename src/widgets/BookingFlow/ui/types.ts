@@ -1,4 +1,4 @@
-import { type PackageEntity } from '@entities/package'
+import { type PackageEntity, type NormalizedRequestEntity } from '@entities/package'
 import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
 
 export type BookingFlowProps = {
@@ -7,7 +7,8 @@ export type BookingFlowProps = {
   isOpen?: boolean
   onClose?: () => void
   childrenAges?: number[]
-  requestId?: number
+  request?: NormalizedRequestEntity | null
   defaultTravelers?: Travelers
   isLateCheckout?: boolean
+  isBooked?: boolean
 }

@@ -14,6 +14,13 @@ export const tabsComponentTheme = {
             color: 'white'
           }
         },
+        tablist: {
+          maxW: 'full',
+          overflowX: 'auto',
+          '&::-webkit-scrollbar': { display: 'none' },
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none'
+        },
         tabpanel: {
           p: 0,
           pt: 10

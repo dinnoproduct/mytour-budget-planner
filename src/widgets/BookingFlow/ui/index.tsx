@@ -8,11 +8,12 @@ export const BookingFlow = ({
   packageDetails,
   initialView,
   childrenAges,
-  requestId,
+  request,
   isOpen,
   onClose,
   defaultTravelers,
-  isLateCheckout
+  isLateCheckout,
+  isBooked,
 }: BookingFlowProps) => {
   const {
     paymentModalView,
@@ -30,7 +31,7 @@ export const BookingFlow = ({
     onClose,
     isOpen,
     childrenAges,
-    requestId,
+    request,
     defaultTravelers,
     isLateCheckout
   })
@@ -63,7 +64,7 @@ export const BookingFlow = ({
             initialView === 'payment' ? undefined : openTravelersModal
           }
           isLoadingBooking={isLoadingBooking}
-          isBooked={!!requestId}
+          isBooked={isBooked}
         />
       )}
 

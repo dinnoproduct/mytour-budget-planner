@@ -10,5 +10,5 @@ export const usePackageByOfferId = (
     ...(options || {}),
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
     queryFn: () => packageUseCases.getPackage(offerId),
-    queryKey: ['package', offerId]
+    queryKey: ['package-by-offer-id', offerId]
   })

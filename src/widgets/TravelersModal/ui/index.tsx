@@ -84,7 +84,7 @@ export const TravelersModal = ({
   const updateNormalizedTravelers = useCallback(
     debounce((data: Travelers) => {
       onChange && onChange(data)
-    }, 1500),
+    }, 1000),
     []
   )
 

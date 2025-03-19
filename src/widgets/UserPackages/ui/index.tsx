@@ -30,9 +30,11 @@ export const UserPackages = () => {
     activeRequest,
     handleBookingFlowClose,
     activeRequestPackage,
-    isLoadingActiveRequestPackage,
-    incompleteInitialView
+    incompleteInitialView,
+    isActiveRequestDraft,
+    isLoadingActiveRequestPackage
   } = useUserRequestsManager()
+
 
   return (
     <Layout>
@@ -58,6 +60,11 @@ export const UserPackages = () => {
                 }
                 onCancelClick={handleCancelClick}
                 status={RequestsGroupStatus.Upcoming}
+                isLoadingContinue={
+                  request.id === activeRequest?.id &&
+                  isLoadingActiveRequestPackage
+                }
+                onContinueClick={handleContinueClick}
               />
             ))}
           </TabContentLayout>
@@ -119,9 +126,10 @@ export const UserPackages = () => {
         isOpen={!!activeRequestPackage?.offerId}
         onClose={handleBookingFlowClose}
         packageDetails={activeRequestPackage}
-        requestId={activeRequest?.id}
+        request={activeRequest}
         defaultTravelers={activeRequest?.notes.travelers}
         isLateCheckout={activeRequest?.notes.isLateCheckout}
+        isBooked={!isActiveRequestDraft}
       />
     </Layout>
   )

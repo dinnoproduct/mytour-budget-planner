@@ -1,7 +1,6 @@
-import { type RequestStatus } from '@entities/package'
+import { type RequestStatus, type NormalizedRequestEntity } from '@entities/package'
 import { type BoxProps } from '@chakra-ui/react'
 import { type RequestsGroupStatus } from '@widgets/UserPackages/ui/types.ts'
-import { type NormalizedRequestEntity } from '@widgets/UserPackages/model/types.ts'
 
 export type RequestCardProps = {
   request: NormalizedRequestEntity

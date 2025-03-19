@@ -6,15 +6,15 @@ import {
   useSearchHotelOfferPackage,
   useSearchOfferPackage,
   useUpdateRequest,
-  useUserRequests
+  useUserRequests,
+  type NormalizedRequestEntity
 } from '@entities/package'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 import { useModalContext } from '@app/providers'
-import { useSnackBar } from '@ui'
+import { Logo, useSnackBar } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
-import { type NormalizedRequestEntity } from '@widgets/UserPackages/model/types.ts'
 import { type EmptyObject } from 'global'
 
 export const useUserRequestsManager = () => {
@@ -50,17 +50,19 @@ export const useUserRequestsManager = () => {
 
       const normalUserRequests = userRequests.map(normalizeRequest)
 
-      const active = normalUserRequests.filter(
-        request =>
-          [
-            RequestStatus.InProcess,
-            RequestStatus.Booked,
-            RequestStatus.Rejected,
-            RequestStatus.Overdue
-          ].includes(request.status) ||
-          (request.status === RequestStatus.Purchased &&
-            moment(request.endDate).isAfter(today))
-      )
+      const active = normalUserRequests
+        .filter(
+          request =>
+            [
+              RequestStatus.InProcess,
+              RequestStatus.Booked,
+              RequestStatus.Rejected,
+              RequestStatus.Overdue,
+              RequestStatus.Reserved
+            ].includes(request.status) ||
+            (request.status === RequestStatus.Purchased &&
+              moment(request.endDate).isAfter(today))
+        )
 
       const pending = normalUserRequests
         .filter(request =>
@@ -166,6 +168,7 @@ export const useUserRequestsManager = () => {
   >('travelers')
   const [activeRequest, setActiveRequest] =
     useState<NormalizedRequestEntity | null>(null)
+  const [isActiveRequestDraft, setIsActiveRequestDraft] = useState(false)
 
   const handlePackageDetailsSuccess = (
     packageDetails: PackageEntity | EmptyObject
@@ -221,6 +224,7 @@ export const useUserRequestsManager = () => {
         !!activeRequest?.id &&
         !!activeRequest?.notes.adultTravelersCount &&
         activeRequestPackageType === 'package',
+
       onSuccess: handlePackageDetailsSuccess
     }
   )
@@ -269,7 +273,11 @@ export const useUserRequestsManager = () => {
   const handleContinueClick = (request: NormalizedRequestEntity) => {
     if (request.status === RequestStatus.Draft) {
       setIncompleteInitialView('travelers')
+      setIsActiveRequestDraft(true)
     } else if (request.status === RequestStatus.NotPaid) {
+      setIncompleteInitialView('payment')
+      setIsActiveRequestDraft(true)
+    } else if (request.status === RequestStatus.Reserved) {
       setIncompleteInitialView('payment')
     }
 
@@ -278,6 +286,7 @@ export const useUserRequestsManager = () => {
 
   const handleBookingFlowClose = () => {
     setActiveRequest(null)
+    setIsActiveRequestDraft(false)
   }
 
   return {
@@ -296,7 +305,8 @@ export const useUserRequestsManager = () => {
     activeRequest,
     handleBookingFlowClose,
     activeRequestPackage,
-    isLoadingActiveRequestPackage,
-    incompleteInitialView
+    incompleteInitialView,
+    isActiveRequestDraft,
+    isLoadingActiveRequestPackage
   }
 }

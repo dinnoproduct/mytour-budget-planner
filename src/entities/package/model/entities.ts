@@ -150,6 +150,29 @@ export interface RequestEntity {
   returnFlightId: number
 }
 
+export type NormalizedRequestEntity = Omit<RequestEntity, 'notes'> & {
+  notes: {
+    childrenAges: number[]
+    isSoldOut: boolean
+    totalTravelersCount: number
+    adultTravelersCount: number
+    travelers: {
+      adults: {
+        firstName: string
+        lastName: string
+        dateOfBirth: string
+      }[]
+      children: {
+        firstName: string
+        lastName: string
+        dateOfBirth: string
+      }[]
+    }
+    isLateCheckout?: boolean
+  }
+}
+
+
 export interface RequestHotel {
   id: number
   name: string
@@ -174,7 +197,7 @@ export enum RequestStatus {
   Cancelled,
   Rejected,
   Overdue,
-  Unspecified
+  Reserved
 }
 
 export interface RequestTraveler {

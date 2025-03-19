@@ -151,9 +151,10 @@ export const PackagesSearchProvider: React.FC<{
     setSearchData(updatedSearchData, true)
   }, [JSON.stringify(packageList), cities])
 
-  const { data: departureFlights } = useAvailableFlights({
-    city: searchData.selectedCity
-  })
+  const { data: departureFlights } = useAvailableFlights(
+    { city: searchData.selectedCity },
+    { enabled: searchData.selectedCity !== 0 }
+  )
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
       {
