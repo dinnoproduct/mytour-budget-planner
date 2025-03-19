@@ -35,6 +35,8 @@ export interface PackageEntity {
   returnFlight: PackageFlight
   childMaxAge: number
   usdRate: number
+  priceInCurrency: string
+  currency: Currency
   checkin: string
   checkout: string
   discount: number
@@ -42,6 +44,8 @@ export interface PackageEntity {
   remainingHours: number
   lateCheckout: boolean
 }
+
+export type Currency = 'USD' | 'EUR' | 'AMD' | 'RUB'
 
 export interface PackageCity {
   id: number

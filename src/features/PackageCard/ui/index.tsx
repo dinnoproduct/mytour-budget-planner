@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import ImageSlider from './ImageSlider.tsx'
 import { type ReactNode, useMemo } from 'react'
-import { LANGUAGE_PREFIX } from '@shared/model'
+import { CURRENCY_MAP, LANGUAGE_PREFIX } from '@shared/model'
 import { type Language } from '@widgets/Header/model'
 import { Icon, Text } from '@ui'
 import { Link as ReactLink } from 'react-router-dom'
@@ -14,7 +14,7 @@ import {
 } from '@entities/package'
 import { getPluralForm } from '@shared/helpers'
 import { type PackageCardProps } from './types.ts'
-import { approximateNumber, formatNumber } from '@shared/utils'
+import { formatNumber } from '@shared/utils'
 
 export const PackageCard = ({
   tourPackage = {},
@@ -62,12 +62,6 @@ export const PackageCard = ({
     tourPackage?.infantTravelers,
     languageSuffix
   ])
-
-  const usdPrice = useMemo(
-    () =>
-      formatNumber(approximateNumber(tourPackage.price, tourPackage.usdRate)),
-    [tourPackage.price, tourPackage.usdRate]
-  )
 
   const isHotelPackage = useMemo(
     () => !tourPackage.destinationFlight?.departureDate,
@@ -122,7 +116,7 @@ export const PackageCard = ({
             <Icon name="approximate" size="20" color="gray.600" />
 
             <Text size="sm" color="gray.600" ml="0.5">
-              $ {usdPrice}
+              {CURRENCY_MAP[tourPackage.currency]} {formatNumber(parseFloat(tourPackage.priceInCurrency))}
             </Text>
           </Flex>
 

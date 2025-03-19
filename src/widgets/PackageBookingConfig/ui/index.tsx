@@ -21,7 +21,8 @@ import {
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import { useBreakpoint } from '@shared/hooks'
 import { useEffect, useMemo, useState } from 'react'
-import { approximateNumber, formatNumber } from '@shared/utils'
+import { formatNumber } from '@shared/utils'
+import { CURRENCY_MAP } from '@/shared/model/index.ts'
 
 export const PackageBookingConfig = ({
   tourPackage,
@@ -93,14 +94,6 @@ export const PackageBookingConfig = ({
         childrenAges: bookingData.travelersData.childrenAges
       })
   }
-
-  const usdPrice = useMemo(
-    () =>
-      formatNumber(
-        approximateNumber(selectedOffer?.price || 0, tourPackage?.usdRate || 0)
-      ),
-    [selectedOffer?.price, tourPackage?.usdRate]
-  )
 
   return (
     <Layout isFixed={isFixed} {...props}>
@@ -203,12 +196,12 @@ export const PackageBookingConfig = ({
         </Flex>
 
         <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
-          {usdPrice !== '0' ? (
+          {tourPackage.priceInCurrency !== '0' ? (
             <>
               <Icon name="approximate" size="20" color="gray.500" />
 
               <Text size="sm" color="gray.500" ml="0.5">
-                $ {usdPrice}
+                {CURRENCY_MAP[tourPackage.currency]} {formatNumber(parseFloat(tourPackage.priceInCurrency))}
               </Text>
             </>
           ) : null}

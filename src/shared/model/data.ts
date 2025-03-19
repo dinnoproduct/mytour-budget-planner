@@ -1,3 +1,4 @@
+import { Currency } from '@/entities/package'
 import { Language } from '../../widgets/Header/model'
 
 export const LANGUAGE_PREFIX: {
@@ -14,4 +15,13 @@ export const LANGUAGE_NAME_MAP: {
 	'arm': 'am',
 	'rus': 'ru',
 	'eng': 'en'
+}
+
+export const CURRENCY_MAP: {
+	[key in Currency]: string
+} = {
+	'USD': '$',
+	'EUR': '€',
+	'AMD': '֏',
+	'RUB': '₽'
 }
