@@ -41,21 +41,20 @@ export const PackageDetailsPage = () => {
 
   const uniqueImageUrls = useMemo(
     () =>
-      (currentOfferPackage || packageDetails)?.hotel?.images
+      packageDetails?.hotel?.images
         .filter(img => img.size === 3)
         .map(img => img.url) || [],
-    [packageDetails?.offerId, currentOfferPackage?.offerId]
+    [packageDetails?.hotel?.images]
   )
 
   useEffect(() => {
     if (
-      !currentOfferPackage?.offerId &&
       !packageDetails?.offerId &&
       !isLoading
     ) {
       handleBackClick()
     }
-  }, [packageDetails?.offerId, isLoading, currentOfferPackage?.offerId])
+  }, [packageDetails?.offerId, isLoading])
 
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index)
@@ -101,7 +100,7 @@ export const PackageDetailsPage = () => {
     openAuthModal()
   }
 
-  if ((!packageDetails?.offerId || isLoading) && !currentOfferPackage) {
+  if (!packageDetails?.offerId || isLoading) {
     return <Loader loading={isLoading} />
   }
 
@@ -117,7 +116,7 @@ export const PackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <PackageDetailsHeader
-          tourPackage={(currentOfferPackage || packageDetails) as PackageEntity}
+          tourPackage={packageDetails as PackageEntity}
           onMoreImagesClick={() => setModalOpen(true)}
         />
 
@@ -127,16 +126,12 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
         >
           <PackageDetails
-            tourPackage={
-              (currentOfferPackage || packageDetails) as PackageEntity
-            }
+            tourPackage={packageDetails as PackageEntity}
             isLateCheckout={isLateCheckout}
           />
 
           <PackageBookingConfig
-            tourPackage={
-              (currentOfferPackage || packageDetails) as PackageEntity
-            }
+            tourPackage={packageDetails as PackageEntity}
             ml={{ md: '20' }}
             mt={{ base: '5', md: '0' }}
             flexShrink={0}

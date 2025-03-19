@@ -26,10 +26,6 @@ export const useBookingFlow = ({
   defaultTravelers,
   isLateCheckout
 }: useBookingFlowProps) => {
-  console.log('useBookingFlow@packageDetails', packageDetails)
-  console.log('defaultTravelers', defaultTravelers)
-  console.log('childrenAges', childrenAges)
-
   const { user } = useUserContext()
   const { i18n } = useTranslation()
   const { mutateAsync: createRequestAsync, isPending: isPendingCreateRequest } =
