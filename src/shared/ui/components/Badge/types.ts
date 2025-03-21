@@ -9,8 +9,7 @@ export type BadgeProps = {
 } & FlexProps
 
 export type BadgeStatus =
-  | 'allInclusive'
-  | 'breakfastOnly'
+  | 'foodType'
   | 'specialOffer'
   | 'notFinished'
   | 'paid'

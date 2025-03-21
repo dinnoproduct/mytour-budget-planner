@@ -42,8 +42,7 @@ export const StatusOnImageBadge = ({
 }: StatusOnImageBadgeProps) => {
   const badge = useMemo(() => {
     const statusMap = {
-      breakfastOnly: <BreakfastOnlyBadge {...props} />,
-      allInclusive: <AllInclusiveBadge {...props} />,
+      foodType: <FoodTypeBadge {...props} />,
       specialOffer: <SpecialOfferBadge {...props} />,
       notFinished: <NotFinishedBadge {...props} />,
       paid: <PaidBadge {...props} />,
@@ -59,17 +58,13 @@ export const StatusOnImageBadge = ({
     }
 
     return statusMap[status]
-  }, [status])
+  }, [status, props.children])
 
   return badge
 }
 
-const AllInclusiveBadge = ({ ...props }: BadgeProps) => (
-  <Layout status="success" textKey="All Inclusive" {...props} />
-)
-
-const BreakfastOnlyBadge = ({ ...props }: BadgeProps) => (
-  <Layout status="success" textKey="breakfastOnly" {...props} />
+const FoodTypeBadge = ({ ...props }: BadgeProps) => (
+  <Layout status="success" {...props} />
 )
 
 const SpecialOfferBadge = ({ ...props }: BadgeProps) => (
@@ -126,7 +121,7 @@ export const Layout = ({
   ...props
 }: {
   status: 'success' | 'warning' | 'error'
-  textKey: string
+  textKey?: string
 } & FlexProps) => {
   const { t } = useTranslation()
 
@@ -145,7 +140,7 @@ export const Layout = ({
       {...props}
     >
       <Text size="xs" color="white" ml=".5">
-        {t(textKey)}
+        {textKey ? t(textKey) : props.children}
       </Text>
     </Flex>
   )

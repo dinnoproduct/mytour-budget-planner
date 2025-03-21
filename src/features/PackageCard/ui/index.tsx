@@ -8,9 +8,10 @@ import { type Language } from '@widgets/Header/model'
 import { Icon, Text } from '@ui'
 import { Link as ReactLink } from 'react-router-dom'
 import {
+  type DictionaryTypes,
   type PackageCity,
   type PackageCountry,
-  type PackageEntity
+  type PackageEntity, useDictionary
 } from '@entities/package'
 import { getPluralForm } from '@shared/helpers'
 import { type PackageCardProps } from './types.ts'
@@ -22,6 +23,10 @@ export const PackageCard = ({
   ...props
 }: PackageCardProps) => {
   const { i18n, t } = useTranslation()
+
+  const { data: foodTypes = [] } = useDictionary(
+    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
+  )
 
   const languageSuffix = useMemo(
     () => LANGUAGE_PREFIX[i18n.language as Language['name']],
@@ -73,13 +78,7 @@ export const PackageCard = ({
       <ImageSlider
         images={tourPackage.hotel.images}
         starsCount={tourPackage.hotel.stars}
-        badgeStatus={
-          isHotelPackage
-            ? 'breakfastOnly'
-            : tourPackage.foodType
-              ? 'allInclusive'
-              : undefined
-        }
+        foodType={foodTypes[tourPackage?.foodType]?.value || undefined}
       />
 
       <Box py="4">

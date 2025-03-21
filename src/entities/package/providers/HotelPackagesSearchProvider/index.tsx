@@ -204,6 +204,8 @@ export const HotelPackagesSearchProvider: React.FC<{
           (childrenAgesParam || '').split(',').filter(Boolean).map(Number) || []
       }
     }
+
+    setSearchData(currentData)
   }, [searchParams])
 
   return (
