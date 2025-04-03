@@ -8,7 +8,7 @@ import {
   useUpdateRequest,
   type NormalizedRequestEntity
 } from '@entities/package'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
 import { isMobile } from 'react-device-detect'
 
@@ -35,7 +35,10 @@ export const useBookingFlow = ({
   const { mutateAsync: bookPackageAsync } = useBookPackage()
   const { mutateAsync: reservePackageAsync } = useReservePackage()
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
-  const [request, setRequest] = useState<NormalizedRequestEntity | null>(initialRequest || null)
+  const [request, setRequest] = useState<NormalizedRequestEntity | null>(
+    initialRequest || null
+  )
+  const requestIdRef = useRef(initialRequest?.id ? initialRequest.id : null)
   const [modalView, setModalView] = useState('')
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
@@ -45,6 +48,7 @@ export const useBookingFlow = ({
 
   useEffect(() => {
     setRequest(initialRequest || null)
+    requestIdRef.current = initialRequest?.id || null
   }, [initialRequest])
 
   useEffect(() => {
@@ -60,6 +64,7 @@ export const useBookingFlow = ({
     onClose && onClose()
     setTravelers({ adults: [], children: [] })
     setRequest(null)
+    requestIdRef.current = null
     setPaymentModalView('paymentForm')
   }
 
@@ -265,7 +270,7 @@ export const useBookingFlow = ({
         requestInput.endDate = packageDetails.checkout
       }
 
-      if (!request?.id) {
+      if (!requestIdRef.current) {
         const newRequestId = await createRequestAsync({
           ...requestInput
         })
@@ -273,14 +278,17 @@ export const useBookingFlow = ({
           id: newRequestId,
           ...requestInput
         } as NormalizedRequestEntity)
+
+        requestIdRef.current = newRequestId
+
         return
       }
 
       const success = await updateRequestAsync({
-        id: request.id,
+        id: requestIdRef.current,
         ...requestInput
       })
-      
+
       if (success) {
         setRequest({
           ...request,
@@ -289,7 +297,8 @@ export const useBookingFlow = ({
       }
     },
     [
-      request,
+      request?.id,
+      requestIdRef.current,
       packageDetails?.offerId,
       childrenAges,
       isPendingCreateRequest,

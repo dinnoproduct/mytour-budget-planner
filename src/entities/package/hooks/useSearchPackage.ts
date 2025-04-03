@@ -3,76 +3,52 @@ import { useLocation } from 'react-router-dom'
 import { type PackageEntity, useSearchPackages } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 import { type EmptyObject } from 'react-hook-form'
-import { useEffect, useMemo } from 'react'
-
-type PassedSearchData = {
-  flightId: number
-  returnFlightId: number
-  city: number
-  adultsCount: number
-  childrenAges: number[]
-  hotelId: number
-  roomId: number
-}
+import { useEffect, useMemo, useState } from 'react'
 
 type Options = {
   onSuccess?: (packageDetails: PackageEntity | EmptyObject) => void
 } & Omit<UseQueryOptions<PackageEntity[]>, 'queryKey' | 'queryFn'>
 
-export const useSearchPackage = (
-  options?: Options,
-  passedSearchData?: PassedSearchData
-) => {
+export const useSearchPackage = (options?: Options) => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
+  const [searchInput, setSearchInput] = useState<any>({})
 
-  const searchData = useMemo(() => {
-    if (passedSearchData) {
-      return {
-        flightId: passedSearchData.flightId,
-        returnFlightId: passedSearchData.returnFlightId,
-        city: passedSearchData.city,
-        adults: passedSearchData.adultsCount,
-        childs: passedSearchData.childrenAges
-      }
-    }
-
-    return {
-      flightId: parseInt(searchParams.get('departureFlightId') || '0', 10),
-      returnFlightId: parseInt(searchParams.get('returnFlightId') || '0', 10),
-      city: parseInt(searchParams.get('city') || '0', 10),
-      adults: parseInt(searchParams.get('adultsCount') || '0', 10),
-      childs: searchParams.get('childrenAges')
-        ? searchParams
-          .get('childrenAges')
-          ?.split(',')
-          .filter(Boolean)
-          .map(Number) || []
-        : []
-    }
-  }, [passedSearchData, searchParams])
-
-  const { data: packages, isLoading } = useSearchPackages(searchData, {
+  const {
+    data: packages = [],
+    isLoading,
+    isFetched
+  } = useSearchPackages(searchInput, {
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
+    enabled: !!searchInput.flightId,
     ...options
   })
 
+  useEffect(() => {
+    if (!isFetched) {
+      const childrenAges = searchParams.get('childrenAges')
+      const children = childrenAges
+        ? childrenAges?.split(',').filter(Boolean).map(Number) || []
+        : []
+
+      setSearchInput({
+        flightId: parseInt(searchParams.get('departureFlightId') || '0', 10),
+        returnFlightId: parseInt(searchParams.get('returnFlightId') || '0', 10),
+        city: parseInt(searchParams.get('city') || '0', 10),
+        adults: parseInt(searchParams.get('adultsCount') || '0', 10),
+        childs: children
+      })
+    }
+  }, [searchParams, isFetched])
+
   const hotelId = useMemo(
-    () =>
-      passedSearchData?.hotelId ||
-      parseInt(searchParams.get('hotelId') || '0', 10),
-    [passedSearchData?.hotelId, searchParams]
-  )
-  const roomId = useMemo(
-    () =>
-      passedSearchData?.roomId ||
-      parseInt(searchParams.get('roomId') || '0', 10),
-    [passedSearchData?.roomId, searchParams]
+    () => parseInt(searchParams.get('hotelId') || '0', 10),
+    [searchParams]
   )
 
   const packageDetails: PackageEntity | null = useMemo(
     () => packages?.find(pkg => pkg.hotel.id === hotelId) || null,
-    [packages, hotelId, roomId]
+    [packages, hotelId]
   )
 
   useEffect(() => {
@@ -83,6 +59,7 @@ export const useSearchPackage = (
 
   return {
     packageDetails,
-    isLoading
+    isLoading,
+    isFetched
   }
 }

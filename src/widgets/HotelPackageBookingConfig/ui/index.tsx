@@ -14,7 +14,6 @@ import { DatePicker } from '@features/DatePicker'
 import { CURRENCY_MAP } from '@/shared/model'
 import { formatNumber } from '@shared/utils'
 
-
 export const HotelPackageBookingConfig = ({
   tourPackage,
   onLateCheckoutChange,
@@ -32,7 +31,8 @@ export const HotelPackageBookingConfig = ({
     searchTravelersProps,
     roomsMenuProps,
     isNotFound,
-    isLoadingTourPackage
+    isLoadingTourPackage,
+    currentOfferPackage
   } = useBookingConfig(tourPackage)
   const { showFreeCancellation, freeCancellationDate } = useFreeCancellation(
     bookingData.checkIn,
@@ -154,11 +154,16 @@ export const HotelPackageBookingConfig = ({
         </Flex>
 
         <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
-          <Icon name="approximate" size="20" color="gray.500" />
+          {currentOfferPackage ? (
+            <>
+              <Icon name="approximate" size="20" color="gray.500" />
 
-          <Text size="sm" color="gray.500" ml="0.5">
-            {CURRENCY_MAP[tourPackage.currency]} {formatNumber(parseFloat(tourPackage.priceInCurrency))}
-          </Text>
+              <Text size="sm" color="gray.500" ml="0.5">
+                {CURRENCY_MAP[currentOfferPackage.currency]}{' '}
+                {formatNumber(parseFloat(currentOfferPackage.priceInCurrency))}
+              </Text>
+            </>
+          ) : null}
         </Flex>
 
         <Button

@@ -7,7 +7,6 @@ import {
 } from '@features/PackageImagesGallery'
 import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
 import {
-  type PackageEntity,
   useCurrentPackageOfferValue,
   usePackagesSearchContext,
   useSearchPackage
@@ -29,7 +28,7 @@ export const PackageDetailsPage = () => {
   const { dispatchModal } = useModalContext()
   const [isModalOpen, setModalOpen] = useState(false)
   const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
-  const { packageDetails, isLoading } = useSearchPackage()
+  const { packageDetails, isFetched } = useSearchPackage()
   const currentOfferPackage = useCurrentPackageOfferValue()
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
@@ -48,13 +47,10 @@ export const PackageDetailsPage = () => {
   )
 
   useEffect(() => {
-    if (
-      !packageDetails?.offerId &&
-      !isLoading
-    ) {
+    if (!packageDetails?.offerId && isFetched) {
       handleBackClick()
     }
-  }, [packageDetails?.offerId, isLoading])
+  }, [packageDetails?.offerId, isFetched])
 
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index)
@@ -100,8 +96,8 @@ export const PackageDetailsPage = () => {
     openAuthModal()
   }
 
-  if (!packageDetails?.offerId || isLoading) {
-    return <Loader loading={isLoading} />
+  if (!packageDetails?.offerId) {
+    return <Loader loading />
   }
 
   return (
@@ -116,7 +112,7 @@ export const PackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <PackageDetailsHeader
-          tourPackage={packageDetails as PackageEntity}
+          tourPackage={packageDetails}
           onMoreImagesClick={() => setModalOpen(true)}
         />
 
@@ -126,12 +122,12 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
         >
           <PackageDetails
-            tourPackage={packageDetails as PackageEntity}
+            tourPackage={packageDetails}
             isLateCheckout={isLateCheckout}
           />
 
           <PackageBookingConfig
-            tourPackage={packageDetails as PackageEntity}
+            tourPackage={packageDetails}
             ml={{ md: '20' }}
             mt={{ base: '5', md: '0' }}
             flexShrink={0}

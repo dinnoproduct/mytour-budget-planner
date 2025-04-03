@@ -47,7 +47,8 @@ export const PackageBookingConfig = ({
     searchTravelersProps,
     roomsMenuProps,
     isNotFound,
-    isLoadingTourPackage
+    isLoadingTourPackage,
+    currentOfferPackage
   } = useBookingConfig(tourPackage)
   const { showFreeCancellation, freeCancellationDate } = useFreeCancellation(
     bookingData.fromDate,
@@ -196,12 +197,13 @@ export const PackageBookingConfig = ({
         </Flex>
 
         <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
-          {tourPackage.priceInCurrency !== '0' ? (
+          {currentOfferPackage ? (
             <>
               <Icon name="approximate" size="20" color="gray.500" />
 
               <Text size="sm" color="gray.500" ml="0.5">
-                {CURRENCY_MAP[tourPackage.currency]} {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+                {CURRENCY_MAP[currentOfferPackage.currency]}{' '}
+                {formatNumber(parseFloat(currentOfferPackage.priceInCurrency))}
               </Text>
             </>
           ) : null}

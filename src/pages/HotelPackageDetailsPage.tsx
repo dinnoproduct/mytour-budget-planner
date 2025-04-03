@@ -32,7 +32,7 @@ export const HotelPackageDetailsPage = () => {
   const { dispatchModal } = useModalContext()
   const [isModalOpen, setModalOpen] = useState(false)
   const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
-  const { packageDetails, isLoading } = useSearchHotelPackage()
+  const { packageDetails, isFetched } = useSearchHotelPackage()
   const currentOfferPackage = useCurrentHotelPackageOfferValue()
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
@@ -55,10 +55,10 @@ export const HotelPackageDetailsPage = () => {
   }, [packageDetails?.hotel?.images])
 
   useEffect(() => {
-    if (!packageDetails?.offerId && !isLoading) {
+    if (!packageDetails?.offerId && isFetched) {
       handleBackClick()
     }
-  }, [packageDetails?.offerId, isLoading])
+  }, [packageDetails?.offerId, isFetched])
 
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index)
@@ -104,8 +104,8 @@ export const HotelPackageDetailsPage = () => {
     openAuthModal()
   }
 
-  if (!packageDetails?.offerId || isLoading) {
-    return <Loader loading={isLoading} />
+  if (!packageDetails?.offerId) {
+    return <Loader loading />
   }
 
   return (

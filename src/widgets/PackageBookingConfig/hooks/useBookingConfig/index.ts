@@ -43,9 +43,14 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     roomId
   })
 
-  const updateBookingData = (data: Partial<typeof bookingData>) => {
+  const updateBookingData = (
+    data: Partial<typeof bookingData>,
+    updateSearchParams: boolean = true
+  ) => {
     setBookingData(prevState => {
       const updatedData = { ...prevState, ...data }
+
+      if (!updateSearchParams) return updatedData
 
       setSearchParams({
         city: searchParams.get('city') || '0',
@@ -92,9 +97,12 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     )
 
     if (selectedFlight) {
-      updateBookingData({
-        departureFlightId: selectedFlight.id
-      })
+      updateBookingData(
+        {
+          departureFlightId: selectedFlight.id
+        },
+        false
+      )
     }
   }
 
