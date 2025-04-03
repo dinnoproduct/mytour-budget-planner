@@ -34,6 +34,7 @@ export const PaymentModal = ({
   )
   const [ameriaPayUrl, setAmeriaPayUrl] = useState<string>('')
   const [paymentAmount, setPaymentAmount] = useState<number>(0)
+  const [paymentOption, setPaymentOption] = useState<PaymentOption>('pay')
 
   const ViewComponent = useMemo(() => {
     const ViewComponentMap = {
@@ -44,6 +45,7 @@ export const PaymentModal = ({
           onSubmit={handleContinue}
           packageDetails={packageDetails}
           isLoadingBooking={isLoadingBooking}
+          initialPaymentOption={paymentOption}
           isBooked={isBooked}
         />
       ),
@@ -51,7 +53,14 @@ export const PaymentModal = ({
     }
 
     return ViewComponentMap[activeView]
-  }, [activeView, ameriaPayUrl, packageDetails])
+  }, [
+    activeView,
+    ameriaPayUrl,
+    packageDetails,
+    isLoadingBooking,
+    isBooked,
+    paymentOption
+  ])
 
   useEffect(() => {
     if (isHotelPackage && view === 'paymentForm') {
@@ -84,6 +93,8 @@ export const PaymentModal = ({
   }
 
   const handleContinue = (amount: number, paymentOption: PaymentOption) => {
+    setPaymentOption(paymentOption)
+
     if (paymentOption === 'pay') {
       setPaymentAmount(amount)
       setActiveView('paymentMethod')

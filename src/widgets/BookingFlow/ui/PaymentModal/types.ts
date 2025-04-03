@@ -21,6 +21,7 @@ export type PaymentFormViewProps = {
   packageDetails: PackageEntity
   isLoadingBooking?: boolean
   isBooked?: boolean
+  initialPaymentOption?: PaymentOption
 }
 
 export type PaymentMethodViewProps = {

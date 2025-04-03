@@ -13,7 +13,8 @@ export const PaymentFormView = ({
   onSubmit,
   packageDetails,
   isLoadingBooking,
-  isBooked
+  isBooked,
+  initialPaymentOption = 'pay'
 }: PaymentFormViewProps) => {
   const { t } = useTranslation()
 
@@ -36,7 +37,7 @@ export const PaymentFormView = ({
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState(false)
-  const [selectedOption, setSelectedOption] = useState<PaymentOption>('pay')
+  const [selectedOption, setSelectedOption] = useState<PaymentOption>(initialPaymentOption)
 
   const handleAmountChange = (value: string | number) => {
     const number = Number(value)
