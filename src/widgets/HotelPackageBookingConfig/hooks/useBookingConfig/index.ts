@@ -160,6 +160,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
       defaultRoom: selectedRoomOffer?.id,
       onChange: handleRoomSelect
     } as RoomsMenuProps,
+    currentOfferPackage,
     isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage
   }
 }
