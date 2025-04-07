@@ -18,6 +18,7 @@ import {
 import { useUserContext } from '@entities/user'
 import { useEffect } from 'react'
 import { HotelPackageDetailsPage } from '@pages/HotelPackageDetailsPage.tsx'
+import { BlogsPage } from '@pages/BlogsPage.tsx'
 
 const Routes = () => {
   useBreakpoint()
@@ -41,6 +42,8 @@ const Routes = () => {
           <Route path="/package" element={<PackageDetailsPage />} />
           <Route path="/hotel" element={<HotelPackageDetailsPage />} />
         </Route>
+
+        <Route path="/blogs" element={<BlogsPage />} />
 
         <Route
           path="/my-packages"

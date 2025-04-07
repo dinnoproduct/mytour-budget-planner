@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import { PackageBanner } from './PackageBanner'
 import { AppSection } from './AppSection.tsx'
 import { AboutUsBanner } from './AboutUsBanner.tsx'
+import { BlogsSection } from '@widgets/BlogsSection'
 
 export const HomePage = () => {
   const { dispatchModal } = useModalContext()
@@ -53,6 +54,7 @@ export const HomePage = () => {
       <PackageSearch variant="centered" />
       <PackageBanner mt={{ base: '60px', md: 20 }} />
       <HotOffersSection mt={{ base: '62px', md: '84px' }} />
+      <BlogsSection />
       <AppSection />
       <AboutUsBanner />
 

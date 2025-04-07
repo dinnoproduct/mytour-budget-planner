@@ -197,6 +197,7 @@
   "travelDates": "Travel dates",
   "partiallyPaid": "Partially paid",
   "purchased": "Purchased",
+  "specialOffer": "Special offer",
   "overduePayment": "Overdue payment",
   "paymentIssue": "Payment issue",
   "draft": "Draft",
@@ -223,5 +224,7 @@
   "aboutUs.subText": "MyTour is a travel platform that helps you plan your next journey by allowing you to find the best tours in one place, explore them, and book online.",
   "aboutUs.buttonLabel": "Learn More",
   "priceChangeText": "The price is subject to change depending on the period when you make the final purchase",
-  "City": "City"
+  "City": "City",
+
+  "c": "Latest Articles"
 }
