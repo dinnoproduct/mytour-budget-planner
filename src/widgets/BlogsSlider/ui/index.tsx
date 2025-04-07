@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { AspectRatio, Box, Img, Fade } from '@chakra-ui/react'
+import { AspectRatio, Box, Img, Fade, Link, Flex } from '@chakra-ui/react'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 import { Navigation, EffectFade } from 'swiper/modules'
 import { useBlogs, type BlogPost } from '@/entities/blog'
@@ -51,13 +51,15 @@ export const BlogsSlider = () => {
       >
         {blogs?.map((blog, index) => (
           <SwiperSlide key={index}>
-            <Box overflow="hidden" rounded={{ sm: '12px' }}>
-              <AspectRatio
-                ratio={{ base: 375 / 193, sm: 768 / 450, lg: 1216 / 450 }}
-              >
-                <Img src={blog.imageUrl} alt={blog.title} />
-              </AspectRatio>
-            </Box>
+            <Link href={blog.link} isExternal>
+              <Box overflow="hidden" rounded={{ sm: '12px' }}>
+                <AspectRatio
+                  ratio={{ base: 375 / 193, sm: 768 / 450, lg: 1216 / 450 }}
+                >
+                  <Img src={blog.imageUrl} alt={blog.title} />
+                </AspectRatio>
+              </Box>
+            </Link>
           </SwiperSlide>
         ))}
         <SwiperButtons />
@@ -65,53 +67,61 @@ export const BlogsSlider = () => {
 
       {currentBlog && (
         <Fade in={true}>
-          <Box
+          <Flex
             width="full"
-            px="8"
+            px={{ sm: 8 }}
             position="relative"
             top={{ sm: '50%' }}
             transform={{ sm: 'translateY(-50%)' }}
             zIndex={3}
+            justify="center"
           >
-            <Box
-              mt={{ base: 4, sm: 0 }}
-              p={{ base: 6 }}
-              rounded={{ sm: '12px' }}
-              shadow={{ sm: 'md' }}
+            <Link
+              href={currentBlog.link}
+              isExternal
+              _hover={{ textDecoration: 'none' }}
+              display="inline-block"
               maxW="800px"
-              mx="auto"
-              bgColor="white"
-              height={{ sm: '272px' }}
-              position="relative"
             >
-              <StatusOnImageBadge
-                status="specialOffer"
+              <Box
+                mt={{ base: 4, sm: 0 }}
+                p={{ base: 6 }}
+                rounded={{ sm: '12px' }}
+                shadow={{ sm: 'md' }}
+
+                bgColor="white"
+                height={{ sm: '272px' }}
                 position="relative"
-                rounded="full"
-                width="fit-content"
-              />
+              >
+                <StatusOnImageBadge
+                  status="specialOffer"
+                  position="relative"
+                  rounded="full"
+                  width="fit-content"
+                />
 
-              <Box mt="2">
-                <Heading as="h3" size="sm" noOfLines={2}>
-                  {currentBlog.title}
-                </Heading>
+                <Box mt="2">
+                  <Heading as="h3" size="sm" noOfLines={2}>
+                    {currentBlog.title}
+                  </Heading>
 
-                <Text mt={2} size="sm" noOfLines={3}>
-                  {currentBlog.description}
+                  <Text mt={2} size="sm" noOfLines={3}>
+                    {currentBlog.description}
+                  </Text>
+                </Box>
+
+                <Text
+                  variant="text-sm"
+                  color="gray.600"
+                  mt={{ base: 6, sm: 'auto' }}
+                  position={{ sm: 'absolute' }}
+                  bottom={{ sm: '24px' }}
+                >
+                  {getPublishDate(currentBlog.date)}
                 </Text>
               </Box>
-
-              <Text
-                variant="text-sm"
-                color="gray.600"
-                mt={{ base: 6, sm: 'auto' }}
-                position={{ sm: 'absolute' }}
-                bottom={{ sm: '24px' }}
-              >
-                {getPublishDate(currentBlog.date)}
-              </Text>
-            </Box>
-          </Box>
+            </Link>
+          </Flex>
         </Fade>
       )}
     </Layout>
