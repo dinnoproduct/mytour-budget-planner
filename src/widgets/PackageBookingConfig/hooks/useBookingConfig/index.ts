@@ -68,7 +68,9 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   }
 
   // flight
-  const { data: departureFlights } = useAvailableFlights({ city: 1 })
+  const { data: departureFlights } = useAvailableFlights({
+    city: defaultTourPackage.city.id
+  })
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
       {
