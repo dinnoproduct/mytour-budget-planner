@@ -24,7 +24,11 @@ export const PaymentFormView = ({
       packageDetails?.checkin
 
     return !overDaysFromNow(departureDate, 21) && !isBooked
-  }, [packageDetails?.destinationFlight?.departureDate, isBooked])
+  }, [
+    packageDetails?.destinationFlight?.departureDate,
+    isBooked,
+    packageDetails?.checkin
+  ])
 
   const [isPaymentInFull, setIsPaymentInFull] = useState(under21DaysFromNow)
   const minPrePaymentAmount = useMemo(
@@ -37,7 +41,8 @@ export const PaymentFormView = ({
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState(false)
-  const [selectedOption, setSelectedOption] = useState<PaymentOption>(initialPaymentOption)
+  const [selectedOption, setSelectedOption] =
+    useState<PaymentOption>(initialPaymentOption)
 
   const handleAmountChange = (value: string | number) => {
     const number = Number(value)
@@ -95,7 +100,12 @@ export const PaymentFormView = ({
         .format('DD/MM/YYYY'),
       paymentAmount: minPrePaymentAmount
     }
-  }, [packageDetails?.destinationFlight?.departureDate])
+  }, [
+    isBooked,
+    minPrePaymentAmount,
+    packageDetails?.destinationFlight?.departureDate,
+    packageDetails?.checkin
+  ])
 
   return (
     <Flex

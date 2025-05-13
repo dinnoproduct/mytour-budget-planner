@@ -43,8 +43,7 @@ export const useBookingFlow = ({
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
   const [travelers, setTravelers] = useState<any>({ adults: [], children: [] })
-
-  const [notesJson, setNotesJson] = useState('')
+  const [notesJson, setNotesJson] = useState<any>('')
 
   useEffect(() => {
     setRequest(initialRequest || null)
@@ -95,7 +94,7 @@ export const useBookingFlow = ({
           offerId: packageDetails.offerId,
           roomType: packageDetails.roomType,
           email: user?.email || '',
-          notes: JSON.stringify(request.notes) || notesJson,
+          notes: notesJson ? notesJson : JSON.stringify(request.notes),
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
@@ -147,7 +146,7 @@ export const useBookingFlow = ({
         setPaymentModalView('paymentError')
       }
     },
-    [request, packageDetails?.offerId, travelers, notesJson]
+    [request, packageDetails?.offerId, travelers]
   )
 
   useEffect(() => {
@@ -242,12 +241,11 @@ export const useBookingFlow = ({
       }
 
       const notesJson = JSON.stringify(notes)
-
       setNotesJson(notesJson)
 
       const requestInput: any = {
         offerId: packageDetails.offerId,
-        travelers: [],
+        travelers: [...data.adults, ...data.children],
         cityId: packageDetails.city.id,
         hotelId: packageDetails.hotel.id,
         price: packageDetails.price,
@@ -257,7 +255,7 @@ export const useBookingFlow = ({
         // endDate: packageDetails.returnFlight.departureDate,
         // destinationFlightId: packageDetails.destinationFlight.id,
         // returnFlightId: packageDetails.returnFlight.id,
-        notes: notesJson
+        notes: notesJson,
       }
 
       if (packageDetails.destinationFlight?.departureDate) {

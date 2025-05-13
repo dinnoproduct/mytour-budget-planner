@@ -26,8 +26,8 @@ export const PaymentModal = ({
 }: PaymentModalProps) => {
   const { t } = useTranslation()
   const isHotelPackage = useMemo(
-    () => !packageDetails.destinationFlight?.departureDate,
-    [packageDetails.destinationFlight?.departureDate]
+    () => !packageDetails.destinationFlight?.id,
+    [packageDetails.destinationFlight?.id]
   )
   const [activeView, setActiveView] = useState<PaymentModalView>(
     view || 'paymentForm'

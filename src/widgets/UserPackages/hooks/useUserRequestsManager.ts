@@ -2,6 +2,7 @@ import {
   type PackageEntity,
   type RequestEntity,
   RequestStatus,
+  transformRequestToPackage,
   usePayRemainingAmount,
   useSearchHotelOfferPackage,
   useSearchOfferPackage,
@@ -12,7 +13,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 import { useModalContext } from '@app/providers'
-import { Logo, useSnackBar } from '@ui'
+import { useSnackBar } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { type EmptyObject } from 'global'
@@ -50,19 +51,18 @@ export const useUserRequestsManager = () => {
 
       const normalUserRequests = userRequests.map(normalizeRequest)
 
-      const active = normalUserRequests
-        .filter(
-          request =>
-            [
-              RequestStatus.InProcess,
-              RequestStatus.Booked,
-              RequestStatus.Rejected,
-              RequestStatus.Overdue,
-              RequestStatus.Reserved
-            ].includes(request.status) ||
-            (request.status === RequestStatus.Purchased &&
-              moment(request.endDate).isAfter(today))
-        )
+      const active = normalUserRequests.filter(
+        request =>
+          [
+            RequestStatus.InProcess,
+            RequestStatus.Booked,
+            RequestStatus.Rejected,
+            RequestStatus.Overdue,
+            RequestStatus.Reserved
+          ].includes(request.status) ||
+          (request.status === RequestStatus.Purchased &&
+            moment(request.endDate).isAfter(today))
+      )
 
       const pending = normalUserRequests
         .filter(request =>
@@ -70,11 +70,9 @@ export const useUserRequestsManager = () => {
         )
         .map(request => {
           if (request.status === RequestStatus.Draft) {
-            const customStatus = request.notes?.isSoldOut
-              ? 11
-              : moment(request.startDate).isBefore(today)
-                ? 10
-                : 1
+            const customStatus = moment(request.startDate).isBefore(today)
+              ? 10
+              : 1
 
             return {
               ...request,
@@ -222,7 +220,8 @@ export const useUserRequestsManager = () => {
     {
       enabled:
         !!activeRequest?.id &&
-        !!activeRequest?.notes.adultTravelersCount &&
+        !!activeRequest?.notes?.adultTravelersCount &&
+        activeRequest?.status !== RequestStatus.Reserved &&
         activeRequestPackageType === 'package',
 
       onSuccess: handlePackageDetailsSuccess
@@ -250,12 +249,21 @@ export const useUserRequestsManager = () => {
     }
   )
 
+  const [reservedPackage, setReservedPackage] = useState<PackageEntity | null>(
+    null
+  )
+
   const activeRequestPackage = useMemo(
     () =>
       activeRequestPackageType === 'package'
-        ? requestPackageData
+        ? reservedPackage || requestPackageData
         : requestHotelPackage,
-    [requestHotelPackage, requestPackageData, activeRequestPackageType]
+    [
+      requestHotelPackage,
+      requestPackageData,
+      activeRequestPackageType,
+      reservedPackage
+    ]
   )
 
   const isLoadingActiveRequestPackage = useMemo(
@@ -278,6 +286,7 @@ export const useUserRequestsManager = () => {
       setIncompleteInitialView('payment')
       setIsActiveRequestDraft(true)
     } else if (request.status === RequestStatus.Reserved) {
+      setReservedPackage(transformRequestToPackage(request))
       setIncompleteInitialView('payment')
     }
 

@@ -35,7 +35,6 @@ export const UserPackages = () => {
     isLoadingActiveRequestPackage
   } = useUserRequestsManager()
 
-
   return (
     <Layout>
       <Heading size="sm-md">{t`myPackages`}</Heading>
@@ -120,9 +119,9 @@ export const UserPackages = () => {
       </Tabs>
 
       <BookingFlow
+        key={activeRequest?.id} // Add this line
         initialView={incompleteInitialView}
         childrenAges={activeRequest?.notes.childrenAges || []}
-        // onBookingSuccess={handleBackClick}
         isOpen={!!activeRequestPackage?.offerId}
         onClose={handleBookingFlowClose}
         packageDetails={activeRequestPackage}

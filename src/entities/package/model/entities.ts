@@ -152,6 +152,7 @@ export interface RequestEntity {
   nextPaymentDate: string
   destinationFlightId: number
   returnFlightId: number
+  travelAgencyId: number
 }
 
 export type NormalizedRequestEntity = Omit<RequestEntity, 'notes'> & {
@@ -175,7 +176,6 @@ export type NormalizedRequestEntity = Omit<RequestEntity, 'notes'> & {
     isLateCheckout?: boolean
   }
 }
-
 
 export interface RequestHotel {
   id: number

@@ -24,7 +24,6 @@ export const useSearchHotelPackage = (options?: Options) => {
     enabled: !!searchInput.dateFrom,
     ...options
   })
-  console.log('isLoading', isLoading)
 
   const getDateFromParam = (param: string | null) =>
     param ? moment(param).format() : null

@@ -13,7 +13,7 @@ export const BookingFlow = ({
   onClose,
   defaultTravelers,
   isLateCheckout,
-  isBooked,
+  isBooked
 }: BookingFlowProps) => {
   const {
     paymentModalView,
