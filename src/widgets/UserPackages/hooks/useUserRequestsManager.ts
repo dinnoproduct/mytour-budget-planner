@@ -8,7 +8,8 @@ import {
   useSearchOfferPackage,
   useUpdateRequest,
   useUserRequests,
-  type NormalizedRequestEntity
+  type NormalizedRequestEntity,
+  useRequestCancellationMessageAsync
 } from '@entities/package'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
@@ -19,7 +20,7 @@ import { useSearchParams } from 'react-router-dom'
 import { type EmptyObject } from 'global'
 
 export const useUserRequestsManager = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { emitSnackBar } = useSnackBar()
   const { mutate: updateRequest } = useUpdateRequest()
   const { data: userRequests, isLoading: isLoadingUserRequests } =
@@ -138,22 +139,42 @@ export const useUserRequestsManager = () => {
   }
 
   const { dispatchModal } = useModalContext()
+  const requestCancellationMessageAsync = useRequestCancellationMessageAsync()
+  const [cancellingRequestId, setCancellingRequestId] = useState<number | null>(
+    null
+  )
 
-  const handleCancelClick = (requestId: number) => {
-    dispatchModal({
-      type: 'open',
-      modalType: 'requestCancel',
-      props: {
+  const handleCancelClick = async (requestId: number) => {
+    setCancellingRequestId(requestId)
+
+    try {
+      const cancellationMessage = await requestCancellationMessageAsync(
         requestId,
-        onSuccess: () => {
-          emitSnackBar({
-            status: 'success',
-            title: t`bookingCanceledSnackbar`
-          })
-          setSearchParams({ tab: '2' })
-        }
+        i18n.language as any
+      )
+
+      if (cancellationMessage) {
+        dispatchModal({
+          type: 'open',
+          modalType: 'requestCancel',
+          props: {
+            requestId,
+            cancellationMessage,
+            onSuccess: () => {
+              emitSnackBar({
+                status: 'success',
+                title: t`bookingCanceledSnackbar`
+              })
+              setSearchParams({ tab: '2' })
+            }
+          }
+        })
       }
-    })
+    } catch (error) {
+      console.error('Failed to fetch cancellation message', error)
+    } finally {
+      setCancellingRequestId(null)
+    }
   }
 
   const handleTabChange = (index: number) => {
@@ -307,6 +328,7 @@ export const useUserRequestsManager = () => {
     isLoadingRemainingPayment,
     currentRequestId,
     handleCancelClick,
+    cancellingRequestId,
     tab,
     handleTabChange,
     isLoadingUserRequests: isLoadingRequests,

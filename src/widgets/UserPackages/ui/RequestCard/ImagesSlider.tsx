@@ -100,6 +100,7 @@ const STATUS_BADGE_MAP: {
   [RequestStatus.Purchased]: <StatusOnImageBadge status="paid" />,
   [RequestStatus.Rejected]: <StatusOnImageBadge status="rejected" />,
   [RequestStatus.Overdue]: <StatusOnImageBadge status="expired" />,
+  [RequestStatus.Reserved]: <StatusOnImageBadge status="reserved" />,
   10: <StatusOnImageBadge status="notAvailable" />,
   11: <StatusOnImageBadge status="soldOut" />
 }

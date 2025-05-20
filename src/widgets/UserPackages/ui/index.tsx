@@ -23,6 +23,7 @@ export const UserPackages = () => {
     isLoadingRemainingPayment,
     currentRequestId,
     handleCancelClick,
+    cancellingRequestId,
     tab,
     handleTabChange,
     isLoadingUserRequests,
@@ -64,6 +65,7 @@ export const UserPackages = () => {
                   isLoadingActiveRequestPackage
                 }
                 onContinueClick={handleContinueClick}
+                cancellingRequestId={cancellingRequestId}
               />
             ))}
           </TabContentLayout>
@@ -84,6 +86,7 @@ export const UserPackages = () => {
                   request.id === activeRequest?.id &&
                   isLoadingActiveRequestPackage
                 }
+                cancellingRequestId={cancellingRequestId}
               />
             ))}
           </TabContentLayout>

@@ -38,6 +38,7 @@ export const RequestCard = ({
   status,
   isLoadingContinue,
   onContinueClick,
+  cancellingRequestId,
   ...props
 }: RequestCardProps) => {
   const { i18n, t } = useTranslation()
@@ -231,6 +232,7 @@ export const RequestCard = ({
               variant="solid-gray"
               onClick={() => onCancelClick && onCancelClick(request.id)}
               width="full"
+              isLoading={cancellingRequestId === request.id}
             >
               {t`cancel`}
             </Button>

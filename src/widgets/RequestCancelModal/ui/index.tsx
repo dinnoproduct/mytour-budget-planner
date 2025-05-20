@@ -11,10 +11,16 @@ import {
 export const RequestCancelModal = ({
   closeModal,
   requestId,
-  onSuccess
+  onSuccess,
+  cancellationMessage
 }: RequestCancelModalProps) => {
   const { t } = useTranslation()
-  const { data: cancellationMessage } = useRequestCancellationMessage(requestId)
+  const { data: cancellationMessageData } = useRequestCancellationMessage(
+    requestId,
+    {
+      enabled: !cancellationMessage
+    }
+  )
   const { mutate: cancelRequest, isPending: isLoadingCancelRequest } =
     useCancelRequest({
       onSuccess: () => {
@@ -43,7 +49,7 @@ export const RequestCancelModal = ({
         }}
       >
         <Text size="sm" align="center">
-          {cancellationMessage}
+          {cancellationMessage || cancellationMessageData || ''}
         </Text>
       </Flex>
 

@@ -204,6 +204,7 @@
   "inProgress": "In process",
   "rejected": "Rejected",
   "notAvailable": "Not available",
+  "reserved": "Reserved",
   "cancel": "Cancel",
   "bookingCanceledSnackbar": "Your booking has been canceled.",
   "packageBanner.title": "Book your next trip with 0 downpayment",

@@ -1,72 +1,54 @@
-import { Flex, FlexProps, Grid } from '@chakra-ui/react'
+import { Flex, type FlexProps } from '@chakra-ui/react'
 import { Icon, Text } from '@ui'
 
-export const PaginationBadge = ({ currentIndex, imagesCount, ...props }: {
-	currentIndex: number
-	imagesCount: number
-} & FlexProps) => {
-	return (
-		<Flex
-			position="absolute"
-			bottom="2"
-			left="2"
-			bgColor="blackAlpha.500"
-			color="white"
-			px="2"
-			height="20px"
-			rounded="full"
-			fontSize="sm"
-			align="center"
-			{...props}
-		>
-			<Text size="xs" color="white">
-				{currentIndex + 1}/{imagesCount}
-			</Text>
-		</Flex>
-	)
-}
+export const PaginationBadge = ({
+  currentIndex,
+  imagesCount,
+  ...props
+}: {
+  currentIndex: number
+  imagesCount: number
+} & FlexProps) => (
+  <Flex
+    position="absolute"
+    bottom="2"
+    left="2"
+    bgColor="blackAlpha.500"
+    color="white"
+    px="2"
+    height="20px"
+    rounded="full"
+    fontSize="sm"
+    align="center"
+    {...props}
+  >
+    <Text size="xs" color="white">
+      {currentIndex + 1}/{imagesCount}
+    </Text>
+  </Flex>
+)
 
-export const HotelStarBadge = ({ starsCount, ...props }: {starsCount: number} & FlexProps) => {
-	return (
-		<Flex
-			position="absolute"
-			bottom="2"
-			right="2"
-			bgColor="orange.500"
-			color="white"
-			px="2"
-			height="20px"
-			rounded="full"
-			fontSize="sm"
-			align="center"
-			{...props}
-		>
-			<Icon name="star" color="white" size="12"/>
+export const HotelStarBadge = ({
+  starsCount,
+  ...props
+}: { starsCount: number } & FlexProps) => (
+  <Flex
+    position="absolute"
+    bottom="2"
+    right="2"
+    bgColor="orange.500"
+    color="white"
+    px="2"
+    height="20px"
+    rounded="full"
+    fontSize="sm"
+    align="center"
+    {...props}
+  >
+    <Icon name="star" color="white" size="12" />
 
-			<Text size="xs" color="white" ml=".5">
-				{starsCount}
-			</Text>
-		</Flex>
-	)
-}
-
-export const StatusBadge = ({}) => {
-	return (
-		<Flex
-			position="absolute"
-			top="0"
-			left="0"
-			bgColor="green.600"
-			color="white"
-			px="3"
-			height="24px"
-			rounded="8px 24px 24px 0px"
-			fontSize="sm"
-			align="center"
-		>
-			<Text size="xs" color="white" ml=".5">
-				All inclusive
-			</Text>
-		</Flex>
-	)
-}
+    <Text size="xs" color="white" ml=".5">
+      {starsCount}
+    </Text>
+  </Flex>
+)

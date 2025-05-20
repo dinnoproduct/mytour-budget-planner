@@ -10,6 +10,7 @@ export type RequestCardProps = {
   onCancelClick?: (requestId: number) => void
   onContinueClick?: (request: NormalizedRequestEntity) => void
   isLoadingContinue?: boolean
+  cancellingRequestId?: number | null
 } & BoxProps
 
 export type DetailsListItemProps = {
@@ -27,6 +28,7 @@ export type RequestCardStatus =
   | RequestStatus.Purchased
   | RequestStatus.Rejected
   | RequestStatus.Overdue
+  | RequestStatus.Reserved
   | 10 // not available
   | 11 // sold out
 

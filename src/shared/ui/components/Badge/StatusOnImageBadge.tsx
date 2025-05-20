@@ -52,6 +52,7 @@ export const StatusOnImageBadge = ({
       unfinished: <UnfinishedBadge {...props} />,
       expired: <ExpiredBadge {...props} />,
       soldOut: <SoldOutBadge {...props} />,
+      reserved: <ReservedBadge {...props} />,
       inProgress: <InProgressBadge {...props} />,
       notAvailable: <NotAvailableBadge {...props} />,
       paymentIssue: <PaymentIssueBadge {...props} />
@@ -81,6 +82,10 @@ const InProgressBadge = ({ ...props }: BadgeProps) => (
 
 const PaidBadge = ({ ...props }: BadgeProps) => (
   <Layout status="success" textKey="purchased" {...props} />
+)
+
+const ReservedBadge = ({ ...props }: BadgeProps) => (
+  <Layout status="success" textKey="reserved" {...props} />
 )
 
 const CanceledBadge = ({ ...props }: BadgeProps) => (

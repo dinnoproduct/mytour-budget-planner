@@ -9,7 +9,7 @@ export const transformRequestToPackage = (
   const transformedPackage: Partial<PackageEntity> = {
     offerId: -1,
     id: request.id,
-    price: request.price,
+    price: request.remainingPaymentAmount,
     hotel: {
       id: request.hotel.id,
       name: request.hotel.name,

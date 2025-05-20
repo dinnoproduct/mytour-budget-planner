@@ -271,6 +271,7 @@
   "inProgress": "Մշակվում է",
   "rejected": "Մերժված",
   "notAvailable": "Առկա չէ",
+  "reserved": "Ամրագրված",
   "cancel": "Չեղարկել",
   "bookingCanceledSnackbar": "Ամրագրումը չեղարկված է",
   "packageBanner.title": "Ամրագրիր փաթեթդ 0 դրամ կանխավճարով",

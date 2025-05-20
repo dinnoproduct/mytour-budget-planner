@@ -169,10 +169,6 @@ export const PaymentFormView = ({
               >
                 {t`payInFull`}
               </Checkbox>
-
-              <Text size="xs" color="gray.600" mt="6" letterSpacing="-0.31px">
-                {t`partialPaymentText`}
-              </Text>
             </>
           )}
 
@@ -187,6 +183,10 @@ export const PaymentFormView = ({
               iconPlacement="start"
             />
           )}
+
+          <Text size="xs" color="gray.600" mt="6" letterSpacing="-0.31px">
+            {t`partialPaymentText`}
+          </Text>
         </Box>
       </Flex>
 

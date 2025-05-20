@@ -4,6 +4,7 @@ export type RequestCancelModalProps = {
   closeModal: () => void
   requestId: number
   onSuccess?: () => void
+  cancellationMessage?: string
 }
 
 export type LayoutProps = {
