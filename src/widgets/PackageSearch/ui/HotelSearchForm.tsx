@@ -12,8 +12,12 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
   const { searchData, handleSearch, setSearchData, cities } =
     useHotelPackagesSearchContext()
 
-  const handleAccept = (fromDate: Date | null, toDate?: Date | null) => {
-    setSearchData({ fromDate, toDate })
+  const handleAccept = (
+    fromDate: Date | null,
+    toDate?: Date | null,
+    nights?: number
+  ) => {
+    setSearchData({ fromDate, toDate, nights })
   }
 
   const handleSearchClick = () => {

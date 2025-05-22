@@ -25,7 +25,7 @@ export const useSearchPackage = (options?: Options) => {
   })
 
   useEffect(() => {
-    if (!isFetched) {
+    if (!isLoading) {
       const childrenAges = searchParams.get('childrenAges')
       const children = childrenAges
         ? childrenAges?.split(',').filter(Boolean).map(Number) || []
@@ -39,7 +39,8 @@ export const useSearchPackage = (options?: Options) => {
         childs: children
       })
     }
-  }, [searchParams, isFetched])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, JSON.stringify(searchParams)])
 
   const hotelId = useMemo(
     () => parseInt(searchParams.get('hotelId') || '0', 10),

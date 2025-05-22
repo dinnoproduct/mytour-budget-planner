@@ -4,6 +4,7 @@ export type SearchData = {
   fromDate: Date | null
   toDate: Date | null
   selectedCity: number
+  nights?: number
   travelersData: SearchTravelersData
   departureFlightId: number | null
   returnFlightId: number | null
@@ -13,6 +14,8 @@ export type SearchContextType = {
   searchData: SearchData
   handleSearch: (searchData: SearchData) => void
   setSearchData: (data: Partial<SearchData>) => void
+  setDateMode: React.Dispatch<React.SetStateAction<DateModeType>>
+  dateMode: DateModeType
   availableDepartureDates: Date[]
   availableReturnDates: Date[]
   isLoadingReturnDates: boolean
@@ -25,6 +28,8 @@ export type SearchContextType = {
   navigateToDefaultSearch: () => void
   cities: PackageCity[]
 }
+
+export type DateModeType = 'exact' | 'approximate'
 
 type SearchTravelersData = {
   childrenCount: number

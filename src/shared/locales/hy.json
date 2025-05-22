@@ -293,6 +293,26 @@
   "aboutUs.buttonLabel": "Իմանալ ավելին",
   "priceChangeText": "Գինը ենթակա է փոփոխման, կախված այն ժամանակահատվածից երբ որ վերջնական գնումը կատարում եք",
   "City": "Քաղաք",
+  "other": "Այլ",
+  "fixedDates": "Հստակ օրերով",
+  "flexibleDates": "Մոտավոր օրերով",
+  "howManyDaysAreYouPlanning": "Քանի՞ օր եք պլանավորում",
+  "whenAreYouPlanningToLeave": "Ե՞րբ եք պլանավորում մեկնել",
+  "numberOfDays": "Օրերի քանակ",
+  "staySummary.one": "{{day}} օր, {{month}} ամսում",
+  "staySummary.few": "{{day}} օր, {{month}} ամսում",
+  "staySummary.many": "{{day}} օր, {{month}} ամսում",
+  "staySummary.other": "{{day}} օր, {{month}} ամսում",
+
+  "nightsQuantity.one": "{{night}} գիշեր",
+  "nightsQuantity.few": "{{night}} գիշեր",
+  "nightsQuantity.many": "{{night}} գիշեր",
+  "nightsQuantity.other": "{{night}} գիշեր",
+
+  "daysQuantity.one": "{{day}} օր",
+  "daysQuantity.few": "{{day}} օր",
+  "daysQuantity.many": "{{day}} օր",
+  "daysQuantity.other": "{{day}} օր",
 
   "blogsSectionTitle": "Վերջին հոդվածները"
 }

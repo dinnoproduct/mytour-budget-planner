@@ -26,6 +26,38 @@ export const tabsComponentTheme = {
           pt: 10
         }
       },
+      'grey-segment': {
+        tab: {
+          fontWeight: '600',
+          fontSize: 'sm',
+          rounded: 'full',
+          color: 'gray.600',
+          margin: 1,
+          px: 4,
+          py: 1,
+
+          _selected: {
+            boxShadow: '0px 1px 3px 0px rgba(0, 0, 0, 0.1)',
+            bgColor: '#fff',
+            svg: {
+              color: 'blue.500'
+            }
+          },
+          _active: {
+            bgColor: '#fff'
+          }
+        },
+        tablist: {
+          gap: '12px',
+          width: 'fit-content',
+          backgroundColor: 'gray.100',
+          borderRadius: '100px'
+        },
+        tabpanel: {
+          p: 0,
+          pt: 6
+        }
+      },
       line: {
         tab: {
           fontWeight: 'medium',

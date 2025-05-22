@@ -7,7 +7,11 @@ import React, {
 } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import moment from 'moment'
-import { type SearchContextType, type SearchData } from './types'
+import {
+  type DateModeType,
+  type SearchContextType,
+  type SearchData
+} from './types'
 import {
   type PackageEntity,
   useCitiesOnlyHotel,
@@ -40,6 +44,7 @@ export const HotelPackagesSearchProvider: React.FC<{
   const [isLoadingFilteredHotelPackages, setIsLoadingFilteredHotelPackages] =
     useState(false)
   const [isSearchError, setIsSearchError] = useState(false)
+  const [dateMode, setDateMode] = useState<DateModeType>('exact')
   const [filteredHotelPackages, setFilteredHotelPackages] = useState<
     PackageEntity[]
   >([])
@@ -121,6 +126,8 @@ export const HotelPackagesSearchProvider: React.FC<{
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
       childrenAges: searchData.travelersData.childrenAges.join(','),
+      nights: searchData.nights?.toString() || '',
+      dateMode: dateMode.toString(),
       tab: 'hotel'
     })
 
@@ -130,19 +137,44 @@ export const HotelPackagesSearchProvider: React.FC<{
   const handleSearch = async (searchData: SearchData) => {
     try {
       setIsSearchError(false)
-      const { fromDate, toDate, selectedCity, travelersData } = searchData
+      const { fromDate, toDate, selectedCity, travelersData, nights } =
+        searchData
       const queryParams = generateSearchQueryParams(searchData)
       navigate(`/packages?${queryParams.toString()}`)
 
       setIsLoadingFilteredHotelPackages(true)
-      const searchPackagesResponse = await searchHotelsAsync({
-        cities: [selectedCity],
-        adults: travelersData.adultsCount,
-        childs: travelersData.childrenAges,
-        dateFrom: moment(fromDate).set({ hour: 14 }).format(),
-        dateTo: moment(toDate).set({ hour: 12 }).format()
-      })
-      setFilteredHotelPackages(searchPackagesResponse)
+
+      if (dateMode === 'exact') {
+        const searchPackagesResponse = await searchHotelsAsync({
+          cities: [selectedCity],
+          adults: travelersData.adultsCount,
+          childs: travelersData.childrenAges,
+          dateFrom: moment(fromDate).set({ hour: 14 }).format(),
+          dateTo: moment(toDate).set({ hour: 12 }).format(),
+          bookingType: 2,
+          lateCheckout: false,
+          nightsCorrectionLowerValue: 0,
+          nightsCorrectionUpperValue: 0
+        })
+        setFilteredHotelPackages(searchPackagesResponse)
+      }
+
+      if (dateMode === 'approximate') {
+        const searchPackagesResponse = await searchHotelsAsync({
+          cities: [selectedCity],
+          adults: travelersData.adultsCount,
+          childs: travelersData.childrenAges,
+          dateFrom: moment(fromDate).set({ hour: 14 }).format(),
+          dateTo: moment(toDate).set({ hour: 12 }).format(),
+          bookingType: 2,
+          lateCheckout: false,
+          nightsCorrectionLowerValue: 1,
+          nightsCorrectionUpperValue: 2,
+          nights
+        })
+        setFilteredHotelPackages(searchPackagesResponse)
+      }
+
       saveSearchDataToLocalStorage(searchData)
     } catch (error) {
       setIsSearchError(true)
@@ -183,6 +215,7 @@ export const HotelPackagesSearchProvider: React.FC<{
     const adultsCountParam = searchParams.get('adultsCount')
     const childrenCountParam = searchParams.get('childrenCount')
     const childrenAgesParam = searchParams.get('childrenAges')
+    const dateMode = searchParams.get('dateMode')
 
     if (fromParam) {
       currentData.fromDate = getDateFromParam(fromParam)
@@ -205,6 +238,10 @@ export const HotelPackagesSearchProvider: React.FC<{
       }
     }
 
+    if (dateMode) {
+      setDateMode(dateMode as DateModeType)
+    }
+
     setSearchData(currentData)
   }, [searchParams])
 
@@ -214,6 +251,8 @@ export const HotelPackagesSearchProvider: React.FC<{
         searchData,
         handleSearch,
         setSearchData,
+        setDateMode,
+        dateMode,
         filteredHotelPackages,
         isLoadingFilteredHotelPackages,
         isSearchError,

@@ -7,7 +7,11 @@ import React, {
 } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import moment from 'moment'
-import { type SearchContextType, type SearchData } from './types'
+import {
+  type SearchContextType,
+  type SearchData,
+  type DateModeType
+} from './types'
 import {
   type PackageEntity,
   useAvailableFlights,
@@ -46,7 +50,8 @@ export const PackagesSearchProvider: React.FC<{
   const [searchParams] = useSearchParams()
   const [isCityChanged, setIsCityChanged] = useState(false)
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false)
-  useState(false)
+  const [dateMode, setDateMode] = useState<DateModeType>('exact')
+
   const { data: cities = [] } = useCities()
 
   const isAllowedSearchRoute = useMemo(() => {
@@ -117,6 +122,7 @@ export const PackagesSearchProvider: React.FC<{
       savedSearchData?.toDate &&
       savedSearchData?.departureFlightId &&
       savedSearchData?.returnFlightId &&
+      savedSearchData?.nights &&
       fromDate &&
       fromDate.isSameOrAfter(today) &&
       savedSearchData.selectedCity
@@ -143,7 +149,8 @@ export const PackagesSearchProvider: React.FC<{
           toDate: new Date(packageItem.returnFlight.arrivalDate),
           departureFlightId: packageItem.destinationFlight.id,
           returnFlightId: packageItem.returnFlight.id,
-          selectedCity: packageItem.city.id
+          selectedCity: packageItem.city.id,
+          nights: packageItem.nights
         }
       }
     }
@@ -249,6 +256,8 @@ export const PackagesSearchProvider: React.FC<{
       childrenAges: searchData.travelersData.childrenAges.join(','),
       departureFlightId: searchData.departureFlightId?.toString() || '',
       returnFlightId: searchData.returnFlightId?.toString() || '',
+      nights: searchData.nights?.toString() || '',
+      dateMode: dateMode.toString(),
       tab: 'packages'
     })
 
@@ -258,27 +267,43 @@ export const PackagesSearchProvider: React.FC<{
   const handleSearch = async (searchData: SearchData) => {
     try {
       setIsSearchError(false)
-      const {
-        fromDate,
-        toDate,
-        selectedCity,
-        travelersData,
-        departureFlightId,
-        returnFlightId
-      } = searchData
+      const { fromDate, toDate, selectedCity, travelersData, nights } =
+        searchData
       const queryParams = generateSearchQueryParams(searchData)
       navigate(`/packages?${queryParams.toString()}`)
-
       setIsLoadingFilteredPackages(true)
       saveSearchDataToLocalStorage(searchData)
-      const searchPackagesResponse = await searchPackagesAsync({
-        flightId: departureFlightId as number,
-        returnFlightId: returnFlightId as number,
-        city: selectedCity,
-        adults: travelersData.adultsCount,
-        childs: travelersData.childrenAges
-      })
-      setFilteredPackages(searchPackagesResponse)
+
+      if (dateMode === 'exact') {
+        const searchPackagesResponse = await searchPackagesAsync({
+          dateFrom: fromDate,
+          dateTo: toDate,
+          cities: [selectedCity],
+          adults: travelersData.adultsCount,
+          childs: travelersData.childrenAges,
+          nightsCorrectionLowerValue: 0,
+          nightsCorrectionUpperValue: 0,
+          lateCheckout: false,
+          bookingType: 1
+        })
+        setFilteredPackages(searchPackagesResponse)
+      }
+
+      if (dateMode === 'approximate') {
+        const searchPackagesResponse = await searchPackagesAsync({
+          cities: [selectedCity],
+          adults: travelersData.adultsCount,
+          childs: travelersData.childrenAges,
+          dateFrom: fromDate,
+          dateTo: toDate,
+          nights,
+          nightsCorrectionLowerValue: 1,
+          nightsCorrectionUpperValue: 2,
+          lateCheckout: false,
+          bookingType: 1
+        })
+        setFilteredPackages(searchPackagesResponse)
+      }
     } catch (error) {
       setIsSearchError(true)
     } finally {
@@ -338,6 +363,8 @@ export const PackagesSearchProvider: React.FC<{
     const childrenAgesParam = searchParams.get('childrenAges')
     const departureFlightIdParam = searchParams.get('departureFlightId')
     const returnFlightIdParam = searchParams.get('returnFlightId')
+    const nights = searchParams.get('nights')
+    const dateMode = searchParams.get('dateMode')
 
     if (fromParam) {
       currentData.fromDate = getDateFromParam(fromParam)
@@ -368,6 +395,14 @@ export const PackagesSearchProvider: React.FC<{
       currentData.returnFlightId = parseInt(returnFlightIdParam, 10)
     }
 
+    if (nights) {
+      currentData.nights = +nights
+    }
+
+    if (dateMode) {
+      setDateMode(dateMode as DateModeType)
+    }
+
     setSearchData(currentData, true)
   }, [searchParams, isAllowedSearchRoute])
 
@@ -377,6 +412,8 @@ export const PackagesSearchProvider: React.FC<{
         searchData,
         handleSearch,
         setSearchData,
+        setDateMode,
+        dateMode,
         availableDepartureDates,
         availableReturnDates,
         isLoadingReturnDates: isLoadingReturnFlights,

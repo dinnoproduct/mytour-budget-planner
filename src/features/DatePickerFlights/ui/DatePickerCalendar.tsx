@@ -103,8 +103,8 @@ export const DatePickerCalendar = ({
   return (
     <Box
       width="full"
-      overflowY={{ base: 'scroll', md: 'unset' }}
-      height={{ base: 'calc(100% - 192px)', md: 'auto' }}
+      // overflowY={{ base: 'scroll', md: 'unset' }}
+      // height={{ base: 'calc(100% - 192px)', md: 'auto' }}
     >
       <Flex
         alignItems={{ base: 'center', md: 'flex-start' }}

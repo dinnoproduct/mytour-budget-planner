@@ -228,5 +228,27 @@
   "priceChangeText": "Цена может меняться в зависимости от периода совершения окончательной покупки.",
   "City": "Город",
 
+  "other": "Другое",
+  "fixedDates": "Точные даты",
+  "flexibleDates": "Приблизительные даты",
+  "howManyDaysAreYouPlanning": "На сколько дней планируете?",
+  "whenAreYouPlanningToLeave": "Когда планируете поездку?",
+  "numberOfDays": "Количество дней",
+
+  "staySummary.one": "{{day}} днеь в {{month}}е",
+  "staySummary.few": "{{day}} дня в {{month}}е",
+  "staySummary.many": "{{day}} дней в {{month}}е",
+  "staySummary.other": "{{day}} дней в {{month}}е",
+
+  "nightsQuantity.one": "{{night}} ночь",
+  "nightsQuantity.few": "{{night}} ночи",
+  "nightsQuantity.many": "{{night}} ночей",
+  "nightsQuantity.other": "{{night}} ночей",
+
+  "daysQuantity.one": "{{day}} день",
+  "daysQuantity.few": "{{day}} дня",
+  "daysQuantity.many": "{{day}} дней",
+  "daysQuantity.other": "{{day}} дней",
+
   "blogsSectionTitle": "Последние статьи"
 }

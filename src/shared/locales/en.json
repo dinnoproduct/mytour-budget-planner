@@ -226,6 +226,26 @@
   "aboutUs.buttonLabel": "Learn More",
   "priceChangeText": "The price is subject to change depending on the period when you make the final purchase",
   "City": "City",
+  "other": "Other",
+  "fixedDates": "Exact dates",
+  "flexibleDates": "Approximate dates",
+  "howManyDaysAreYouPlanning": "How many days are you planning?",
+  "whenAreYouPlanningToLeave": "When do you plan to travel?",
+  "numberOfDays": "Number of days",
+  "staySummary.one": "{{day}} day in {{month}}",
+  "staySummary.few": "{{day}} days in {{month}}",
+  "staySummary.many": "{{day}} days in {{month}}",
+  "staySummary.other": "{{day}} days in {{month}}",
+
+  "nightsQuantity.one": "{{night}} night",
+  "nightsQuantity.few": "{{night}} nights",
+  "nightsQuantity.many": "{{night}} nights",
+  "nightsQuantity.other": "{{night}} nights",
+
+  "daysQuantity.one": "{{day}} day",
+  "daysQuantity.few": "{{day}} days",
+  "daysQuantity.many": "{{day}} days",
+  "daysQuantity.other": "{{day}} days",
 
   "c": "Latest Articles"
 }

@@ -11,14 +11,16 @@ import {
   type GetReturnFlightsParams,
   type PackageUseCasesParams,
   type ReservePackageInput,
-  type SearchHotelPackagesParams,
+  type UpdateRequestInput,
   type SearchPackagesParams,
-  type UpdateRequestInput
+  type SearchParams,
+  type SearchHotelPackagesParams
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
 import { type LanguageName } from '@shared/model'
 import { type CityService } from './CityService.ts'
+import { type SearchService } from './SearchService.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
@@ -26,31 +28,36 @@ export class PackageUseCases {
   private readonly requestService: RequestService
   private readonly dictionaryService: DictionaryService
   private readonly cityService: CityService
+  private readonly searchService: SearchService
 
   constructor({
     packageService,
     flightService,
     requestService,
     dictionaryService,
-    cityService
+    cityService,
+    searchService
   }: PackageUseCasesParams) {
     this.packageService = packageService
     this.flightService = flightService
     this.requestService = requestService
     this.dictionaryService = dictionaryService
     this.cityService = cityService
+    this.searchService = searchService
   }
 
   // package
   async getPackageList() {
     return this.packageService.getPackageList()
   }
-
-  async searchPackages(search: SearchPackagesParams) {
+  async searchPackagesV1(search: SearchPackagesParams) {
     return this.packageService.searchPackages({
       travelAgencyId: 1,
       ...search
     })
+  }
+  async searchPackages(search: SearchParams) {
+    return this.searchService.search(search)
   }
 
   async generateOffers(input: GenerateOffersInput) {
@@ -61,12 +68,15 @@ export class PackageUseCases {
     return this.packageService.getPackage(offerId)
   }
 
-  // hotel
-  async searchHotelPackages(search: SearchHotelPackagesParams) {
+  async searchHotelPackagesV1(search: SearchHotelPackagesParams) {
     return this.packageService.searchHotelPackages({
       travelAgencyId: 3,
       ...search
     })
+  }
+
+  async searchHotelPackages(search: SearchParams) {
+    return this.searchService.search(search)
   }
 
   async generateHotelOffers(input: GenerateHotelOffersInput) {

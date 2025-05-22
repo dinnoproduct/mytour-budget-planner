@@ -20,8 +20,12 @@ export const PackageSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
   } = usePackagesSearchContext()
   const { data: cities = [] } = useCities()
 
-  const handleAccept = (fromDate: Date | null, toDate?: Date | null) => {
-    setSearchData({ fromDate, toDate })
+  const handleAccept = (
+    fromDate: Date | null,
+    toDate?: Date | null,
+    nights?: number
+  ) => {
+    setSearchData({ fromDate, toDate, nights })
   }
 
   const handleSearchClick = () => {

@@ -4,13 +4,15 @@ import { FlightService } from './FlightService.ts'
 import { RequestService } from './RequestService.ts'
 import { DictionaryService } from './DictionaryService.ts'
 import { CityService } from './CityService.ts'
+import { SearchService } from './SearchService.ts'
 
 export const packageUseCases = new PackageUseCases({
   packageService: new PackageService(),
   flightService: new FlightService(),
   requestService: new RequestService(),
   dictionaryService: new DictionaryService(),
-  cityService: new CityService()
+  cityService: new CityService(),
+  searchService: new SearchService()
 })
 
 export type * from './types'

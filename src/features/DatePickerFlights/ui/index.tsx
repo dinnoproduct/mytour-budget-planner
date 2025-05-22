@@ -4,10 +4,14 @@ import { type DatePickerProps, type DateSelectState } from './types'
 import { DatePickerInput } from './DatePickerInput'
 import { DatePickerCalendar } from './DatePickerCalendar'
 import { DatePickerHeader } from './DatePickerHeader'
-import { Button, Text } from '@ui'
+import { Button, Text, Tabs } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
 import { DatePickerFooter } from '@features/DatePickerFlights/ui/DatePickerFooter.tsx'
+import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePicker'
+import { usePackagesSearchContext } from '@/entities/package/providers'
+import { MONTHS } from '@/shared/model'
+import moment from 'moment'
 
 export const DatePickerFlights = ({
   fromDate,
@@ -21,6 +25,7 @@ export const DatePickerFlights = ({
   CustomButton
 }: DatePickerProps) => {
   const { t } = useTranslation()
+  const [tabIndex, setTabIndex] = useState(0)
   const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(null)
   const [selectedToDate, setSelectedToDate] = useState<Date | null>(null)
   const [isCalendarOpen, setCalendarOpen] = useState(false)
@@ -30,7 +35,10 @@ export const DatePickerFlights = ({
   const [dateSelectState, setDateSelectState] =
     useState<DateSelectState>('from') // New state for tracking focused input
 
+  const { setDateMode, dateMode, searchData } = usePackagesSearchContext()
+
   const { isMd } = useBreakpoint()
+  const nextMonthIndex = moment().add(1, 'months').month()
 
   useEffect(() => {
     if (fromDate) {
@@ -46,8 +54,8 @@ export const DatePickerFlights = ({
 
   useEffect(() => {
     if (isCalendarOpen) {
-      setSelectedFromDate(inputFromDate)
-      setSelectedToDate(inputToDate)
+      setSelectedFromDate(dateMode === 'exact' ? inputFromDate : null)
+      setSelectedToDate(dateMode === 'exact' ? inputToDate : null)
 
       if (!isMd) {
         document.body.style.overflow = 'hidden'
@@ -55,7 +63,7 @@ export const DatePickerFlights = ({
     } else {
       document.body.style.overflow = ''
     }
-  }, [isCalendarOpen, inputFromDate, inputToDate, isMd])
+  }, [isCalendarOpen, inputFromDate, inputToDate, isMd, dateMode])
 
   useEffect(() => {
     if (dateSelectState === 'from') {
@@ -90,11 +98,24 @@ export const DatePickerFlights = ({
   const handleAccept = () => {
     if (selectedFromDate && selectedToDate) {
       onAccept(selectedFromDate, selectedToDate)
+      setDateMode('exact')
       setInputFromDate(selectedFromDate)
       setInputToDate(selectedToDate)
       setCalendarOpen(false)
       setDateSelectState('from')
     }
+  }
+
+  const handleAcceptApproximate = (data: {
+    nights: number
+    dateFrom: Date
+    dateTo: Date
+  }) => {
+    onAccept(data.dateFrom, data.dateTo, data.nights)
+    setDateMode('approximate')
+    setInputFromDate(data.dateFrom)
+    setInputToDate(data.dateTo)
+    setCalendarOpen(false)
   }
 
   const handleCalendarOpen = () => {
@@ -146,7 +167,8 @@ export const DatePickerFlights = ({
 
       <Portal>
         <MenuList
-          p={0}
+          pt={{ base: '0', md: '10px' }}
+          pb={0}
           borderRadius={{ base: '0', md: 'xl' }}
           border="none"
           minWidth="fit-content"
@@ -155,23 +177,23 @@ export const DatePickerFlights = ({
           rootProps={
             !isMd
               ? {
-                position: { base: 'fixed !important' as any, md: undefined },
-                top: { base: '80px !important', md: undefined },
-                left: { base: '0 !important', md: undefined },
-                right: { base: '0 !important', md: undefined },
-                bottom: { base: '0 !important', md: undefined },
+                  position: { base: 'fixed !important' as any, md: undefined },
+                  top: { base: '80px !important', md: undefined },
+                  left: { base: '0 !important', md: undefined },
+                  right: { base: '0 !important', md: undefined },
+                  bottom: { base: '0 !important', md: undefined },
                   height: {
                     base: 'calc(100dvh - 80px) !important',
                     md: undefined
                   },
-                zIndex: { base: '100000 !important', md: undefined },
-                overflowY: { base: 'auto !important' as any, md: undefined },
-                width: { base: '100dvw !important', md: undefined },
+                  zIndex: { base: '100000 !important', md: undefined },
+                  overflowY: { base: 'auto !important' as any, md: undefined },
+                  width: { base: '100dvw !important', md: undefined },
                   transform: {
                     base: 'translate3d(0px, 0px, 0px) !important',
                     md: undefined
                   }
-              }
+                }
               : {}
           }
         >
@@ -195,29 +217,52 @@ export const DatePickerFlights = ({
               onClick={() => setCalendarOpen(false)}
             />
           </Flex>
+          <Tabs
+            align="center"
+            variant="grey-segment"
+            labels={[t`fixedDates`, t`flexibleDates`]}
+            overflowY={{ base: 'scroll', md: 'unset' }}
+            size="sm"
+            height={{ base: 'calc(100% - 144px)', md: 'auto' }}
+            onChange={tabIndex => setTabIndex(tabIndex)}
+          >
+            <>
+              <DatePickerHeader
+                fromDate={selectedFromDate}
+                toDate={selectedToDate}
+                dateSelectState={dateSelectState}
+                onFromTabClick={() => setDateSelectState('from')}
+              />
 
-          <DatePickerHeader
-            fromDate={selectedFromDate}
-            toDate={selectedToDate}
-            dateSelectState={dateSelectState}
-            onFromTabClick={() => setDateSelectState('from')}
-          />
+              <DatePickerCalendar
+                availableDates={availableDates}
+                onDayClick={handleDayClick}
+                selectedFromDate={selectedFromDate}
+                selectedToDate={selectedToDate}
+                isLoading={isLoadingReturnDates}
+                dateSelectState={dateSelectState}
+              />
 
-          <DatePickerCalendar
-            availableDates={availableDates}
-            onDayClick={handleDayClick}
-            selectedFromDate={selectedFromDate}
-            selectedToDate={selectedToDate}
-            isLoading={isLoadingReturnDates}
-            dateSelectState={dateSelectState}
-          />
+              <DatePickerFooter
+                onConfirm={handleAccept}
+                isConfirmDisabled={!selectedFromDate || !selectedToDate}
+                fromDate={selectedFromDate}
+                toDate={selectedToDate}
+              />
+            </>
 
-          <DatePickerFooter
-            onConfirm={handleAccept}
-            isConfirmDisabled={!selectedFromDate || !selectedToDate}
-            fromDate={selectedFromDate}
-            toDate={selectedToDate}
-          />
+            <React.Fragment key={tabIndex}>
+              <ApproximateDatePicker
+                onConfirm={handleAcceptApproximate}
+                monthValue={MONTHS[moment(toDate).month()]}
+                defaultMonthValue={MONTHS[nextMonthIndex]}
+                nightsValue={
+                  searchData.nights ? String(searchData.nights) : undefined
+                }
+                isResetState={isCalendarOpen}
+              />
+            </React.Fragment>
+          </Tabs>
         </MenuList>
       </Portal>
     </Menu>

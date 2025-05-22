@@ -6,7 +6,8 @@ import {
 import {
   type PackageEntity,
   packageUseCases,
-  type SearchHotelPackagesParams
+  type SearchHotelPackagesParams,
+  type SearchParams
 } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
@@ -17,14 +18,14 @@ export const useSearchHotelPackages = (
   useQuery({
     ...(options || {}),
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    queryFn: () => packageUseCases.searchHotelPackages(search),
+    queryFn: () => packageUseCases.searchHotelPackagesV1(search),
     queryKey: ['search-hotel-packages', search]
   })
 
 export const useSearchHotelPackagesAsync = () => {
   const queryClient = useQueryClient()
 
-  return async (search: SearchHotelPackagesParams) =>
+  return async (search: SearchParams) =>
     queryClient.fetchQuery({
       queryKey: ['search-hotel-packages', search],
       queryFn: () => packageUseCases.searchHotelPackages(search)
