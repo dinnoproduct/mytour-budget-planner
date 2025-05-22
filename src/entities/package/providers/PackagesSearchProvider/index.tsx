@@ -276,8 +276,8 @@ export const PackagesSearchProvider: React.FC<{
 
       if (dateMode === 'exact') {
         const searchPackagesResponse = await searchPackagesAsync({
-          dateFrom: fromDate,
-          dateTo: toDate,
+          dateFrom: moment(fromDate).format('YYYY-MM-DD'),
+          dateTo: moment(toDate).format('YYYY-MM-DD'),
           cities: [selectedCity],
           adults: travelersData.adultsCount,
           childs: travelersData.childrenAges,
@@ -294,8 +294,8 @@ export const PackagesSearchProvider: React.FC<{
           cities: [selectedCity],
           adults: travelersData.adultsCount,
           childs: travelersData.childrenAges,
-          dateFrom: fromDate,
-          dateTo: toDate,
+          dateFrom: moment(fromDate).format('YYYY-MM-DD'),
+          dateTo: moment(toDate).format('YYYY-MM-DD'),
           nights,
           nightsCorrectionLowerValue: 1,
           nightsCorrectionUpperValue: 2,

@@ -29,7 +29,7 @@ export const useSearchHotelPackage = (options?: Options) => {
     param ? moment(param).format() : null
 
   useEffect(() => {
-    if (!isFetched) {
+    if (!isLoading) {
       const dateFrom = moment(
         getDateFromParam(searchParams.get('from')) as string
       )
@@ -53,7 +53,8 @@ export const useSearchHotelPackage = (options?: Options) => {
         childs: children
       })
     }
-  }, [searchParams, isFetched])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, JSON.stringify(searchParams)])
 
   const hotelId = useMemo(
     () => parseInt(searchParams.get('hotelId') || '0', 10),

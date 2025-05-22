@@ -225,7 +225,7 @@ export const DatePicker = ({
               <ApproximateDatePicker
                 variant="hotel"
                 defaultMonthValue={MONTHS[moment(searchData.toDate).month()]}
-                defaultNightsValue={
+                nightsValue={
                   searchData.nights ? String(searchData.nights) : undefined
                 }
                 isResetState={isCalendarOpen}

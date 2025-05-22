@@ -40,8 +40,8 @@ export type SearchParams = {
   cities: number[]
   adults: number
   childs?: number[]
-  dateFrom: Date | null
-  dateTo: Date | null
+  dateFrom: string | null
+  dateTo: string | null
   nights?: number
   nightsCorrectionLowerValue: number
   nightsCorrectionUpperValue: number

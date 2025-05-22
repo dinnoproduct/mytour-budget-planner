@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React, { Children, isValidElement } from 'react'
 import {
   HStack,
   useRadioGroup,
@@ -34,6 +34,10 @@ export function Group({
   return (
     <HStack {...group} style={style}>
       {Children.map(children, (child, index) => {
+        if (!isValidElement(child)) {
+          return null
+        }
+
         const props = getRadioProps({
           value: child?.props?.value ?? String(index)
         })
