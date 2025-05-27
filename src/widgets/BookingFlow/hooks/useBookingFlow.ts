@@ -112,6 +112,7 @@ export const useBookingFlow = ({
           bookInput.startDate = packageDetails.checkin
           bookInput.endDate = packageDetails.checkout
           bookInput.bookingType = 2
+          bookInput.footType = packageDetails.foodType || 0
         }
 
         if (paymentAmount === 0) {
@@ -255,7 +256,7 @@ export const useBookingFlow = ({
         // endDate: packageDetails.returnFlight.departureDate,
         // destinationFlightId: packageDetails.destinationFlight.id,
         // returnFlightId: packageDetails.returnFlight.id,
-        notes: notesJson,
+        notes: notesJson
       }
 
       if (packageDetails.destinationFlight?.departureDate) {

@@ -112,6 +112,7 @@ export interface OfferEntity {
   nights: number
   checkin: string
   checkout: string
+  foodType: number
 }
 
 // flight

@@ -1,11 +1,11 @@
-export type RoomsMenuProps = {
+export type RoomsMenuHotelProps = {
   defaultRoom?: number
-  onChange?: (roomId: number) => void
+  onChange?: (roomId: number, mealType: number) => void
   rooms: RoomItem[]
   priceType?: 'room' | 'package'
 }
 
-type RoomItem = {
+export type RoomItem = {
   id: number
   name: string
   price: number
@@ -17,4 +17,8 @@ type RoomItem = {
     offerId: number
     price: number,
   }[]
+}
+
+export type RoomWithSelectedMeal = RoomItem & {
+  selectedMealId?: number
 }

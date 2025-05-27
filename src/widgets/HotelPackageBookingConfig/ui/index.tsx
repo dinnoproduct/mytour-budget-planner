@@ -5,7 +5,7 @@ import { AlertCardMessage, Button, Icon, Text } from '@ui'
 import { FlightsConfigButton } from '@widgets/PackageBookingConfig/ui/FlightsConfigButton.tsx'
 import { SearchTravelers } from '@features/SearchTravelers'
 import { TravelersConfigButton } from '@widgets/PackageBookingConfig/ui/TravelersConfigButton.tsx'
-import { RoomsMenu } from '@features/RoomsMenu'
+import { RoomsMenuHotel } from '@features/RoomsMenuHotel'
 import { useBookingConfig, useFreeCancellation } from '../hooks'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import { useBreakpoint } from '@shared/hooks'
@@ -94,7 +94,7 @@ export const HotelPackageBookingConfig = ({
           CustomButton={TravelersConfigButton}
         />
 
-        <RoomsMenu {...roomsMenuProps} priceType="room" />
+        <RoomsMenuHotel {...roomsMenuProps} priceType="room" />
 
         {isNotFound ? (
           <Box px="4">

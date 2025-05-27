@@ -35,11 +35,10 @@ export const RoomsMenu = ({
     setDropdownOpen(false)
   }
 
-  const roomValue = useMemo(() => {
-    const room = rooms.find(room => room.id === selectedRoom)
-
-    return room ? room.name : ''
-  }, [selectedRoom, rooms])
+  const roomValue = useMemo(
+    () => rooms.find(room => room.id === selectedRoom),
+    [selectedRoom, rooms]
+  )
 
   return (
     <Menu
@@ -70,8 +69,14 @@ export const RoomsMenu = ({
           </Flex>
 
           <Text fontWeight="500" size="sm" mt="1">
-            {roomValue}
+            {roomValue?.name}
           </Text>
+
+          {roomValue?.mealName && (
+            <Text fontWeight="500" size="sm" mt="1.5">
+              {roomValue.mealName}
+            </Text>
+          )}
         </Box>
       </MenuButton>
       <Portal>

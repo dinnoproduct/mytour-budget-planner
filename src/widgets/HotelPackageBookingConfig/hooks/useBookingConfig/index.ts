@@ -20,6 +20,12 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     return roomId ? parseInt(roomId, 10) : 0
   }, [searchParams])
 
+  const mealId = useMemo(() => {
+    const mealId = searchParams.get('mealId')
+
+    return mealId ? parseInt(mealId, 10) : undefined
+  }, [searchParams])
+
   const [bookingData, setBookingData] = useState({
     checkIn: new Date(defaultTourPackage.checkin),
     checkOut: new Date(defaultTourPackage.checkout),
@@ -36,7 +42,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
           .map(Number) || []
     },
     hotelId: defaultTourPackage.hotel.id,
-    roomId
+    roomId,
+    mealId
   })
 
   const updateBookingData = (data: Partial<typeof bookingData>) => {
@@ -50,6 +57,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         childrenAges: updatedData.travelersData.childrenAges.join(','),
         hotelId: String(updatedData.hotelId),
         roomId: String(updatedData.roomId),
+        mealId: updatedData.mealId ? String(updatedData.mealId) : '',
         from: moment(updatedData.checkIn).format('YYYY-MM-DD'),
         to: moment(updatedData.checkOut).format('YYYY-MM-DD')
       })
@@ -87,8 +95,26 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   const { data: roomTypes = [] } = useDictionary(
     'RoomTypeDictionary' as DictionaryTypes.RoomTypeDictionary
   )
+  const { data: foodTypes = [] } = useDictionary(
+    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
+  )
+
   const roomOffers = useMemo(() => {
     if (!offers?.length) return []
+
+    // First group offers by room type
+    const offersByRoomType = offers.reduce(
+      (acc, offer) => {
+        if (!acc[offer.roomType]) {
+          acc[offer.roomType] = []
+        }
+
+        acc[offer.roomType].push(offer)
+
+        return acc
+      },
+      {} as Record<number, typeof offers>
+    )
 
     const offerRoomTypes = roomTypes.filter(roomType =>
       offers.some(offer => offer.roomType === roomType.key)
@@ -96,12 +122,32 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 
     return offerRoomTypes
       .map(roomType => {
-        const offer = offers.find(offer => offer.roomType === roomType.key)
+        const roomOffers = offersByRoomType[roomType.key] || []
+        const defaultOffer = roomOffers[0]
 
         return {
           id: roomType.key,
           name: roomType.value,
-          price: offer?.price || 0
+          price: defaultOffer?.price || 0,
+          mealType: defaultOffer?.foodType,
+          mealName: foodTypes.find(
+            foodType => foodType.key === defaultOffer?.foodType
+          )?.value,
+          meals: Array.from(
+            new Map(
+              roomOffers.map(offer => [
+                offer.offerId,
+                {
+                  mealType: offer.foodType,
+                  mealName: foodTypes.find(
+                    foodType => foodType.key === offer.foodType
+                  )?.value,
+                  offerId: offer.offerId,
+                  price: offer.price
+                }
+              ])
+            ).values()
+          )
         }
       })
       .sort((a, b) => a.price - b.price)
@@ -118,15 +164,21 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     [JSON.stringify(roomOffers), bookingData.roomId]
   )
 
-  const handleRoomSelect = (roomId: number) => {
+  const handleRoomSelect = (roomId: number, mealId: number) => {
     updateBookingData({
-      roomId
+      roomId,
+      mealId
     })
   }
 
   const selectedOffer = useMemo(
-    () => offers.find(offer => offer.roomType === selectedRoomOffer.id),
-    [selectedRoomOffer, JSON.stringify(offers)]
+    () =>
+      offers.find(
+        offer =>
+          offer.roomType === selectedRoomOffer.id &&
+          offer.foodType === selectedRoomOffer.mealType
+      ),
+    [selectedRoomOffer, bookingData.mealId, JSON.stringify(offers)]
   )
 
   const {
