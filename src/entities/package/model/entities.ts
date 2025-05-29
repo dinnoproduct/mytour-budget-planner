@@ -113,6 +113,9 @@ export interface OfferEntity {
   checkin: string
   checkout: string
   foodType: number
+  currency: Currency
+  rate: number
+  priceInCurrency: number
 }
 
 // flight

@@ -27,7 +27,8 @@ import { useBreakpoint } from '@shared/hooks'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 
 export const RoomsMenuHotel = ({
-  defaultRoom,
+  defaultRoomId,
+  defaultMealId,
   onChange,
   rooms,
   priceType = 'package'
@@ -39,14 +40,14 @@ export const RoomsMenuHotel = ({
   const [roomsWithMeals, setRoomsWithMeals] = useState<RoomWithSelectedMeal[]>(
     []
   )
-  const [expandedIndex, setExpandedIndex] = useState<number>(0)
+  const [currentIndex, setCurrentIndex] = useState<number>(-1)
 
   useEffect(() => {
     setRoomsWithMeals((prevRooms: RoomWithSelectedMeal[]) =>
       rooms.map((room: RoomItem) => {
         const prevRoom = prevRooms.find(r => r.id === room.id)
         const defaultMeal = room.meals.find(
-          meal => meal.mealType === room.mealType
+          meal => meal.offerId === (prevRoom?.selectedMealId || defaultMealId)
         )
 
         return {
@@ -55,24 +56,20 @@ export const RoomsMenuHotel = ({
         }
       })
     )
-  }, [rooms])
+  }, [rooms, defaultMealId])
 
   useEffect(() => {
-    setSelectedRoom(defaultRoom)
-  }, [defaultRoom])
+    if (defaultRoomId && !selectedRoom) {
+      const defaultRoom = roomsWithMeals.find(room => room.id === defaultRoomId)
+      setCurrentIndex(
+        roomsWithMeals.findIndex(room => room.id === defaultRoomId)
+      )
 
-  useEffect(() => {
-    if (isDropdownOpen) {
-      if (selectedRoom) {
-        const selectedIndex = roomsWithMeals.findIndex(
-          room => room.id === selectedRoom
-        )
-        setExpandedIndex(selectedIndex >= 0 ? selectedIndex : 0)
-      } else {
-        setExpandedIndex(0)
+      if (defaultRoom) {
+        setSelectedRoom(defaultRoom.id)
       }
     }
-  }, [isDropdownOpen, selectedRoom, roomsWithMeals])
+  }, [defaultRoomId, roomsWithMeals])
 
   const handleRoomSelect = (roomId: number, mealId: number) => {
     setSelectedRoom(roomId)
@@ -96,21 +93,6 @@ export const RoomsMenuHotel = ({
     }
   }
 
-  const handleAccordionChange = (index: number | number[]) => {
-    if (typeof index === 'number') {
-      setExpandedIndex(index)
-      const room = roomsWithMeals[index]
-
-      if (room && !room.selectedMealId) {
-        const firstMeal = room.meals[0]
-
-        if (firstMeal) {
-          handleMealTypeSelect(room.id, firstMeal.offerId)
-        }
-      }
-    }
-  }
-
   const roomValue = useMemo(
     () => roomsWithMeals.find(room => room.id === selectedRoom),
     [selectedRoom, roomsWithMeals]
@@ -120,7 +102,7 @@ export const RoomsMenuHotel = ({
     <Menu
       isOpen={isDropdownOpen}
       onClose={() => setDropdownOpen(false)}
-      offset={[12, -28]}
+      offset={[12, -56]}
     >
       <MenuButton
         as={Box}
@@ -149,7 +131,11 @@ export const RoomsMenuHotel = ({
           </Text>
 
           <Text fontWeight="500" size="sm" mt="1.5">
-            {roomValue?.mealName}
+            {
+              roomValue?.meals.find(
+                meal => meal.offerId === roomValue?.selectedMealId
+              )?.mealName
+            }
           </Text>
         </Box>
       </MenuButton>
@@ -226,8 +212,21 @@ export const RoomsMenuHotel = ({
             >
               <Accordion
                 allowMultiple={false}
-                index={expandedIndex}
-                onChange={handleAccordionChange}
+                index={currentIndex}
+                onChange={index => {
+                  if (typeof index === 'number') {
+                    setCurrentIndex(index)
+                    const room = roomsWithMeals[index]
+
+                    if (room && !room.selectedMealId) {
+                      const firstMeal = room.meals[0]
+
+                      if (firstMeal) {
+                        handleMealTypeSelect(room.id, firstMeal.offerId)
+                      }
+                    }
+                  }
+                }}
                 width="full"
               >
                 {roomsWithMeals?.map((room, index) => (
@@ -259,7 +258,7 @@ export const RoomsMenuHotel = ({
                             size="md"
                             color="gray.900"
                             align="left"
-                            noOfLines={expandedIndex === index ? 2 : 1}
+                            noOfLines={currentIndex === index ? 2 : 1}
                           >
                             {room.name}
                           </Text>
@@ -272,7 +271,6 @@ export const RoomsMenuHotel = ({
                           mt="3"
                           align="center"
                         >
-                          {/* change price based on offer id */}
                           <Text size="xs" color="gray.500">
                             {t(`${priceType}Price`)}
                           </Text>
@@ -287,9 +285,7 @@ export const RoomsMenuHotel = ({
                             <Text
                               size="sm"
                               color={
-                                expandedIndex === index
-                                  ? 'blue.500'
-                                  : 'gray.800'
+                                currentIndex === index ? 'blue.500' : 'gray.800'
                               }
                               fontWeight="semibold"
                             >
@@ -305,7 +301,6 @@ export const RoomsMenuHotel = ({
                       </Flex>
                     </AccordionButton>
 
-                    {/* always on option should be open, and by default first should be open */}
                     <AccordionPanel px="4" py="0">
                       <Divider borderColor="gray.200" my="4" />
 

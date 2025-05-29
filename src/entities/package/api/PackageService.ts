@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 import {
   type GenerateHotelOffersInput,
   type GenerateOffersInput,
@@ -9,51 +9,85 @@ import {
 } from '@entities/package'
 
 export class PackageService {
-  private readonly apiVersion = 'V2'
-  private readonly api: AxiosInstance
+  private readonly baseUrl = `${import.meta.env.VITE_API_URL}`
 
-  constructor() {
-    this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/package/`
+  private async request<T>(
+    config: AxiosRequestConfig & { version?: 'V2' }
+  ): Promise<T> {
+    const { version, ...restConfig } = config
+    const api = axios.create({
+      baseURL: this.baseUrl
     })
 
-    this.api.interceptors.response.use(
+    api.interceptors.response.use(
       response => response.data,
       error => Promise.reject(error)
     )
+
+    const url = version
+      ? `/${version}/package${restConfig.url}`
+      : `/package${restConfig.url}`
+
+    return api({
+      ...restConfig,
+      url
+    })
   }
 
   // package
   async getPackageList(): Promise<PackageEntity[]> {
-    return this.api(`/${this.apiVersion}/getPackages`)
+    return this.request<PackageEntity[]>({
+      url: '/V2/getPackages'
+    })
   }
 
   async searchPackages(search: SearchPackagesParams): Promise<PackageEntity[]> {
-    return this.api.post('searchPackages', search)
+    return this.request<PackageEntity[]>({
+      url: '/searchPackages',
+      method: 'post',
+      data: search
+    })
   }
 
   async getPackage(offerId: number): Promise<PackageEntity> {
-    return this.api(`/getPackage/?id=${offerId}`)
+    return this.request<PackageEntity>({
+      url: `/getPackage/?id=${offerId}`
+    })
   }
 
   async generateOffers(input: GenerateOffersInput): Promise<OfferEntity[]> {
-    return this.api.post('generateOffers', input)
+    return this.request<OfferEntity[]>({
+      url: '/generateOffers',
+      method: 'post',
+      data: input
+    })
   }
 
   //hotel
   async searchHotelPackages(
     search: SearchHotelPackagesParams
   ): Promise<PackageEntity[]> {
-    return this.api.post('searchHotelPackages', search)
+    return this.request<PackageEntity[]>({
+      url: '/searchHotelPackages',
+      method: 'post',
+      data: search
+    })
   }
 
   async generateHotelOffers(
     input: GenerateHotelOffersInput
   ): Promise<OfferEntity[]> {
-    return this.api.post('/generateHotelOffers/?travelAgancy=3', input)
+    return this.request<OfferEntity[]>({
+      url: '/generateHotelOffers/?travelAgancy=3',
+      method: 'post',
+      version: 'V2',
+      data: input
+    })
   }
 
   async getHotelPackage(offerId: number): Promise<PackageEntity> {
-    return this.api(`/getHotelPackage/?id=${offerId}&travelAgancy=3`)
+    return this.request<PackageEntity>({
+      url: `/getHotelPackage/?id=${offerId}&travelAgancy=3`
+    })
   }
 }
