@@ -17,6 +17,7 @@ import { tabsComponentTheme } from '@components/Tabs'
 import { containerComponentTheme } from '@components/Container/theme.ts'
 import { radioComponentTheme } from '@components/Radio/theme.ts'
 import { radioSelectComponentTheme } from '@components/RadioCard/theme.ts'
+import { tagComponentTheme } from '@components/Tag/theme'
 
 export const breakpoints = {
   base: '0px',
@@ -45,6 +46,7 @@ export const theme = extendTheme({
     ...tabsComponentTheme,
     ...containerComponentTheme,
     ...radioComponentTheme,
-    ...radioSelectComponentTheme
+    ...radioSelectComponentTheme,
+    ...tagComponentTheme
   }
 })

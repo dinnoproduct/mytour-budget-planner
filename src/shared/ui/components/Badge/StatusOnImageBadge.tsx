@@ -6,6 +6,7 @@ import {
   type StatusOnImageBadgeProps
 } from '@components/Badge/types.ts'
 import { useTranslation } from 'react-i18next'
+import { type TextProps } from '@shared/ui/foundation/Typography/types'
 
 export const PaginationBadge = ({
   currentIndex,
@@ -123,10 +124,12 @@ const PaymentIssueBadge = ({ ...props }: BadgeProps) => (
 export const Layout = ({
   status,
   textKey,
+  textProps,
   ...props
 }: {
   status: 'success' | 'warning' | 'error'
   textKey?: string
+  textProps?: TextProps
 } & FlexProps) => {
   const { t } = useTranslation()
 
@@ -144,7 +147,7 @@ export const Layout = ({
       align="center"
       {...props}
     >
-      <Text size="xs" color="white" ml=".5">
+      <Text size="xs" color="white" ml=".5" {...textProps}>
         {textKey ? t(textKey) : props.children}
       </Text>
     </Flex>

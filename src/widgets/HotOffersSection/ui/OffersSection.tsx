@@ -1,6 +1,6 @@
 import { Box, Flex, Grid } from '@chakra-ui/react'
 import { Skeleton, Text } from '@ui'
-import { PackageCard } from '@features/PackageCard'
+import { PackageCardBasic } from '@features/PackageCard'
 import React from 'react'
 import Slider from 'react-slick'
 import { useTranslation } from 'react-i18next'
@@ -77,7 +77,7 @@ const PackagesList = ({ packages }: any) => {
         <Slider {...settings}>
           {packages.map((tourPackage: any) => (
             <Box key={tourPackage.offerId} maxWidth="342px" pr="4">
-              <PackageCard
+              <PackageCardBasic
                 tourPackage={tourPackage}
                 link={generateLink(tourPackage)}
                 maxWidth="326px"
@@ -93,7 +93,7 @@ const PackagesList = ({ packages }: any) => {
         display={{ base: 'none', md: 'grid' }}
       >
         {packages.map((tourPackage: any) => (
-          <PackageCard
+          <PackageCardBasic
             tourPackage={tourPackage}
             key={tourPackage.offerId}
             link={generateLink(tourPackage)}

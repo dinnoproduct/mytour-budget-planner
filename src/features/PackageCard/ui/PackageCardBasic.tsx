@@ -11,17 +11,18 @@ import {
   type DictionaryTypes,
   type PackageCity,
   type PackageCountry,
-  type PackageEntity, useDictionary
+  type PackageEntity,
+  useDictionary
 } from '@entities/package'
 import { getPluralForm } from '@shared/helpers'
-import { type PackageCardProps } from './types.ts'
+import { type PackageCardBasicProps } from './types.ts'
 import { formatNumber } from '@shared/utils'
 
-export const PackageCard = ({
+export const PackageCardBasic = ({
   tourPackage = {},
   link,
   ...props
-}: PackageCardProps) => {
+}: PackageCardBasicProps) => {
   const { i18n, t } = useTranslation()
 
   const { data: foodTypes = [] } = useDictionary(
@@ -68,11 +69,6 @@ export const PackageCard = ({
     languageSuffix
   ])
 
-  const isHotelPackage = useMemo(
-    () => !tourPackage.destinationFlight?.departureDate,
-    [tourPackage.destinationFlight?.departureDate]
-  )
-
   return (
     <Layout link={link} {...props}>
       <ImageSlider
@@ -103,19 +99,14 @@ export const PackageCard = ({
             <Text size="lg" fontWeight="bold" color="gray.800">
               {numberWithCommaNormalizer(tourPackage.price)} ֏
             </Text>
-
-            {/*{tourPackage.hotOffer ?*/}
-            {/*	<Text size="sm" fontWeight="normal" color="red.500" textDecoration="line-through" ml="2">*/}
-            {/*		{numberWithCommaNormalizer(tourPackage.oldPrice)} ֏*/}
-            {/*	</Text>*/}
-            {/*	: null}*/}
           </Flex>
 
           <Flex height="28px" mt="1" align="center">
             <Icon name="approximate" size="20" color="gray.600" />
 
             <Text size="sm" color="gray.600" ml="0.5">
-              {CURRENCY_MAP[tourPackage.currency]} {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+              {CURRENCY_MAP[tourPackage.currency]}{' '}
+              {formatNumber(parseFloat(tourPackage.priceInCurrency))}
             </Text>
           </Flex>
 

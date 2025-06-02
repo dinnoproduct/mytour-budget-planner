@@ -1,1 +1,2 @@
-export { PackageCard } from './ui'
+export { PackageCardHorizontal } from './ui/PackageCardHorizontal'
+export { PackageCardBasic } from './ui/PackageCardBasic'

@@ -126,7 +126,7 @@ export const HotelPackagesSearchProvider: React.FC<{
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
       childrenAges: searchData.travelersData.childrenAges.join(','),
-      nights: searchData.nights?.toString() || '',
+      nights: dateMode === 'exact' ? '' : searchData.nights?.toString() ?? '',
       dateMode: dateMode.toString(),
       tab: 'hotel'
     })

@@ -1,7 +1,9 @@
 import { type FlexProps } from '@chakra-ui/react'
+import { type TextProps } from '@shared/ui/foundation/Typography/types'
 
 export type StatusOnImageBadgeProps = {
   status: BadgeStatus
+  textProps?: Omit<TextProps, 'children'>
 } & BadgeProps
 
 export type BadgeProps = {

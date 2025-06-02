@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import { HotelStarBadge, PaginationBadge, StatusOnImageBadge } from '@ui'
 
 const slideTime = 300
+const IMG_HEIGHT = 170
 
 const ImageSlider = ({
   images,
@@ -66,9 +67,10 @@ const ImageSlider = ({
         {sliderImages?.map(({ url }: { url: string }) => (
           <Box outline="none" key={url}>
             <Image
+              key={url}
               src={url}
               maxWidth="full"
-              height="170px"
+              height={IMG_HEIGHT}
               width="full"
               objectFit="cover"
             />
@@ -84,7 +86,6 @@ const ImageSlider = ({
       />
 
       <HotelStarBadge starsCount={starsCount} isPositionAbsolute />
-
       {foodType ? (
         <StatusOnImageBadge status="foodType" children={foodType} />
       ) : null}
@@ -104,6 +105,10 @@ const Layout = ({ children, ...props }: BoxProps) => (
       },
       '.slick-slide': {
         marginRight: '0 !important'
+      },
+      '.slick-list': {
+        borderRadius: 8,
+        height: IMG_HEIGHT
       },
       '.hide-prev .slick-prev': {
         opacity: 0,
