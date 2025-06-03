@@ -107,7 +107,7 @@ export const useBookingFlow = ({
           bookInput.startDate = packageDetails.checkin
           bookInput.endDate = packageDetails.checkout
           bookInput.bookingType = 2
-          bookInput.footType = packageDetails.foodType || 0
+          bookInput.foodType = packageDetails.foodType || 0
         }
 
         if (paymentAmount === 0) {
@@ -218,8 +218,8 @@ export const useBookingFlow = ({
   useEffect(() => {
     const handleTravelersModalTransition = () => {
       if (
-        isLoadingTravelersModal && 
-        !isRequestInProgressRef.current && 
+        isLoadingTravelersModal &&
+        !isRequestInProgressRef.current &&
         requestIdRef.current
       ) {
         setModalView('payment')
