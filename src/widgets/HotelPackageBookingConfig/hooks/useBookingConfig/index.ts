@@ -159,7 +159,14 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   }
 
   const selectedOffer = useMemo(
-    () => offers.find(offer => offer.offerId === bookingData.mealId),
+    () => {
+      if (offers.length === 0) return null
+      const mealOffer = bookingData.mealId
+        ? offers.find(offer => offer.offerId === bookingData.mealId)
+        : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
+
+      return mealOffer
+    },
     [bookingData.mealId, JSON.stringify(offers)]
   )
 

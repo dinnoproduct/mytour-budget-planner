@@ -22,7 +22,8 @@ export const TravelersModal = ({
   packageDetails,
   travelers,
   isOpen = false,
-  onChange
+  onChange,
+  isLoading
 }: TravelersModalProps) => {
   const { t } = useTranslation()
   const [normalizedTravelers, setNormalizedTravelers] = useState<Traveler[]>([])
@@ -291,7 +292,13 @@ export const TravelersModal = ({
             backgroundColor="white"
             mt="auto"
           >
-            <Button variant="solid-blue" type="submit" size="lg" width="full">
+            <Button
+              variant="solid-blue"
+              type="submit"
+              size="lg"
+              width="full"
+              isLoading={isLoading}
+            >
               {t`continue`}
             </Button>
           </Box>

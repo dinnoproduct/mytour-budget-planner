@@ -26,6 +26,7 @@ export type PaymentFormViewProps = {
 
 export type PaymentMethodViewProps = {
   onSubmit: (method: PaymentMethod) => Promise<void>
+  isLoadingBooking?: boolean
 }
 
 export type LayoutProps = {

@@ -28,13 +28,13 @@ export const useBookingFlow = ({
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
-  const { mutateAsync: createRequestAsync, isPending: isPendingCreateRequest } =
-    useCreateRequest()
-  const { mutateAsync: updateRequestAsync, isPending: isPendingUpdateRequest } =
-    useUpdateRequest()
+  const { mutateAsync: createRequestAsync } = useCreateRequest()
+  const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
   const { mutateAsync: reservePackageAsync } = useReservePackage()
+  const isRequestInProgressRef = useRef(false)
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
+  const [isLoadingTravelersModal, setIsLoadingTravelersModal] = useState(false)
   const [request, setRequest] = useState<NormalizedRequestEntity | null>(
     initialRequest || null
   )
@@ -65,11 +65,6 @@ export const useBookingFlow = ({
     setRequest(null)
     requestIdRef.current = null
     setPaymentModalView('paymentForm')
-  }
-
-  const onTravelersModalSuccess = (travelers: Travelers) => {
-    setTravelers(travelers)
-    setModalView('payment')
   }
 
   const openPaymentModal = () => {
@@ -214,14 +209,40 @@ export const useBookingFlow = ({
     defaultTravelers
   ])
 
-  // draft request sync
 
+  const onTravelersModalSuccess = (travelers: Travelers) => {
+    setTravelers(travelers)
+    setIsLoadingTravelersModal(true)
+  }
+
+  useEffect(() => {
+    const handleTravelersModalTransition = () => {
+      if (
+        isLoadingTravelersModal && 
+        !isRequestInProgressRef.current && 
+        requestIdRef.current
+      ) {
+        setModalView('payment')
+        setIsLoadingTravelersModal(false)
+      }
+    }
+
+    handleTravelersModalTransition()
+  }, [isLoadingTravelersModal, isRequestInProgressRef.current, requestIdRef.current])
+
+console.log('request status : ', {
+  isRequestInProgressRef: isRequestInProgressRef.current
+})
+
+  // draft request sync
   const handleTravelersChange = useCallback(
     async (data: Travelers) => {
+      console.log('handleTravelersChange : ', {
+        isRequestInProgressRef: isRequestInProgressRef.current
+      })
       if (
         !packageDetails?.offerId ||
-        isPendingCreateRequest ||
-        isPendingUpdateRequest
+        isRequestInProgressRef.current
       ) {
         return
       }
@@ -252,10 +273,6 @@ export const useBookingFlow = ({
         price: packageDetails.price,
         roomType: packageDetails.roomType,
         travelAgencyId: packageDetails.travelAgency.id,
-        // startDate: packageDetails.destinationFlight.departureDate,
-        // endDate: packageDetails.returnFlight.departureDate,
-        // destinationFlightId: packageDetails.destinationFlight.id,
-        // returnFlightId: packageDetails.returnFlight.id,
         notes: notesJson
       }
 
@@ -269,39 +286,41 @@ export const useBookingFlow = ({
         requestInput.endDate = packageDetails.checkout
       }
 
-      if (!requestIdRef.current) {
-        const newRequestId = await createRequestAsync({
-          ...requestInput
-        })
-        setRequest({
-          id: newRequestId,
-          ...requestInput
-        } as NormalizedRequestEntity)
+      isRequestInProgressRef.current = true
 
-        requestIdRef.current = newRequestId
+      try {
+        if (!requestIdRef.current) {
+          const newRequestId = await createRequestAsync({
+            ...requestInput
+          })
+          setRequest({
+            id: newRequestId,
+            ...requestInput
+          } as NormalizedRequestEntity)
 
-        return
-      }
+          requestIdRef.current = newRequestId
+        } else {
+          const success = await updateRequestAsync({
+            id: requestIdRef.current,
+            ...requestInput
+          })
 
-      const success = await updateRequestAsync({
-        id: requestIdRef.current,
-        ...requestInput
-      })
-
-      if (success) {
-        setRequest({
-          ...request,
-          ...requestInput
-        } as NormalizedRequestEntity)
+          if (success) {
+            setRequest({
+              ...request,
+              ...requestInput
+            } as NormalizedRequestEntity)
+          }
+        }
+      } finally {
+        isRequestInProgressRef.current = false
       }
     },
     [
       request?.id,
       requestIdRef.current,
       packageDetails?.offerId,
-      childrenAges,
-      isPendingCreateRequest,
-      isPendingUpdateRequest
+      childrenAges
     ]
   )
 
@@ -312,6 +331,7 @@ export const useBookingFlow = ({
     onPaymentModalSuccess,
     paymentModalView,
     isLoadingBooking,
+    isLoadingTravelersModal,
     travelers,
     modalView,
     closeModal,

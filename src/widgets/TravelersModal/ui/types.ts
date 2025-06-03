@@ -8,6 +8,7 @@ export type TravelersModalProps = {
   travelers: Travelers
   isOpen?: boolean
   onChange?: (data: Travelers) => void
+  isLoading?: boolean
 }
 
 export type Travelers = {

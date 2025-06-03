@@ -8,9 +8,11 @@ import {
 } from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
 import { useState } from 'react'
 
-export const PaymentMethodView = ({ onSubmit }: PaymentMethodViewProps) => {
+export const PaymentMethodView = ({
+  onSubmit,
+  isLoadingBooking
+}: PaymentMethodViewProps) => {
   const { t } = useTranslation()
-  const [isLoading, setIsLoading] = useState(false)
 
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(
     PaymentMethod.bankCard
@@ -22,10 +24,9 @@ export const PaymentMethodView = ({ onSubmit }: PaymentMethodViewProps) => {
 
   const handleContinue = async () => {
     try {
-      setIsLoading(true)
       await onSubmit(selectedMethod)
-    } finally {
-      setIsLoading(false)
+    } catch (error) {
+      console.error('Error submitting payment method:', error)
     }
   }
 
@@ -96,7 +97,7 @@ export const PaymentMethodView = ({ onSubmit }: PaymentMethodViewProps) => {
           size="lg"
           width="full"
           onClick={handleContinue}
-          isLoading={isLoading}
+          isLoading={isLoadingBooking}
         >
           {t`pay`}
         </Button>

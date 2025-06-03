@@ -24,7 +24,8 @@ export const BookingFlow = ({
     modalView,
     closeModal,
     handleTravelersChange,
-    isLoadingBooking
+    isLoadingBooking,
+    isLoadingTravelersModal
   } = useBookingFlow({
     initialView,
     packageDetails,
@@ -50,6 +51,7 @@ export const BookingFlow = ({
           travelers={travelers}
           onSuccess={onTravelersModalSuccess}
           onChange={handleTravelersChange}
+          isLoading={isLoadingTravelersModal}
         />
       )}
 

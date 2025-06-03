@@ -38,7 +38,12 @@ export const PaymentModal = ({
 
   const ViewComponent = useMemo(() => {
     const ViewComponentMap = {
-      paymentMethod: () => <PaymentMethodView onSubmit={handlePay} />,
+      paymentMethod: () => (
+        <PaymentMethodView
+          onSubmit={handlePay}
+          isLoadingBooking={isLoadingBooking}
+        />
+      ),
       ameriaPay: () => <AmeriaPayView paymentUrl={ameriaPayUrl} />,
       paymentForm: () => (
         <PaymentFormView

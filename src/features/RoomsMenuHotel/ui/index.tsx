@@ -46,17 +46,23 @@ export const RoomsMenuHotel = ({
     setRoomsWithMeals((prevRooms: RoomWithSelectedMeal[]) =>
       rooms.map((room: RoomItem) => {
         const prevRoom = prevRooms.find(r => r.id === room.id)
-        const defaultMeal = room.meals.find(
-          meal => meal.offerId === (prevRoom?.selectedMealId || defaultMealId)
-        )
+        let selectedMealId = prevRoom?.selectedMealId || defaultMealId
+
+        if (
+          room.id === defaultRoomId &&
+          !selectedMealId &&
+          room.meals.length > 0
+        ) {
+          selectedMealId = room.meals[0].offerId
+        }
 
         return {
           ...room,
-          selectedMealId: prevRoom?.selectedMealId || defaultMeal?.offerId
+          selectedMealId
         }
       })
     )
-  }, [rooms, defaultMealId])
+  }, [rooms, defaultMealId, defaultRoomId])
 
   useEffect(() => {
     if (defaultRoomId && !selectedRoom) {
