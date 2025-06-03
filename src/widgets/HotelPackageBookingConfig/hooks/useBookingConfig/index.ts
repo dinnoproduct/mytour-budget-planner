@@ -138,7 +138,9 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
               mealType: offer.foodType,
               mealName: foodTypeInfo?.value || '',
               offerId: offer.offerId,
-              price: offer.price
+              price: offer.price,
+              priceInCurrency: offer.priceInCurrency,
+              currency: offer.currency
             }
           })
         }
@@ -158,17 +160,14 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     })
   }
 
-  const selectedOffer = useMemo(
-    () => {
-      if (offers.length === 0) return null
-      const mealOffer = bookingData.mealId
-        ? offers.find(offer => offer.offerId === bookingData.mealId)
-        : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
+  const selectedOffer = useMemo(() => {
+    if (offers.length === 0) return null
+    const mealOffer = bookingData.mealId
+      ? offers.find(offer => offer.offerId === bookingData.mealId)
+      : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
 
-      return mealOffer
-    },
-    [bookingData.mealId, JSON.stringify(offers)]
-  )
+    return mealOffer
+  }, [bookingData.mealId, JSON.stringify(offers)])
 
   const {
     data: currentOfferPackage,

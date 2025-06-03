@@ -16,7 +16,7 @@ import {
   Divider
 } from '@chakra-ui/react'
 import { Button, Text, Radio } from '@ui'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   type RoomsMenuHotelProps,
@@ -24,7 +24,22 @@ import {
   type RoomWithSelectedMeal
 } from './types.ts'
 import { useBreakpoint } from '@shared/hooks'
+import { CURRENCY_MAP } from '@shared/model'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
+
+const getRoomPriceString = (room: RoomWithSelectedMeal) => {
+  const selectedMeal = room.selectedMealId
+    ? room.meals.find(meal => meal.offerId === room.selectedMealId)
+    : room.meals[0]
+
+  if (!selectedMeal) return ''
+
+  return `${numberWithCommaNormalizer(selectedMeal.price || room.price)} ֏ ~ ${selectedMeal.priceInCurrency} ${
+    CURRENCY_MAP[
+      selectedMeal.currency?.toUpperCase() as keyof typeof CURRENCY_MAP
+    ]
+  }`
+}
 
 export const RoomsMenuHotel = ({
   defaultRoomId,
@@ -295,12 +310,7 @@ export const RoomsMenuHotel = ({
                               }
                               fontWeight="semibold"
                             >
-                              {numberWithCommaNormalizer(
-                                room.meals.find(
-                                  meal => meal.offerId === room.selectedMealId
-                                )?.price || room.price
-                              )}{' '}
-                              ֏
+                              {getRoomPriceString(room)}
                             </Text>
                           </Flex>
                         </Flex>

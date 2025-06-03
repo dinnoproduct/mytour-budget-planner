@@ -12,9 +12,11 @@ export type RoomItem = {
   price: number
   meals: {
     mealType: number
-    mealName: string,
+    mealName: string
     offerId: number
-    price: number,
+    price: number
+    priceInCurrency: number
+    currency: string
   }[]
 }
 
