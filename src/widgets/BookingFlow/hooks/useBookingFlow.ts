@@ -209,7 +209,6 @@ export const useBookingFlow = ({
     defaultTravelers
   ])
 
-
   const onTravelersModalSuccess = (travelers: Travelers) => {
     setTravelers(travelers)
     setIsLoadingTravelersModal(true)
@@ -228,22 +227,16 @@ export const useBookingFlow = ({
     }
 
     handleTravelersModalTransition()
-  }, [isLoadingTravelersModal, isRequestInProgressRef.current, requestIdRef.current])
-
-console.log('request status : ', {
-  isRequestInProgressRef: isRequestInProgressRef.current
-})
+  }, [
+    isLoadingTravelersModal,
+    isRequestInProgressRef.current,
+    requestIdRef.current
+  ])
 
   // draft request sync
   const handleTravelersChange = useCallback(
     async (data: Travelers) => {
-      console.log('handleTravelersChange : ', {
-        isRequestInProgressRef: isRequestInProgressRef.current
-      })
-      if (
-        !packageDetails?.offerId ||
-        isRequestInProgressRef.current
-      ) {
+      if (!packageDetails?.offerId || isRequestInProgressRef.current) {
         return
       }
 
@@ -316,12 +309,7 @@ console.log('request status : ', {
         isRequestInProgressRef.current = false
       }
     },
-    [
-      request?.id,
-      requestIdRef.current,
-      packageDetails?.offerId,
-      childrenAges
-    ]
+    [request?.id, requestIdRef.current, packageDetails?.offerId, childrenAges]
   )
 
   return {

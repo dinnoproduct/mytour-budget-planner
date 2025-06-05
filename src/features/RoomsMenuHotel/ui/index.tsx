@@ -18,28 +18,10 @@ import {
 import { Button, Text, Radio } from '@ui'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  type RoomsMenuHotelProps,
-  type RoomItem,
-  type RoomWithSelectedMeal
-} from './types.ts'
+import { type RoomsMenuHotelProps } from './types.ts'
 import { useBreakpoint } from '@shared/hooks'
-import { CURRENCY_MAP } from '@shared/model'
-import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
-
-const getRoomPriceString = (room: RoomWithSelectedMeal) => {
-  const selectedMeal = room.selectedMealId
-    ? room.meals.find(meal => meal.offerId === room.selectedMealId)
-    : room.meals[0]
-
-  if (!selectedMeal) return ''
-
-  return `${numberWithCommaNormalizer(selectedMeal.price || room.price)} ֏ ~ ${selectedMeal.priceInCurrency} ${
-    CURRENCY_MAP[
-      selectedMeal.currency?.toUpperCase() as keyof typeof CURRENCY_MAP
-    ]
-  }`
-}
+import { getRoomPriceString } from '../helpers'
+import { type RoomWithSelectedMeal, type RoomItem } from '../model'
 
 export const RoomsMenuHotel = ({
   defaultRoomId,
@@ -60,16 +42,10 @@ export const RoomsMenuHotel = ({
   useEffect(() => {
     setRoomsWithMeals((prevRooms: RoomWithSelectedMeal[]) =>
       rooms.map((room: RoomItem) => {
-        const prevRoom = prevRooms.find(r => r.id === room.id)
-        let selectedMealId = prevRoom?.selectedMealId || defaultMealId
-
-        if (
-          room.id === defaultRoomId &&
-          !selectedMealId &&
-          room.meals.length > 0
-        ) {
-          selectedMealId = room.meals[0].offerId
-        }
+        const selectedMealId =
+          room.id === defaultRoomId && defaultMealId !== -1
+            ? defaultMealId
+            : room.meals[0].mealType
 
         return {
           ...room,
@@ -154,7 +130,7 @@ export const RoomsMenuHotel = ({
           <Text fontWeight="500" size="sm" mt="1.5">
             {
               roomValue?.meals.find(
-                meal => meal.offerId === roomValue?.selectedMealId
+                meal => meal.mealType === roomValue?.selectedMealId
               )?.mealName
             }
           </Text>
@@ -243,7 +219,7 @@ export const RoomsMenuHotel = ({
                       const firstMeal = room.meals[0]
 
                       if (firstMeal) {
-                        handleMealTypeSelect(room.id, firstMeal.offerId)
+                        handleMealTypeSelect(room.id, firstMeal.mealType)
                       }
                     }
                   }
@@ -337,7 +313,7 @@ export const RoomsMenuHotel = ({
                                 {meal.mealName}
                               </Text>
                               <Radio
-                                value={meal.offerId.toString()}
+                                value={meal.mealType.toString()}
                                 size="lg"
                               />
                             </Flex>

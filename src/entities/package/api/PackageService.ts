@@ -78,7 +78,7 @@ export class PackageService {
     input: GenerateHotelOffersInput
   ): Promise<OfferEntity[]> {
     return this.request<OfferEntity[]>({
-      url: '/generateHotelOffers/?travelAgancy=3',
+      url: '/generateHotelOffers/?travelAgency=3',
       method: 'post',
       version: 'V2',
       data: input

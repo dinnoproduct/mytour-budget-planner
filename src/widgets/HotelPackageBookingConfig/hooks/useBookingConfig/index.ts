@@ -23,7 +23,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   const mealId = useMemo(() => {
     const mealId = searchParams.get('mealId')
 
-    return mealId ? parseInt(mealId, 10) : 0
+    return mealId ? parseInt(mealId, 10) : -1
   }, [searchParams])
 
   const [bookingData, setBookingData] = useState({
@@ -163,11 +163,15 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   const selectedOffer = useMemo(() => {
     if (offers.length === 0) return null
     const mealOffer = bookingData.mealId
-      ? offers.find(offer => offer.offerId === bookingData.mealId)
+      ? offers.find(
+        offer =>
+          offer.foodType === bookingData.mealId &&
+            offer.roomType === bookingData.roomId
+      )
       : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
 
     return mealOffer
-  }, [bookingData.mealId, JSON.stringify(offers)])
+  }, [bookingData.mealId, bookingData.roomId, JSON.stringify(offers)])
 
   const {
     data: currentOfferPackage,
