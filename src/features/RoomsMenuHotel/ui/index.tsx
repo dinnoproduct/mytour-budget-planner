@@ -34,6 +34,7 @@ export const RoomsMenuHotel = ({
   const { isMd } = useBreakpoint()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState<number>()
+  const [confirmedMealId, setConfirmedMealId] = useState<number>()
   const [roomsWithMeals, setRoomsWithMeals] = useState<RoomWithSelectedMeal[]>(
     []
   )
@@ -42,10 +43,13 @@ export const RoomsMenuHotel = ({
   useEffect(() => {
     setRoomsWithMeals((prevRooms: RoomWithSelectedMeal[]) =>
       rooms.map((room: RoomItem) => {
-        const selectedMealId =
-          room.id === defaultRoomId && defaultMealId >= 0
-            ? defaultMealId
-            : room.meals[0].mealType
+        let selectedMealId = room.meals[0].mealType
+
+        if (room.id === defaultRoomId) {
+          selectedMealId =
+            defaultMealId >= 0 ? defaultMealId : room.meals[0].mealType
+          setConfirmedMealId(defaultMealId)
+        }
 
         return {
           ...room,
@@ -86,6 +90,7 @@ export const RoomsMenuHotel = ({
     const room = roomsWithMeals.find(r => r.id === roomId)
 
     if (room?.selectedMealId) {
+      setConfirmedMealId(room.selectedMealId)
       handleRoomSelect(roomId, room.selectedMealId)
     }
   }
@@ -93,6 +98,11 @@ export const RoomsMenuHotel = ({
   const roomValue = useMemo(
     () => roomsWithMeals.find(room => room.id === selectedRoom),
     [selectedRoom, roomsWithMeals]
+  )
+
+  const confirmedMeal = useMemo(
+    () => roomValue?.meals.find(meal => meal.mealType === confirmedMealId),
+    [roomValue, confirmedMealId]
   )
 
   return (
@@ -128,11 +138,7 @@ export const RoomsMenuHotel = ({
           </Text>
 
           <Text fontWeight="500" size="sm" mt="1.5">
-            {
-              roomValue?.meals.find(
-                meal => meal.mealType === roomValue?.selectedMealId
-              )?.mealName
-            }
+            {confirmedMeal?.mealName}
           </Text>
         </Box>
       </MenuButton>
