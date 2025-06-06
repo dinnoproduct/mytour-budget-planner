@@ -43,7 +43,7 @@ export const RoomsMenuHotel = ({
     setRoomsWithMeals((prevRooms: RoomWithSelectedMeal[]) =>
       rooms.map((room: RoomItem) => {
         const selectedMealId =
-          room.id === defaultRoomId && defaultMealId !== -1
+          room.id === defaultRoomId && defaultMealId >= 0
             ? defaultMealId
             : room.meals[0].mealType
 

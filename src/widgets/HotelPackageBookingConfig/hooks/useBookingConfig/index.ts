@@ -162,7 +162,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 
   const selectedOffer = useMemo(() => {
     if (offers.length === 0) return null
-    const mealOffer = bookingData.mealId
+    const mealOffer = bookingData.mealId >= 0
       ? offers.find(
         offer =>
           offer.foodType === bookingData.mealId &&
