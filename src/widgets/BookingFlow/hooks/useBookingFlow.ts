@@ -266,6 +266,7 @@ export const useBookingFlow = ({
         price: packageDetails.price,
         roomType: packageDetails.roomType,
         travelAgencyId: packageDetails.travelAgency.id,
+        foodType: packageDetails.foodType,
         notes: notesJson
       }
 

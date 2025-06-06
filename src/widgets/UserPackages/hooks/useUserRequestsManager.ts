@@ -259,7 +259,8 @@ export const useUserRequestsManager = () => {
       from: activeRequest?.startDate || '',
       to: activeRequest?.endDate || '',
       hotelId: activeRequest?.hotel.id || 0,
-      roomId: activeRequest?.roomType || 0
+      roomId: activeRequest?.roomType || 0,
+      mealId: activeRequest?.foodType || 0
     },
     {
       enabled:

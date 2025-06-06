@@ -26,10 +26,15 @@ export const useSearchHotelOfferPackage = (
     )
 
   const offerId = useMemo(() => {
-    const roomId = searchData?.roomId
+    const roomId = searchData.roomId
+    const mealId = searchData.mealId
 
-    return offers?.find(offer => offer.roomType === roomId)?.offerId || 0
-  }, [offers, searchData?.roomId])
+    return (
+      offers?.find(
+        offer => offer.roomType === roomId && offer.foodType === mealId
+      )?.offerId || 0
+    )
+  }, [offers, searchData?.roomId, searchData?.mealId])
 
   const { data: hotelPackageDetails, isLoading: isLoadingHotelPackage } =
     useHotelPackageByOfferId(offerId, {
@@ -55,6 +60,7 @@ type SearchData = {
   childrenAges: number[]
   hotelId: number
   roomId: number
+  mealId: number
 }
 
 type Options = {
