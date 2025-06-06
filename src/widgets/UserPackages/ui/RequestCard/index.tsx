@@ -46,11 +46,23 @@ export const RequestCard = ({
   const { data: roomTypes = [] } = useDictionary(
     'RoomTypeDictionary' as DictionaryTypes.RoomTypeDictionary
   )
+
+  const { data: foodTypes = [] } = useDictionary(
+    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
+  )
+
   const roomType = useMemo(
     () =>
       roomTypes.find(roomType => roomType.key === request.roomType)
         ?.value as string,
     [roomTypes, request.roomType]
+  )
+
+  const foodType = useMemo(
+    () =>
+      foodTypes.find(foodType => foodType.key === request.foodType)
+        ?.value as string,
+    [foodTypes, request.foodType]
   )
 
   const showRemainingPaymentButton = useMemo(
@@ -181,6 +193,11 @@ export const RequestCard = ({
               value={totalTravelers}
             />
             <DetailsListItem label={t`room`} value={roomType} />
+
+            {foodType && (
+              <DetailsListItem label={t`mealType`} value={foodType} />
+            )}
+
             <DetailsListItem
               label={t`travelDates`}
               value={`${moment(request.startDate).format('DD.MM.YYYY')} - ${moment(request.endDate).format('DD.MM.YYYY')}`}

@@ -71,7 +71,7 @@ const AboutUs = () => {
 
 const CopyRight = () => (
   <Box mt={{ base: 10, md: 0 }}>
-    <ItemsList items={['© 2024 MyTour']} />
+    <ItemsList items={[`© ${new Date().getFullYear()} MyTour`]} />
   </Box>
 )
 

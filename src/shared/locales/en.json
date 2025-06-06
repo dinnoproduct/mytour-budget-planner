@@ -90,6 +90,7 @@
   "notIncluded": "Not included",
   "agency": "Agency",
   "roomType": "Room type",
+  "mealType": "Meal type",
   "packagePrice": "Package price",
   "roomPrice": "Room price",
   "total": "Total",

@@ -92,6 +92,7 @@
   "reserved": "Забронированый",
   "agency": "Агентство",
   "roomType": "Тип номера",
+  "mealType": "Тип питания",
   "packagePrice": "Цена пакета",
   "roomPrice": "Цена номера",
   "total": "Итого",

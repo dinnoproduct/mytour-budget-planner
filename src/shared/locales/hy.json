@@ -184,6 +184,7 @@
   "reviewsAccordingToBooking": "Գնահատականներ, ըստ Booking.com-ի",
   "guestsReviews": "Ճանապարհորդների գնահատական",
   "roomType": "Սենյակի տեսակ",
+  "mealType": "Սնունդի տեսակ",
   "total": "Ընդհանուր",
   "freeCancellationUntil": "Անվճար չեղարկում մինչև",
   "availableSeats": "Հասանելի է {{count}} տեղ",
