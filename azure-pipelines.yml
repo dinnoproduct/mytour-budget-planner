@@ -10,7 +10,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '200ec32c-4186-422c-9609-2f5129e73b51'
+  dockerRegistryServiceConnection: '28cabb97-fe57-4fe0-9498-8d8ba3eab57c'
   imageRepository: 'mytourweb'
   containerRegistry: 'dinnomytour.azurecr.io'
   dockerfilePath: '**/Dockerfile'
