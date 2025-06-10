@@ -48,7 +48,7 @@ export const RoomsMenuHotel = ({
         if (room.id === defaultRoomId) {
           selectedMealId =
             defaultMealId >= 0 ? defaultMealId : room.meals[0].mealType
-          setConfirmedMealId(defaultMealId)
+          setConfirmedMealId(selectedMealId)
         }
 
         return {
