@@ -5,5 +5,5 @@ export type LayoutProps = {
 }
 
 export type EmptyViewProps = {
-  searchView: 'hotel' | 'packages'
+  searchView: 'hotel' | 'packages' | 'filter-packages' | 'filter-hotel'
 }

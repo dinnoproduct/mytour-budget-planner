@@ -1,5 +1,5 @@
 import { type LayoutProps } from './types'
-import { Box, Container, VStack } from '@chakra-ui/react'
+import { Box, Flex, VStack } from '@chakra-ui/react'
 import {
   PackageCardSkeleton,
   type PackageEntity,
@@ -12,6 +12,9 @@ import { useQueryParams } from '@/hooks/useQueryParams.ts'
 import { EmptyView } from '@widgets/PackageList/ui/EmptyView.tsx'
 import moment from 'moment/moment'
 import { getHotelNightsByDate, getNightsByDate } from '@/features/helper'
+import { PackageFilter } from '@/features/PackageFilter'
+import { useFilterPackage } from '@/features/PackageFilter/hooks'
+import { Skeleton } from '@shared/ui'
 
 export const PackageList = () => {
   const { searchParams } = useQueryParams()
@@ -77,6 +80,12 @@ export const PackageList = () => {
     () => (isHotelSearchView ? filteredHotelPackages : filteredPackages),
     [isHotelSearchView, filteredPackages, filteredHotelPackages]
   )
+  const {
+    filterOptions,
+    filteredPackages: filteredActivePackages,
+    isFilterActive,
+    onFilter
+  } = useFilterPackage(activePackages)
 
   const isLoadingPackages = useMemo(
     () =>
@@ -116,17 +125,42 @@ export const PackageList = () => {
 
   return (
     <Layout>
-      {isLoadingPackages ? <SkeletonLoading /> : null}
-      {/* TODO add <PackageFilter onChange={filterParamsHandler}> */}
-      {!isLoadingPackages &&
-        activePackages?.map(packageEntity => (
-          <PackageCardHorizontal
-            tourPackage={packageEntity}
-            key={packageEntity.offerId}
-            link={generateLink(packageEntity)}
-            nights={getNights()}
+      {!isLoadingPackages ? (
+        <Box ml={{ base: 0, md: !isLoadingPackages ? '326px' : undefined }}>
+          <PackageFilter
+            isActive={isFilterActive}
+            filterOptions={filterOptions}
+            onFilter={onFilter}
           />
-        ))}
+        </Box>
+      ) : (
+        <Skeleton minW="326px" width="326px" rounded="lg" />
+      )}
+      {!isLoadingPackages && filteredActivePackages.length === 0 && (
+        <EmptyView
+          searchView={isPackagesSearchView ? 'filter-packages' : 'filter-hotel'}
+        />
+      )}
+
+      {isLoadingPackages && (
+        <VStack spacing={4} flexGrow={1} width="full">
+          {isLoadingPackages ? <SkeletonLoading /> : null}
+        </VStack>
+      )}
+
+      {!isLoadingPackages && filteredActivePackages.length > 0 && (
+        <VStack spacing={4} flexGrow={1} width="full">
+          {!isLoadingPackages &&
+            filteredActivePackages?.map(packageEntity => (
+              <PackageCardHorizontal
+                tourPackage={packageEntity}
+                key={packageEntity.offerId}
+                link={generateLink(packageEntity)}
+                nights={getNights()}
+              />
+            ))}
+        </VStack>
+      )}
     </Layout>
   )
 }
@@ -139,21 +173,15 @@ const SkeletonLoading = ({ carsCount = 8 }) =>
     ))
 
 const Layout = ({ children }: LayoutProps) => (
-  <Box py={{ base: 6, md: 10 }}>
-    <Container px={{ base: 4, md: 6, lg: 8 }} maxWidth="1440px">
-      <VStack spacing={4}>
-        {/* <Grid
-          templateColumns={{
-            base: '1fr',
-            md: 'repeat(4, minmax(0, 1fr))'
-          }}
-          columnGap={{ base: 4, lg: 6 }}
-          rowGap="4"
-          justifyItems={{ base: 'center', md: 'stretch' }}
-        > */}
+  <Box py={{ base: 6, md: 10 }} width="100%">
+    <Box px={{ base: 4, md: 6, lg: 8 }}>
+      <Flex
+        gap={6}
+        direction={{ base: 'column', md: 'row' }}
+        align={{ base: 'flex-start', md: 'initial' }}
+      >
         {children}
-        {/* </Grid> */}
-      </VStack>
-    </Container>
+      </Flex>
+    </Box>
   </Box>
 )

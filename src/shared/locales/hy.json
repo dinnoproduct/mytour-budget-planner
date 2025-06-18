@@ -309,7 +309,10 @@
   "staySummary.few": "{{day}} օր, {{month}} ամսում",
   "staySummary.many": "{{day}} օր, {{month}} ամսում",
   "staySummary.other": "{{day}} օր, {{month}} ամսում",
-
+  "star.one": "աստղ",
+  "star.few": "աստղ",
+  "star.many": "աստղ",
+  "star.other": "աստղ",
   "nightsQuantity.one": "{{night}} գիշեր",
   "nightsQuantity.few": "{{night}} գիշեր",
   "nightsQuantity.many": "{{night}} գիշեր",
@@ -319,6 +322,17 @@
   "daysQuantity.few": "{{day}} օր",
   "daysQuantity.many": "{{day}} օր",
   "daysQuantity.other": "{{day}} օր",
+  "find": "Փնտրել",
+  "selectHotel": "Ընտրել հյուրանոց",
+  "filterByHotel": "Ֆիլտրել ըստ հյուրանոցի",
+  "filterByPrice": "Արժեքը",
+  "filterByRating": "Հյուրանոցի աստղերը",
+  "filterPackageNotFound": "Նշված չափանիշներով փաթեթներ չեն գտվնել",
+  "filterHotelNotFound": "Նշված չափանիշներով հյուրանոցներ չեն գտվնել",
+  "filters": "Ֆիլտրներ",
+  "filter": "Ֆիլտր",
+  "filtering": "Ֆիլտրել",
+  "clear": "Ջնջել",
 
   "blogsSectionTitle": "Վերջին հոդվածները"
 }

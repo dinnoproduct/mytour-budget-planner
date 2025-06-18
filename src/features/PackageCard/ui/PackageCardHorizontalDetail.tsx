@@ -138,7 +138,12 @@ const DateTag = ({ tourPackage, fromDate, toDate, nights }: DateTagProps) => {
     <Tag variant={tagVariant} px={3} rounded="full">
       {formatDate(fromDate)} - {formatDate(toDate)}
       {!isNightsAreEqual && (
-        <Tooltip label={label} fontSize="md">
+        <Tooltip
+          label={label}
+          fontSize="md"
+          width="280px"
+          placement="top-start"
+        >
           <Box display="flex" justifyContent="center" as="span" ml={1}>
             <TagRightIcon as={Icon} name="info-outline" size="16" ml={0} />
           </Box>

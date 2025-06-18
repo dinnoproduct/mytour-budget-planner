@@ -244,7 +244,10 @@
   "staySummary.few": "{{day}} дня в {{month}}е",
   "staySummary.many": "{{day}} дней в {{month}}е",
   "staySummary.other": "{{day}} дней в {{month}}е",
-
+  "star.one": "звезда",
+  "star.few": "звезды",
+  "star.many": "звёзд",
+  "star.other": "звёзд",
   "nightsQuantity.one": "{{night}} ночь",
   "nightsQuantity.few": "{{night}} ночи",
   "nightsQuantity.many": "{{night}} ночей",
@@ -254,6 +257,17 @@
   "daysQuantity.few": "{{day}} дня",
   "daysQuantity.many": "{{day}} дней",
   "daysQuantity.other": "{{day}} дней",
+  "find": "Искать",
+  "selectHotel": "Выбрать отель",
+  "filterByHotel": "Фильтровать по отелю",
+  "filterByPrice": "Цена",
+  "filterByRating": "Звёзды отеля",
+  "filterPackageNotFound": "Пакеты по указанным критериям не найдены",
+  "filterHotelNotFound": "Отели по указанным критериям не найдены",
+  "filters": "Фильтры",
+  "filter": "Фильтр",
+  "filtering": "Фильтровать",
+  "clear": "Удалить",
 
   "blogsSectionTitle": "Последние статьи"
 }

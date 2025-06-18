@@ -160,7 +160,7 @@ module.exports = {
     'react/no-children-prop': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     'no-undef': 'off',
-    indent: ['error', 2],
+    indent: ['error', 2, { SwitchCase: 1 }],
     semi: ['error', 'never'],
     'quote-props': ['warn', 'as-needed'],
     '@typescript-eslint/no-empty-function': 'off'

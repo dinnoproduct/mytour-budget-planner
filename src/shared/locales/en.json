@@ -243,7 +243,10 @@
   "staySummary.few": "{{day}} days in {{month}}",
   "staySummary.many": "{{day}} days in {{month}}",
   "staySummary.other": "{{day}} days in {{month}}",
-
+  "star.one": "stars",
+  "star.few": "stars",
+  "star.many": "stars",
+  "star.other": "stars",
   "nightsQuantity.one": "{{night}} night",
   "nightsQuantity.few": "{{night}} nights",
   "nightsQuantity.many": "{{night}} nights",
@@ -253,6 +256,16 @@
   "daysQuantity.few": "{{day}} days",
   "daysQuantity.many": "{{day}} days",
   "daysQuantity.other": "{{day}} days",
-
+  "find": "Find",
+  "selectHotel": "Select a hotel",
+  "filterByHotel": "Filter by hotel",
+  "filterByPrice": "Price",
+  "filterByRating": "Hotel stars",
+  "filterPackageNotFound": "No packages matching the specified criteria were found",
+  "filterHotelNotFound": "No hotels matching the specified criteria were found",
+  "filters": "Filters",
+  "filter": "Filter",
+  "filtering": "Filter",
+  "clear": "Clear",
   "c": "Latest Articles"
 }

@@ -16,6 +16,7 @@ export const Button = forwardRef(
       iconAfter,
       iconBefore,
       icon,
+      isFillIconColor = false,
       to,
       isLoading = false,
       onMouseDown,
@@ -72,7 +73,7 @@ export const Button = forwardRef(
         ref={ref}
         isDisabled={isDisabled}
         isLoading={isLoading}
-        variant={variant}
+        variant={isFillIconColor ? `${variant}-icon` : variant}
         size={buttonSize}
         {...(iconBefore && {
           leftIcon: (

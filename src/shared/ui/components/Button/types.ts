@@ -15,6 +15,7 @@ export type ButtonProps = {
   iconBefore?: IconName
   iconAfter?: IconName
   icon?: IconName
+  isFillIconColor?: boolean
   isLoading?: boolean
   onMouseDown?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void
   onMouseUp?: (event: MouseEvent<HTMLButtonElement, MouseEvent>) => void

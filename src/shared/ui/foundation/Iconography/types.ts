@@ -15,6 +15,7 @@ export type IconName =
   | 'instagram'
   | 'linkedin'
   | 'star'
+  | 'star-outlined'
   | 'add'
   | 'alarm'
   | 'calendar-today'
@@ -67,6 +68,8 @@ export type IconName =
   | 'hotels'
   | 'packages'
   | 'approximate'
+  | 'search'
+  | 'filter-list'
 
 export type IconSize =
   | '12'
