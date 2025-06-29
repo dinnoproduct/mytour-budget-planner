@@ -43,8 +43,8 @@ export type SearchParams = {
   dateFrom: string | null
   dateTo: string | null
   nights?: number
-  nightsCorrectionLowerValue: number
-  nightsCorrectionUpperValue: number
+  nightsCorrectionLowerValue?: number
+  nightsCorrectionUpperValue?: number
   lateCheckout: boolean
   bookingType: 1 | 2
 }

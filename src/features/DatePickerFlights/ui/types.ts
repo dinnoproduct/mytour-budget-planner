@@ -5,7 +5,7 @@ import { type MenuProps } from '@chakra-ui/react'
 export interface DatePickerProps {
   fromDate?: Date | null
   toDate?: Date | null
-  onAccept: (fromDate: Date, toDate?: Date | null, nights?: number) => void
+  onAccept: (fromDate: Date, toDate?: Date | null) => void
   onFromDateClick: (date: Date) => void
   isLoadingReturnDates?: boolean
   availableDepartureDates: Date[]

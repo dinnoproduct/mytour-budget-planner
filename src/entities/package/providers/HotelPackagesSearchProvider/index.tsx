@@ -168,8 +168,8 @@ export const HotelPackagesSearchProvider: React.FC<{
           dateTo: moment(toDate).set({ hour: 12 }).format(),
           bookingType: 2,
           lateCheckout: false,
-          nightsCorrectionLowerValue: 1,
-          nightsCorrectionUpperValue: 2,
+          nightsCorrectionLowerValue: 0,
+          nightsCorrectionUpperValue: 0,
           nights
         })
         setFilteredHotelPackages(searchPackagesResponse)

@@ -14,8 +14,6 @@ export type SearchContextType = {
   searchData: SearchData
   handleSearch: (searchData: SearchData) => void
   setSearchData: (data: Partial<SearchData>) => void
-  setDateMode: React.Dispatch<React.SetStateAction<DateModeType>>
-  dateMode: DateModeType
   availableDepartureDates: Date[]
   availableReturnDates: Date[]
   isLoadingReturnDates: boolean
