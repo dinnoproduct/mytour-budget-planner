@@ -170,7 +170,7 @@ export const HotelPackagesSearchProvider: React.FC<{
           lateCheckout: false,
           nightsCorrectionLowerValue: 0,
           nightsCorrectionUpperValue: 0,
-          nights
+          nights: -1
         })
         setFilteredHotelPackages(searchPackagesResponse)
       }
