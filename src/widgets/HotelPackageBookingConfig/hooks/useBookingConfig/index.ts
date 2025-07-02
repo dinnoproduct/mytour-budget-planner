@@ -3,6 +3,8 @@ import {
   type DictionaryTypes,
   type OfferEntity,
   type PackageEntity,
+  type PrepaymentInfo,
+  useCalculatePrepayment,
   useCurrentHotelPackageOffer,
   useDictionary,
   useGenerateHotelOffers
@@ -181,9 +183,43 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     enabled: !!selectedOffer?.offerId
   })
 
+
+
   useEffect(() => {
     selectedOffer?.offerId && refetchCurrentOfferPackage()
   }, [selectedOffer?.offerId, refetchCurrentOfferPackage])
+
+  // calculate prepayment
+  const [prepaymentInfo, setPrepaymentInfo] = useState<PrepaymentInfo | null>(
+    null
+  )
+
+  const { mutateAsync: calculatePrepayment, isPending: isCalculatingPrepayment } =
+    useCalculatePrepayment()
+
+  useEffect(() => {
+    const performCalculation = async () => {
+      try {
+        const data = await calculatePrepayment({
+          travelAgencyId: 3,
+          bookingType: 2,
+          destinationId: defaultTourPackage.city.id,
+          startDate: selectedOffer!.checkin,
+          fullPrice: selectedOffer!.price,
+          calculationSource: 'search'
+        })
+        setPrepaymentInfo(data)
+      } catch (e) {
+        setPrepaymentInfo(null)
+      }
+    }
+
+    if (selectedOffer) {
+      performCalculation()
+    } else {
+      setPrepaymentInfo(null)
+    }
+  }, [selectedOffer?.offerId, defaultTourPackage.city.id, calculatePrepayment])
 
   return {
     bookingData,
@@ -206,6 +242,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
       onChange: handleRoomSelect
     },
     currentOfferPackage,
-    isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage
+    isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage,
+    prepaymentInfo,
+    isCalculatingPrepayment,
   }
 }

@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { type PackageEntity, type PaymentSystem } from '@entities/package'
+import { PrepaymentInfo, type PackageEntity, type PaymentSystem } from '@entities/package'
 import { type RadioProps } from '@ui'
 
 export type PaymentModalProps = {
@@ -14,6 +14,7 @@ export type PaymentModalProps = {
   view?: PaymentModalView
   isLoadingBooking?: boolean
   isBooked?: boolean
+  prepaymentInfo?: PrepaymentInfo | null
 }
 
 export type PaymentFormViewProps = {
@@ -22,6 +23,7 @@ export type PaymentFormViewProps = {
   isLoadingBooking?: boolean
   isBooked?: boolean
   initialPaymentOption?: PaymentOption
+  prepaymentInfo?: PrepaymentInfo | null
 }
 
 export type PaymentMethodViewProps = {

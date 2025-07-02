@@ -15,7 +15,7 @@ import {
 import {
   type PackageEntity,
   useCitiesOnlyHotel,
-  useSearchHotelPackagesAsync
+  useSearchAsync
 } from '@entities/package'
 
 const LOCAL_STORAGE_KEY = 'hotel_packages_search_params'
@@ -49,7 +49,7 @@ export const HotelPackagesSearchProvider: React.FC<{
     PackageEntity[]
   >([])
   const { data: cities = [] } = useCitiesOnlyHotel()
-  const searchHotelsAsync = useSearchHotelPackagesAsync()
+  const searchAsync = useSearchAsync()
   const [searchData, setSearchDataState] =
     useState<SearchData>(defaultSearchData)
 
@@ -144,8 +144,10 @@ export const HotelPackagesSearchProvider: React.FC<{
 
       setIsLoadingFilteredHotelPackages(true)
 
+      let searchPackagesResponse: PackageEntity[] = []
+
       if (dateMode === 'exact') {
-        const searchPackagesResponse = await searchHotelsAsync({
+        searchPackagesResponse = await searchAsync({
           cities: [selectedCity],
           adults: travelersData.adultsCount,
           childs: travelersData.childrenAges,
@@ -156,11 +158,10 @@ export const HotelPackagesSearchProvider: React.FC<{
           nightsCorrectionLowerValue: 0,
           nightsCorrectionUpperValue: 0
         })
-        setFilteredHotelPackages(searchPackagesResponse)
       }
 
       if (dateMode === 'approximate') {
-        const searchPackagesResponse = await searchHotelsAsync({
+        searchPackagesResponse = await searchAsync({
           cities: [selectedCity],
           adults: travelersData.adultsCount,
           childs: travelersData.childrenAges,
@@ -172,9 +173,9 @@ export const HotelPackagesSearchProvider: React.FC<{
           nightsCorrectionUpperValue: 0,
           nights: (nights || 0) - 1
         })
-        setFilteredHotelPackages(searchPackagesResponse)
       }
 
+      setFilteredHotelPackages(searchPackagesResponse)
       saveSearchDataToLocalStorage(searchData)
     } catch (error) {
       setIsSearchError(true)

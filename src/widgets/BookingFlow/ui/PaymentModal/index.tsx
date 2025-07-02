@@ -22,12 +22,13 @@ export const PaymentModal = ({
   isOpen = false,
   isLoadingBooking,
   view,
-  isBooked
+  isBooked,
+  prepaymentInfo
 }: PaymentModalProps) => {
   const { t } = useTranslation()
-  const isHotelPackage = useMemo(
-    () => !packageDetails.destinationFlight?.id,
-    [packageDetails.destinationFlight?.id]
+  const isFullPricePayment = useMemo(
+    () => prepaymentInfo?.paymentType === 'FullPricePayment',
+    [prepaymentInfo?.paymentType]
   )
   const [activeView, setActiveView] = useState<PaymentModalView>(
     view || 'paymentForm'
@@ -52,6 +53,7 @@ export const PaymentModal = ({
           isLoadingBooking={isLoadingBooking}
           initialPaymentOption={paymentOption}
           isBooked={isBooked}
+          prepaymentInfo={prepaymentInfo}
         />
       ),
       paymentError: () => <PaymentErrorView />
@@ -68,15 +70,15 @@ export const PaymentModal = ({
   ])
 
   useEffect(() => {
-    if (isHotelPackage && view === 'paymentForm') {
+    if (isFullPricePayment && view === 'paymentForm') {
       setActiveView('paymentMethod')
     } else if (view) {
       setActiveView(view)
     }
-  }, [view, isHotelPackage])
+  }, [view, isFullPricePayment])
 
   const handlePay = async (paymentMethod: PaymentMethod) => {
-    const amount = isHotelPackage ? packageDetails.price : paymentAmount
+    const amount = isFullPricePayment ? packageDetails.price : paymentAmount
 
     try {
       if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {

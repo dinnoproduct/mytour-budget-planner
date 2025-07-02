@@ -6,7 +6,9 @@ import {
   useCreateRequest,
   useReservePackage,
   useUpdateRequest,
-  type NormalizedRequestEntity
+  type NormalizedRequestEntity,
+  type PrepaymentInfo,
+  useCalculatePrepayment
 } from '@entities/package'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
@@ -313,6 +315,45 @@ export const useBookingFlow = ({
     [request?.id, requestIdRef.current, packageDetails?.offerId, childrenAges]
   )
 
+  // calculate prepayment
+  const [prepaymentInfo, setPrepaymentInfo] = useState<PrepaymentInfo | null>(
+    null
+  )
+
+  const {
+    mutateAsync: calculatePrepayment,
+    isPending: isCalculatingPrepayment
+  } = useCalculatePrepayment()
+
+  useEffect(() => {
+    const performCalculation = async () => {
+      try {
+        const data = await calculatePrepayment({
+          travelAgencyId: 3,
+          bookingType: 2,
+          destinationId: packageDetails!.city.id,
+          startDate: packageDetails!.checkin,
+          fullPrice: packageDetails!.price,
+          calculationSource: 'search'
+        })
+        setPrepaymentInfo(data)
+      } catch (e) {
+        setPrepaymentInfo(null)
+      }
+    }
+
+    if (packageDetails) {
+      performCalculation()
+    } else {
+      setPrepaymentInfo(null)
+    }
+  }, [
+    packageDetails?.city.id,
+    packageDetails?.checkin,
+    packageDetails?.price,
+    calculatePrepayment
+  ])
+
   return {
     openTravelersModal,
     onTravelersModalSuccess,
@@ -324,7 +365,8 @@ export const useBookingFlow = ({
     travelers,
     modalView,
     closeModal,
-    handleTravelersChange
+    handleTravelersChange,
+    prepaymentInfo
   }
 }
 

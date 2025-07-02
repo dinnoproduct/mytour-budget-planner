@@ -32,7 +32,8 @@ export const HotelPackageBookingConfig = ({
     roomsMenuProps,
     isNotFound,
     isLoadingTourPackage,
-    currentOfferPackage
+    currentOfferPackage,
+    prepaymentInfo
   } = useBookingConfig(tourPackage)
   const { showFreeCancellation, freeCancellationDate } = useFreeCancellation(
     bookingData.checkIn,
@@ -174,7 +175,7 @@ export const HotelPackageBookingConfig = ({
           onClick={handleBookClick}
           size="lg"
         >
-          {t`book`}
+          {prepaymentInfo?.paymentType === 'NoDownPayment' ? t`bookWithoutPrepayment` : t`book`}
         </Button>
       </SectionLayout>
     </Layout>

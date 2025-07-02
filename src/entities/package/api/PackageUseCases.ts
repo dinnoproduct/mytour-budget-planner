@@ -14,13 +14,15 @@ import {
   type UpdateRequestInput,
   type SearchPackagesParams,
   type SearchParams,
-  type SearchHotelPackagesParams
+  type SearchHotelPackagesParams,
+  type PrepaymentCalculationParams
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
 import { type LanguageName } from '@shared/model'
 import { type CityService } from './CityService.ts'
 import { type SearchService } from './SearchService.ts'
+import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
@@ -29,6 +31,7 @@ export class PackageUseCases {
   private readonly dictionaryService: DictionaryService
   private readonly cityService: CityService
   private readonly searchService: SearchService
+  private readonly prepaymentInfoCalculationService: PrepaymentInfoCalculationService
 
   constructor({
     packageService,
@@ -36,7 +39,8 @@ export class PackageUseCases {
     requestService,
     dictionaryService,
     cityService,
-    searchService
+    searchService,
+    prepaymentInfoCalculationService
   }: PackageUseCasesParams) {
     this.packageService = packageService
     this.flightService = flightService
@@ -44,20 +48,18 @@ export class PackageUseCases {
     this.dictionaryService = dictionaryService
     this.cityService = cityService
     this.searchService = searchService
+    this.prepaymentInfoCalculationService = prepaymentInfoCalculationService
   }
 
   // package
   async getPackageList() {
     return this.packageService.getPackageList()
   }
-  async searchPackagesV1(search: SearchPackagesParams) {
+  async searchPackages(search: SearchPackagesParams) {
     return this.packageService.searchPackages({
       travelAgencyId: 1,
       ...search
     })
-  }
-  async searchPackages(search: SearchParams) {
-    return this.searchService.search(search)
   }
 
   async generateOffers(input: GenerateOffersInput) {
@@ -68,15 +70,11 @@ export class PackageUseCases {
     return this.packageService.getPackage(offerId)
   }
 
-  async searchHotelPackagesV1(search: SearchHotelPackagesParams) {
+  async searchHotelPackages(search: SearchHotelPackagesParams) {
     return this.packageService.searchHotelPackages({
       travelAgencyId: 3,
       ...search
     })
-  }
-
-  async searchHotelPackages(search: SearchParams) {
-    return this.searchService.search(search)
   }
 
   async generateHotelOffers(input: GenerateHotelOffersInput) {
@@ -157,5 +155,15 @@ export class PackageUseCases {
     const cities = await this.cityService.getCities()
 
     return cities
+  }
+
+  // search
+  async search(search: SearchParams) {
+    return this.searchService.search(search)
+  }
+
+  // prepayment
+  async calculatePrepayment(params: PrepaymentCalculationParams) {
+    return this.prepaymentInfoCalculationService.calculate(params)
   }
 }

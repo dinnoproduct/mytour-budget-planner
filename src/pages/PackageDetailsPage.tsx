@@ -7,6 +7,7 @@ import {
 } from '@features/PackageImagesGallery'
 import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
 import {
+  PackageEntity,
   useCurrentPackageOfferValue,
   usePackagesSearchContext,
   useSearchPackage
@@ -148,7 +149,7 @@ export const PackageDetailsPage = () => {
       />
 
       <BookingFlow
-        packageDetails={currentOfferPackage}
+        packageDetails={currentOfferPackage as PackageEntity}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}

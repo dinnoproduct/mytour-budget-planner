@@ -152,7 +152,7 @@ export const HotelPackageDetailsPage = () => {
       />
 
       <BookingFlow
-        packageDetails={currentOfferPackage}
+        packageDetails={currentOfferPackage as PackageEntity}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}

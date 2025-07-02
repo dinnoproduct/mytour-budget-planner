@@ -5,9 +5,8 @@ import {
 } from '@tanstack/react-query'
 import {
   type PackageEntity,
-  type SearchPackagesParams,
-  type SearchParams,
-  packageUseCases
+  packageUseCases,
+  type SearchPackagesParams
 } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
@@ -18,14 +17,14 @@ export const useSearchPackages = (
   useQuery({
     ...(options || {}),
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    queryFn: () => packageUseCases.searchPackagesV1(search),
-    queryKey: ['search-packagesV1', search]
+    queryFn: () => packageUseCases.searchPackages(search),
+    queryKey: ['search-packages', search]
   })
 
 export const useSearchPackagesAsync = () => {
   const queryClient = useQueryClient()
 
-  return async (search: SearchParams) =>
+  return async (search: SearchPackagesParams) =>
     queryClient.fetchQuery({
       queryKey: ['search-packages', search],
       queryFn: () => packageUseCases.searchPackages(search)

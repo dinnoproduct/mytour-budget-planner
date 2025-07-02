@@ -14,7 +14,7 @@ import {
   useCities,
   usePackageList,
   useReturnFlights,
-  useSearchPackagesAsync
+  useSearchAsync
 } from '@entities/package'
 
 const LOCAL_STORAGE_KEY = 'package_search_params'
@@ -76,7 +76,7 @@ export const PackagesSearchProvider: React.FC<{
   const [isLoadingFilteredPackages, setIsLoadingFilteredPackages] =
     useState(false)
   const [isSearchError, setIsSearchError] = useState(false)
-  const searchPackagesAsync = useSearchPackagesAsync()
+  const searchAsync = useSearchAsync()
   const [searchData, setSearchDataState] =
     useState<SearchData>(defaultSearchData)
   const [availableDepartureDates, setAvailableDepartureDates] = useState<
@@ -275,7 +275,7 @@ export const PackagesSearchProvider: React.FC<{
       setIsLoadingFilteredPackages(true)
       saveSearchDataToLocalStorage(searchData)
 
-      const searchPackagesResponse = await searchPackagesAsync({
+      const searchPackagesResponse = await searchAsync({
         dateFrom: moment(fromDate).format('YYYY-MM-DD'),
         dateTo: moment(toDate).format('YYYY-MM-DD'),
         cities: [selectedCity],

@@ -9,37 +9,76 @@ import { overDaysFromNow } from '@/utils/methods.ts'
 import { useMemo, useState } from 'react'
 import moment from 'moment'
 
+const NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT = 40
+
 export const PaymentFormView = ({
   onSubmit,
   packageDetails,
   isLoadingBooking,
   isBooked,
-  initialPaymentOption = 'pay'
+  initialPaymentOption = 'pay',
+  prepaymentInfo
 }: PaymentFormViewProps) => {
   const { t } = useTranslation()
 
-  const under21DaysFromNow = useMemo(() => {
-    const departureDate =
+  const departureDate = useMemo(
+    () =>
       packageDetails?.destinationFlight?.departureDate ||
-      packageDetails?.checkin
+      packageDetails?.checkin,
+    [packageDetails?.destinationFlight?.departureDate, packageDetails?.checkin]
+  )
+  const under21DaysFromNow = useMemo(
+    () => !overDaysFromNow(departureDate, 21) && !isBooked,
+    [departureDate, isBooked]
+  )
 
-    return !overDaysFromNow(departureDate, 21) && !isBooked
+  const paymentOptions = useMemo(() => {
+    if (prepaymentInfo) {
+      return {
+        isPartialPaymentAllowed:
+          prepaymentInfo.paymentType === 'PartialPricePayment' ||
+          prepaymentInfo.paymentType === 'NoDownPayment',
+        isNoDownPaymentAllowed: prepaymentInfo.paymentType === 'NoDownPayment',
+        isFullPaymentOnly: prepaymentInfo.paymentType === 'FullPricePayment'
+      }
+    }
+
+    // Fallback to old logic
+    return {
+      isPartialPaymentAllowed: !under21DaysFromNow,
+      isNoDownPaymentAllowed: overDaysFromNow(departureDate, 40) && !isBooked,
+      isFullPaymentOnly: under21DaysFromNow
+    }
+  }, [prepaymentInfo, under21DaysFromNow, departureDate, isBooked])
+
+  const minPrePaymentAmount = useMemo(() => {
+    if (paymentOptions.isFullPaymentOnly) {
+      return packageDetails.price
+    }
+
+    if (prepaymentInfo && paymentOptions.isPartialPaymentAllowed) {
+      return prepaymentInfo.minimumAcceptablePayment
+    }
+
+    if (paymentOptions.isPartialPaymentAllowed) {
+      return Math.ceil(packageDetails.price / 2)
+    }
+
+    return packageDetails.price
   }, [
-    packageDetails?.destinationFlight?.departureDate,
-    isBooked,
-    packageDetails?.checkin
+    prepaymentInfo,
+    paymentOptions.isPartialPaymentAllowed,
+    paymentOptions.isFullPaymentOnly,
+    packageDetails.price
   ])
 
-  const [isPaymentInFull, setIsPaymentInFull] = useState(under21DaysFromNow)
-  const minPrePaymentAmount = useMemo(
-    () =>
-      under21DaysFromNow
-        ? packageDetails.price
-        : Math.ceil(packageDetails.price / 2),
-    [under21DaysFromNow, packageDetails.price]
+  const [isPaymentInFull, setIsPaymentInFull] = useState(
+    paymentOptions.isFullPaymentOnly
   )
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [errorElements, setErrorElements] = useState<React.ReactNode | null>(
+    null
+  )
   const [isDisabled, setIsDisabled] = useState(false)
   const [selectedOption, setSelectedOption] =
     useState<PaymentOption>(initialPaymentOption)
@@ -52,24 +91,43 @@ export const PaymentFormView = ({
     }
 
     if (number < minPrePaymentAmount) {
-      setErrorMessage(`${t`minPrePayment`} ${minPrePaymentAmount}`)
+      if (
+        prepaymentInfo?.minimumAcceptablePaymentPercentage &&
+        minPrePaymentAmount > 0
+      ) {
+        const percentage = prepaymentInfo.minimumAcceptablePaymentPercentage
+        setErrorElements(
+          <>
+            {t('minPrePaymentPercentage', { percentage })}
+            <br />
+            {t('minPrePaymentAmount', { amount: minPrePaymentAmount })}
+          </>
+        )
+      } else {
+        setErrorElements(
+          <>
+            {t`minPrePayment`} {minPrePaymentAmount}
+          </>
+        )
+      }
+
       setPaymentAmount(number)
       setIsDisabled(true)
     } else if (number >= packageDetails.price) {
-      setErrorMessage(null)
+      setErrorElements(null)
       setPaymentAmount(packageDetails.price)
       setIsDisabled(false)
     } else {
-      setErrorMessage(null)
+      setErrorElements(null)
       setPaymentAmount(number)
       setIsDisabled(false)
     }
   }
 
   const handlePayInFullChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!under21DaysFromNow) {
+    if (!paymentOptions.isFullPaymentOnly) {
       setIsPaymentInFull(e.target.checked)
-      setErrorMessage(null)
+      setErrorElements(null)
       const amount = e.target.checked
         ? packageDetails.price
         : minPrePaymentAmount
@@ -79,7 +137,7 @@ export const PaymentFormView = ({
   }
 
   const handleFormSubmit = (e: React.FormEvent<HTMLDivElement>) => {
-    if (errorMessage) {
+    if (errorElements) {
       return
     }
 
@@ -89,22 +147,37 @@ export const PaymentFormView = ({
 
   // 40 days no prepayment for package
   const noPrepaymentData = useMemo(() => {
-    const departureDate =
-      packageDetails?.destinationFlight?.departureDate ||
-      packageDetails?.checkin
+    const isEnabled = paymentOptions.isNoDownPaymentAllowed
+    let paymentDueDate = ''
+    let days: number | null = null
+
+    if (isEnabled) {
+      if (prepaymentInfo?.firstPaymentDate) {
+        paymentDueDate = moment(prepaymentInfo.firstPaymentDate).format(
+          'DD/MM/YYYY'
+        )
+      } else {
+        paymentDueDate = moment(departureDate)
+          .subtract(NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT, 'days')
+          .format('DD/MM/YYYY')
+      }
+
+      days =
+        prepaymentInfo?.minimumAcceptableDaysCount ??
+        NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT
+    }
 
     return {
-      isEnabled: overDaysFromNow(departureDate, 40) && !isBooked,
-      paymentDueDate: moment(departureDate)
-        .subtract(35, 'days')
-        .format('DD/MM/YYYY'),
-      paymentAmount: minPrePaymentAmount
+      isEnabled,
+      paymentDueDate,
+      paymentAmount: minPrePaymentAmount,
+      days
     }
   }, [
-    isBooked,
-    minPrePaymentAmount,
-    packageDetails?.destinationFlight?.departureDate,
-    packageDetails?.checkin
+    paymentOptions.isNoDownPaymentAllowed,
+    prepaymentInfo,
+    departureDate,
+    minPrePaymentAmount
   ])
 
   return (
@@ -131,7 +204,7 @@ export const PaymentFormView = ({
           }
         }}
       >
-        {noPrepaymentData.isEnabled ? (
+        {paymentOptions.isNoDownPaymentAllowed ? (
           <RadioGroup
             onChange={(value: PaymentOption) => setSelectedOption(value)}
             value={selectedOption}
@@ -153,17 +226,22 @@ export const PaymentFormView = ({
               <Input
                 value={paymentAmount}
                 onChange={e => handleAmountChange(e.target.value)}
-                isDisabled={isPaymentInFull || under21DaysFromNow}
+                isDisabled={isPaymentInFull || paymentOptions.isFullPaymentOnly}
                 suffix
-                helperText={errorMessage || ''}
-                state={errorMessage ? 'invalid' : 'default'}
+                state={errorElements ? 'invalid' : 'default'}
                 rightIconName="dram"
               />
+
+              {errorElements && (
+                <Text size="xs" color="red.500" mt="1">
+                  {errorElements}
+                </Text>
+              )}
 
               <Checkbox
                 size="lg"
                 mt="4"
-                isDisabled={under21DaysFromNow}
+                isDisabled={paymentOptions.isFullPaymentOnly}
                 onChange={handlePayInFullChange}
                 isChecked={isPaymentInFull}
               >
@@ -176,7 +254,8 @@ export const PaymentFormView = ({
             <AlertCardMessage
               message={t('noPrepaymentText', {
                 amount: noPrepaymentData.paymentAmount,
-                dueDate: noPrepaymentData.paymentDueDate
+                dueDate: noPrepaymentData.paymentDueDate,
+                days: noPrepaymentData.days
               })}
               status="info"
               textSize="md"

@@ -4,6 +4,7 @@ import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
 import { type CityService } from './CityService.ts'
 import { type SearchService } from './SearchService.ts'
+import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 
 export type PackageUseCasesParams = {
   packageService: PackageService
@@ -12,6 +13,7 @@ export type PackageUseCasesParams = {
   dictionaryService: DictionaryService
   cityService: CityService
   searchService: SearchService
+  prepaymentInfoCalculationService: PrepaymentInfoCalculationService
 }
 
 export type GetAvailableFlightsParams = {
@@ -152,4 +154,25 @@ export enum DictionaryTypes {
   RoomTypeDictionary = 'RoomTypeDictionary',
   RequestStatusDictionary = 'RequestStatusDictionary',
   FacilityDictionary = 'FacilityDictionary'
+}
+
+export type PrepaymentCalculationParams = {
+  travelAgencyId: number
+  bookingType: 1 | 2
+  destinationId: number
+  startDate: string
+  fullPrice: number
+  calculationSource: 'search' | 'myBookings'
+}
+
+export type PrepaymentInfo = {
+  travelAgencyId: number
+  bookingType: 1 | 2
+  paymentType: 'FullPricePayment' | 'PartialPricePayment' | 'NoDownPayment'
+  fullPrice: number
+  minimumAcceptablePayment: number
+  minimumAcceptablePaymentPercentage: number
+  firstPaymentDate: string | null
+  secondPaymentDate: string | null
+  minimumAcceptableDaysCount: number | null
 }
