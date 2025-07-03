@@ -75,6 +75,7 @@ export const PackageBanner = (props: LinkBoxProps) => {
               href="https://www.mytourpackages.am/booking-no-prepayment?utm_source=meta&utm_medium=web&utm_campaign=spring_no_downpayment"
               target="_blank"
               rel="noopener noreferrer"
+              zIndex="0 !important"
             >
               {t`packageBanner.buttonLabel`}
             </Button>
