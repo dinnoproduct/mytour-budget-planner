@@ -44,7 +44,7 @@ export const useBookingFlow = ({
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
   const [travelers, setTravelers] = useState<any>({ adults: [], children: [] })
-  const [notesJson, setNotesJson] = useState<any>('')
+  const notesJson = useRef<any>('')
 
   useEffect(() => {
     setRequest(initialRequest || null)
@@ -90,7 +90,9 @@ export const useBookingFlow = ({
           offerId: packageDetails.offerId,
           roomType: packageDetails.roomType,
           email: user?.email || '',
-          notes: notesJson ? notesJson : JSON.stringify(request.notes),
+          notes: notesJson.current
+            ? notesJson.current
+            : JSON.stringify(request.notes),
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
@@ -237,7 +239,7 @@ export const useBookingFlow = ({
   // draft request sync
   const handleTravelersChange = useCallback(
     async (data: Travelers) => {
-      if (!packageDetails?.offerId || isRequestInProgressRef.current) {
+      if (!packageDetails?.offerId) {
         return
       }
 
@@ -256,8 +258,12 @@ export const useBookingFlow = ({
         notes.isLateCheckout = isLateCheckout
       }
 
-      const notesJson = JSON.stringify(notes)
-      setNotesJson(notesJson)
+      const newNotesJson = JSON.stringify(notes)
+      notesJson.current = newNotesJson
+
+      if (isRequestInProgressRef.current) {
+        return
+      }
 
       const requestInput: any = {
         offerId: packageDetails.offerId,
@@ -268,7 +274,7 @@ export const useBookingFlow = ({
         roomType: packageDetails.roomType,
         travelAgencyId: packageDetails.travelAgency.id,
         foodType: packageDetails.foodType,
-        notes: notesJson
+        notes: newNotesJson
       }
 
       if (packageDetails.destinationFlight?.departureDate) {
