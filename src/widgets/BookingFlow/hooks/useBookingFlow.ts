@@ -7,7 +7,6 @@ import {
   useReservePackage,
   useUpdateRequest,
   type NormalizedRequestEntity,
-  type PrepaymentInfo,
   useCalculatePrepayment
 } from '@entities/package'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -316,43 +315,21 @@ export const useBookingFlow = ({
   )
 
   // calculate prepayment
-  const [prepaymentInfo, setPrepaymentInfo] = useState<PrepaymentInfo | null>(
-    null
+  const isHotelPackage = !!(
+    packageDetails && !packageDetails.destinationFlight?.id
   )
 
-  const {
-    mutateAsync: calculatePrepayment,
-    isPending: isCalculatingPrepayment
-  } = useCalculatePrepayment()
-
-  useEffect(() => {
-    const performCalculation = async () => {
-      try {
-        const data = await calculatePrepayment({
-          travelAgencyId: 3,
-          bookingType: 2,
-          destinationId: packageDetails!.city.id,
-          startDate: packageDetails!.checkin,
-          fullPrice: packageDetails!.price,
-          calculationSource: 'search'
-        })
-        setPrepaymentInfo(data)
-      } catch (e) {
-        setPrepaymentInfo(null)
-      }
-    }
-
-    if (packageDetails) {
-      performCalculation()
-    } else {
-      setPrepaymentInfo(null)
-    }
-  }, [
-    packageDetails?.city.id,
-    packageDetails?.checkin,
-    packageDetails?.price,
-    calculatePrepayment
-  ])
+  const { data: prepaymentInfo = null } = useCalculatePrepayment(
+    {
+      travelAgencyId: 3,
+      bookingType: 2,
+      destinationId: packageDetails?.city.id || 0,
+      startDate: packageDetails?.checkin || '',
+      fullPrice: packageDetails?.price || 0,
+      calculationSource: 'search'
+    },
+    { enabled: isHotelPackage && !!packageDetails?.checkin && isOpen }
+  )
 
   return {
     openTravelersModal,

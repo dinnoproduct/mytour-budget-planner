@@ -3,7 +3,6 @@ import {
   type DictionaryTypes,
   type OfferEntity,
   type PackageEntity,
-  type PrepaymentInfo,
   useCalculatePrepayment,
   useCurrentHotelPackageOffer,
   useDictionary,
@@ -164,13 +163,14 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 
   const selectedOffer = useMemo(() => {
     if (offers.length === 0) return null
-    const mealOffer = bookingData.mealId >= 0
-      ? offers.find(
-        offer =>
-          offer.foodType === bookingData.mealId &&
-            offer.roomType === bookingData.roomId
-      )
-      : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
+    const mealOffer =
+      bookingData.mealId >= 0
+        ? offers.find(
+          offer =>
+            offer.foodType === bookingData.mealId &&
+              offer.roomType === bookingData.roomId
+        )
+        : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
 
     return mealOffer
   }, [bookingData.mealId, bookingData.roomId, JSON.stringify(offers)])
@@ -183,43 +183,23 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     enabled: !!selectedOffer?.offerId
   })
 
-
-
   useEffect(() => {
     selectedOffer?.offerId && refetchCurrentOfferPackage()
   }, [selectedOffer?.offerId, refetchCurrentOfferPackage])
 
   // calculate prepayment
-  const [prepaymentInfo, setPrepaymentInfo] = useState<PrepaymentInfo | null>(
-    null
-  )
-
-  const { mutateAsync: calculatePrepayment, isPending: isCalculatingPrepayment } =
-    useCalculatePrepayment()
-
-  useEffect(() => {
-    const performCalculation = async () => {
-      try {
-        const data = await calculatePrepayment({
-          travelAgencyId: 3,
-          bookingType: 2,
-          destinationId: defaultTourPackage.city.id,
-          startDate: selectedOffer!.checkin,
-          fullPrice: selectedOffer!.price,
-          calculationSource: 'search'
-        })
-        setPrepaymentInfo(data)
-      } catch (e) {
-        setPrepaymentInfo(null)
-      }
-    }
-
-    if (selectedOffer) {
-      performCalculation()
-    } else {
-      setPrepaymentInfo(null)
-    }
-  }, [selectedOffer?.offerId, defaultTourPackage.city.id, calculatePrepayment])
+  const { data: prepaymentInfo = null, isPending: isCalculatingPrepayment } =
+    useCalculatePrepayment(
+      {
+        travelAgencyId: 3,
+        bookingType: 2,
+        destinationId: defaultTourPackage.city.id,
+        startDate: selectedOffer?.checkin || '',
+        fullPrice: selectedOffer?.price || 0,
+        calculationSource: 'search'
+      },
+      { enabled: !!selectedOffer && !!selectedOffer?.checkin }
+    )
 
   return {
     bookingData,
@@ -244,6 +224,6 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     currentOfferPackage,
     isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage,
     prepaymentInfo,
-    isCalculatingPrepayment,
+    isCalculatingPrepayment
   }
 }
