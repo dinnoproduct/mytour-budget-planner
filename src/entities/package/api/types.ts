@@ -158,7 +158,7 @@ export enum DictionaryTypes {
 
 export type PrepaymentCalculationParams = {
   travelAgencyId: number
-  bookingType: 1 | 2
+  bookingType: number
   destinationId: number
   startDate: string
   fullPrice: number
@@ -167,7 +167,7 @@ export type PrepaymentCalculationParams = {
 
 export type PrepaymentInfo = {
   travelAgencyId: number
-  bookingType: 1 | 2
+  bookingType: number
   paymentType: 'FullPricePayment' | 'PartialPricePayment' | 'NoDownPayment'
   fullPrice: number
   minimumAcceptablePayment: number

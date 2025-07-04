@@ -266,6 +266,7 @@ export const useUserRequestsManager = () => {
       enabled:
         !!activeRequest?.id &&
         !!activeRequest?.notes.adultTravelersCount &&
+        activeRequest?.status !== RequestStatus.Reserved &&
         activeRequestPackageType === 'hotel',
       onSuccess: handlePackageDetailsSuccess
     }
@@ -274,17 +275,20 @@ export const useUserRequestsManager = () => {
   const [reservedPackage, setReservedPackage] = useState<PackageEntity | null>(
     null
   )
+  const [reservedHotelPackage, setReservedHotelPackage] =
+    useState<PackageEntity | null>(null)
 
   const activeRequestPackage = useMemo(
     () =>
       activeRequestPackageType === 'package'
         ? reservedPackage || requestPackageData
-        : requestHotelPackage,
+        : reservedHotelPackage || requestHotelPackage,
     [
       requestHotelPackage,
       requestPackageData,
       activeRequestPackageType,
-      reservedPackage
+      reservedPackage,
+      reservedHotelPackage
     ]
   )
 
@@ -308,7 +312,14 @@ export const useUserRequestsManager = () => {
       setIncompleteInitialView('payment')
       setIsActiveRequestDraft(true)
     } else if (request.status === RequestStatus.Reserved) {
-      setReservedPackage(transformRequestToPackage(request))
+      const transformedRequest = transformRequestToPackage(request)
+
+      if (request.destinationFlightId) {
+        setReservedPackage(transformedRequest)
+      } else {
+        setReservedHotelPackage(transformedRequest)
+      }
+
       setIncompleteInitialView('payment')
     }
 
@@ -318,6 +329,8 @@ export const useUserRequestsManager = () => {
   const handleBookingFlowClose = () => {
     setActiveRequest(null)
     setIsActiveRequestDraft(false)
+    setReservedPackage(null)
+    setReservedHotelPackage(null)
   }
 
   return {

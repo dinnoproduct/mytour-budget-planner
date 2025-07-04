@@ -322,11 +322,11 @@ export const useBookingFlow = ({
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
       travelAgencyId: 3,
-      bookingType: 2,
+      bookingType: initialRequest?.bookingType ? initialRequest.bookingType : 2,
       destinationId: packageDetails?.city.id || 0,
       startDate: packageDetails?.checkin || '',
       fullPrice: packageDetails?.price || 0,
-      calculationSource: 'search'
+      calculationSource: initialRequest ? 'myBookings' : 'search'
     },
     { enabled: isHotelPackage && !!packageDetails?.checkin && isOpen }
   )

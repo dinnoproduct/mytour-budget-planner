@@ -158,6 +158,7 @@ export interface RequestEntity {
   returnFlightId: number
   travelAgencyId: number
   foodType: number
+  bookingType: number
 }
 
 export type NormalizedRequestEntity = Omit<RequestEntity, 'notes'> & {

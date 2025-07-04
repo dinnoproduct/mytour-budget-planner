@@ -66,7 +66,8 @@ export const PaymentModal = ({
     packageDetails,
     isLoadingBooking,
     isBooked,
-    paymentOption
+    paymentOption,
+    prepaymentInfo
   ])
 
   useEffect(() => {
