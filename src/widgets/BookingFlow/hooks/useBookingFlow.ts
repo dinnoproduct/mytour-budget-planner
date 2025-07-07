@@ -7,9 +7,10 @@ import {
   useReservePackage,
   useUpdateRequest,
   type NormalizedRequestEntity,
-  useCalculatePrepayment
+  useCalculatePrepayment,
+  RequestStatus
 } from '@entities/package'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
 import { isMobile } from 'react-device-detect'
 
@@ -321,8 +322,17 @@ export const useBookingFlow = ({
   )
 
   // calculate prepayment
-  const isHotelPackage = !!(
-    packageDetails && !packageDetails.destinationFlight?.id
+  const isHotelPackage = useMemo(
+    () => !!(packageDetails && !packageDetails.destinationFlight?.id),
+    [packageDetails]
+  )
+  const isDraftRequest = useMemo(
+    () =>
+      !initialRequest ||
+      [RequestStatus.Draft, RequestStatus.NotPaid, 10].includes(
+        initialRequest?.status || 0
+      ),
+    [initialRequest]
   )
 
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
@@ -332,7 +342,7 @@ export const useBookingFlow = ({
       destinationId: packageDetails?.city.id || 0,
       startDate: packageDetails?.checkin || '',
       fullPrice: packageDetails?.price || 0,
-      calculationSource: initialRequest ? 'myBookings' : 'search'
+      calculationSource: isDraftRequest ? 'search' : 'myBookings'
     },
     { enabled: isHotelPackage && !!packageDetails?.checkin && isOpen }
   )
