@@ -181,6 +181,11 @@ const PackageFilterMobileContent = ({
     onCloseMenu?.()
   }
 
+  const handleCloseMenu = () => {
+    setFilterParams(selectedFilters)
+    onCloseMenu?.()
+  }
+
   return (
     <>
       <Flex
@@ -190,13 +195,14 @@ const PackageFilterMobileContent = ({
         height="64px"
         align="center"
         width="full"
+        maxW="100dvw"
       >
         <Button
           icon="close"
           aria-label="Close calendar"
           variant="solid-gray"
           size="sm"
-          onClick={onCloseMenu}
+          onClick={handleCloseMenu}
         />
         <Text size="md" fontWeight="semibold">
           {t`filtering`}
@@ -210,6 +216,7 @@ const PackageFilterMobileContent = ({
         p={4}
         style={{ height: 'calc(100% - 64px - 56px)' }}
         overflowY="scroll"
+        maxW="100dvw"
       >
         <CommonFilterItems
           filterOptions={filterOptions}
@@ -225,6 +232,7 @@ const PackageFilterMobileContent = ({
           borderWidth="1px"
           width="full"
           p={4}
+          maxW="100dvw"
         >
           <Button width="full" onClick={handleOnConfirm}>
             {t`filtering`}

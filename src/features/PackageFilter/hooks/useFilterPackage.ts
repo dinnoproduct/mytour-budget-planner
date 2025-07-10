@@ -22,7 +22,9 @@ export const useFilterPackage = (packages: PackageEntity[]) => {
 
     const names = packages.map(pkg => pkg.hotel.name)
     const prices = packages.map(pkg => pkg.price)
-    const stars = Array.from(new Set(packages.map(pkg => pkg.hotel.stars)))
+    const stars = Array.from(
+      new Set(packages.map(pkg => pkg.hotel.stars))
+    ).sort((a, b) => b - a)
 
     return {
       name: names,
@@ -46,9 +48,9 @@ export const useFilterPackage = (packages: PackageEntity[]) => {
           filterParams.hotelRatingSelect.includes(pack.hotel.stars)
 
         const matchesPrice =
-          (filterParams.priceRange.minValue === 0 &&
-            filterParams.priceRange.maxValue === 0) ||
-          (pack.price >= filterParams.priceRange.minValue &&
+          (!filterParams.priceRange.minValue ||
+            pack.price >= filterParams.priceRange.minValue) &&
+          (!filterParams.priceRange.maxValue ||
             pack.price <= filterParams.priceRange.maxValue)
 
         return matchesHotel && matchesPrice && matchesStars

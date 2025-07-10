@@ -66,7 +66,7 @@ export const FilterSelectBody = ({
       <VStack
         align="start"
         maxHeight="300px"
-        overflowY="scroll"
+        overflowY="auto"
         spacing={3}
         mt={4}
       >

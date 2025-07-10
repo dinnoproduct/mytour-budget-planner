@@ -81,6 +81,7 @@ type PopoverContentLayoutProps = {
 }
 const PopoverContentLayout = forwardRef(
   (props: PopoverContentLayoutProps, ref: Ref<HTMLDivElement>) => {
+    const { t } = useTranslation()
     const { isOpen, options, selectedValues, handleOnButtonClick } = props
 
     const [value, setValue] = useState<string[]>(selectedValues)
@@ -117,7 +118,7 @@ const PopoverContentLayout = forwardRef(
         </PopoverBody>
         <PopoverFooter p={4}>
           <Button width="full" onClick={handleOnClick}>
-            Հաստատել
+            {t`confirm`}
           </Button>
         </PopoverFooter>
       </PopoverContent>
