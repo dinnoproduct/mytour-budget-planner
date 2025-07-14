@@ -4,38 +4,38 @@ import { Input, Text } from '@ui'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { MonthsSelect } from './MonthsSelect'
-import { NightsSelect } from './NightsSelect'
+import { DaysSelect } from './DaysSelect'
 import { Footer } from './Footer'
 import { type ApproximateDatePickerPropsType, type StayInfoType } from './types'
 import { useTranslation } from 'react-i18next'
 import {
-  HOTEL_NIGHTS_OPTIONS,
+  HOTEL_DAYS_OPTIONS,
   MONTHS_COUNT_TO_DISPLAY,
-  PACKAGE_NIGHTS_OPTIONS
+  PACKAGE_DAYS_OPTIONS
 } from '../model/constants'
 import {
-  getDefaultNightValue,
+  getDefaultDayValue,
   getMonthRange,
   getMonthsToDisplay
 } from '../helper'
 
 const monthsToDisplay = getMonthsToDisplay(MONTHS_COUNT_TO_DISPLAY)
 
-export function ApproximateDatePicker({
+export const ApproximateDatePicker = ({
   variant = 'package',
   monthValue,
   defaultMonthValue = MONTHS[moment().month()],
-  nightsValue,
+  daysValue,
   isResetState,
   onConfirm
-}: Readonly<ApproximateDatePickerPropsType>) {
-  const NIGHTS_OPTIONS =
-    variant === 'package' ? PACKAGE_NIGHTS_OPTIONS : HOTEL_NIGHTS_OPTIONS
+}: Readonly<ApproximateDatePickerPropsType>) => {
+  const DAYS_OPTIONS =
+    variant === 'package' ? PACKAGE_DAYS_OPTIONS : HOTEL_DAYS_OPTIONS
   const {
-    night: defaultNight,
+    day: defaultDay,
     isOther,
     actualValue
-  } = getDefaultNightValue(variant, nightsValue)
+  } = getDefaultDayValue(variant, daysValue)
 
   const defaultMonth = monthValue ?? defaultMonthValue
 
@@ -43,7 +43,7 @@ export function ApproximateDatePicker({
 
   const [stayInfo, setStayInfo] = useState<StayInfoType>({
     month: defaultMonth,
-    night: defaultNight
+    day: defaultDay
   })
   const [showInput, setShowInput] = useState<boolean>(isOther)
   const [inputValue, setInputValue] = useState<string>(
@@ -68,69 +68,71 @@ export function ApproximateDatePicker({
   useEffect(() => {
     setStayInfo({
       month: defaultMonth,
-      night: defaultNight
+      day: defaultDay
     })
     setShowInput(isOther)
     setInputValue(isOther ? actualValue ?? '' : '')
-  }, [isResetState, defaultMonth, defaultNight, isOther, actualValue])
+  }, [isResetState, defaultMonth, defaultDay, isOther, actualValue])
 
   const handleOnConfirm = () => {
-    const nights =
-      variant === 'hotel' && inputValue.length > 0 && stayInfo.night === 'other'
+    const days =
+      variant === 'hotel' && inputValue.length > 0 && stayInfo.day === 'other'
         ? inputValue
-        : stayInfo.night
+        : stayInfo.day
 
     const { startOfMonth, endOfMonth } = getMonthRange(stayInfo.month)
 
     onConfirm({
-      nights: Number(nights),
+      days: Number(days),
       dateFrom: startOfMonth,
       dateTo: endOfMonth
     })
   }
 
-  const onChangeNightsHandler = (value: string) => {
-    setStayInfo(prev => ({ ...prev, night: value }))
+  const onChangeDaysHandler = (value: string) => {
+    setStayInfo(prev => ({ ...prev, day: value }))
     setShowInput(value === 'other')
   }
 
   const onChangeMonthsHandler = (value: string) =>
     setStayInfo(prev => ({ ...prev, month: value }))
 
-  return (
-    <Box>
-      <VStack spacing={7}>
-        <Text fontWeight="500">{t`howManyDaysAreYouPlanning`}</Text>
-        <Box px={3}>
-          <NightsSelect
-            nights={NIGHTS_OPTIONS}
-            activeValue={stayInfo.night}
-            onChange={onChangeNightsHandler}
-          />
-        </Box>
-        {showInput && (
-          <Box px={3} width="full">
-            {' '}
-            <Input
-              value={inputValue}
-              placeholder={t`numberOfDays`}
-              onChange={e => setInputValue(e.target.value)}
-            />
-          </Box>
-        )}
-        <Divider />
+  console.log(stayInfo)
 
-        <VStack spacing={7}>
-          <MonthsSelect
-            id={scrollIntoViewId}
-            monthsToDisplay={monthsToDisplay}
-            activeValue={stayInfo.month}
-            onChange={onChangeMonthsHandler}
+  return (
+    <Box maxW="full">
+      <VStack spacing={7} pt="8" px={3}>
+        <Text fontWeight="500" size="md" color="gray.800">
+          {t`howManyDaysAreYouPlanning`}
+        </Text>
+
+        <DaysSelect
+          days={DAYS_OPTIONS}
+          activeValue={stayInfo.day}
+          onChange={onChangeDaysHandler}
+        />
+
+        {showInput && (
+          <Input
+            value={inputValue}
+            placeholder={t`numberOfDays`}
+            onChange={e => setInputValue(e.target.value)}
+            width="full"
           />
-        </VStack>
+        )}
       </VStack>
+
+      <Divider my="7" />
+
+      <MonthsSelect
+        id={scrollIntoViewId}
+        monthsToDisplay={monthsToDisplay}
+        activeValue={stayInfo.month}
+        onChange={onChangeMonthsHandler}
+      />
+
       <Footer
-        night={stayInfo.night === 'other' ? inputValue : stayInfo.night}
+        day={stayInfo.day === 'other' ? inputValue : stayInfo.day}
         month={stayInfo.month}
         onConfirm={handleOnConfirm}
       />

@@ -55,19 +55,17 @@ export const PackageCardHorizontalDetail = ({
         )}
         {!isMd && (
           <>
-            <Flex justify="space-between" align="center" width="full">
-              {' '}
-              <TravelersAndNightsInfo
-                tourPackage={tourPackage}
-                childrenTravelers={childrenTravelers}
-              />
-              <DateTag
-                fromDate={fromDate}
-                toDate={toDate}
-                nights={nights}
-                tourPackage={tourPackage}
-              />
-            </Flex>
+            <TravelersAndNightsInfo
+              tourPackage={tourPackage}
+              childrenTravelers={childrenTravelers}
+            />
+
+            <DateTag
+              fromDate={fromDate}
+              toDate={toDate}
+              nights={nights}
+              tourPackage={tourPackage}
+            />
 
             <Flex justify="space-between" align="center" width="full">
               <Text size="xs" color="gray.600">

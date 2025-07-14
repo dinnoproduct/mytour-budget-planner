@@ -5,7 +5,7 @@ export type DateModeType = 'exact' | 'approximate'
 export type SearchData = {
   fromDate: Date | null
   toDate: Date | null
-  nights?: number
+  days?: number
   selectedCity: number
   travelersData: SearchTravelersData
 }

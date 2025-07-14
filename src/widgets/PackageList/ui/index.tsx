@@ -111,8 +111,8 @@ export const PackageList = () => {
       return 0
     }
 
-    if (searchParams.nights) {
-      return Number(searchParams.nights)
+    if (searchParams.days) {
+      return Number(searchParams.days) - 1
     }
 
     const fromDate = new Date(searchParams.from as string)
@@ -156,7 +156,7 @@ export const PackageList = () => {
                 tourPackage={packageEntity}
                 key={packageEntity.offerId}
                 link={generateLink(packageEntity)}
-                nights={getNights()}
+                nights={getNights()} // todo: check nights
               />
             ))}
         </VStack>

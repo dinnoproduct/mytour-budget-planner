@@ -126,7 +126,7 @@ export const HotelPackagesSearchProvider: React.FC<{
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
       childrenAges: searchData.travelersData.childrenAges.join(','),
-      nights: dateMode === 'exact' ? '' : searchData.nights?.toString() ?? '',
+      days: dateMode === 'exact' ? '' : searchData.days?.toString() ?? '',
       dateMode: dateMode.toString(),
       tab: 'hotel'
     })
@@ -137,7 +137,7 @@ export const HotelPackagesSearchProvider: React.FC<{
   const handleSearch = async (searchData: SearchData) => {
     try {
       setIsSearchError(false)
-      const { fromDate, toDate, selectedCity, travelersData, nights } =
+      const { fromDate, toDate, selectedCity, travelersData, days } =
         searchData
       const queryParams = generateSearchQueryParams(searchData)
       navigate(`/packages?${queryParams.toString()}`)
@@ -158,6 +158,7 @@ export const HotelPackagesSearchProvider: React.FC<{
           nightsCorrectionLowerValue: 0,
           nightsCorrectionUpperValue: 0
         })
+      saveSearchDataToLocalStorage(searchData)
       }
 
       if (dateMode === 'approximate') {
@@ -171,12 +172,11 @@ export const HotelPackagesSearchProvider: React.FC<{
           lateCheckout: false,
           nightsCorrectionLowerValue: 0,
           nightsCorrectionUpperValue: 0,
-          nights: (nights || 0) - 1
+          nights: (days || 0) - 1
         })
       }
 
       setFilteredHotelPackages(searchPackagesResponse)
-      saveSearchDataToLocalStorage(searchData)
     } catch (error) {
       setIsSearchError(true)
     } finally {

@@ -15,9 +15,9 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
   const handleAccept = (
     fromDate: Date | null,
     toDate?: Date | null,
-    nights?: number
+    days?: number
   ) => {
-    setSearchData({ fromDate, toDate, nights })
+    setSearchData({ fromDate, toDate, days })
   }
 
   const handleSearchClick = () => {

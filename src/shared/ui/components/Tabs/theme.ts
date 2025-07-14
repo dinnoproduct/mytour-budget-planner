@@ -27,35 +27,42 @@ export const tabsComponentTheme = {
         }
       },
       'grey-segment': {
+        root: {
+          height: { base: 'calc(100% - 64px)', md: 'auto' },
+          pt: { base: 3, md: 0 }
+        },
         tab: {
-          fontWeight: '600',
-          fontSize: 'sm',
+          fontWeight: '500',
           rounded: 'full',
           color: 'gray.600',
-          margin: 1,
           px: 4,
-          py: 1,
 
           _selected: {
-            boxShadow: '0px 1px 3px 0px rgba(0, 0, 0, 0.1)',
+            fontWeight: '600',
+            shadow: 'base',
             bgColor: '#fff',
-            svg: {
-              color: 'blue.500'
-            }
           },
           _active: {
             bgColor: '#fff'
           }
         },
         tablist: {
-          gap: '12px',
+          gap: '3',
+          p: 1,
+          mt: { md: 1 },
+          mb: 1,
+          mx: 'auto',
           width: 'fit-content',
           backgroundColor: 'gray.100',
-          borderRadius: '100px'
+          borderRadius: '100px',
+        },
+        tabpanels: {
+          height: { base: 'calc(100% - 36px)', md: 'auto' }
         },
         tabpanel: {
           p: 0,
-          pt: 6
+          height: 'full',
+          maxHeight: 'full'
         }
       },
       line: {

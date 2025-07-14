@@ -4,7 +4,7 @@ export type SearchData = {
   fromDate: Date | null
   toDate: Date | null
   selectedCity: number
-  nights?: number
+  days?: number
   travelersData: SearchTravelersData
   departureFlightId: number | null
   returnFlightId: number | null

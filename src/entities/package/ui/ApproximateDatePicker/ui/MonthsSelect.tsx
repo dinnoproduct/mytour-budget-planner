@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { HStack, Text, VStack } from '@chakra-ui/react'
 import { Icon, RadioCard } from '@ui'
 import { useTranslation } from 'react-i18next'
 
@@ -23,41 +23,63 @@ export function MonthsSelect({
   const { t } = useTranslation()
 
   return (
-    <>
+    <VStack
+      px={3}
+      pb="8"
+      spacing={7}
+      maxW="full"
+      width="full"
+    >
       <Text fontWeight="500">{t`whenAreYouPlanningToLeave`}</Text>
-      <Flex
-        gap={2}
-        width={{ base: '100vw', md: '395px' }}
-        height="110px"
-        overflowX="auto"
-        position="relative"
-        justifyContent={{ base: 'center', md: 'flex-start' }}
-      >
-        <RadioCard.Group
-          name="months"
-          defaultValue={activeValue}
-          activeItem={activeValue}
-          onChange={onChange}
-          style={{ position: 'absolute', top: 0, padding: '0px 12px' }}
-        >
-          {monthsToDisplay.map(month => {
-            const id = activeValue === month.name ? scrollIntoViewId : undefined
 
-            return (
-              <RadioCard.Item
-                id={id}
-                key={month.name}
-                value={month.name}
-                variant="outline-card"
-                size="outline-card-md"
-                label={t(month.name)}
-                subLabel={String(month.year)}
-                icon={<Icon name="calendar-today" />}
-              />
-            )
-          })}
-        </RadioCard.Group>
-      </Flex>
-    </>
+      {monthsToDisplay.length > 0 && (
+        <HStack
+          gap={2}
+          overflowX="auto"
+          maxW="full"
+          position="relative"
+          pb={{base: 0, md: 3}}
+          sx={{
+            '&::-webkit-scrollbar': {
+              display: { base: 'none', md: 'block' },
+              height: '6px'
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'gray.200',
+              borderRadius: '6px'
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'gray.400',
+              borderRadius: '6px'
+            },
+          }}
+        >
+          <RadioCard.Group
+            name="months"
+            defaultValue={activeValue}
+            activeItem={activeValue}
+            onChange={onChange}
+          >
+            {monthsToDisplay.map(month => {
+              const id =
+                activeValue === month.name ? scrollIntoViewId : undefined
+
+              return (
+                <RadioCard.Item
+                  id={id}
+                  key={month.name}
+                  value={month.name}
+                  variant="outline-card"
+                  size="outline-card-md"
+                  label={t(month.name)}
+                  subLabel={String(month.year)}
+                  icon={<Icon name="calendar-today" />}
+                />
+              )
+            })}
+          </RadioCard.Group>
+        </HStack>
+      )}
+    </VStack>
   )
 }

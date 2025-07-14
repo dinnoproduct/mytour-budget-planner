@@ -2,34 +2,34 @@ import { getPluralForm } from '@/shared/helpers'
 import { RadioCard } from '@ui'
 import { useTranslation } from 'react-i18next'
 
-type NightOption = {
+type DayOption = {
   label: string
   subLabel: string
   value: string
   localizationKey: string
 }
 
-type NightsSelectProps = {
-  nights: NightOption[]
+type DaysSelectProps = {
+  days: DayOption[]
   activeValue: string
   onChange: (value: string) => void
 }
 
-export function NightsSelect({
-  nights,
+export const DaysSelect = ({
+  days,
   activeValue,
   onChange
-}: Readonly<NightsSelectProps>) {
+}: Readonly<DaysSelectProps>) => {
   const { t } = useTranslation()
 
   return (
     <RadioCard.Group
-      name="nights"
+      name="days"
       defaultValue={activeValue}
       activeItem={activeValue}
       onChange={onChange}
     >
-      {nights.map(el => (
+      {days.map(el => (
         <RadioCard.Item
           key={el.label + el.subLabel}
           value={el.value}

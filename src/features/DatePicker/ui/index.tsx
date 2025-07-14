@@ -6,7 +6,7 @@ import { DatePickerCalendar } from './DatePickerCalendar.tsx'
 import { DatePickerConfirmButton } from './DatePickerConfirmButton.tsx'
 import { Button, Text, Tabs } from '@ui'
 import { useTranslation } from 'react-i18next'
-import { useBreakpoint } from '@shared/hooks'
+import { useBreakpoint, useDisablePageScroll } from '@shared/hooks'
 import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePicker/index.tsx'
 import { useHotelPackagesSearchContext } from '@/entities/package/index.ts'
 import { MONTHS } from '@/shared/model/index.ts'
@@ -26,9 +26,11 @@ export const DatePicker = ({
   const [isCalendarOpen, setCalendarOpen] = useState(false)
   const [inputFromDate, setInputFromDate] = useState<Date | null>(null)
   const [inputToDate, setInputToDate] = useState<Date | null>(null)
+  const [days, setDays] = useState<number>()
 
   const { isMd } = useBreakpoint()
   const { setDateMode, dateMode, searchData } = useHotelPackagesSearchContext()
+  useDisablePageScroll(isCalendarOpen && !isMd)
 
   useEffect(() => {
     if (fromDate) {
@@ -40,20 +42,20 @@ export const DatePicker = ({
       setSelectedToDate(toDate)
       setInputToDate(toDate)
     }
-  }, [fromDate, toDate])
+
+    if (searchData.days && dateMode === 'approximate') {
+      setDays(searchData.days)
+    } else {
+      setDays(undefined)
+    }
+  }, [fromDate, toDate, dateMode, searchData.days])
 
   useEffect(() => {
     if (isCalendarOpen) {
       setSelectedFromDate(dateMode === 'exact' ? inputFromDate : null)
       setSelectedToDate(dateMode === 'exact' ? inputToDate : null)
-
-      if (!isMd) {
-        document.body.style.overflow = 'hidden'
-      }
-    } else {
-      document.body.style.overflow = ''
     }
-  }, [isCalendarOpen, inputFromDate, inputToDate, isMd, dateMode])
+  }, [isCalendarOpen, inputFromDate, inputToDate, dateMode])
 
   const handleDayClick = (date: Date) => {
     if (!selectedFromDate || (selectedFromDate && selectedToDate)) {
@@ -73,6 +75,7 @@ export const DatePicker = ({
       onAccept(selectedFromDate, selectedToDate)
       setInputFromDate(selectedFromDate)
       setInputToDate(selectedToDate)
+      setDays(undefined)
       setDateMode('exact')
       setCalendarOpen(false)
     }
@@ -81,11 +84,12 @@ export const DatePicker = ({
   const handleApproximateAccept = (data: {
     dateFrom: Date
     dateTo: Date
-    nights: number
+    days: number
   }) => {
-    onAccept(data.dateFrom, data.dateTo, data.nights)
+    onAccept(data.dateFrom, data.dateTo, data.days)
     setInputFromDate(data.dateFrom)
     setInputToDate(data.dateTo)
+    setDays(data.days)
     setDateMode('approximate')
     setCalendarOpen(false)
   }
@@ -132,6 +136,7 @@ export const DatePicker = ({
             fromDate={inputFromDate as any}
             toDate={inputToDate as any}
             isFocused={isCalendarOpen}
+            days={days}
           />
         </MenuButton>
       )}
@@ -142,9 +147,10 @@ export const DatePicker = ({
           pb={0}
           borderRadius={{ base: '0', md: 'xl' }}
           border="none"
-          minWidth="fit-content"
+          minWidth="auto"
           height="full"
           width="full"
+          maxW={{ base: '100dvw', md: '392px' }}
           rootProps={
             !isMd
               ? {
@@ -158,7 +164,7 @@ export const DatePicker = ({
                     md: undefined
                   },
                   zIndex: { base: '100000 !important', md: undefined },
-                  overflowY: { base: 'auto !important' as any, md: undefined },
+                  overflowY: { base: 'hidden !important' as any, md: undefined },
                   width: { base: '100dvw !important', md: undefined },
                   transform: {
                     base: 'translate3d(0px, 0px, 0px) !important',
@@ -188,21 +194,21 @@ export const DatePicker = ({
               onClick={() => setCalendarOpen(false)}
             />
           </Flex>
+
           <Tabs
             align="center"
             variant="grey-segment"
             labels={[t`fixedDates`, t`flexibleDates`]}
-            overflowY={{ base: 'scroll', md: 'unset' }}
             size="sm"
-            height={{ base: 'calc(100% - 144px)', md: 'auto' }}
             onChange={tabIndex => setTabIndex(tabIndex)}
           >
-            <Box>
+            <Box height="full" maxHeight="full">
               <DatePickerCalendar
                 onDayClick={handleDayClick}
                 selectedFromDate={selectedFromDate}
                 selectedToDate={selectedToDate}
               />
+
               <Flex
                 textAlign="right"
                 height="80px"
@@ -221,17 +227,20 @@ export const DatePicker = ({
               </Flex>
             </Box>
 
-            <React.Fragment key={tabIndex}>
-              <ApproximateDatePicker
-                variant="hotel"
-                defaultMonthValue={MONTHS[moment(searchData.toDate).month()]}
-                nightsValue={
-                  searchData.nights ? String(searchData.nights) : undefined
-                }
-                isResetState={isCalendarOpen}
-                onConfirm={handleApproximateAccept}
-              />
-            </React.Fragment>
+            <ApproximateDatePicker
+              key={tabIndex}
+              variant="hotel"
+              defaultMonthValue={
+                searchData.days
+                  ? MONTHS[moment(searchData.toDate).month()]
+                  : MONTHS[moment().add(1, 'month').month()]
+              }
+              daysValue={
+                searchData.days ? String(searchData.days) : undefined
+              }
+              isResetState={isCalendarOpen}
+              onConfirm={handleApproximateAccept}
+            />
           </Tabs>
         </MenuList>
       </Portal>

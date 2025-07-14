@@ -1,3 +1,3 @@
-export * from './getDefaultNightValue'
+export * from './getDefaultDayValue'
 export * from './getMonthsToDisplay'
 export * from './getMonthRange'

@@ -1,4 +1,4 @@
-export const PACKAGE_NIGHTS_OPTIONS = [
+export const PACKAGE_DAYS_OPTIONS = [
   {
     label: '7',
     subLabel: '6',
@@ -19,7 +19,7 @@ export const PACKAGE_NIGHTS_OPTIONS = [
   }
 ]
 
-export const HOTEL_NIGHTS_OPTIONS = [
+export const HOTEL_DAYS_OPTIONS = [
   {
     label: '3',
     subLabel: '',

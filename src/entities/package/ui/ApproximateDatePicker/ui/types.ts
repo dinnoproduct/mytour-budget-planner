@@ -2,12 +2,12 @@ export type ApproximateDatePickerPropsType = {
   variant?: 'package' | 'hotel'
   monthValue?: string
   defaultMonthValue?: string
-  nightsValue?: string
+  daysValue?: string
   isResetState?: boolean
-  onConfirm: (param: { nights: number; dateFrom: Date; dateTo: Date }) => void
+  onConfirm: (param: { days: number; dateFrom: Date; dateTo: Date }) => void
 }
 
 export type StayInfoType = {
   month: string
-  night: string
+  day: string
 }

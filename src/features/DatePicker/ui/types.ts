@@ -1,18 +1,21 @@
+import { type DateModeType } from '@/entities/package'
 import { type ButtonProps, type MenuProps } from '@chakra-ui/react'
 import type { ComponentType } from 'react'
 
 export type DatePickerProps = {
   fromDate?: Date | null
   toDate?: Date | null
-  onAccept: (fromDate: Date, toDate?: Date | null, nights?: number) => void
+  onAccept: (fromDate: Date, toDate?: Date | null, days?: number) => void
   CustomButton?: ComponentType<DatePickerCustomButtonProps>
   menuProps?: Omit<MenuProps, 'children'>
 }
 
 export type DatePickerInputProps = {
-  fromDate?: Date
-  toDate?: Date
-  isFocused?: boolean
+  fromDate: Date | null
+  toDate: Date | null
+  isFocused: boolean
+  days?: number
+  dateMode?: DateModeType
 }
 
 export type DatePickerCustomButtonProps = {
