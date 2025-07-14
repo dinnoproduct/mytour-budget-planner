@@ -3,9 +3,10 @@ import { type ReactNode } from 'react'
 
 export type PackageSearchProps = {
   variant?: PackageSearchVariant
+  showTabs?: boolean
 } & Omit<LayoutProps, 'children'>
 
-export type PackageSearchVariant = 'fixed' | 'centered'
+export type PackageSearchVariant = 'fixed' | 'centered' | 'fixedWithoutTabs'
 
 export type LayoutProps = {
   containerProps?: BoxProps
@@ -14,4 +15,5 @@ export type LayoutProps = {
   children: ReactNode | ReactNode[]
   defaultTabIndex?: number
   onTabChange?: (index: number) => void
+  showTabs?: boolean
 }

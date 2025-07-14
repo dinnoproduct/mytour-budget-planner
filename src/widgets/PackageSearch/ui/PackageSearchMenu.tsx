@@ -15,7 +15,8 @@ export const PackageSearchMenu = ({
   onTabChange,
   onFormOpen,
   onFormClose,
-  isFormOpen
+  isFormOpen,
+  showTabs = true
 }: any) => {
   const { t, i18n } = useTranslation()
   const { searchData, cities } = usePackagesSearchContext()
@@ -89,6 +90,7 @@ export const PackageSearchMenu = ({
             </Box>
           </Flex>
 
+          {showTabs && (
           <Tabs
             labels={[
               <PackageTabItem key="package-tab" />,
@@ -103,12 +105,14 @@ export const PackageSearchMenu = ({
             <></>
             <></>
           </Tabs>
+          )}
 
           <VStack
             spacing="4"
             align="center"
-            mt="-2"
+            mt={showTabs ? "-2" : "0"}
             pb="3"
+            pt={showTabs ? "0" : "3"}
             maxWidth="368px"
             mx="auto"
           >

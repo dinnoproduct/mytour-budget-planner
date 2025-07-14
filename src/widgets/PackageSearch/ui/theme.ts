@@ -42,5 +42,26 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
       p: { base: 3, md: 0 },
       width: 'full'
     }
+  },
+  fixedWithoutTabs: {
+    wrapper: {
+      height: { base: 'auto', md: '88px' },
+      width: 'full'
+    },
+    container: {
+      height: { base: 'auto', md: '88px' },
+      position: 'fixed',
+      borderBottom: '1px solid',
+      borderColor: 'gray.100'
+    },
+    contentWrapper: {
+      maxWidth: 'full',
+      pb: { md: 6 },
+      justify: 'center'
+    },
+    content: {
+      p: { base: 3, md: 0 },
+      width: 'full'
+    }
   }
 }

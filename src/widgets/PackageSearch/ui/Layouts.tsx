@@ -14,7 +14,8 @@ export const Layout = ({
   containerProps,
   variant,
   defaultTabIndex,
-  onTabChange
+  onTabChange,
+  showTabs = true
 }: LayoutProps) => (
   <Box
     position="relative"
@@ -46,6 +47,7 @@ export const Layout = ({
             align="center"
             defaultIndex={defaultTabIndex}
             onChange={onTabChange}
+            showTabs={showTabs}
           >
             {children}
           </Tabs>

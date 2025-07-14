@@ -14,16 +14,18 @@ import {
 export const PackageSearch = ({
   containerProps,
   contentProps,
-  variant = 'centered'
+  variant = 'centered',
+  showTabs = true
 }: PackageSearchProps) => {
   const { isMd } = useBreakpoint()
 
-  if (variant === 'fixed' && !isMd) {
+  if (['fixed', 'fixedWithoutTabs'].includes(variant) && !isMd) {
     return (
       <FixedSearchView
         containerProps={containerProps}
         contentProps={contentProps}
         variant={variant}
+        showTabs={showTabs}
       />
     )
   }
@@ -33,6 +35,7 @@ export const PackageSearch = ({
       containerProps={containerProps}
       contentProps={contentProps}
       variant={variant}
+      showTabs={showTabs}
     />
   )
 }
@@ -40,7 +43,8 @@ export const PackageSearch = ({
 const FormSearchView = ({
   containerProps,
   contentProps,
-  variant = 'centered'
+  variant = 'centered',
+  showTabs = true
 }: any) => {
   const {
     isAllowedSearchRoute: isHotelSearchView,
@@ -66,6 +70,7 @@ const FormSearchView = ({
       variant={variant}
       defaultTabIndex={isHotelSearchView ? 1 : 0}
       onTabChange={handleTabChange}
+      showTabs={showTabs}
     >
       <PackageSearchForm />
       <HotelSearchForm />
@@ -76,7 +81,8 @@ const FormSearchView = ({
 const FixedSearchView = ({
   containerProps,
   contentProps,
-  variant = 'centered'
+  variant = 'centered',
+  showTabs = true
 }: any) => {
   const [activeTab, setActiveTab] = useState(0)
   const [isFormOpen, setFormOpen] = useState(false)
@@ -106,6 +112,7 @@ const FixedSearchView = ({
           onFormOpen={() => setFormOpen(true)}
           onFormClose={() => setFormOpen(false)}
           isFormOpen={isFormOpen}
+          showTabs={showTabs}
         />
       )}
       {activeTab === 1 && (
@@ -114,6 +121,7 @@ const FixedSearchView = ({
           onFormOpen={() => setFormOpen(true)}
           onFormClose={() => setFormOpen(false)}
           isFormOpen={isFormOpen}
+          showTabs={showTabs}
         />
       )}
     </LayoutFixed>

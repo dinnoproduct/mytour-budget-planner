@@ -1,64 +1,65 @@
-import React, { useEffect, useMemo } from 'react'
-import { Box, Flex, VStack } from '@chakra-ui/react'
+import React, { useEffect, useMemo } from "react";
+import { Box, Flex, VStack } from "@chakra-ui/react";
 import {
   type PackageCity,
-  useHotelPackagesSearchContext
-} from '@entities/package'
-import { useTranslation } from 'react-i18next'
-import { Icon, Tabs, Text } from '@ui'
-import { capitalize } from '@shared/utils'
-import { HotelSearchForm } from '@widgets/PackageSearch/ui/HotelSearchForm.tsx'
+  useHotelPackagesSearchContext,
+} from "@entities/package";
+import { useTranslation } from "react-i18next";
+import { Icon, Tabs, Text } from "@ui";
+import { capitalize } from "@shared/utils";
+import { HotelSearchForm } from "@widgets/PackageSearch/ui/HotelSearchForm.tsx";
 import {
   HotelTabItem,
-  PackageTabItem
-} from '@widgets/PackageSearch/ui/TabItem.tsx'
-import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
+  PackageTabItem,
+} from "@widgets/PackageSearch/ui/TabItem.tsx";
+import { LANGUAGE_PREFIX, type LanguageName } from "@shared/model";
 
 export const HotelSearchMenu = ({
   onTabChange,
   onFormOpen,
   onFormClose,
-  isFormOpen
+  isFormOpen,
+  showTabs = true,
 }: any) => {
-  const { t, i18n } = useTranslation()
-  const { searchData, cities } = useHotelPackagesSearchContext()
+  const { t, i18n } = useTranslation();
+  const { searchData, cities } = useHotelPackagesSearchContext();
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
-      return ''
+      return "";
     }
 
     const longMonthName = date
-      .toLocaleString('en-US', { month: 'long' })
-      .toLowerCase()
-    const shortMonthName = t(`${longMonthName}Short`)
+      .toLocaleString("en-US", { month: "long" })
+      .toLowerCase();
+    const shortMonthName = t(`${longMonthName}Short`);
 
-    return `${shortMonthName} ${date.getDate()}`
-  }
+    return `${shortMonthName} ${date.getDate()}`;
+  };
 
   useEffect(() => {
     if (isFormOpen) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = "";
     }
-  }, [isFormOpen])
+  }, [isFormOpen]);
 
   const cityLabel = useMemo(
     () =>
-      (cities.find(city => searchData.selectedCity === city.id)?.[
+      (cities.find((city) => searchData.selectedCity === city.id)?.[
         `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
-      ] || '') as string,
-    [searchData.selectedCity, cities, i18n.language]
-  )
+      ] || "") as string,
+    [searchData.selectedCity, cities, i18n.language],
+  );
 
   const handleFormOpen = () => {
-    onFormOpen()
-  }
+    onFormOpen();
+  };
 
   const handleFormClose = () => {
-    onFormClose()
-  }
+    onFormClose();
+  };
 
   return (
     <Box height="full" width="full">
@@ -76,7 +77,7 @@ export const HotelSearchMenu = ({
       )}
 
       <Box width="full">
-        <Box display={isFormOpen ? 'block' : 'none'}>
+        <Box display={isFormOpen ? "block" : "none"}>
           <Flex
             justify="space-between"
             align="center"
@@ -92,26 +93,29 @@ export const HotelSearchMenu = ({
             </Box>
           </Flex>
 
-          <Tabs
-            labels={[
-              <PackageTabItem key="package-tab" />,
-              <HotelTabItem key="hotel-tab" />
-            ]}
-            variant="line"
-            align="center"
-            mt="2"
-            defaultIndex={1}
-            onChange={onTabChange}
-          >
-            <></>
-            <></>
-          </Tabs>
+          {showTabs && (
+            <Tabs
+              labels={[
+                <PackageTabItem key="package-tab" />,
+                <HotelTabItem key="hotel-tab" />,
+              ]}
+              variant="line"
+              align="center"
+              mt="2"
+              defaultIndex={1}
+              onChange={onTabChange}
+            >
+              <></>
+              <></>
+            </Tabs>
+          )}
 
           <VStack
             spacing="4"
             align="center"
-            mt="-2"
+            mt={showTabs ? "-2" : "0"}
             pb="3"
+            pt={showTabs ? "0" : "3"}
             maxWidth="368px"
             mx="auto"
           >
@@ -120,7 +124,7 @@ export const HotelSearchMenu = ({
         </Box>
 
         <Box
-          display={isFormOpen ? 'none' : 'block'}
+          display={isFormOpen ? "none" : "block"}
           onClick={handleFormOpen}
           cursor="pointer"
           p="3"
@@ -135,14 +139,14 @@ export const HotelSearchMenu = ({
           </Flex>
 
           <Text size="sm" color="gray.500" mt="2" noOfLines={1} align="left">
-            {formatDate(searchData.fromDate)} - {formatDate(searchData.toDate)}{' '}
-            •{' '}
+            {formatDate(searchData.fromDate)} - {formatDate(searchData.toDate)}{" "}
+            •{" "}
             {searchData.travelersData.adultsCount +
-              searchData.travelersData.childrenCount}{' '}
+              searchData.travelersData.childrenCount}{" "}
             {capitalize(t`traveler`)}
           </Text>
         </Box>
       </Box>
     </Box>
-  )
-}
+  );
+};

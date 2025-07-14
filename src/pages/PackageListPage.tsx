@@ -6,7 +6,7 @@ import { PackageList } from '@widgets/PackageList'
 export const PackageListPage = () => (
   <Box overflowX="hidden">
     <Header />
-    <PackageSearch variant="fixed" />
+    <PackageSearch variant="fixedWithoutTabs" showTabs={false} />
     <PackageList />
   </Box>
 )
