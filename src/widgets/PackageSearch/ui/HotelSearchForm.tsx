@@ -4,7 +4,7 @@ import { useHotelPackagesSearchContext } from '@entities/package'
 import { Button } from '@ui'
 import { SearchCities } from '@features/SearchCities'
 import { SearchTravelers } from '@features/SearchTravelers'
-import { DatePicker } from '@features/DatePicker'
+import { DatePickerFlexibleSearch } from '@features/DatePickerFlexibleSearch'
 import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
 
 export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
@@ -36,7 +36,7 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
         placeholder="City"
       />
 
-      <DatePicker
+      <DatePickerFlexibleSearch
         fromDate={searchData.fromDate}
         toDate={searchData.toDate}
         onAccept={handleAccept}

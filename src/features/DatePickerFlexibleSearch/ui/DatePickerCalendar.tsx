@@ -59,13 +59,18 @@ export const DatePickerCalendar = ({
     <Box
       width="full"
       overflowY={{ base: 'scroll', md: 'unset' }}
-      height={{ base: 'calc(100% - 143px)', md: 'auto' }}
+      height={{ base: 'calc(100% - 84px)', md: 'auto' }}
+      sx={{
+        '&::-webkit-scrollbar': {
+          width: '0'
+        }
+      }}
     >
       <Flex
         alignItems={{ base: 'center', md: 'flex-start' }}
         direction={{ base: 'column', md: 'row' }}
         pb="4"
-        pt={{ base: 0, md: 3 }}
+        pt="0"
       >
         {isMobile ? (
           // Render MAX_MONTHS count of months stacked vertically on mobile

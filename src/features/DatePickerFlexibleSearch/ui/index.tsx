@@ -4,11 +4,15 @@ import { type DatePickerProps } from './types.ts'
 import { DatePickerInput } from './DatePickerInput.tsx'
 import { DatePickerCalendar } from './DatePickerCalendar.tsx'
 import { DatePickerConfirmButton } from './DatePickerConfirmButton.tsx'
-import { Button, Text } from '@ui'
+import { Button, Text, Tabs } from '@ui'
 import { useTranslation } from 'react-i18next'
-import { useBreakpoint } from '@shared/hooks'
+import { useBreakpoint, useDisablePageScroll } from '@shared/hooks'
+import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePicker/index.tsx'
+import { useHotelPackagesSearchContext } from '@/entities/package/index.ts'
+import { MONTHS } from '@/shared/model/index.ts'
+import moment from 'moment'
 
-export const DatePicker = ({
+export const DatePickerFlexibleSearch = ({
   fromDate,
   toDate,
   onAccept,
@@ -16,13 +20,17 @@ export const DatePicker = ({
   menuProps
 }: DatePickerProps) => {
   const { t } = useTranslation()
+  const [tabIndex, setTabIndex] = useState(0)
   const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(null)
   const [selectedToDate, setSelectedToDate] = useState<Date | null>(null)
   const [isCalendarOpen, setCalendarOpen] = useState(false)
   const [inputFromDate, setInputFromDate] = useState<Date | null>(null)
   const [inputToDate, setInputToDate] = useState<Date | null>(null)
+  const [days, setDays] = useState<number>()
 
   const { isMd } = useBreakpoint()
+  const { setDateMode, dateMode, searchData } = useHotelPackagesSearchContext()
+  useDisablePageScroll(isCalendarOpen && !isMd)
 
   useEffect(() => {
     if (fromDate) {
@@ -34,20 +42,20 @@ export const DatePicker = ({
       setSelectedToDate(toDate)
       setInputToDate(toDate)
     }
-  }, [fromDate, toDate])
+
+    if (searchData.days && dateMode === 'approximate') {
+      setDays(searchData.days)
+    } else {
+      setDays(undefined)
+    }
+  }, [fromDate, toDate, dateMode, searchData.days])
 
   useEffect(() => {
     if (isCalendarOpen) {
-      setSelectedFromDate(inputFromDate)
-      setSelectedToDate(inputToDate)
-
-      if (!isMd) {
-        document.body.style.overflow = 'hidden'
-      }
-    } else {
-      document.body.style.overflow = ''
+      setSelectedFromDate(dateMode === 'exact' ? inputFromDate : null)
+      setSelectedToDate(dateMode === 'exact' ? inputToDate : null)
     }
-  }, [isCalendarOpen, inputFromDate, inputToDate, isMd])
+  }, [isCalendarOpen, inputFromDate, inputToDate, dateMode])
 
   const handleDayClick = (date: Date) => {
     if (!selectedFromDate || (selectedFromDate && selectedToDate)) {
@@ -67,8 +75,23 @@ export const DatePicker = ({
       onAccept(selectedFromDate, selectedToDate)
       setInputFromDate(selectedFromDate)
       setInputToDate(selectedToDate)
+      setDays(undefined)
+      setDateMode('exact')
       setCalendarOpen(false)
     }
+  }
+
+  const handleApproximateAccept = (data: {
+    dateFrom: Date
+    dateTo: Date
+    days: number
+  }) => {
+    onAccept(data.dateFrom, data.dateTo, data.days)
+    setInputFromDate(data.dateFrom)
+    setInputToDate(data.dateTo)
+    setDays(data.days)
+    setDateMode('approximate')
+    setCalendarOpen(false)
   }
 
   const handleCalendarOpen = () => {
@@ -113,37 +136,40 @@ export const DatePicker = ({
             fromDate={inputFromDate as any}
             toDate={inputToDate as any}
             isFocused={isCalendarOpen}
+            days={days}
           />
         </MenuButton>
       )}
 
       <Portal>
         <MenuList
-          p={0}
+          pt={{ base: '0', md: '10px' }}
+          pb={0}
           borderRadius={{ base: '0', md: 'xl' }}
           border="none"
-          minWidth="fit-content"
+          minWidth="auto"
           height="full"
           width="full"
+          maxW={{ base: '100dvw', md: '392px' }}
           rootProps={
             !isMd
               ? {
                   position: { base: 'fixed !important' as any, md: undefined },
-                top: { base: '80px !important', md: undefined },
+                  top: { base: '80px !important', md: undefined },
                   left: { base: '0 !important', md: undefined },
-                right: { base: '0 !important', md: undefined },
+                  right: { base: '0 !important', md: undefined },
                   bottom: { base: '0 !important', md: undefined },
                   height: {
                     base: 'calc(100dvh - 80px) !important',
                     md: undefined
                   },
                   zIndex: { base: '100000 !important', md: undefined },
-                overflowY: { base: 'auto !important' as any, md: undefined },
-                width: { base: '100dvw !important', md: undefined },
-                transform: {
-                  base: 'translate3d(0px, 0px, 0px) !important',
-                  md: undefined
-                }
+                  overflowY: { base: 'hidden !important' as any, md: undefined },
+                  width: { base: '100dvw !important', md: undefined },
+                  transform: {
+                    base: 'translate3d(0px, 0px, 0px) !important',
+                    md: undefined
+                  }
                 }
               : {}
           }
@@ -169,26 +195,53 @@ export const DatePicker = ({
             />
           </Flex>
 
-          <DatePickerCalendar
-            onDayClick={handleDayClick}
-            selectedFromDate={selectedFromDate}
-            selectedToDate={selectedToDate}
-          />
-
-          <Flex
-            textAlign="right"
-            height="80px"
-            width="full"
+          <Tabs
             align="center"
-            px="8"
-            justify="flex-end"
-            borderTop="1px solid"
-            borderColor="gray.100"
-            position={{ base: 'fixed', md: 'static' }}
-            bottom={{ base: 0, md: undefined }}
+            variant="grey-segment"
+            labels={[t`fixedDates`, t`flexibleDates`]}
+            size="sm"
+            onChange={tabIndex => setTabIndex(tabIndex)}
           >
-            <DatePickerConfirmButton onClick={handleAccept} />
-          </Flex>
+            <Box height="full" maxHeight="full">
+              <DatePickerCalendar
+                onDayClick={handleDayClick}
+                selectedFromDate={selectedFromDate}
+                selectedToDate={selectedToDate}
+              />
+
+              <Flex
+                textAlign="right"
+                height="80px"
+                width="full"
+                align="center"
+                p={4}
+                borderTop="1px solid"
+                borderColor="gray.100"
+                position={{ base: 'fixed', md: 'static' }}
+                bottom={{ base: 0, md: undefined }}
+              >
+                <DatePickerConfirmButton
+                  onClick={handleAccept}
+                  isDisabled={!selectedFromDate || !selectedToDate}
+                />
+              </Flex>
+            </Box>
+
+            <ApproximateDatePicker
+              key={tabIndex}
+              variant="hotel"
+              defaultMonthValue={
+                searchData.days
+                  ? MONTHS[moment(searchData.toDate).month()]
+                  : MONTHS[moment().add(1, 'month').month()]
+              }
+              daysValue={
+                searchData.days ? String(searchData.days) : undefined
+              }
+              isResetState={isCalendarOpen}
+              onConfirm={handleApproximateAccept}
+            />
+          </Tabs>
         </MenuList>
       </Portal>
     </Menu>
