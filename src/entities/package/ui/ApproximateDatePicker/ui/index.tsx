@@ -97,8 +97,6 @@ export const ApproximateDatePicker = ({
   const onChangeMonthsHandler = (value: string) =>
     setStayInfo(prev => ({ ...prev, month: value }))
 
-  console.log(stayInfo)
-
   return (
     <Box maxW="full">
       <VStack spacing={7} pt="8" px={3}>
