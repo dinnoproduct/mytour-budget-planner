@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHotelPackagesSearchContext } from '@entities/package'
 import { Button } from '@ui'
-import { SearchCities } from '@features/SearchCities'
+import { SearchMultiCities } from '@features/SearchMultiCities'
 import { SearchTravelers } from '@features/SearchTravelers'
 import { DatePickerFlexibleSearch } from '@features/DatePickerFlexibleSearch'
 import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
@@ -27,7 +27,7 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
 
   return (
     <Layouts>
-      <SearchCities
+      <SearchMultiCities
         defaultSelectedCity={searchData.selectedCity}
         onChange={selectedCity => {
           setSearchData({ selectedCity })
