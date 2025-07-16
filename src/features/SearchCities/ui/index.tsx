@@ -34,6 +34,16 @@ export const SearchCities = ({
     [i18n.language]
   )
 
+  const groupedCities = useMemo(() => {
+    return cities.reduce((acc, city) => {
+      // @ts-ignore
+      const countryName = city.country[cityNameField] as string
+      if (!acc[countryName]) acc[countryName] = []
+      acc[countryName].push(city)
+      return acc
+    }, {} as Record<string, PackageCity[]>)
+  }, [cities, cityNameField])
+
   const activeCityValue = useMemo(() => {
     const city = cities.find(city => city.id === selectedCity)
 
@@ -86,39 +96,39 @@ export const SearchCities = ({
         overflowY="auto"
       >
         <Box>
-          <VStack width="full" spacing="1" align="stretch">
-            {cities.map((city: PackageCity) => (
-              <Flex
-                key={city.id}
-                width="full"
-                align="center"
-                bgColor="white"
-                justify="space-between"
-                height="40px"
-                px="4"
-                _hover={{
-                  bgColor: 'gray.50'
-                }}
-                _active={{
-                  bgColor: 'gray.100'
-                }}
-                _focus={{
-                  bgColor: 'gray.100'
-                }}
-                _focusVisible={{
-                  bgColor: 'gray.100'
-                }}
-                fontSize="text-md"
-                lineHeight="text-md"
-                cursor="pointer"
-                onClick={() => handleCitySelect(city.id)}
-              >
-                <Text size="md">{city[cityNameField] as string}</Text>
 
-                {selectedCity === city.id && (
-                  <Icon name="check" size="20" color="blue.500" />
-                )}
-              </Flex>
+          <VStack width="full" spacing="1" align="stretch">
+            {Object.entries(groupedCities).map(([countryName, countryCities]) => (
+              <Box key={countryName}>
+                <Flex
+                  px="4"
+                  py="2"
+                  bgColor="gray.50"
+                  cursor="pointer"
+                  _hover={{ bgColor: 'gray.100' }}
+                >
+                  <Text fontWeight="bold">{countryName}</Text>
+                </Flex>
+
+                {countryCities.map(city => (
+                  <Flex
+                    key={city.id}
+                    px="4"
+                    py="1"
+                    align="center"
+                    justify="space-between"
+                    cursor="pointer"
+                    _hover={{ bgColor: 'gray.50' }}
+                    onClick={() => handleCitySelect(city.id)}
+                  >
+                    {/* @ts-ignore*/}
+                    <Text ml='4'>{city[cityNameField]}</Text>
+                    {selectedCity === city.id && (
+                      <Icon name="check" size="20" color="blue.500" />
+                      )}
+                  </Flex>
+                ))}
+              </Box>
             ))}
           </VStack>
         </Box>
