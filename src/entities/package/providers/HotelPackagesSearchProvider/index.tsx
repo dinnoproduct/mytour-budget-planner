@@ -113,7 +113,7 @@ export const HotelPackagesSearchProvider: React.FC<{
       date ? moment(date).format('YYYY-MM-DD') : ''
 
     const cityParam = Array.isArray(searchData.selectedCity)
-      ? searchData.selectedCity[0] || 0
+      ? searchData.selectedCity.join(',')
       : searchData.selectedCity
 
     const queryParams = new URLSearchParams({
@@ -233,8 +233,12 @@ export const HotelPackagesSearchProvider: React.FC<{
       currentData.toDate = getDateFromParam(toParam)
     }
     if (cityParam) {
-      currentData.selectedCity = [parseInt(cityParam, 10)]
+      currentData.selectedCity = cityParam
+        .split(',')
+        .map(s => Number(s.trim()))
+        .filter(n => !isNaN(n))
     }
+
     if (childrenCountParam || childrenAgesParam || adultsCountParam) {
       currentData.travelersData = {
         adultsCount: parseInt(adultsCountParam || '0', 10),
