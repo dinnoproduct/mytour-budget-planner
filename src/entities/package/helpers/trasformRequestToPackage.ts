@@ -47,7 +47,9 @@ export const transformRequestToPackage = (
       contactPersonDetails: ''
     },
     infantTravelers: 0,
-    usdRate: 0
+    usdRate: 0,
+    currency: request.currency,
+    rate: request.rate
   }
 
   const notes = request.notes

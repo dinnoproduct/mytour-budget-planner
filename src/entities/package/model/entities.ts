@@ -37,6 +37,7 @@ export interface PackageEntity {
   usdRate: number
   priceInCurrency: string
   currency: Currency
+  rate: number
   checkin: string
   checkout: string
   discount: number
@@ -159,6 +160,8 @@ export interface RequestEntity {
   travelAgencyId: number
   foodType: number
   bookingType: number
+  currency: Currency
+  rate: number
 }
 
 export type NormalizedRequestEntity = Omit<RequestEntity, 'notes'> & {

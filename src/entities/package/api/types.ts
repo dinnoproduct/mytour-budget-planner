@@ -5,6 +5,7 @@ import { type DictionaryService } from './DictionaryService.ts'
 import { type CityService } from './CityService.ts'
 import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
+import { type Currency } from '../index.ts'
 
 export type PackageUseCasesParams = {
   packageService: PackageService
@@ -94,6 +95,8 @@ export type BookPackageInput = {
   travelers: BookPackageTraveler[]
   offerId: number
   usdRate: number
+  currency: Currency
+  rate: number
   destinationFlightId: number
   returnFlightId: number
   hotelId: number

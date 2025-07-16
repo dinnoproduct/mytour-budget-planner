@@ -97,6 +97,8 @@ export const useBookingFlow = ({
           phoneNumber: user?.phoneNumber || '',
           amountToBePaid: +paymentAmount,
           usdRate: packageDetails.usdRate,
+          currency: packageDetails.currency,
+          rate: packageDetails.rate,
           travelers: [...travelers.adults, ...travelers.children],
           paymentSystem
         }
@@ -275,7 +277,9 @@ export const useBookingFlow = ({
         roomType: packageDetails.roomType,
         travelAgencyId: packageDetails.travelAgency.id,
         foodType: packageDetails.foodType,
-        notes: newNotesJson
+        notes: newNotesJson,
+        currency: packageDetails.currency,
+        rate: packageDetails.rate
       }
 
       if (packageDetails.destinationFlight?.departureDate) {
