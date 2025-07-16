@@ -6,7 +6,7 @@ export type SearchData = {
   fromDate: Date | null
   toDate: Date | null
   days?: number
-  selectedCity: number
+  selectedCity: number | number[]
   travelersData: SearchTravelersData
 }
 

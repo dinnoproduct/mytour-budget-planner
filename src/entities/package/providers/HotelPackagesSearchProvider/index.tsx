@@ -23,7 +23,7 @@ const LOCAL_STORAGE_KEY = 'hotel_packages_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCity: 0,
+  selectedCity: [],
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
@@ -60,34 +60,24 @@ export const HotelPackagesSearchProvider: React.FC<{
   const isAllowedSearchRoute = useMemo(() => {
     const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
       if (route.path === location.pathname) {
-        if (route.query.length === 0) {
-          return true
-        }
-
+        if (route.query.length === 0) return true
         return route.query.every(query => {
           const value = searchParams.get(query[0])
-
           return value && value === query[1]
         })
       }
-
       return false
     })
-
     return isAllowed
   }, [location.pathname, searchParams])
 
-  // Function to load searchData from localStorage
   const loadSearchDataFromLocalStorage = (): SearchData | null => {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY)
-
     return savedData ? JSON.parse(savedData) : null
   }
 
   useEffect(() => {
-    if (searchData.fromDate && searchData.toDate) {
-      return
-    }
+    if (searchData.fromDate && searchData.toDate) return
 
     const savedSearchData = loadSearchDataFromLocalStorage()
     const fromDate = savedSearchData?.fromDate
@@ -104,13 +94,16 @@ export const HotelPackagesSearchProvider: React.FC<{
       setSearchData({
         ...savedSearchData,
         fromDate: new Date(savedSearchData.fromDate),
-        toDate: new Date(savedSearchData.toDate)
+        toDate: new Date(savedSearchData.toDate),
+        selectedCity: Array.isArray(savedSearchData.selectedCity)
+          ? savedSearchData.selectedCity
+          : [savedSearchData.selectedCity]
       })
     } else {
       setSearchData({
         fromDate: moment().toDate(),
         toDate: moment().add(1, 'day').toDate(),
-        selectedCity: cities[0]?.id || 0
+        selectedCity: cities[0] ? [cities[0].id] : []
       })
     }
   }, [cities])
@@ -119,10 +112,14 @@ export const HotelPackagesSearchProvider: React.FC<{
     const formatDate = (date: Date | null) =>
       date ? moment(date).format('YYYY-MM-DD') : ''
 
+    const cityParam = Array.isArray(searchData.selectedCity)
+      ? searchData.selectedCity[0] || 0
+      : searchData.selectedCity
+
     const queryParams = new URLSearchParams({
       from: formatDate(searchData.fromDate),
       to: formatDate(searchData.toDate),
-      city: searchData.selectedCity + '',
+      city: cityParam.toString(),
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
       childrenAges: searchData.travelersData.childrenAges.join(','),
@@ -145,10 +142,13 @@ export const HotelPackagesSearchProvider: React.FC<{
       setIsLoadingFilteredHotelPackages(true)
 
       let searchPackagesResponse: PackageEntity[] = []
+      const selectedCitiesArray = Array.isArray(selectedCity)
+        ? selectedCity
+        : [selectedCity]
 
       if (dateMode === 'exact') {
         searchPackagesResponse = await searchAsync({
-          cities: [selectedCity],
+          cities: selectedCitiesArray,
           adults: travelersData.adultsCount,
           childs: travelersData.childrenAges,
           dateFrom: moment(fromDate).set({ hour: 14 }).format(),
@@ -158,12 +158,12 @@ export const HotelPackagesSearchProvider: React.FC<{
           nightsCorrectionLowerValue: 0,
           nightsCorrectionUpperValue: 0
         })
-      saveSearchDataToLocalStorage(searchData)
+        saveSearchDataToLocalStorage(searchData)
       }
 
       if (dateMode === 'approximate') {
         searchPackagesResponse = await searchAsync({
-          cities: [selectedCity],
+          cities: selectedCitiesArray,
           adults: travelersData.adultsCount,
           childs: travelersData.childrenAges,
           dateFrom: moment(fromDate).set({ hour: 14 }).format(),
@@ -185,7 +185,15 @@ export const HotelPackagesSearchProvider: React.FC<{
   }
 
   const setSearchData = (data: Partial<SearchData>) => {
-    setSearchDataState(prevData => ({ ...prevData, ...data }))
+    setSearchDataState(prevData => ({
+      ...prevData,
+      ...data,
+      selectedCity: Array.isArray(data.selectedCity)
+        ? data.selectedCity
+        : data.selectedCity !== undefined
+          ? [data.selectedCity]
+          : prevData.selectedCity
+    }))
   }
 
   const navigateToDefaultSearch = () => {
@@ -221,15 +229,12 @@ export const HotelPackagesSearchProvider: React.FC<{
     if (fromParam) {
       currentData.fromDate = getDateFromParam(fromParam)
     }
-
     if (toParam) {
       currentData.toDate = getDateFromParam(toParam)
     }
-
     if (cityParam) {
-      currentData.selectedCity = parseInt(cityParam, 10)
+      currentData.selectedCity = [parseInt(cityParam, 10)]
     }
-
     if (childrenCountParam || childrenAgesParam || adultsCountParam) {
       currentData.travelersData = {
         adultsCount: parseInt(adultsCountParam || '0', 10),
@@ -238,11 +243,9 @@ export const HotelPackagesSearchProvider: React.FC<{
           (childrenAgesParam || '').split(',').filter(Boolean).map(Number) || []
       }
     }
-
     if (dateMode) {
       setDateMode(dateMode as DateModeType)
     }
-
     setSearchData(currentData)
   }, [searchParams])
 
@@ -270,12 +273,10 @@ export const HotelPackagesSearchProvider: React.FC<{
 
 export const useHotelPackagesSearchContext = () => {
   const context = useContext(SearchContext)
-
   if (!context) {
     throw new Error(
       'useHotelPackagesSearchContext must be used within a HotelPackagesSearchProvider'
     )
   }
-
   return context
 }
