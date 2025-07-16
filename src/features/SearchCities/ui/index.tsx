@@ -1,45 +1,32 @@
-import {
-  Box,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuList,
-  VStack,
-  Text
-} from '@chakra-ui/react'
-import { Icon, Input } from '@ui'
+import { Box, Flex, Menu, MenuButton, MenuList, VStack } from '@chakra-ui/react'
+import { Icon, Input, Text } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { type SearchCitiesProps } from './types.ts'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
 
-type SearchCitiesProps = {
-  defaultSelectedCity?: number | number[]
-  cities: PackageCity[]
-  onChange: (selectedCityIds: number[]) => void
-  placeholder?: string
-}
-
 export const SearchCities = ({
-                               defaultSelectedCity,
-                               cities,
-                               onChange,
-                               placeholder = ''
-                             }: SearchCitiesProps) => {
+  defaultSelectedCity,
+  cities,
+  onChange,
+  placeholder = ''
+}: SearchCitiesProps) => {
   const { i18n, t } = useTranslation()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
-
-  const [selectedCities, setSelectedCities] = useState<number[]>([])
+  const [selectedCity, setSelectedCity] = useState<number>(cities[0]?.id)
 
   useEffect(() => {
-    if (defaultSelectedCity) {
-      setSelectedCities(
-        Array.isArray(defaultSelectedCity)
-          ? defaultSelectedCity
-          : [defaultSelectedCity]
-      )
+    if (defaultSelectedCity && defaultSelectedCity !== selectedCity) {
+      setSelectedCity(defaultSelectedCity)
     }
   }, [defaultSelectedCity])
+
+  const handleCitySelect = (cityId: number) => {
+    setSelectedCity(cityId)
+    onChange && onChange(cityId)
+    setDropdownOpen(false)
+  }
 
   const cityNameField = useMemo(
     () =>
@@ -47,46 +34,15 @@ export const SearchCities = ({
     [i18n.language]
   )
 
-  const groupedCities = useMemo(() => {
-    return cities.reduce((acc, city) => {
-      // @ts-ignore
-      const countryName = city.country[cityNameField] as string
-      if (!acc[countryName]) acc[countryName] = []
-      acc[countryName].push(city)
-      return acc
-    }, {} as Record<string, PackageCity[]>)
-  }, [cities, cityNameField])
+  const activeCityValue = useMemo(() => {
+    const city = cities.find(city => city.id === selectedCity)
 
-  const handleCityToggle = (city: PackageCity) => {
-    const countryId = city.countryId
-
-    const currentCountryCities = selectedCities.filter(
-      id => cities.find(c => c.id === id)?.countryId === countryId
-    )
-
-    let newSelection: number[]
-    if (currentCountryCities.includes(city.id)) {
-      newSelection = currentCountryCities.filter(id => id !== city.id)
-    } else {
-      newSelection = [...currentCountryCities, city.id]
+    if (!city) {
+      return ''
     }
 
-    setSelectedCities(newSelection)
-    onChange(newSelection)
-  }
-
-  const handleCountrySelect = (countryCities: PackageCity[]) => {
-    const countryCityIds = countryCities.map(c => c.id)
-    setSelectedCities(countryCityIds)
-    onChange(countryCityIds)
-  }
-
-  const activeCityNames = useMemo(() => {
-    return cities
-      .filter(c => selectedCities.includes(c.id))
-      .map(c => c[cityNameField])
-      .join(', ')
-  }, [selectedCities, cities, cityNameField])
+    return city[cityNameField] as string
+  }, [selectedCity, cities, cityNameField])
 
   return (
     <Menu
@@ -96,17 +52,24 @@ export const SearchCities = ({
     >
       <MenuButton
         as={Box}
-        width={{ base: 'full', md: '350px', lg: '320px' }}
+        width={{
+          base: 'full',
+          md: '350px',
+          lg: '320px'
+        }}
         onClick={() => setDropdownOpen(!isDropdownOpen)}
         cursor="pointer"
       >
         <Input
           type="text"
-          value={activeCityNames}
-          placeholder={t(placeholder)}
-          leftIconName="location-pin"
+          value={activeCityValue}
+          width="full"
           borderColor={isDropdownOpen ? 'blue.500' : undefined}
-          _placeholder={{ color: 'blackAlpha.900' }}
+          leftIconName="location-pin"
+          placeholder={t(placeholder)}
+          _placeholder={{
+            color: 'blackAlpha.900'
+          }}
         />
       </MenuButton>
 
@@ -114,45 +77,51 @@ export const SearchCities = ({
         px="0"
         py="4"
         minWidth="fit-content"
-        width={{ base: '328px', md: '350px', lg: '320px' }}
+        width={{
+          base: '328px',
+          md: '350px',
+          lg: '320px'
+        }}
         height="auto"
         overflowY="auto"
       >
-        <VStack width="full" spacing="1" align="stretch">
-          {Object.entries(groupedCities).map(([countryName, countryCities]) => (
-            <Box key={countryName}>
+        <Box>
+          <VStack width="full" spacing="1" align="stretch">
+            {cities.map((city: PackageCity) => (
               <Flex
+                key={city.id}
+                width="full"
+                align="center"
+                bgColor="white"
+                justify="space-between"
+                height="40px"
                 px="4"
-                py="2"
-                bgColor="gray.50"
+                _hover={{
+                  bgColor: 'gray.50'
+                }}
+                _active={{
+                  bgColor: 'gray.100'
+                }}
+                _focus={{
+                  bgColor: 'gray.100'
+                }}
+                _focusVisible={{
+                  bgColor: 'gray.100'
+                }}
+                fontSize="text-md"
+                lineHeight="text-md"
                 cursor="pointer"
-                _hover={{ bgColor: 'gray.100' }}
-                onClick={() => handleCountrySelect(countryCities)}
+                onClick={() => handleCitySelect(city.id)}
               >
-                <Text fontWeight="bold">{countryName}</Text>
-              </Flex>
+                <Text size="md">{city[cityNameField] as string}</Text>
 
-              {countryCities.map(city => (
-                <Flex
-                  key={city.id}
-                  px="4"
-                  py="1"
-                  align="center"
-                  justify="space-between"
-                  cursor="pointer"
-                  _hover={{ bgColor: 'gray.50' }}
-                  onClick={() => handleCityToggle(city)}
-                >
-                  {/* @ts-ignore*/}
-                  <Text ml='4'>{city[cityNameField]}</Text>
-                  {selectedCities.includes(city.id) && (
-                    <Icon name="check" size="20" color="blue.500" />
-                  )}
-                </Flex>
-              ))}
-            </Box>
-          ))}
-        </VStack>
+                {selectedCity === city.id && (
+                  <Icon name="check" size="20" color="blue.500" />
+                )}
+              </Flex>
+            ))}
+          </VStack>
+        </Box>
       </MenuList>
     </Menu>
   )
