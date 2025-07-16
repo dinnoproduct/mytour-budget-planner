@@ -22,7 +22,7 @@ const LOCAL_STORAGE_KEY = 'package_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCity: 0,
+  selectedCity: [],
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
@@ -155,8 +155,12 @@ export const PackagesSearchProvider: React.FC<{
     setSearchData(updatedSearchData, true)
   }, [JSON.stringify(packageList), cities])
 
+  const selectedCityId = Array.isArray(searchData.selectedCity)
+    ? searchData.selectedCity[0]
+    : searchData.selectedCity
+
   const { data: departureFlights } = useAvailableFlights({
-    city: searchData.selectedCity
+    city: selectedCityId
   })
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
@@ -242,11 +246,14 @@ export const PackagesSearchProvider: React.FC<{
   const generateSearchQueryParams = (searchData: SearchData) => {
     const formatDate = (date: Date | null) =>
       date ? moment(date).format('YYYY-MM-DD') : ''
+    const cityParam = Array.isArray(searchData.selectedCity)
+      ? searchData.selectedCity[0] || ''
+      : searchData.selectedCity
 
     const queryParams = new URLSearchParams({
       from: formatDate(searchData.fromDate),
       to: formatDate(searchData.toDate),
-      city: searchData.selectedCity + '',
+      city: cityParam.toString(),
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
       childrenAges: searchData.travelersData.childrenAges.join(','),
@@ -274,15 +281,16 @@ export const PackagesSearchProvider: React.FC<{
 
       setIsLoadingFilteredPackages(true)
       saveSearchDataToLocalStorage(searchData)
+      const selectedCitiesArray = Array.isArray(selectedCity)
+        ? selectedCity
+        : [selectedCity]
 
       const searchPackagesResponse = await searchAsync({
         dateFrom: moment(fromDate).format('YYYY-MM-DD'),
         dateTo: moment(toDate).format('YYYY-MM-DD'),
-        cities: [selectedCity],
+        cities: selectedCitiesArray,
         adults: travelersData.adultsCount,
         childs: travelersData.childrenAges,
-        // nightsCorrectionLowerValue: 0,
-        // nightsCorrectionUpperValue: 0,
         lateCheckout: false,
         bookingType: 1
       })
