@@ -3,7 +3,7 @@ import { type PackageCity, type PackageEntity } from '@entities/package'
 export type SearchData = {
   fromDate: Date | null
   toDate: Date | null
-  selectedCity: number
+  selectedCity: number | number[]
   days?: number
   travelersData: SearchTravelersData
   departureFlightId: number | null
