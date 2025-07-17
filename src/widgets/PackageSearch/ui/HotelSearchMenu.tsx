@@ -45,13 +45,13 @@ export const HotelSearchMenu = ({
     }
   }, [isFormOpen]);
 
-  const cityLabel = useMemo(
-    () =>
-      (cities.find((city) => searchData.selectedCity === city.id)?.[
-        `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
-      ] || "") as string,
-    [searchData.selectedCity, cities, i18n.language],
-  );
+  const cityLabel = useMemo(() => {
+      return cities
+        .filter(c => Array.isArray(searchData.selectedCity) ? searchData.selectedCity.includes(c.id) : [searchData.selectedCity].includes(c.id))
+        .map(c => c[`name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
+          ] || '')
+        .join(', ')
+    }, [searchData.selectedCity, cities, i18n.language]);
 
   const handleFormOpen = () => {
     onFormOpen();
