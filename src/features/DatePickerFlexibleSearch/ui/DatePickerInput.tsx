@@ -18,7 +18,7 @@ export const DatePickerInput = ({
     }
 
     const longMonthName = date
-      .toLocaleString('default', { month: 'long' })
+      .toLocaleString('en-US', { month: 'long' })
       .toLowerCase()
     const shortMonthName = t(`${longMonthName}Short`)
 
@@ -29,7 +29,7 @@ export const DatePickerInput = ({
     if (!days || !fromDate) return ''
 
     const longMonthName = fromDate
-      .toLocaleString('default', { month: 'long' })
+      .toLocaleString('en-US', { month: 'long' })
       .toLowerCase()
 
     const month = t(longMonthName)

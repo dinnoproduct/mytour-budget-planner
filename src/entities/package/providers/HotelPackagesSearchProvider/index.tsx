@@ -61,18 +61,23 @@ export const HotelPackagesSearchProvider: React.FC<{
     const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
       if (route.path === location.pathname) {
         if (route.query.length === 0) return true
+
         return route.query.every(query => {
           const value = searchParams.get(query[0])
+
           return value && value === query[1]
         })
       }
+
       return false
     })
+
     return isAllowed
   }, [location.pathname, searchParams])
 
   const loadSearchDataFromLocalStorage = (): SearchData | null => {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY)
+
     return savedData ? JSON.parse(savedData) : null
   }
 
@@ -134,8 +139,7 @@ export const HotelPackagesSearchProvider: React.FC<{
   const handleSearch = async (searchData: SearchData) => {
     try {
       setIsSearchError(false)
-      const { fromDate, toDate, selectedCity, travelersData, days } =
-        searchData
+      const { fromDate, toDate, selectedCity, travelersData, days } = searchData
       const queryParams = generateSearchQueryParams(searchData)
       navigate(`/packages?${queryParams.toString()}`)
 
@@ -225,13 +229,16 @@ export const HotelPackagesSearchProvider: React.FC<{
     const childrenCountParam = searchParams.get('childrenCount')
     const childrenAgesParam = searchParams.get('childrenAges')
     const dateMode = searchParams.get('dateMode')
+    const daysParam = searchParams.get('days')
 
     if (fromParam) {
       currentData.fromDate = getDateFromParam(fromParam)
     }
+
     if (toParam) {
       currentData.toDate = getDateFromParam(toParam)
     }
+
     if (cityParam) {
       currentData.selectedCity = cityParam
         .split(',')
@@ -247,9 +254,15 @@ export const HotelPackagesSearchProvider: React.FC<{
           (childrenAgesParam || '').split(',').filter(Boolean).map(Number) || []
       }
     }
+
     if (dateMode) {
       setDateMode(dateMode as DateModeType)
     }
+
+    if (daysParam) {
+      currentData.days = parseInt(daysParam, 10)
+    }
+
     setSearchData(currentData)
   }, [searchParams])
 
@@ -277,10 +290,12 @@ export const HotelPackagesSearchProvider: React.FC<{
 
 export const useHotelPackagesSearchContext = () => {
   const context = useContext(SearchContext)
+
   if (!context) {
     throw new Error(
       'useHotelPackagesSearchContext must be used within a HotelPackagesSearchProvider'
     )
   }
+
   return context
 }

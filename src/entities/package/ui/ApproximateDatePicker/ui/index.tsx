@@ -98,7 +98,18 @@ export const ApproximateDatePicker = ({
     setStayInfo(prev => ({ ...prev, month: value }))
 
   return (
-    <Box maxW="full">
+    <Box maxW="full" height="full">
+      <Box 
+      height="full"
+       width="full" 
+       overflowY="auto"
+        pb={{base: '112px', md: '0'}}
+        sx={{
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        }}
+        >
       <VStack spacing={7} pt="8" px={3}>
         <Text fontWeight="500" size="md" color="gray.800">
           {t`howManyDaysAreYouPlanning`}
@@ -128,6 +139,7 @@ export const ApproximateDatePicker = ({
         activeValue={stayInfo.month}
         onChange={onChangeMonthsHandler}
       />
+      </Box>
 
       <Footer
         day={stayInfo.day === 'other' ? inputValue : stayInfo.day}

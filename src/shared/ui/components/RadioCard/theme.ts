@@ -53,6 +53,7 @@ export const RadioCard = defineStyleConfig({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      p: 1,
       '& > #label': {
         mt: 2,
         mb: 0.5

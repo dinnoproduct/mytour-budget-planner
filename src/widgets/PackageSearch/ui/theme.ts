@@ -45,11 +45,11 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   },
   fixedWithoutTabs: {
     wrapper: {
-      height: { base: 'auto', md: '88px' },
+      height: { base: 'auto', md: '96px' },
       width: 'full'
     },
     container: {
-      height: { base: 'auto', md: '88px' },
+      height: { base: 'auto', md: '96px' },
       position: 'fixed',
       borderBottom: '1px solid',
       borderColor: 'gray.100'

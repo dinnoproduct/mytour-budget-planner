@@ -55,17 +55,19 @@ export const PackageCardHorizontalDetail = ({
         )}
         {!isMd && (
           <>
-            <TravelersAndNightsInfo
-              tourPackage={tourPackage}
-              childrenTravelers={childrenTravelers}
-            />
+            <Flex justify="space-between" align="start" width="full">
+              <TravelersAndNightsInfo
+                tourPackage={tourPackage}
+                childrenTravelers={childrenTravelers}
+              />
 
-            <DateTag
-              fromDate={fromDate}
-              toDate={toDate}
-              nights={nights}
-              tourPackage={tourPackage}
-            />
+              <DateTag
+                fromDate={fromDate}
+                toDate={toDate}
+                nights={nights}
+                tourPackage={tourPackage}
+              />
+            </Flex>
 
             <Flex justify="space-between" align="center" width="full">
               <Text size="xs" color="gray.600">
@@ -109,8 +111,9 @@ const TravelersAndNightsInfo = ({
     <Text size="xs" fontWeight="medium" color="gray.600">
       {tourPackage.adultTravelers}{' '}
       {t(getPluralForm(tourPackage.adultTravelers, 'adults'))}
-      {childrenTravelers} • {tourPackage.nights}{' '}
-      {t(getPluralForm(tourPackage.nights, 'nights'))}
+      {childrenTravelers}
+      <br />
+      {tourPackage.nights} {t(getPluralForm(tourPackage.nights, 'nights'))}
     </Text>
   )
 }

@@ -128,7 +128,7 @@ const MonthHeader = ({
   const { t } = useTranslation()
 
   const monthName = month
-    .toLocaleString('default', { month: 'long' })
+    .toLocaleString('en-US', { month: 'long' })
     .toLowerCase()
 
   return (
