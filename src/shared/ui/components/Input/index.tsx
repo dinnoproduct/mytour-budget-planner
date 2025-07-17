@@ -30,7 +30,9 @@ export const Input = forwardRef(
       leftIconName,
       rightIconName,
       onRightIconClick,
+      rightIconProps,
       onLeftIconClick,
+      leftIconProps,
       containerProps = {},
       suffix,
       prefix,
@@ -92,6 +94,7 @@ export const Input = forwardRef(
               iconName={leftIconName}
               onClick={onLeftIconClick}
               isDisabled={state === 'disabled'}
+              {...leftIconProps}
             />
           )}
 
@@ -112,6 +115,7 @@ export const Input = forwardRef(
               iconName={rightIconName}
               onClick={onRightIconClick}
               isDisabled={state === 'disabled'}
+              {...rightIconProps}
             />
           )}
         </InputGroup>
@@ -126,7 +130,8 @@ const InputRightElement = ({
   iconName,
   onClick,
   content,
-  isDisabled = false
+  isDisabled = false,
+  ...props
 }: InputElementProps) => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     if (isDisabled) {
@@ -145,6 +150,7 @@ const InputRightElement = ({
       onClick={handleClick}
       top="unset"
       bottom="0"
+      {...props}
     >
       {iconName ? (
         <Icon name={iconName} size="20" color="gray.500" />
@@ -161,7 +167,8 @@ const InputLeftElement = ({
   isDisabled,
   onClick,
   iconName,
-  content
+  content,
+  ...props
 }: InputElementProps) => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     if (isDisabled) {
@@ -180,6 +187,7 @@ const InputLeftElement = ({
       onClick={handleClick}
       top="unset"
       bottom="0"
+      {...props}
     >
       {iconName ? (
         <Icon name={iconName} size="20" color="gray.500" />

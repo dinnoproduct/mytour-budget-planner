@@ -51,6 +51,9 @@ export const FilterSelect = ({
       <PopoverTrigger>
         <Input
           onClick={onOpen}
+          rightIconProps={{
+            pointerEvents: 'none'
+          }}
           isReadOnly
           value={
             selectedValues.length !== 0
@@ -107,7 +110,11 @@ const PopoverContentLayout = forwardRef(
     }
 
     const popoverContent = (
-      <PopoverContent width="400px" ref={ref}>
+      <PopoverContent
+        maxWidth={{ base: 'full', md: '408px' }}
+        width={{ base: 'full', md: '408px' }}
+        ref={ref}
+      >
         <PopoverBody px={4} pt={4} pb={3}>
           <FilterSelectBody
             onChange={onChange}
