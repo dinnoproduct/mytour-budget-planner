@@ -72,7 +72,7 @@ export const PackageBanner = (props: LinkBoxProps) => {
               variant="solid-blue"
               mt="6"
               width="fit-content"
-              href="https://www.mytourpackages.am/booking-no-prepayment?utm_source=meta&utm_medium=web&utm_campaign=spring_no_downpayment"
+              href="https://www.mytour.am/packages?from=2025-10-16&to=2025-10-23&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=1398&returnFlightId=1398&tab=packages"
               target="_blank"
               rel="noopener noreferrer"
               zIndex="0 !important"
