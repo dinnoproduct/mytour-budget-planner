@@ -95,6 +95,11 @@ export const DatePickerFlexibleSearch = ({
   }
 
   const handleCalendarOpen = () => {
+    if (dateMode === 'approximate') {
+      setTabIndex(1)
+    } else {
+      setTabIndex(0)
+    }
     setCalendarOpen(true)
   }
 
@@ -200,6 +205,7 @@ export const DatePickerFlexibleSearch = ({
             variant="grey-segment"
             labels={[t`fixedDates`, t`flexibleDates`]}
             size="sm"
+            index={tabIndex}
             onChange={tabIndex => setTabIndex(tabIndex)}
           >
             <Box height="full" maxHeight="full">

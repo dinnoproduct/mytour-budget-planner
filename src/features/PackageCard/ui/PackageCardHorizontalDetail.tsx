@@ -4,7 +4,7 @@ import {
   type PackageCardHorizontalDetailProps
 } from './types'
 import { useBreakpoint } from '@/shared/hooks'
-import { Box, VStack, Flex, Tag, TagRightIcon } from '@chakra-ui/react'
+import { Box, VStack, Flex, Tag, TagRightIcon, Show } from '@chakra-ui/react'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import { CURRENCY_MAP } from '@shared/model'
 import { Button, Icon, Text, Tooltip } from '@ui'
@@ -112,7 +112,10 @@ const TravelersAndNightsInfo = ({
       {tourPackage.adultTravelers}{' '}
       {t(getPluralForm(tourPackage.adultTravelers, 'adults'))}
       {childrenTravelers}
-      <br />
+      <Show above="md">{' • '}</Show>
+      <Show below="md">
+        <Box as="br" display={{ base: 'block', md: 'none' }} />
+      </Show>
       {tourPackage.nights} {t(getPluralForm(tourPackage.nights, 'nights'))}
     </Text>
   )
