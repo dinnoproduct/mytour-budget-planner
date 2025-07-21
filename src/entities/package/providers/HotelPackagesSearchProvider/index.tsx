@@ -83,6 +83,7 @@ export const HotelPackagesSearchProvider: React.FC<{
 
   useEffect(() => {
     if (searchData.fromDate && searchData.toDate) return
+    if (cities.length === 0) return
 
     const savedSearchData = loadSearchDataFromLocalStorage()
     const fromDate = savedSearchData?.fromDate

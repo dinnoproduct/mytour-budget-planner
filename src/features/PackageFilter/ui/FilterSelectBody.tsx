@@ -65,7 +65,15 @@ export const FilterSelectBody = ({
 
       <VStack
         align="start"
-        maxHeight="300px"
+        sx={{
+          maxHeight: '162px',
+          '@media (min-height: 774px)': {
+            maxHeight: '200px'
+          },
+          '@media (min-height: 872px)': {
+            maxHeight: '300px'
+          }
+        }}
         overflowY="auto"
         spacing={3}
         mt={4}
