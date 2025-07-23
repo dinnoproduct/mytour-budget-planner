@@ -149,15 +149,12 @@ const Layout = ({
   link,
   ...props
 }: { children: ReactNode | ReactNode[]; link: string } & LinkProps) => {
-  const { isMd } = useBreakpoint()
-
-  if (!isMd) {
     return (
       <Link
         as={ReactLink}
         to={link}
         _hover={{ textTransform: 'none' }}
-        maxWidth="362px"
+        maxWidth={{ base: '362px', md: 'full' }}
         width={{ base: 'auto', md: 'full' }}
         {...props}
       >
@@ -173,18 +170,4 @@ const Layout = ({
         </Box>
       </Link>
     )
-  }
-
-  return (
-    <Box
-      width={{ base: 'auto', md: 'full' }}
-      rounded="lg"
-      overflow="hidden"
-      border="1px solid"
-      borderColor="gray.200"
-      {...props}
-    >
-      {children}
-    </Box>
-  )
 }
