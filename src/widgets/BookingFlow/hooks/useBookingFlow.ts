@@ -341,7 +341,7 @@ export const useBookingFlow = ({
 
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
-      travelAgencyId: 3,
+      travelAgencyId: packageDetails?.travelAgency.id || 0,
       bookingType: initialRequest?.bookingType ? initialRequest.bookingType : 2,
       destinationId: packageDetails?.city.id || 0,
       startDate: packageDetails?.checkin || '',

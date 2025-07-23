@@ -4,7 +4,6 @@ import {
   type GenerateOffersInput,
   type OfferEntity,
   type PackageEntity,
-  type SearchHotelPackagesParams,
   type SearchPackagesParams
 } from '@entities/package'
 
@@ -64,30 +63,24 @@ export class PackageService {
   }
 
   //hotel
-  async searchHotelPackages(
-    search: SearchHotelPackagesParams
-  ): Promise<PackageEntity[]> {
-    return this.request<PackageEntity[]>({
-      url: '/searchHotelPackages',
-      method: 'post',
-      data: search
-    })
-  }
 
   async generateHotelOffers(
     input: GenerateHotelOffersInput
   ): Promise<OfferEntity[]> {
     return this.request<OfferEntity[]>({
-      url: '/generateHotelOffers/?travelAgency=3',
+      url: '/generateHotelOffers/',
       method: 'post',
       version: 'V2',
       data: input
     })
   }
 
-  async getHotelPackage(offerId: number): Promise<PackageEntity> {
+  async getHotelPackage(
+    offerId: number,
+    travelAgency: number
+  ): Promise<PackageEntity> {
     return this.request<PackageEntity>({
-      url: `/getHotelPackage/?id=${offerId}&travelAgancy=3`
+      url: `/getHotelPackage/?id=${offerId}&travelAgancy=${travelAgency}`
     })
   }
 }

@@ -179,9 +179,15 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
     data: currentOfferPackage,
     refetch: refetchCurrentOfferPackage,
     isFetching: isFetchingCurrentOfferPackage
-  } = useCurrentHotelPackageOffer(selectedOffer?.offerId || 0, {
-    enabled: !!selectedOffer?.offerId
-  })
+  } = useCurrentHotelPackageOffer(
+    {
+      offerId: selectedOffer?.offerId || 0,
+      travelAgency: defaultTourPackage.travelAgency.id
+    },
+    {
+      enabled: !!selectedOffer?.offerId && !!defaultTourPackage.travelAgency.id
+    }
+  )
 
   useEffect(() => {
     selectedOffer?.offerId && refetchCurrentOfferPackage()
@@ -191,7 +197,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
   const { data: prepaymentInfo = null, isPending: isCalculatingPrepayment } =
     useCalculatePrepayment(
       {
-        travelAgencyId: 3,
+        travelAgencyId: defaultTourPackage.travelAgency.id,
         bookingType: 2,
         destinationId: defaultTourPackage.city.id,
         startDate: selectedOffer?.checkin || '',

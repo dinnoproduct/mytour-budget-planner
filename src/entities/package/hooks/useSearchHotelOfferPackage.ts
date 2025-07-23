@@ -37,9 +37,15 @@ export const useSearchHotelOfferPackage = (
   }, [offers, searchData?.roomId, searchData?.mealId])
 
   const { data: hotelPackageDetails, isLoading: isLoadingHotelPackage } =
-    useHotelPackageByOfferId(offerId, {
-      enabled: !!offerId
-    })
+    useHotelPackageByOfferId(
+      {
+        offerId,
+        travelAgency: searchData.travelAgency
+      },
+      {
+        enabled: !!offerId && !!searchData.travelAgency
+      }
+    )
 
   useEffect(() => {
     if (hotelPackageDetails?.offerId) {
@@ -61,6 +67,7 @@ type SearchData = {
   hotelId: number
   roomId: number
   mealId: number
+  travelAgency: number
 }
 
 type Options = {

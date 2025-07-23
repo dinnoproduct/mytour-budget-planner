@@ -1,69 +1,91 @@
 import { type UseQueryOptions } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
-import { type PackageEntity, useSearchHotelPackages } from '@entities/package'
-import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
+import {
+  type PackageEntity,
+  useGenerateHotelOffers,
+  useHotelPackageByOfferId
+} from '@entities/package'
 import { type EmptyObject } from 'react-hook-form'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import moment from 'moment'
 
 type Options = {
   onSuccess?: (packageDetails: PackageEntity | EmptyObject) => void
-} & Omit<UseQueryOptions<PackageEntity[]>, 'queryKey' | 'queryFn'>
+} & Omit<UseQueryOptions<PackageEntity>, 'queryKey' | 'queryFn' | 'onSuccess'>
 
 export const useSearchHotelPackage = (options?: Options) => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
-  const [searchInput, setSearchInput] = useState<any>({})
 
-  const {
-    data: packages = [],
-    isLoading,
-    isFetched
-  } = useSearchHotelPackages(searchInput, {
-    refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    enabled: !!searchInput.dateFrom,
-    ...options
-  })
+  const from = searchParams.get('from')
+  const to = searchParams.get('to')
+  const adultsCount = parseInt(searchParams.get('adultsCount') || '0', 10)
+  const childrenAgesParam = searchParams.get('childrenAges')
+  const childrenAges = childrenAgesParam
+    ? childrenAgesParam?.split(',').filter(Boolean).map(Number) || []
+    : []
+  const hotelId = parseInt(searchParams.get('hotelId') || '0', 10)
+  const roomId = parseInt(searchParams.get('roomId') || '0', 10)
+  const mealId = parseInt(searchParams.get('mealId') || '0', 10)
+  const travelAgency = parseInt(searchParams.get('travelAgency') || '0', 10)
 
-  const getDateFromParam = (param: string | null) =>
-    param ? moment(param).format() : null
-
-  useEffect(() => {
-    if (!isLoading) {
-      const dateFrom = moment(
-        getDateFromParam(searchParams.get('from')) as string
-      )
-        .set({ hour: 14 })
-        .format()
-
-      const dateTo = moment(getDateFromParam(searchParams.get('to')) as string)
-        .set({ hour: 12 })
-        .format()
-
-      const childrenAges = searchParams.get('childrenAges')
-      const children = childrenAges
-        ? childrenAges?.split(',').filter(Boolean).map(Number) || []
-        : []
-
-      setSearchInput({
-        dateFrom,
-        dateTo,
-        cities: [parseInt(searchParams.get('city') || '0', 10)],
-        adults: parseInt(searchParams.get('adultsCount') || '0', 10),
-        childs: children
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, JSON.stringify(searchParams)])
-
-  const hotelId = useMemo(
-    () => parseInt(searchParams.get('hotelId') || '0', 10),
-    [searchParams]
+  const checkin = useMemo(
+    () =>
+      from ? moment(from).set({ hour: 14 }).format('ddd MMM DD YYYY') : '',
+    [from]
+  )
+  const checkout = useMemo(
+    () => (to ? moment(to).set({ hour: 12 }).format('ddd MMM DD YYYY') : ''),
+    [to]
   )
 
-  const packageDetails: PackageEntity | null = useMemo(
-    () => packages?.find(pkg => pkg.hotel.id === hotelId) || null,
-    [packages, hotelId]
+  const { data: offers = [], isLoading: isLoadingGenerateOffers } =
+    useGenerateHotelOffers(
+      {
+        checkin,
+        checkout,
+        adults: adultsCount,
+        childs: childrenAges,
+        hotelId
+      },
+      {
+        enabled: !!(checkin && checkout && hotelId)
+      }
+    )
+
+  const offerId = useMemo(() => {
+    if (!offers?.length) {
+      return 0
+    }
+
+    if (mealId && roomId) {
+      return (
+        offers.find(
+          offer => offer.roomType === roomId && offer.foodType === mealId
+        )?.offerId || 0
+      )
+    }
+
+    if (roomId) {
+      return offers.find(offer => offer.roomType === roomId)?.offerId || 0
+    }
+
+    return offers[0].offerId || 0
+  }, [offers, roomId, mealId])
+
+  const {
+    data: packageDetails,
+    isLoading: isLoadingHotelPackage,
+    isFetched
+  } = useHotelPackageByOfferId(
+    {
+      offerId,
+      travelAgency
+    },
+    {
+      enabled: !!offerId && !!travelAgency,
+      ...options
+    }
   )
 
   useEffect(() => {
@@ -74,7 +96,7 @@ export const useSearchHotelPackage = (options?: Options) => {
 
   return {
     packageDetails,
-    isLoading,
+    isLoading: isLoadingGenerateOffers || isLoadingHotelPackage,
     isFetched
   }
 }

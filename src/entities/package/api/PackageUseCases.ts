@@ -14,7 +14,6 @@ import {
   type UpdateRequestInput,
   type SearchPackagesParams,
   type SearchParams,
-  type SearchHotelPackagesParams,
   type PrepaymentCalculationParams
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
@@ -70,19 +69,12 @@ export class PackageUseCases {
     return this.packageService.getPackage(offerId)
   }
 
-  async searchHotelPackages(search: SearchHotelPackagesParams) {
-    return this.packageService.searchHotelPackages({
-      travelAgencyId: 3,
-      ...search
-    })
-  }
-
   async generateHotelOffers(input: GenerateHotelOffersInput) {
     return this.packageService.generateHotelOffers(input)
   }
 
-  async getHotelPackage(offerId: number) {
-    return this.packageService.getHotelPackage(offerId)
+  async getHotelPackage(offerId: number, travelAgency: number) {
+    return this.packageService.getHotelPackage(offerId, travelAgency)
   }
 
   // flight

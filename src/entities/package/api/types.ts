@@ -52,15 +52,6 @@ export type SearchParams = {
   bookingType: 1 | 2
 }
 
-export type SearchHotelPackagesParams = {
-  travelAgencyId?: number
-  cities: number[]
-  adults: number
-  childs?: number[]
-  dateFrom?: string
-  dateTo?: string
-}
-
 export type GetFlightsByDateParams = {
   date: string
   travelAgency: number

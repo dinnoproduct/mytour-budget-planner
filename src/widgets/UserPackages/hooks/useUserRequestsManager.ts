@@ -260,7 +260,8 @@ export const useUserRequestsManager = () => {
       to: activeRequest?.endDate || '',
       hotelId: activeRequest?.hotel.id || 0,
       roomId: activeRequest?.roomType || 0,
-      mealId: activeRequest?.foodType || 0
+      mealId: activeRequest?.foodType || 0,
+      travelAgency: activeRequest?.travelAgencyId || 0
     },
     {
       enabled:

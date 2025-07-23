@@ -22,7 +22,7 @@ const LOCAL_STORAGE_KEY = 'package_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCity: 0,
+  selectedCity: -1,
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
@@ -36,6 +36,12 @@ const ALLOWED_SEARCH_ROUTES = [
   { path: '/packages', query: [['tab', 'packages']] }
 ]
 
+const ALLOWED_PACKAGE_ROUTES = [
+  { path: '/packages', query: [['tab', 'packages']] },
+  { path: '/' },
+  { path: '/package' }
+]
+
 const SearchContext = createContext<SearchContextType | undefined>(undefined)
 
 export const PackagesSearchProvider: React.FC<{
@@ -47,7 +53,6 @@ export const PackagesSearchProvider: React.FC<{
   const [isCityChanged, setIsCityChanged] = useState(false)
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false)
   useState(false)
-  const { data: cities = [] } = useCities()
 
   const isAllowedSearchRoute = useMemo(() => {
     const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
@@ -68,6 +73,30 @@ export const PackagesSearchProvider: React.FC<{
 
     return isAllowed
   }, [location.pathname, searchParams])
+
+  const isAllowedPackageRoute = useMemo(() => {
+    const isAllowed = ALLOWED_PACKAGE_ROUTES.some(route => {
+      if (route.path === location.pathname) {
+        if (!route.query || route.query.length === 0) {
+          return true
+        }
+
+        return route.query.every(query => {
+          const value = searchParams.get(query[0])
+
+          return value && value === query[1]
+        })
+      }
+
+      return false
+    })
+
+    return isAllowed
+  }, [location.pathname, searchParams])
+
+  const { data: cities = [] } = useCities({
+    enabled: isAllowedPackageRoute
+  })
 
   const { data: packageList = [] } = usePackageList({
     enabled: isAllowedSearchRoute
@@ -155,16 +184,21 @@ export const PackagesSearchProvider: React.FC<{
     setSearchData(updatedSearchData, true)
   }, [JSON.stringify(packageList), cities])
 
-  const { data: departureFlights } = useAvailableFlights({
-    city: searchData.selectedCity
-  })
+  const { data: departureFlights } = useAvailableFlights(
+    {
+      city: searchData.selectedCity
+    },
+    {
+      enabled: searchData.selectedCity !== -1 && isAllowedPackageRoute
+    }
+  )
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
       {
         flightId: searchData.departureFlightId as number
       },
       {
-        enabled: !!searchData.departureFlightId
+        enabled: !!searchData.departureFlightId && isAllowedPackageRoute
       }
     )
 

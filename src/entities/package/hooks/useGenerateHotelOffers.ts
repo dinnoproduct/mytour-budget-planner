@@ -4,6 +4,7 @@ import {
   type OfferEntity,
   packageUseCases
 } from '@entities/package'
+import moment from 'moment'
 
 export const useGenerateHotelOffers = (
   input: GenerateHotelOffersInput,
@@ -11,6 +12,13 @@ export const useGenerateHotelOffers = (
 ) =>
   useQuery({
     queryFn: () => packageUseCases.generateHotelOffers(input),
-    queryKey: ['generate-hotel-offers', input],
+    queryKey: [
+      'generate-hotel-offers',
+      input.hotelId,
+      moment(input.checkin).format('ddd MMM DD YYYY'),
+      moment(input.checkout).format('ddd MMM DD YYYY'),
+      input.adults,
+      input.childs
+    ],
     ...(options || {})
   })

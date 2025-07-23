@@ -9,13 +9,19 @@ import { useEffect, useState } from 'react'
 const QUERY_KEY = 'current-hotel-package-offer'
 
 export const useCurrentHotelPackageOffer = (
-  offerId: number,
+  {
+    offerId,
+    travelAgency
+  }: {
+    offerId: number
+    travelAgency: number
+  },
   options?: Omit<UseQueryOptions<PackageEntity>, 'queryFn' | 'queryKey'>
 ) =>
   useQuery({
     ...(options || {}),
     // refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    queryFn: () => packageUseCases.getHotelPackage(offerId),
+    queryFn: () => packageUseCases.getHotelPackage(offerId, travelAgency),
     queryKey: [QUERY_KEY]
   })
 

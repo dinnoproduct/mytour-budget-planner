@@ -67,6 +67,7 @@ export const PackageList = () => {
         hotelSearchData.travelersData.childrenAges.join(',')
       queryParams.from = moment(tourPackage.checkin).format('YYYY-MM-DD')
       queryParams.to = moment(tourPackage.checkout).format('YYYY-MM-DD')
+      queryParams.travelAgency = tourPackage.travelAgency.id.toString()
     }
 
     const searchParams = new URLSearchParams(queryParams).toString()
