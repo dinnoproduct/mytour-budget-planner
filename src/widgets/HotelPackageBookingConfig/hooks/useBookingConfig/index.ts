@@ -85,7 +85,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         checkout: bookingData.checkOut.toDateString(),
         adults: bookingData.travelersData.adultsCount,
         childs: bookingData.travelersData.childrenAges,
-        hotelId: bookingData.hotelId
+        hotelId: bookingData.hotelId,
+        travelAgency: defaultTourPackage.travelAgency.id
       },
       {
         enabled: true

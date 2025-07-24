@@ -46,7 +46,8 @@ export const useSearchHotelPackage = (options?: Options) => {
         checkout,
         adults: adultsCount,
         childs: childrenAges,
-        hotelId
+        hotelId,
+        travelAgency
       },
       {
         enabled: !!(checkin && checkout && hotelId)

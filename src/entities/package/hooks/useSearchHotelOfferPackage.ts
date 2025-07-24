@@ -18,7 +18,8 @@ export const useSearchHotelOfferPackage = (
         checkout: moment(searchData.to).set({ hour: 12 }).format(),
         adults: searchData.adultsCount,
         childs: searchData.childrenAges,
-        hotelId: searchData.hotelId
+        hotelId: searchData.hotelId,
+        travelAgency: searchData.travelAgency
       },
       {
         enabled: typeof options?.enabled === 'boolean' ? options.enabled : true

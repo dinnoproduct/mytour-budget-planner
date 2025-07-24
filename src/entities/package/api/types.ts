@@ -73,6 +73,7 @@ export type GenerateHotelOffersInput = {
   childs: number[]
   checkin: string
   checkout: string
+  travelAgency: number
 }
 
 export type BookPackageInput = {

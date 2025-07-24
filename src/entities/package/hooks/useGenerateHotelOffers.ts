@@ -18,7 +18,8 @@ export const useGenerateHotelOffers = (
       moment(input.checkin).format('ddd MMM DD YYYY'),
       moment(input.checkout).format('ddd MMM DD YYYY'),
       input.adults,
-      input.childs
+      input.childs,
+      input.travelAgency
     ],
     ...(options || {})
   })
