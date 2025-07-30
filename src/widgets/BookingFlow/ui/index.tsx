@@ -69,6 +69,8 @@ export const BookingFlow = ({
           isLoadingBooking={isLoadingBooking}
           isBooked={isBooked}
           prepaymentInfo={prepaymentInfo}
+          isLateCheckout={isLateCheckout}
+          travelers={travelers}
         />
       )}
 

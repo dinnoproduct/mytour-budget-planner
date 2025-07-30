@@ -1,6 +1,12 @@
 import { type ReactNode } from 'react'
-import { PrepaymentInfo, type PackageEntity, type PaymentSystem } from '@entities/package'
+import {
+  type PrepaymentInfo,
+  type PackageEntity,
+  type PaymentSystem
+} from '@entities/package'
 import { type RadioProps } from '@ui'
+import { type BoxProps, type ListProps } from '@chakra-ui/react'
+import { type Travelers } from '@widgets/TravelersModal/ui/types'
 
 export type PaymentModalProps = {
   closeModal: () => void
@@ -15,6 +21,8 @@ export type PaymentModalProps = {
   isLoadingBooking?: boolean
   isBooked?: boolean
   prepaymentInfo?: PrepaymentInfo | null
+  isLateCheckout?: boolean
+  travelers?: Travelers
 }
 
 export type PaymentFormViewProps = {
@@ -27,8 +35,20 @@ export type PaymentFormViewProps = {
 }
 
 export type PaymentMethodViewProps = {
-  onSubmit: (method: PaymentMethod) => Promise<void>
+  onSubmit: (method: PaymentMethod) => void
   isLoadingBooking?: boolean
+}
+
+export type PreviewDetailsViewProps = {
+  onPay: () => void
+  onUsePromocode: () => void
+  isLoadingBooking?: boolean
+  packageDetails: PackageEntity
+  isLateCheckout?: boolean
+  travelers: Travelers
+  paymentAmount: number
+  isFullPricePayment: boolean
+  prepaymentInfo?: PrepaymentInfo | null
 }
 
 export type LayoutProps = {
@@ -44,6 +64,7 @@ export type PaymentModalView =
   | 'paymentError'
   | 'paymentMethod'
   | 'ameriaPay'
+  | 'previewDetails'
 
 export enum PaymentMethod {
   bankCard = 'bankCard',
@@ -76,5 +97,21 @@ export const VIEW_CONTENT_MAP: {
   },
   ameriaPay: {
     title: 'MyAmeria'
+  },
+  previewDetails: {
+    title: 'dataCheck'
   }
 }
+
+export type SectionLayoutProps = {
+  children?: ReactNode
+  title?: ReactNode
+  subtitle?: ReactNode
+  listItems?: ListItem[]
+} & BoxProps
+
+export type SectionListProps = {
+  listItems: ListItem[]
+} & ListProps
+
+type ListItem = { key: ReactNode; value: ReactNode }

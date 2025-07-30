@@ -13,6 +13,7 @@ import { PaymentErrorView } from '@widgets/BookingFlow/ui/PaymentModal/PaymentEr
 import { PaymentMethodView } from '@widgets/BookingFlow/ui/PaymentModal/PaymentMethodView.tsx'
 import { AmeriaPayView } from '@widgets/BookingFlow/ui/PaymentModal/AmeriaPayView.tsx'
 import { type PaymentSystem } from '@entities/package'
+import { PreviewDetailsView } from '@widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView.tsx'
 
 export const PaymentModal = ({
   closeModal,
@@ -23,12 +24,29 @@ export const PaymentModal = ({
   isLoadingBooking,
   view,
   isBooked,
-  prepaymentInfo
+  prepaymentInfo,
+  isLateCheckout,
+  travelers
 }: PaymentModalProps) => {
   const { t } = useTranslation()
+  const normalizedPrepaymentInfo = useMemo(
+    () => {
+      const isHotelPackage = !(
+        packageDetails?.destinationFlight.id && packageDetails?.returnFlight.id
+      )
+
+      if (isHotelPackage) {
+        return prepaymentInfo
+      }
+
+      return null
+    },
+    [packageDetails?.destinationFlight.id, packageDetails?.returnFlight.id, prepaymentInfo]
+  )
+
   const isFullPricePayment = useMemo(
-    () => prepaymentInfo?.paymentType === 'FullPricePayment',
-    [prepaymentInfo?.paymentType]
+    () => normalizedPrepaymentInfo?.paymentType === 'FullPricePayment',
+    [normalizedPrepaymentInfo?.paymentType]
   )
   const [activeView, setActiveView] = useState<PaymentModalView>(
     view || 'paymentForm'
@@ -36,12 +54,14 @@ export const PaymentModal = ({
   const [ameriaPayUrl, setAmeriaPayUrl] = useState<string>('')
   const [paymentAmount, setPaymentAmount] = useState<number>(0)
   const [paymentOption, setPaymentOption] = useState<PaymentOption>('pay')
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<PaymentMethod | null>(null)
 
   const ViewComponent = useMemo(() => {
     const ViewComponentMap = {
       paymentMethod: () => (
         <PaymentMethodView
-          onSubmit={handlePay}
+          onSubmit={handlePaymentMethodSelect}
           isLoadingBooking={isLoadingBooking}
         />
       ),
@@ -53,10 +73,25 @@ export const PaymentModal = ({
           isLoadingBooking={isLoadingBooking}
           initialPaymentOption={paymentOption}
           isBooked={isBooked}
-          prepaymentInfo={prepaymentInfo}
+          prepaymentInfo={normalizedPrepaymentInfo}
         />
       ),
-      paymentError: () => <PaymentErrorView />
+      paymentError: () => <PaymentErrorView />,
+      previewDetails: () => (
+        <PreviewDetailsView
+          onPay={handlePay}
+          onUsePromocode={() => {
+            // TODO: implement promocode logic
+          }}
+          isLoadingBooking={isLoadingBooking}
+          packageDetails={packageDetails}
+          isLateCheckout={isLateCheckout}
+          travelers={travelers || {adults: [], children: []}}
+          paymentAmount={isFullPricePayment ? packageDetails.price : paymentAmount}
+          isFullPricePayment={isFullPricePayment}
+          prepaymentInfo={prepaymentInfo}
+        />
+      )
     }
 
     return ViewComponentMap[activeView]
@@ -67,7 +102,7 @@ export const PaymentModal = ({
     isLoadingBooking,
     isBooked,
     paymentOption,
-    prepaymentInfo
+    normalizedPrepaymentInfo
   ])
 
   useEffect(() => {
@@ -78,11 +113,11 @@ export const PaymentModal = ({
     }
   }, [view, isFullPricePayment])
 
-  const handlePay = async (paymentMethod: PaymentMethod) => {
+  const handlePay = async () => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount
 
     try {
-      if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {
+      if (selectedPaymentMethod === PaymentMethod.ameriaPay && onSuccess) {
         const url = await onSuccess(
           amount,
           'MyAmeriaPay' as PaymentSystem.MyAmeriaPay
@@ -92,12 +127,17 @@ export const PaymentModal = ({
           setAmeriaPayUrl(url)
           setActiveView('ameriaPay')
         }
-      } else if (paymentMethod === PaymentMethod.bankCard) {
+      } else if (selectedPaymentMethod === PaymentMethod.bankCard) {
         await onSuccess(amount, 'VPos' as PaymentSystem.VPos)
       }
     } catch (error) {
       setActiveView('paymentError')
     }
+  }
+
+  const handlePaymentMethodSelect = (paymentMethod: PaymentMethod) => {
+    setSelectedPaymentMethod(paymentMethod)
+    setActiveView('previewDetails')
   }
 
   const handleContinue = (amount: number, paymentOption: PaymentOption) => {
@@ -108,13 +148,15 @@ export const PaymentModal = ({
       setActiveView('paymentMethod')
     } else if (paymentOption === 'noPrepayment') {
       setPaymentAmount(0)
-      handlePay(PaymentMethod.bankCard)
+      handlePaymentMethodSelect(PaymentMethod.bankCard)
     }
   }
 
   const handleBackClick = useMemo(() => {
     if (activeView === 'paymentMethod') {
       return () => setActiveView('paymentForm')
+    } else if (activeView === 'previewDetails') {
+      return () => setActiveView('paymentMethod')
     } else if (activeView === 'paymentForm' && onBackClick) {
       return () => onBackClick()
     }

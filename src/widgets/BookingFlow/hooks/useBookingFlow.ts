@@ -44,7 +44,10 @@ export const useBookingFlow = ({
   const [modalView, setModalView] = useState('')
   const [paymentModalView, setPaymentModalView] =
     useState<PaymentModalView>('paymentForm')
-  const [travelers, setTravelers] = useState<any>({ adults: [], children: [] })
+  const [travelers, setTravelers] = useState<Travelers>({
+    adults: [],
+    children: []
+  })
   const notesJson = useRef<any>('')
 
   useEffect(() => {
@@ -342,13 +345,13 @@ export const useBookingFlow = ({
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency.id || 0,
-      bookingType: initialRequest?.bookingType ? initialRequest.bookingType : 2,
+      bookingType: initialRequest?.bookingType ? initialRequest.bookingType : isHotelPackage ? 2 : 1,
       destinationId: packageDetails?.city.id || 0,
       startDate: packageDetails?.checkin || '',
       fullPrice: packageDetails?.price || 0,
       calculationSource: isDraftRequest ? 'search' : 'myBookings'
     },
-    { enabled: isHotelPackage && !!packageDetails?.checkin && isOpen }
+    { enabled: !!packageDetails?.checkin && isOpen }
   )
 
   return {
