@@ -60,7 +60,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         roomId: String(updatedData.roomId),
         from: moment(updatedData.checkIn).format('YYYY-MM-DD'),
         to: moment(updatedData.checkOut).format('YYYY-MM-DD'),
-        mealId: String(updatedData.mealId)
+        mealId: String(updatedData.mealId),
+        travelAgency: String(defaultTourPackage.travelAgency.id)
       })
 
       return updatedData
@@ -88,9 +89,6 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         hotelId: bookingData.hotelId,
         travelAgency: defaultTourPackage.travelAgency.id
       },
-      {
-        enabled: true
-      }
     )
 
   // rooms
