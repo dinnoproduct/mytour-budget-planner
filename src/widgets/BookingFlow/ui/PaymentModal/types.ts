@@ -7,6 +7,8 @@ import {
 import { type RadioProps } from '@ui'
 import { type BoxProps, type ListProps } from '@chakra-ui/react'
 import { type Travelers } from '@widgets/TravelersModal/ui/types'
+import { type UseMutationResult } from '@tanstack/react-query'
+import { type PromoCodeValidationResponse, type PromoCodeValidationParams } from '@entities/package'
 
 export type PaymentModalProps = {
   closeModal: () => void
@@ -23,6 +25,11 @@ export type PaymentModalProps = {
   prepaymentInfo?: PrepaymentInfo | null
   isLateCheckout?: boolean
   travelers?: Travelers
+  validatePromoCode?: UseMutationResult<
+    PromoCodeValidationResponse,
+    unknown,
+    Omit<PromoCodeValidationParams, 'userId'>
+  >
 }
 
 export type PaymentFormViewProps = {
@@ -49,6 +56,7 @@ export type PreviewDetailsViewProps = {
   paymentAmount: number
   isFullPricePayment: boolean
   prepaymentInfo?: PrepaymentInfo | null
+  validatePromoCode: any
 }
 
 export type LayoutProps = {

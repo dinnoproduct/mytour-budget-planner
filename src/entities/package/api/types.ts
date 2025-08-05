@@ -5,6 +5,7 @@ import { type DictionaryService } from './DictionaryService.ts'
 import { type CityService } from './CityService.ts'
 import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
+import { type PromoCodeService } from './PromoCodeService.ts'
 import { type Currency } from '../index.ts'
 
 export type PackageUseCasesParams = {
@@ -15,6 +16,7 @@ export type PackageUseCasesParams = {
   cityService: CityService
   searchService: SearchService
   prepaymentInfoCalculationService: PrepaymentInfoCalculationService
+  promoCodeService: PromoCodeService
 }
 
 export type GetAvailableFlightsParams = {
@@ -158,6 +160,24 @@ export type PrepaymentCalculationParams = {
   startDate: string
   fullPrice: number
   calculationSource: 'search' | 'myBookings'
+}
+
+export type PromoCodeValidationParams = {
+  promoCode: string
+  userId: number
+  price: number
+  agencyId: number
+  destinationId: number
+  hotelId: number
+}
+
+export type PromoCodeValidationResponse = {
+  success: boolean
+  isValid: boolean
+  discount: number
+  finalAmount: number
+  errorCode: string
+  message: string
 }
 
 export type PrepaymentInfo = {

@@ -26,27 +26,13 @@ export const PaymentModal = ({
   isBooked,
   prepaymentInfo,
   isLateCheckout,
-  travelers
+  travelers,
+  validatePromoCode
 }: PaymentModalProps) => {
   const { t } = useTranslation()
-  const normalizedPrepaymentInfo = useMemo(
-    () => {
-      const isHotelPackage = !(
-        packageDetails?.destinationFlight.id && packageDetails?.returnFlight.id
-      )
-
-      if (isHotelPackage) {
-        return prepaymentInfo
-      }
-
-      return null
-    },
-    [packageDetails?.destinationFlight.id, packageDetails?.returnFlight.id, prepaymentInfo]
-  )
-
   const isFullPricePayment = useMemo(
-    () => normalizedPrepaymentInfo?.paymentType === 'FullPricePayment',
-    [normalizedPrepaymentInfo?.paymentType]
+    () => prepaymentInfo?.paymentType === 'FullPricePayment',
+    [prepaymentInfo?.paymentType]
   )
   const [activeView, setActiveView] = useState<PaymentModalView>(
     view || 'paymentForm'
@@ -73,7 +59,7 @@ export const PaymentModal = ({
           isLoadingBooking={isLoadingBooking}
           initialPaymentOption={paymentOption}
           isBooked={isBooked}
-          prepaymentInfo={normalizedPrepaymentInfo}
+          prepaymentInfo={prepaymentInfo}
         />
       ),
       paymentError: () => <PaymentErrorView />,
@@ -90,6 +76,7 @@ export const PaymentModal = ({
           paymentAmount={isFullPricePayment ? packageDetails.price : paymentAmount}
           isFullPricePayment={isFullPricePayment}
           prepaymentInfo={prepaymentInfo}
+          validatePromoCode={validatePromoCode}
         />
       )
     }
@@ -102,7 +89,7 @@ export const PaymentModal = ({
     isLoadingBooking,
     isBooked,
     paymentOption,
-    normalizedPrepaymentInfo
+    prepaymentInfo
   ])
 
   useEffect(() => {

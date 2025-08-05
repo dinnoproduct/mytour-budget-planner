@@ -186,6 +186,7 @@
   "balance": "Remaining payment",
   "nameSurname": "Name Surname",
   "usePromoCode": "Use promo code",
+  "apply": "Apply",
   "alreadyRegisteredText": "You are already registered with this phone number. Please login.",
   "call": "Call",
   "flightDate": "Date of flight",

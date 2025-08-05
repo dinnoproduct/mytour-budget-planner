@@ -8,7 +8,8 @@ import {
   useUpdateRequest,
   type NormalizedRequestEntity,
   useCalculatePrepayment,
-  RequestStatus
+  RequestStatus,
+  useValidatePromoCode
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
@@ -34,6 +35,7 @@ export const useBookingFlow = ({
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
   const { mutateAsync: reservePackageAsync } = useReservePackage()
+  const validatePromoCode = useValidatePromoCode()
   const isRequestInProgressRef = useRef(false)
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
   const [isLoadingTravelersModal, setIsLoadingTravelersModal] = useState(false)
@@ -366,7 +368,8 @@ export const useBookingFlow = ({
     modalView,
     closeModal,
     handleTravelersChange,
-    prepaymentInfo
+    prepaymentInfo,
+    validatePromoCode
   }
 }
 

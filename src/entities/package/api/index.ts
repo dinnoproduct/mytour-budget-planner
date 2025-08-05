@@ -6,6 +6,7 @@ import { DictionaryService } from './DictionaryService.ts'
 import { CityService } from './CityService.ts'
 import { SearchService } from './SearchService.ts'
 import { PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
+import { PromoCodeService } from './PromoCodeService.ts'
 
 export const packageUseCases = new PackageUseCases({
   packageService: new PackageService(),
@@ -14,7 +15,8 @@ export const packageUseCases = new PackageUseCases({
   dictionaryService: new DictionaryService(),
   cityService: new CityService(),
   searchService: new SearchService(),
-  prepaymentInfoCalculationService: new PrepaymentInfoCalculationService()
+  prepaymentInfoCalculationService: new PrepaymentInfoCalculationService(),
+  promoCodeService: new PromoCodeService()
 })
 
 export type * from './types'

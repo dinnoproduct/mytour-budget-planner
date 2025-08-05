@@ -14,7 +14,8 @@ import {
   type UpdateRequestInput,
   type SearchPackagesParams,
   type SearchParams,
-  type PrepaymentCalculationParams
+  type PrepaymentCalculationParams,
+  type PromoCodeValidationParams
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
@@ -22,6 +23,7 @@ import { type LanguageName } from '@shared/model'
 import { type CityService } from './CityService.ts'
 import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
+import { type PromoCodeService } from './PromoCodeService.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
@@ -31,6 +33,7 @@ export class PackageUseCases {
   private readonly cityService: CityService
   private readonly searchService: SearchService
   private readonly prepaymentInfoCalculationService: PrepaymentInfoCalculationService
+  private readonly promoCodeService: PromoCodeService
 
   constructor({
     packageService,
@@ -39,7 +42,8 @@ export class PackageUseCases {
     dictionaryService,
     cityService,
     searchService,
-    prepaymentInfoCalculationService
+    prepaymentInfoCalculationService,
+    promoCodeService
   }: PackageUseCasesParams) {
     this.packageService = packageService
     this.flightService = flightService
@@ -48,6 +52,7 @@ export class PackageUseCases {
     this.cityService = cityService
     this.searchService = searchService
     this.prepaymentInfoCalculationService = prepaymentInfoCalculationService
+    this.promoCodeService = promoCodeService
   }
 
   // package
@@ -157,5 +162,10 @@ export class PackageUseCases {
   // prepayment
   async calculatePrepayment(params: PrepaymentCalculationParams) {
     return this.prepaymentInfoCalculationService.calculate(params)
+  }
+
+  // promo code
+  async validatePromoCode(params: PromoCodeValidationParams, token: string) {
+    return this.promoCodeService.validate(params, token)
   }
 }

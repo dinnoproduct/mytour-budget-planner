@@ -26,7 +26,8 @@ export const BookingFlow = ({
     handleTravelersChange,
     isLoadingBooking,
     isLoadingTravelersModal,
-    prepaymentInfo
+    prepaymentInfo,
+    validatePromoCode
   } = useBookingFlow({
     initialView,
     packageDetails,
@@ -71,6 +72,7 @@ export const BookingFlow = ({
           prepaymentInfo={prepaymentInfo}
           isLateCheckout={isLateCheckout}
           travelers={travelers}
+          validatePromoCode={validatePromoCode}
         />
       )}
 
