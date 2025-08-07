@@ -4,7 +4,7 @@
   "signОut": "Log out",
   "adult": "adult",
   "night": "night",
-  "officeAddress": "Argishti 1/2",
+  "officeAddress": "Argishti 1/2, Yerevan, AM",
   "aboutUs": "About us",
   "termsAndConditions": "Terms and conditions",
   "myTourApp": "MyTour is also available at MyAmeria app",
@@ -276,5 +276,9 @@
   "filter": "Filter",
   "filtering": "Filter",
   "clear": "Clear",
-  "c": "Latest Articles"
+  "c": "Latest Articles",
+  "contact": "Contact",
+  "followUs": "Follow us",
+  "support": "Support",
+  "privacyPolicy": "Privacy policy"
 }

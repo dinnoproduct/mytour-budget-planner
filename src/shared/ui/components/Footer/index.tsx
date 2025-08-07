@@ -4,19 +4,21 @@ import {
   HStack,
   ListItem,
   UnorderedList,
-  Link
+  Link, Image
 } from '@chakra-ui/react'
 import { type ReactNode } from 'react'
 import { SOCIALS } from './data'
-import { Icon, Text } from '@ui'
+import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 
 export const Footer = () => (
   <Layout>
-    <Flex direction={{ base: 'column', md: 'row' }}>
+    <Flex direction={{ base: 'column', md: 'row' }} width='full' justify={{ lg: 'space-between' }} gap='6'>
       <Contact />
+      <FollowUs />
+      <Support />
+      <AppSection />
     </Flex>
-    <CopyRight />
   </Layout>
 )
 
@@ -24,15 +26,10 @@ const Contact = () => {
   const { t } = useTranslation()
 
   return (
-    <Flex direction="column" maxWidth="400px" width="full" flexShrink={0}>
-      <HStack spacing="4" mb="4">
-        {SOCIALS.map(social => (
-          <Link key={social.icon} href={social.link} isExternal>
-            <Icon name={social.icon} size="32" color="gray.600" />
-          </Link>
-        ))}
-      </HStack>
-
+    <Flex direction="column" maxWidth="400px" width="full" >
+      <Text size="md" color="gray.700" fontWeight={700} mb={3}>
+        {t`contact`}
+      </Text>
       <UnorderedList listStyleType="none" spacing="2" mx="0">
         <ListItem>
           <Text
@@ -59,18 +56,100 @@ const Contact = () => {
   )
 }
 
-const AboutUs = () => {
+const FollowUs = () => {
   const { t } = useTranslation()
 
   return (
-    <Box mt={{ base: 10, md: 0 }} ml={{ md: '60px' }} flexShrink={0}>
-      <ItemsList items={[t`aboutUs`, t`termsAndConditions`]} />
-    </Box>
+    <Flex direction="column" maxWidth="400px" width="full" >
+      <Text size="md" color="gray.700" fontWeight={700} mb={3}>
+        {t`followUs`}
+      </Text>
+      <UnorderedList listStyleType="none" spacing="2" mx="0">
+        {SOCIALS.map((social) => (
+          <ListItem>
+            <Link key={social.icon} href={social.link} isExternal>
+              <Text
+                size="md"
+                color="gray.600"
+                textTransform="capitalize"
+              >
+                {social.icon}
+              </Text>
+            </Link>
+          </ListItem>
+        ))}
+      </UnorderedList>
+    </Flex>
+  )
+}
+
+const Support = () => {
+  const { t } = useTranslation()
+
+  return (
+    <Flex direction="column" maxWidth="400px" width="full" >
+      <Text size="md" color="gray.700" fontWeight={700} mb={3}>
+        {t`support`}
+      </Text>
+      <UnorderedList listStyleType="none" spacing="2" mx="0">
+        <ListItem>
+          <Text
+            size="md"
+            color="gray.600"
+          >
+            FAQ
+          </Text>
+        </ListItem>
+        <ListItem>
+          <Text size="md" color="gray.600">
+            {t`privacyPolicy`}
+          </Text>
+        </ListItem>
+        <ListItem>
+          <Text size="md" color="gray.600">
+            {t`termsAndConditions`}
+          </Text>
+        </ListItem>
+      </UnorderedList>
+    </Flex>
+  )
+}
+const AppSection = () => {
+  const { t } = useTranslation()
+
+  return (
+    <Flex
+      width={{ base: 'full', sm: '578px' }}
+      mt={{ base: '5', md: '0' }}
+      direction="column"
+      height="full"
+      justify={{ md: 'center' }}
+    >
+      <Text size="md" color="gray.700" fontWeight={700} mb={3}>{t`myTourApp`}</Text>
+
+      <HStack spacing="4" mt="5">
+        <Link
+          isExternal
+          href="https://apps.apple.com/am/app/my-ameria/id1546373103"
+        >
+          <Image src="/assets/images/app-store.svg" alt="App Store" />
+        </Link>
+
+        <Link
+          isExternal
+          href="https://play.google.com/store/apps/details?id=com.banqr.ameriabank&hl=en"
+        >
+          <Image src="/assets/images/google-play.svg" alt="Google Play" />
+        </Link>
+      </HStack>
+
+      <CopyRight />
+    </Flex>
   )
 }
 
 const CopyRight = () => (
-  <Box mt={{ base: 10, md: 0 }}>
+  <Box mt='5'>
     <ItemsList items={[`© ${new Date().getFullYear()} MyTour`]} />
   </Box>
 )
@@ -90,10 +169,9 @@ const ItemsList = ({ items }: { items: string[] }) => (
 const Layout = ({ children }: { children: ReactNode | ReactNode[] }) => (
   <Box as="footer" bgColor="white" borderTop="1px solid" borderColor="gray.100">
     <Flex
-      px={{ base: 4, md: 6 }}
+      px={{ base: 4, md: 10 }}
       py="10"
       direction={{ base: 'column', lg: 'row' }}
-      justify={{ lg: 'space-between' }}
       width="full"
     >
       {children}
