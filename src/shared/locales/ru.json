@@ -4,7 +4,7 @@
   "signОut": "Выйти",
   "adult": "взрослый",
   "night": "ночь",
-  "officeAddress": "Аргишти 1/2",
+  "officeAddress": "Аргишти 1/2, Ереван, АМ",
   "aboutUs": "О нас",
   "termsAndConditions": "Условия и положения",
   "myTourApp": "MyTour также доступен в приложении MyAmeria",
@@ -261,7 +261,6 @@
   "nightsQuantity.few": "{{night}} ночи",
   "nightsQuantity.many": "{{night}} ночей",
   "nightsQuantity.other": "{{night}} ночей",
-
   "daysQuantity.one": "{{day}} день",
   "daysQuantity.few": "{{day}} дня",
   "daysQuantity.many": "{{day}} дней",
@@ -277,6 +276,9 @@
   "filter": "Фильтр",
   "filtering": "Фильтровать",
   "clear": "Удалить",
-
-  "blogsSectionTitle": "Последние статьи"
+  "blogsSectionTitle": "Последние статьи",
+  "contact": "Связь",
+  "followUs": "Подписывайтесь",
+  "support": "Поддержка",
+  "privacyPolicy": "Конфиденциальность"
 }

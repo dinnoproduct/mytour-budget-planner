@@ -120,7 +120,7 @@
   "backToPackages": "Վերադառնալ փաթեթներին",
   "withContinueYouAccept": "Շարունակելով ամրագրումը՝ դուք ընդունում եք",
   "bookingGrade": "Ըստ Booking.com-ի",
-  "officeAddress": "Արգիշտի 1/2",
+  "officeAddress": "Արգիշտի 1/2, Երևան, ՀՀ",
   "aboutUs": "Մեր մասին",
   "termsAndConditions": "Դրույթներ և պայմաններ",
   "myTourApp": "MyTour ը հասանելի է նաև MyAmeria հավելվածում",
@@ -341,6 +341,9 @@
   "filter": "Ֆիլտր",
   "filtering": "Ֆիլտրել",
   "clear": "Ջնջել",
-
-  "blogsSectionTitle": "Վերջին հոդվածները"
+  "blogsSectionTitle": "Վերջին հոդվածները",
+  "contact": "Կապ",
+  "followUs": "Հետևի՛ր մեզ",
+  "support": "Օգնություն",
+  "privacyPolicy": "Գաղտնիություն"
 }
