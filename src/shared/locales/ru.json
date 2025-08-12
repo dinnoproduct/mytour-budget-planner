@@ -4,7 +4,7 @@
   "signОut": "Выйти",
   "adult": "взрослый",
   "night": "ночь",
-  "officeAddress": "Аргишти 1/2",
+  "officeAddress": "Аргишти 1/2, Ереван, АМ",
   "aboutUs": "О нас",
   "termsAndConditions": "Условия и положения",
   "myTourApp": "MyTour также доступен в приложении MyAmeria",
@@ -219,10 +219,10 @@
   "notAvailable": "Недоступный",
   "cancel": "Отменить",
   "bookingCanceledSnackbar": "Ваше бронирование было отменено.",
-  "packageBanner.title": "Забронируй свой пакет с предоплатой 0 драм",
-  "packageBanner.subtitle1": "Для всех пакетов, до вылета которых осталось не менее 40 дней",
+  "packageBanner.title": "На 40% дешевле",
+  "packageBanner.subtitle1": "Дронируйте отель — экономьте до 40% по сравнению с Booking.com",
   "packageBanner.subtitle2": "Количество мест ограничено!",
-  "packageBanner.buttonLabel": "Забронируй свой пакет сейчас",
+  "packageBanner.buttonLabel": "Забронировать отель",
   "paymentSuccessModalText": "Спасибо. Ваш пакет успешно забронирован.",
   "personalInformation": "Персональная информация",
   "save": "Сохранять",
@@ -261,7 +261,6 @@
   "nightsQuantity.few": "{{night}} ночи",
   "nightsQuantity.many": "{{night}} ночей",
   "nightsQuantity.other": "{{night}} ночей",
-
   "daysQuantity.one": "{{day}} день",
   "daysQuantity.few": "{{day}} дня",
   "daysQuantity.many": "{{day}} дней",
@@ -277,6 +276,10 @@
   "filter": "Фильтр",
   "filtering": "Фильтровать",
   "clear": "Удалить",
-
-  "blogsSectionTitle": "Последние статьи"
+  "blogsSectionTitle": "Последние статьи",
+  "contact": "Связь",
+  "followUs": "Подписывайтесь",
+  "support": "Поддержка",
+  "privacyPolicy": "Конфиденциальность",
+  "planTrip": "Начните планировать свою поездку здесь"
 }

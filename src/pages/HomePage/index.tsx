@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/react'
 import { Footer } from '@ui'
 import { PackageSearch } from '@widgets/PackageSearch'
 import { HotOffersSection } from '@widgets/HotOffersSection'
-import { useEffect } from 'react'
+import {useEffect, useState} from 'react'
 import { useModalContext } from '@app/providers'
 import { useLocation } from 'react-router-dom'
 import { PackageBanner } from './PackageBanner'
@@ -14,6 +14,7 @@ import { BlogsSection } from '@widgets/BlogsSection'
 export const HomePage = () => {
   const { dispatchModal } = useModalContext()
   const location = useLocation()
+  const [isHotel, setHotel] = useState(0)
 
   useEffect(() => {
     const scriptId = 'EmbedSocialHashtagScript'
@@ -48,15 +49,16 @@ export const HomePage = () => {
     }
   }, [JSON.stringify(location.search), dispatchModal])
 
+
   return (
     <Box overflowX="hidden">
       <Header />
-      <PackageSearch variant="centered" />
-      <PackageBanner mt={{ base: '60px', md: 20 }} />
+      <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
+      <PackageBanner mt={{ base: 4, md: 20 }} />
       <HotOffersSection mt={{ base: '62px', md: '84px' }} />
-      <BlogsSection />
-      <AppSection />
-      <AboutUsBanner />
+      {/*<BlogsSection />*/}
+      {/*<AppSection />*/}
+      {/*<AboutUsBanner />*/}
 
       {/*<div*/}
       {/*  className="embedsocial-hashtag"*/}

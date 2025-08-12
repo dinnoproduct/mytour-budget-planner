@@ -120,7 +120,7 @@
   "backToPackages": "Վերադառնալ փաթեթներին",
   "withContinueYouAccept": "Շարունակելով ամրագրումը՝ դուք ընդունում եք",
   "bookingGrade": "Ըստ Booking.com-ի",
-  "officeAddress": "Արգիշտի 1/2",
+  "officeAddress": "Արգիշտի 1/2, Երևան, ՀՀ",
   "aboutUs": "Մեր մասին",
   "termsAndConditions": "Դրույթներ և պայմաններ",
   "myTourApp": "MyTour ը հասանելի է նաև MyAmeria հավելվածում",
@@ -284,10 +284,10 @@
   "reserved": "Ամրագրված",
   "cancel": "Չեղարկել",
   "bookingCanceledSnackbar": "Ամրագրումը չեղարկված է",
-  "packageBanner.title": "Ամրագրիր փաթեթդ 0 դրամ կանխավճարով",
-  "packageBanner.subtitle1": "Բոլոր այն փաթեթների համար, որոնց թռիչքին մնացել է առնվազն 40 օր",
+  "packageBanner.title": "40% ավելի մատչելի",
+  "packageBanner.subtitle1": "Ամրագրեք հյուրանոց — խնայեք մինչև 40%՝ համեմատած Booking.com-ի հետ",
   "packageBanner.subtitle2": "Տեղերը սահմանափակ են:",
-  "packageBanner.buttonLabel": "Ամրագրիր փաթեթդ հիմա ",
+  "packageBanner.buttonLabel": "Ամրագրել հյուրանոց",
   "paymentSuccessModalText": "Շնորհակալություն։ Ձեր փաթեթը հաջողությամբ ամրագրվել է:",
   "personalInformation": "Անձնական տվյալներ",
   "save": "Պահպանել",
@@ -341,6 +341,10 @@
   "filter": "Ֆիլտր",
   "filtering": "Ֆիլտրել",
   "clear": "Ջնջել",
-
-  "blogsSectionTitle": "Վերջին հոդվածները"
+  "blogsSectionTitle": "Վերջին հոդվածները",
+  "contact": "Կապ",
+  "followUs": "Հետևի՛ր մեզ",
+  "support": "Օգնություն",
+  "privacyPolicy": "Գաղտնիություն",
+  "planTrip": "Սկսեք պլանավորել ձեր ուղևորությունը այստեղ"
 }
