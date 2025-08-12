@@ -43,9 +43,9 @@ export const Layout = ({
           {...packageSearchVariants[variant].content}
           {...contentProps}
         >
-          <Text fontSize={{base: '24px', sm: '30px'}} py={{base: '6', sm: '10'}} color='white' textAlign='center' fontWeight='bold'>
+          {showTabs ? <Text fontSize={{base: '24px', sm: '30px'}} py={{base: '6', sm: '10'}} color='white' textAlign='center' fontWeight='bold'>
             {t`planTrip`}
-          </Text>
+          </Text> : null}
           <Tabs
             labels={[
               <HotelTabItem key="hotel-tab"/>,

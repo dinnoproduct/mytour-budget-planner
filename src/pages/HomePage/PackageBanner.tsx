@@ -18,10 +18,8 @@ export const PackageBanner = (props: LinkBoxProps) => {
   return (
     <LinkBox
       height={{
-        base: '440px', // height at base size
-        // xs: '230px',
-        sm: '296px',
-        lg: '330px'
+        base: '440px',
+        sm: '330px'
       }}
       rounded="40px"
       mx={{ base: 4, md: 6 }}
@@ -34,10 +32,14 @@ export const PackageBanner = (props: LinkBoxProps) => {
     >
         <Box
             height={{
-                base: '850px',
+                base: '250px',
+                sm: '400px'
             }}
-            width='610px'
-            top={{ base: '-80px', md: '-225px' }}
+            width={{
+                base: '400px',
+                sm: '610px'
+            }}
+            top={{ base: '200px', sm: '-8px' }}
             right={0}
             zIndex={1}
             position='absolute'
