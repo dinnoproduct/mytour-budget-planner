@@ -10,12 +10,14 @@ import {
   useHotelPackagesSearchContext,
   usePackagesSearchContext
 } from '@entities/package'
+import {Box} from "@chakra-ui/react";
 
 export const PackageSearch = ({
   containerProps,
   contentProps,
   variant = 'centered',
-  showTabs = true
+  showTabs = true,
+  setHotel = () => {}
 }: PackageSearchProps) => {
   const { isMd } = useBreakpoint()
 
@@ -26,17 +28,22 @@ export const PackageSearch = ({
         contentProps={contentProps}
         variant={variant}
         showTabs={showTabs}
+        setHotel={setHotel}
       />
     )
   }
 
   return (
-    <FormSearchView
-      containerProps={containerProps}
-      contentProps={contentProps}
-      variant={variant}
-      showTabs={showTabs}
-    />
+    <Box position='relative'>
+      <FormSearchView
+        containerProps={containerProps}
+        contentProps={contentProps}
+        variant={variant}
+        showTabs={showTabs}
+        setHotel={setHotel}
+      />
+      <Box position='absolute' mt='-40px' height='40px' bgColor='white' width='full' zIndex='1' borderRadius='40px 40px 0 0 '></Box>
+    </Box>
   )
 }
 
@@ -44,7 +51,8 @@ const FormSearchView = ({
   containerProps,
   contentProps,
   variant = 'centered',
-  showTabs = true
+  showTabs = true,
+  setHotel = () => {}
 }: any) => {
   const {
     isAllowedSearchRoute: isHotelSearchView,
@@ -56,6 +64,7 @@ const FormSearchView = ({
   } = usePackagesSearchContext()
 
   const handleTabChange = (index: number) => {
+    setHotel(index)
     if (index === 1 && isHotelSearchView) {
       navigateToDefaultHotelSearch()
     } else if (index === 0 && isPackageSearchView) {
@@ -72,8 +81,8 @@ const FormSearchView = ({
       onTabChange={handleTabChange}
       showTabs={showTabs}
     >
-      <PackageSearchForm />
       <HotelSearchForm />
+      <PackageSearchForm />
     </Layout>
   )
 }
@@ -82,7 +91,8 @@ const FixedSearchView = ({
   containerProps,
   contentProps,
   variant = 'centered',
-  showTabs = true
+  showTabs = true,
+  setHotel = () => {}
 }: any) => {
   const [activeTab, setActiveTab] = useState(0)
   const [isFormOpen, setFormOpen] = useState(false)
@@ -94,10 +104,12 @@ const FixedSearchView = ({
   useEffect(() => {
     const activeTabIndex = isHotelSearchView ? 1 : 0
     setActiveTab(activeTabIndex)
+    setHotel(activeTabIndex)
   }, [isHotelSearchView, isPackageSearchView])
 
   const handleTabChange = (index: number) => {
     setActiveTab(index)
+    setHotel(index)
   }
 
   return (

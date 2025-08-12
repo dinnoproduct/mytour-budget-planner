@@ -1,16 +1,13 @@
 import { Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { Icon, NewBadge, Text } from '@ui'
-import { type ReactNode } from 'react'
+import { Icon, Text } from '@ui'
 
 const TabItem = ({
   iconName,
-  label,
-  badge
+  label
 }: {
   iconName: string
   label: string
-  badge?: ReactNode
 }) => {
   const { t } = useTranslation()
 
@@ -22,7 +19,6 @@ const TabItem = ({
         {t(label)}
       </Text>
 
-      {badge}
     </Flex>
   )
 }
@@ -31,7 +27,6 @@ export const HotelTabItem = () => (
   <TabItem
     iconName="hotels"
     label="hotel"
-    badge={<NewBadge ml="2" mb="-1" />}
   />
 )
 export const PackageTabItem = () => (

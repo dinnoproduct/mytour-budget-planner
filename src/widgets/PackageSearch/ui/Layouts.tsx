@@ -1,12 +1,13 @@
 import { Box, Flex, Stack, type StackProps } from '@chakra-ui/react'
 import type { LayoutProps } from '@widgets/PackageSearch/ui/types.ts'
 import { packageSearchVariants } from '@widgets/PackageSearch/ui/theme.ts'
-import { Tabs } from '@ui'
+import {Tabs, Text} from '@ui'
 import React from 'react'
 import {
   HotelTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
+import {useTranslation} from "react-i18next";
 
 export const Layout = ({
   children,
@@ -16,7 +17,10 @@ export const Layout = ({
   defaultTabIndex,
   onTabChange,
   showTabs = true
-}: LayoutProps) => (
+}: LayoutProps) => {
+
+  const { t } = useTranslation()
+  return (
   <Box
     position="relative"
     width="full"
@@ -35,13 +39,17 @@ export const Layout = ({
       <Flex height="full" {...packageSearchVariants[variant].contentWrapper}>
         <Box
           rounded="xl"
+          w={{base: 'full', md: 'auto'}}
           {...packageSearchVariants[variant].content}
           {...contentProps}
         >
+          <Text fontSize={{base: '24px', sm: '30px'}} py={{base: '6', sm: '10'}} color='white' textAlign='center' fontWeight='bold'>
+            {t`planTrip`}
+          </Text>
           <Tabs
             labels={[
-              <PackageTabItem key="package-tab" />,
-              <HotelTabItem key="hotel-tab" />
+              <HotelTabItem key="hotel-tab"/>,
+              <PackageTabItem key="package-tab"/>
             ]}
             variant="line"
             align="center"
@@ -55,7 +63,7 @@ export const Layout = ({
       </Flex>
     </Box>
   </Box>
-)
+)}
 
 export const LayoutFixed = ({
   children,
@@ -86,6 +94,7 @@ export const LayoutFixed = ({
 
 export const Layouts = (props: StackProps) => (
   <Stack
+    {...props}
     direction={{ base: 'column', md: 'row' }}
     spacing={{ base: 4, md: 2 }}
     px={{ base: 4, md: '6' }}
@@ -93,6 +102,5 @@ export const Layouts = (props: StackProps) => (
     width="full"
     align="center"
     justify="center"
-    {...props}
   />
 )
