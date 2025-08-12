@@ -3,21 +3,34 @@ import { type PackageSearchVariant } from './types.ts'
 export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   centered: {
     container: {
-      bgImage: '/assets/images/search-hero-image.jpg',
-      height: { base: '432px', md: '240px' },
-      px: { base: 4, md: '6' }
+      background: 'linear-gradient(177.92deg, #8408FF 1.7%, #93C5FF 98.21%)',
+      pt: { base: 4, md: '7' },
+      pb: { base: '60px', md: '7' }
     },
     contentWrapper: {
-      maxWidth: { base: '362px', md: '1140px' },
+      maxWidth: { base: 'full', md: '1140px' },
       width: 'full',
       mx: 'auto',
       align: 'center'
     },
     content: {
+      pt: { base: 4, md: '4' },
+      pb: { base: 4, md: '10' }
+    }
+  },
+  centeredPackage: {
+    container: {
+      background: 'linear-gradient(178deg, #017BFE 1.7%, #00CFFF 98.21%)',
+      pt: { base: 4, md: '7' },
+      pb: { base: '60px', md: '7' }
+    },
+    contentWrapper: {
+      maxWidth: { base: 'full', md: '1140px' },
       width: 'full',
-      background: 'white',
-      border: '2px solid',
-      borderColor: 'gray.200',
+      mx: 'auto',
+      align: 'center'
+    },
+    content: {
       pt: { base: 4, md: '4' },
       pb: { base: 4, md: '10' }
     }

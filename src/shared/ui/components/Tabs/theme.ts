@@ -5,8 +5,7 @@ export const tabsComponentTheme = {
         tab: {
           fontWeight: 'medium',
           rounded: 'full',
-          bgColor: 'blue.50',
-          color: 'blue.500',
+          color: 'white',
           px: 4,
           mr: 3,
           _selected: {
@@ -34,7 +33,7 @@ export const tabsComponentTheme = {
         tab: {
           fontWeight: '500',
           rounded: 'full',
-          color: 'gray.600',
+          color: 'white',
           px: 4,
 
           _selected: {
@@ -47,14 +46,11 @@ export const tabsComponentTheme = {
           }
         },
         tablist: {
-          gap: '3',
           p: 1,
           mt: { md: 1 },
           mb: 1,
           mx: 'auto',
           width: 'fit-content',
-          backgroundColor: 'gray.100',
-          borderRadius: '100px',
         },
         tabpanels: {
           height: { base: 'calc(100% - 36px)', md: 'auto' }
@@ -68,32 +64,40 @@ export const tabsComponentTheme = {
       line: {
         tab: {
           fontWeight: 'medium',
-          // rounded: 'full',
-          // bgColor: 'blue.50',
-          color: 'gray.700',
-          px: 4,
-          py: 2,
-          mr: 3,
+          border: 'none',
+          bgColor: 'whiteAlpha.500',
+          borderRadius: '200px',
+          width: {base : 'full', md: 'fit-content'},
+          px: 6,
+          py: 4,
           _selected: {
-            // bgColor: 'blue.500',
-            color: 'blue.500 !important',
+            bgColor: 'white',
+            color: 'gray.700 !important',
+            borderRadius: '200px',
             svg: {
-              color: 'blue.500'
+              color: 'gray.700'
             },
             '.tab-label': {
-              color: 'blue.500'
+              color: 'gray.700'
             },
             '>': {
-              color: 'blue.500'
+              color: 'gray.700'
             }
           },
           _active: {
             bgColor: 'transparent'
-          }
+          },
+          p: {
+            color: 'white'
+          },
+          svg: {
+            color: 'white'
+          },
         },
         tablist: {
-          borderBottom: '1px solid',
-          borderColor: 'gray.100'
+          mx: 4,
+          gap: '4',
+          borderBottom: 'none'
         },
         tabpanel: {
           p: 0,
