@@ -89,15 +89,6 @@ export const RequestCard = ({
     [status, request.status]
   )
 
-  const showCancelButton = useMemo(
-    () =>
-      ['upcoming'].includes(status) &&
-      ![RequestStatus.InProcess, RequestStatus.Rejected].includes(
-        request.status
-      ),
-    [status, request.status]
-  )
-
   const showNextPaymentFields = useMemo(
     () =>
       (status === RequestsGroupStatus.Upcoming &&
@@ -207,9 +198,7 @@ export const RequestCard = ({
         </Box>
       </Box>
 
-      {(showCancelButton ||
-        showContinueButton ||
-        showCancelButton ||
+      {(showContinueButton ||
         showNotPaidButton) && (
         <VStack px="4" pb="4" align="stretch" spacing="2">
           {showRemainingPaymentButton ? (
@@ -243,17 +232,6 @@ export const RequestCard = ({
               {t`pay`}
             </Button>
           ) : null}
-
-          {showCancelButton && (
-            <Button
-              variant="solid-gray"
-              onClick={() => onCancelClick && onCancelClick(request.id)}
-              width="full"
-              isLoading={cancellingRequestId === request.id}
-            >
-              {t`cancel`}
-            </Button>
-          )}
         </VStack>
       )}
     </Layout>
