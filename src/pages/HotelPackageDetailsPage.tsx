@@ -194,10 +194,10 @@ const PackageDetailsLayout = ({ children, ...props }: LayoutProps) => (
     maxWidth="1188px"
     width="full"
     mx="auto"
-    px={{ md: 6 }}
-    {...props}
+    {...props} 
+    px={{ base: 4, sm: 6 }}
     pt={{ base: 4, md: 6, lg: 10 }}
-    pb={{ base: 4, md: 20, lg: 14 }}
+    pb={{ base: 10, md: 20, lg: 16 }}
   >
     {children}
   </Box>

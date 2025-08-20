@@ -1,13 +1,13 @@
 import { type PackageDetailsProps } from './types.ts'
-import { Divider, Flex, Grid } from '@chakra-ui/react'
+import { Flex, Grid } from '@chakra-ui/react'
 import { SectionLayout } from '@widgets/PackageDetails/ui/SectionLayout.tsx'
 import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
 import { formatDate } from '@widgets/PackageDetails/utils'
 import { useTranslation } from 'react-i18next'
 import { PackageDescription } from '@widgets/PackageDetails/ui/PackageDescription.tsx'
-import { CompanyPolicy } from '@widgets/PackageDetails/ui/CompanyPolicy.tsx'
 import { type DictionaryTypes, useDictionary } from '@entities/package'
 import { useMemo } from 'react'
+import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 
 export const PackageDetails = ({
   tourPackage,
@@ -37,86 +37,84 @@ export const PackageDetails = ({
   )
 
   return (
-    <Flex direction="column" mt={{ base: 5, md: 0 }}>
-      <SectionLayout title={t`included`}>
-        <Grid
-          templateColumns="repeat(2, minmax(0, 206px))"
-          templateRows="repeat(2, 1fr)"
-          columnGap="26px"
-          rowGap="4"
-        >
-          {tourPackage.hotel.id ? (
-            <SummaryCard iconName="bed" children={t`hotel`} />
-          ) : null}
-          {tourPackage.destinationFlight.id && tourPackage.returnFlight.id ? (
-            <SummaryCard
-              iconName="airplanemode-active"
-              children={t`airTicket`}
-            />
-          ) : null}
-          {tourPackage.foodType ? (
-            <SummaryCard iconName="restaurant" children={foodType} />
-          ) : null}
-          {tourPackage.transferType ? (
-            <SummaryCard
-              iconName="directions-car"
-              children={t`transportation`}
-            />
-          ) : null}
-        </Grid>
-      </SectionLayout>
+    <Flex direction="column" mt={{ base: 5, md: 0 }} gap="6">
+      <CardSectionLayout>
+        <SectionLayout title={t`included`}>
+          <Grid
+            templateColumns="repeat(2, minmax(0, 206px))"
+            templateRows="repeat(2, 1fr)"
+            columnGap="26px"
+            rowGap="4"
+          >
+            {tourPackage.hotel.id ? (
+              <SummaryCard iconName="bed" children={t`hotel`} />
+            ) : null}
+            {tourPackage.destinationFlight.id && tourPackage.returnFlight.id ? (
+              <SummaryCard
+                iconName="airplanemode-active"
+                children={t`airTicket`}
+              />
+            ) : null}
+            {tourPackage.foodType ? (
+              <SummaryCard iconName="restaurant" children={foodType} />
+            ) : null}
+            {tourPackage.transferType ? (
+              <SummaryCard
+                iconName="directions-car"
+                children={t`transportation`}
+              />
+            ) : null}
+          </Grid>
+        </SectionLayout>
+      </CardSectionLayout>
 
-      <Divider my={{ base: 5, md: 10 }} />
+      <CardSectionLayout>
+        <SectionLayout
+          title={t`flightDetails`}
+          listItems={[
+            {
+              key: t`airCompany`,
+              value: tourPackage.destinationFlight.airCompany.name
+            },
+            { key: t`class`, value: ticketClass },
+            {
+              key: t`departure`,
+              value: formatDate(tourPackage.destinationFlight.departureDate)
+            },
+            {
+              key: t`returning`,
+              value: formatDate(tourPackage.returnFlight.departureDate)
+            },
+            { key: t`carryOnBag`, value: '1 x 5' + t`kg` },
+            { key: t`checkedInBag`, value: '1 x 20' + t`kg` }
+          ]}
+        />
+      </CardSectionLayout>
 
-      <SectionLayout
-        title={t`flightDetails`}
-        listItems={[
-          {
-            key: t`airCompany`,
-            value: tourPackage.destinationFlight.airCompany.name
-          },
-          { key: t`class`, value: ticketClass },
-          {
-            key: t`departure`,
-            value: formatDate(tourPackage.destinationFlight.departureDate)
-          },
-          {
-            key: t`returning`,
-            value: formatDate(tourPackage.returnFlight.departureDate)
-          },
-          { key: t`carryOnBag`, value: '1 x 5' + t`kg` },
-          { key: t`checkedInBag`, value: '1 x 20' + t`kg` }
-        ]}
-      />
+      <CardSectionLayout>
+        <SectionLayout
+          title={t`hotelDetails`}
+          listItems={[
+            { key: t`checkIn`, value: formatDate(tourPackage.checkin) },
+            { key: t`checkOut`, value: formatDate(tourPackage.checkout) },
+            {
+              key: t`lateCheckOut`,
+              value: isLateCheckout ? t`included` : t`notIncluded`
+            }
+          ]}
+        />
 
-      <Divider my={{ base: 5, md: 10 }} />
+        <SectionLayout
+          mt="8"
+          subtitle={t`reviewsAccordingToBooking`}
+          listItems={[
+            { key: t`guestsReviews`, value: tourPackage.hotel?.travellersRating },
+            { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness }
+          ]}
+        />
 
-      <SectionLayout
-        title={t`hotelDetails`}
-        listItems={[
-          { key: t`checkIn`, value: formatDate(tourPackage.checkin) },
-          { key: t`checkOut`, value: formatDate(tourPackage.checkout) },
-          {
-            key: t`lateCheckOut`,
-            value: isLateCheckout ? t`included` : t`notIncluded`
-          }
-        ]}
-      />
-
-      <SectionLayout
-        mt="8"
-        subtitle={t`reviewsAccordingToBooking`}
-        listItems={[
-          { key: t`guestsReviews`, value: tourPackage.hotel?.travellersRating },
-          { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness }
-        ]}
-      />
-
-      <PackageDescription tourPackage={tourPackage} />
-
-      <Divider my={{ base: 5, md: 10 }} />
-
-      <CompanyPolicy tourPackage={tourPackage} />
+        <PackageDescription tourPackage={tourPackage} />
+      </CardSectionLayout>
     </Flex>
   )
 }

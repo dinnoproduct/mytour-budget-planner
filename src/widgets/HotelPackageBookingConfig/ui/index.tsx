@@ -1,18 +1,14 @@
 import { type LayoutProps, type PackageBookingConfigProps } from './types.ts'
-import { Box, type BoxProps, Flex, Grid, VStack } from '@chakra-ui/react'
+import { Box, Flex, Grid } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { AlertCardMessage, Button, Icon, Text } from '@ui'
-import { FlightsConfigButton } from '@widgets/PackageBookingConfig/ui/FlightsConfigButton.tsx'
-import { SearchTravelers } from '@features/SearchTravelers'
-import { TravelersConfigButton } from '@widgets/PackageBookingConfig/ui/TravelersConfigButton.tsx'
-import { RoomsMenuHotel } from '@features/RoomsMenuHotel'
+import { Button, Icon, Text } from '@ui'
 import { useBookingConfig, useFreeCancellation } from '../hooks'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import { useBreakpoint } from '@shared/hooks'
 import { useEffect, useState } from 'react'
-import { DatePicker } from '@features/DatePicker'
 import { CURRENCY_MAP } from '@/shared/model'
 import { formatNumber } from '@shared/utils'
+import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 
 export const HotelPackageBookingConfig = ({
   tourPackage,
@@ -27,18 +23,11 @@ export const HotelPackageBookingConfig = ({
   const {
     bookingData,
     selectedOffer,
-    flightsDatePickerProps,
-    searchTravelersProps,
-    roomsMenuProps,
     isNotFound,
     isLoadingTourPackage,
     currentOfferPackage,
     prepaymentInfo
   } = useBookingConfig(tourPackage)
-  const { showFreeCancellation, freeCancellationDate } = useFreeCancellation(
-    bookingData.checkIn,
-    bookingData.checkOut
-  )
 
   const [isFixed, setIsFixed] = useState(false)
 
@@ -75,66 +64,7 @@ export const HotelPackageBookingConfig = ({
 
   return (
     <Layout isFixed={isFixed} {...props}>
-      <VStack
-        align="stretch"
-        py="4"
-        spacing="4"
-        gridArea="config"
-        borderTop="1px solid"
-        borderColor={{ base: 'gray.100', md: 'transparent' }}
-      >
-        <DatePicker
-          CustomButton={FlightsConfigButton}
-          menuProps={{ offset: [-4, -28] }}
-          {...flightsDatePickerProps}
-        />
-
-        <SearchTravelers
-          menuProps={{ offset: [12, -28] }}
-          {...searchTravelersProps}
-          CustomButton={TravelersConfigButton}
-        />
-
-        <RoomsMenuHotel {...roomsMenuProps} priceType="room" />
-
-        {isNotFound ? (
-          <Box px="4">
-            <AlertCardMessage
-              status="error"
-              message={t`noRoomsFoundWithParams`}
-            />
-          </Box>
-        ) : null}
-      </VStack>
-
-      {/*{showFreeCancellation ? (*/}
-      {/*  <SectionLayout*/}
-      {/*    gridArea="availability"*/}
-      {/*    borderColor={{ base: 'transparent', md: 'gray.100' }}*/}
-      {/*  >*/}
-      {/*<HStack px="4" spacing="2">*/}
-      {/*	<Icon name="status-info" size="20"/>*/}
-      {/*	<Text size="sm">*/}
-      {/*		{t('availableSeats', { count: availableSeats as any })}*/}
-      {/*	</Text>*/}
-      {/*</HStack>*/}
-
-      {/*{showFreeCancellation ? (*/}
-      {/*  <HStack*/}
-      {/*    px="4"*/}
-      {/*    spacing="2"*/}
-      {/*    // mt="4"*/}
-      {/*  >*/}
-      {/*    <Icon name="status-success" size="20" />*/}
-      {/*    <Text size="sm">*/}
-      {/*      {t`freeCancellationUntil`} {freeCancellationDate}*/}
-      {/*    </Text>*/}
-      {/*  </HStack>*/}
-      {/*) : null}*/}
-      {/*</SectionLayout>*/}
-      {/*) : null}*/}
-
-      <SectionLayout
+      <CardSectionLayout
         px="4"
         gridArea="totalPrice"
         position={{
@@ -144,31 +74,31 @@ export const HotelPackageBookingConfig = ({
         bottom="0"
         left="0"
         right="0"
-        width="full"
-      >
+        width="full">
         <Flex width="full" justify="space-between" align="center" height="28px">
           <Text size="sm">{t`total`}</Text>
 
-          <Text size="lg" fontWeight="bold" ml="2">
-            {numberWithCommaNormalizer(selectedOffer?.price)} ֏
-          </Text>
-        </Flex>
+          <Flex>
+            <Text size="lg" fontWeight="bold" ml="2">
+              {numberWithCommaNormalizer(selectedOffer?.price)} ֏
+            </Text>
+            <Flex align="center" ml="2">
+              {currentOfferPackage ? (
+                <>
+                  <Icon name="approximate" size="20" color="gray.500" />
 
-        <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
-          {currentOfferPackage ? (
-            <>
-              <Icon name="approximate" size="20" color="gray.500" />
-
-              <Text size="sm" color="gray.500" ml="0.5">
-                {CURRENCY_MAP[currentOfferPackage.currency]}{' '}
-                {formatNumber(parseFloat(currentOfferPackage.priceInCurrency))}
-              </Text>
-            </>
-          ) : null}
+                  <Text size="sm" color="gray.500" ml="0.5">
+                    {CURRENCY_MAP[currentOfferPackage.currency]}{' '}
+                    {formatNumber(parseFloat(currentOfferPackage.priceInCurrency))}
+                  </Text>
+                </>
+              ) : null}
+            </Flex>
+          </Flex>
         </Flex>
 
         <Button
-          mt="2"
+          mt="4"
           width="full"
           isDisabled={isNotFound}
           isLoading={isLoadingTourPackage}
@@ -177,7 +107,7 @@ export const HotelPackageBookingConfig = ({
         >
           {prepaymentInfo?.paymentType === 'NoDownPayment' ? t`bookWithoutPrepayment` : t`book`}
         </Button>
-      </SectionLayout>
+      </CardSectionLayout>
     </Layout>
   )
 }
@@ -220,14 +150,4 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
       {children}
     </Grid>
   </Box>
-)
-
-const SectionLayout = (props: BoxProps) => (
-  <Box
-    py={{ base: '5', md: '4' }}
-    borderTop="1px solid"
-    borderColor="gray.100"
-    bgColor="white"
-    {...props}
-  />
 )
