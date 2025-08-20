@@ -198,7 +198,8 @@ export const RequestCard = ({
         </Box>
       </Box>
 
-      {(showContinueButton ||
+      {(showRemainingPaymentButton ||
+        showContinueButton ||
         showNotPaidButton) && (
         <VStack px="4" pb="4" align="stretch" spacing="2">
           {showRemainingPaymentButton ? (
