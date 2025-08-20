@@ -42,7 +42,7 @@ export const PackageSearch = ({
         showTabs={showTabs}
         setHotel={setHotel}
       />
-      <Box position='absolute' mt='-40px' height='40px' bgColor='white' width='full' zIndex='1' borderRadius='40px 40px 0 0 '></Box>
+      {showTabs ? <Box position='absolute' mt='-40px' height='40px' bgColor='white' width='full' zIndex='1' borderRadius='40px 40px 0 0 '></Box>: null}
     </Box>
   )
 }
