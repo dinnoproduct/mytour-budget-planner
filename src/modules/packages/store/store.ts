@@ -10,6 +10,7 @@ import {
 import { type TDictionary } from '../data/dictionaryTypes.ts';
 import { type DictionaryTypes } from '../data/dictionaryEnum.ts';
 import { type CustomFields } from '../data/packagesEnums.ts';
+import { type PackageEntity } from '@entities/package';
 
 export const packagesAtom = atom<TPackages>({
   key: 'packages',
@@ -98,12 +99,17 @@ export const userInfoAtom = atom<Partial<{ [CustomFields.email]: string }>>({
 
 export const screenBreakpointAtom = atom<string>({
   key: 'screenBreakpoint',
-  default: 'large',
+  default: 'large'
+});
+
+export const selectedPackageAtom = atom<PackageEntity | null>({
+  key: 'selectedPackage',
+  default: null
 });
 
 export const preventSideModalCloseAtom = atom<boolean>({
   key: 'preventSideModalClose',
-  default: false,
+  default: false
 });
 
 export const preventParentSlideAtom = atom<boolean>({

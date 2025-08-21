@@ -42,6 +42,7 @@ const ImagesSlider = ({ imageUrls=[] }: ImageSliderProps) => {
 				{imageUrls?.map((url) => (
 					<Box
 						outline="none"
+						key={url}
 					>
 						<GalleryImage
 							src={url}

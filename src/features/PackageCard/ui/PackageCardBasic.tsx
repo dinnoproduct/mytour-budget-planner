@@ -17,6 +17,8 @@ import {
 import { getPluralForm } from '@shared/helpers'
 import { type PackageCardBasicProps } from './types.ts'
 import { formatNumber } from '@shared/utils'
+import { useSelectedPackage } from '@/modules/packages/hooks/useSelectedPackage.ts'
+import { type EmptyObject } from 'global'
 
 export const PackageCardBasic = ({
   tourPackage = {},
@@ -70,7 +72,7 @@ export const PackageCardBasic = ({
   ])
 
   return (
-    <Layout link={link} {...props}>
+    <Layout link={link} tourPackage={tourPackage} {...props}>
       <ImageSlider
         images={tourPackage.hotel.images}
         starsCount={tourPackage.hotel.stars}
@@ -125,18 +127,39 @@ export const PackageCardBasic = ({
 const Layout = ({
   children,
   link,
+  tourPackage,
   ...props
-}: { children: ReactNode | ReactNode[]; link: string } & LinkProps) => (
-  <Link as={ReactLink} to={link} _hover={{ textTransform: 'none' }} {...props}>
-    <Box
-      maxWidth="362px"
-      width="full"
-      rounded="lg"
-      overflow="hidden"
-      border="1px solid"
-      borderColor="gray.200"
+}: { 
+  children: ReactNode | ReactNode[]; 
+  link: string; 
+  tourPackage: PackageEntity | EmptyObject;
+} & LinkProps) => {
+  const { storeSelectedPackage } = useSelectedPackage()
+
+  const handleClick = () => {
+    if (tourPackage && 'offerId' in tourPackage && tourPackage.offerId) {
+      storeSelectedPackage(tourPackage as PackageEntity);
+    }
+  };
+
+  return (
+    <Link 
+      as={ReactLink} 
+      to={link} 
+      onClick={handleClick}
+      _hover={{ textTransform: 'none' }} 
+      {...props}
     >
-      {children}
-    </Box>
-  </Link>
-)
+      <Box
+        maxWidth="362px"
+        width="full"
+        rounded="lg"
+        overflow="hidden"
+        border="1px solid"
+        borderColor="gray.200"
+      >
+        {children}
+      </Box>
+    </Link>
+  )
+}

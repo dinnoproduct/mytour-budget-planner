@@ -21,6 +21,7 @@ import { useBreakpoint } from '@shared/hooks'
 import { useModalContext } from '@app/providers'
 import { BookingFlow } from '@widgets/BookingFlow'
 import { useUserContext } from '@/entities/user'
+import { usePackageDetailsFromStore } from '@/modules/packages/hooks'
 
 export const PackageDetailsPage = () => {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ export const PackageDetailsPage = () => {
   const { dispatchModal } = useModalContext()
   const [isModalOpen, setModalOpen] = useState(false)
   const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
-  const { packageDetails, isFetched } = useSearchPackage()
+  const { packageDetails, isFetched } = usePackageDetailsFromStore()
   const currentOfferPackage = useCurrentPackageOfferValue()
 
   const [childrenAges, setChildrenAges] = useState<number[]>([])
@@ -132,7 +133,6 @@ export const PackageDetailsPage = () => {
             ml={{ md: '20' }}
             mt={{ base: '5', md: '0' }}
             flexShrink={0}
-            onLateCheckoutChange={setLateCheckout}
             containerRef={containerRef}
             onBookClick={handleBookClick}
           />

@@ -66,7 +66,7 @@ const FollowUs = () => {
       </Text>
       <UnorderedList listStyleType="none" spacing="2" mx="0">
         {SOCIALS.map((social) => (
-          <ListItem>
+          <ListItem key={social.link}>
             <Link key={social.icon} href={social.link} isExternal>
               <Text
                 size="md"

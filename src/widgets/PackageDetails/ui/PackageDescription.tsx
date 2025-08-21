@@ -37,7 +37,7 @@ export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}
 			 mt="4"
 			>
 				{hotelFacilities?.map(({key, value}) => (
-					<ListItem>
+					<ListItem key={key}>
 						<SummaryCard
 							iconName={PACKAGE_FACILITY_ICON_MAP[key]}
 						  children={value}

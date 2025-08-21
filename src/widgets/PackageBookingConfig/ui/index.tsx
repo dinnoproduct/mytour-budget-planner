@@ -12,7 +12,6 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 
 export const PackageBookingConfig = ({
   tourPackage,
-  onLateCheckoutChange,
   containerRef,
   onBookClick,
   ...props
