@@ -10,6 +10,7 @@ import { PackageBanner } from './PackageBanner'
 import { AppSection } from './AppSection.tsx'
 import { AboutUsBanner } from './AboutUsBanner.tsx'
 import { BlogsSection } from '@widgets/BlogsSection'
+import {CityOffersSection} from "@widgets/CityOffersSection/ui";
 
 export const HomePage = () => {
   const { dispatchModal } = useModalContext()
@@ -55,6 +56,7 @@ export const HomePage = () => {
       <Header />
       <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
       <PackageBanner mt={{ base: 4, md: 20 }} isHotel={isHotel}/>
+      <CityOffersSection mt={{ base: '62px', md: '84px' }} isHotel={isHotel}/>
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}
       {/*<AppSection />*/}
