@@ -10,6 +10,7 @@
   "night": "գիշեր",
   "packageIncludes": "Փաթեթում ներառված է",
   "hotel": "Հյուրանոց",
+  "flight": "Թռիչք",
   "package": "Փաթեթ",
   "airTicket": "Ավիատոմս",
   "airCompany": "Ավիաընկերություն",
@@ -328,7 +329,6 @@
   "nightsQuantity.few": "{{night}} գիշեր",
   "nightsQuantity.many": "{{night}} գիշեր",
   "nightsQuantity.other": "{{night}} գիշեր",
-
   "daysQuantity.one": "{{day}} օր",
   "daysQuantity.few": "{{day}} օր",
   "daysQuantity.many": "{{day}} օր",
@@ -349,5 +349,6 @@
   "followUs": "Հետևի՛ր մեզ",
   "support": "Օգնություն",
   "privacyPolicy": "Գաղտնիություն",
-  "planTrip": "Սկսեք պլանավորել ձեր ուղևորությունը այստեղ"
+  "planTrip": "Սկսեք պլանավորել ձեր ուղևորությունը այստեղ",
+  "packageOffers" : "Փաթեթային առաջարկներ այլ ուղղությունների համար"
 }

@@ -1,8 +1,7 @@
 import {Box, Flex, LinkBox, type LinkBoxProps, LinkOverlay} from '@chakra-ui/react'
 import {Button, Heading, Text} from '@ui'
 import {useTranslation} from 'react-i18next'
-import React, {useEffect} from "react";
-import {usePackageList} from "@entities/package";
+import React from "react";
 import {useFlightDates} from "@entities/package/hooks/useFlightDates.ts";
 
 interface PackageBannerProps extends LinkBoxProps {
