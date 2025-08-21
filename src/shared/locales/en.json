@@ -67,6 +67,7 @@
   "hotelPackagesNotFoundText": "No available hotels were found for your selected criteria. Please adjust your search and try again",
   "viewAllPhotos": "View all photos",
   "hotel": "Hotel",
+  "flight": "Flight",
   "package": "Package",
   "airTicket": "Air ticket",
   "transportation": "Transportation",
@@ -284,5 +285,6 @@
   "followUs": "Follow us",
   "support": "Support",
   "privacyPolicy": "Privacy policy",
-  "planTrip": "Start planning your trip here"
+  "planTrip": "Start planning your trip here",
+  "packageOffers" : "Package offers for other destinations"
 }

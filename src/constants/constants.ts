@@ -36,5 +36,32 @@ export enum Methods {
   // DELETE = ' delete',
 }
 
+export const packageCards = [
+  {
+    id: 1,
+    image: '/assets/cities/city1.png',
+  },
+  {
+    id: 2,
+    image: '/assets/cities/city2.jpg',
+  }
+]
+export const countryCards = [
+  {
+    countryId: 3,
+    image: '/assets/cities/maldives.png',
+    cities: '6%2C12'
+  },
+  {
+    countryId: 4,
+    image: '/assets/cities/uae.jpg',
+    cities: '16%2C18%2C19%2C20%2C21'
+  },
+  {
+    countryId: 6,
+    image: '/assets/cities/cypros.png',
+    cities: '32%2C33%2C34%2C35%2C37'
+  }
+]
 export const REQUIRED_MESSAGE = 'requiredField';
 export const WRONG_FORMAT = 'wrongFormat';

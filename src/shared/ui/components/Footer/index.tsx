@@ -16,7 +16,7 @@ export const Footer = () => (
     <Flex direction={{ base: 'column', md: 'row' }} width='full' justify={{ lg: 'space-between' }} gap='6'>
       <Contact />
       <FollowUs />
-      <Support />
+      {/*<Support />*/}
       <AppSection />
     </Flex>
   </Layout>
