@@ -3,6 +3,7 @@ import { type FlightService } from './FlightService.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
 import { type CityService } from './CityService.ts'
+import { type FlightDatesService } from './FlightDatesService.ts'
 import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
@@ -14,6 +15,7 @@ export type PackageUseCasesParams = {
   requestService: RequestService
   dictionaryService: DictionaryService
   cityService: CityService
+  flightDatesService: FlightDatesService
   searchService: SearchService
   prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   promoCodeService: PromoCodeService
@@ -52,6 +54,13 @@ export type SearchParams = {
   nightsCorrectionUpperValue?: number
   lateCheckout: boolean
   bookingType: 1 | 2
+}
+
+export type FlightDatesParams = {
+  travelAgencyId: number
+  destinationId: number
+  daysCountFromNow: number
+  duration: number
 }
 
 export type GetFlightsByDateParams = {
@@ -143,6 +152,11 @@ export type CreateRequestInput = {
 export type UpdateRequestInput = {
   id: number
 } & Partial<CreateRequestInput>
+
+export type FlightDates = {
+  flightStartDate: string;
+  flightReturnDate: string;
+};
 
 export enum DictionaryTypes {
   TicketClassDictionary = 'TicketClassDictionary',

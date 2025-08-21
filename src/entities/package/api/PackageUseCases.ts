@@ -15,12 +15,14 @@ import {
   type SearchPackagesParams,
   type SearchParams,
   type PrepaymentCalculationParams,
-  type PromoCodeValidationParams
+  type PromoCodeValidationParams,
+  type FlightDatesParams
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
 import { type LanguageName } from '@shared/model'
 import { type CityService } from './CityService.ts'
+import { type FlightDatesService } from './FlightDatesService.ts'
 import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
@@ -31,6 +33,7 @@ export class PackageUseCases {
   private readonly requestService: RequestService
   private readonly dictionaryService: DictionaryService
   private readonly cityService: CityService
+  private readonly flightDatesService: FlightDatesService
   private readonly searchService: SearchService
   private readonly prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   private readonly promoCodeService: PromoCodeService
@@ -41,6 +44,7 @@ export class PackageUseCases {
     requestService,
     dictionaryService,
     cityService,
+    flightDatesService,
     searchService,
     prepaymentInfoCalculationService,
     promoCodeService
@@ -50,6 +54,7 @@ export class PackageUseCases {
     this.requestService = requestService
     this.dictionaryService = dictionaryService
     this.cityService = cityService
+    this.flightDatesService = flightDatesService
     this.searchService = searchService
     this.prepaymentInfoCalculationService = prepaymentInfoCalculationService
     this.promoCodeService = promoCodeService
@@ -58,6 +63,10 @@ export class PackageUseCases {
   // package
   async getPackageList() {
     return this.packageService.getPackageList()
+  }
+
+  async flightDatesSearch(params: FlightDatesParams) {
+    return this.flightDatesService.getFlightDates(params)
   }
   async searchPackages(search: SearchPackagesParams) {
     return this.packageService.searchPackages({
