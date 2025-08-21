@@ -1,7 +1,9 @@
 import {Box, Flex, LinkBox, type LinkBoxProps, LinkOverlay} from '@chakra-ui/react'
 import {Button, Heading, Text} from '@ui'
 import {useTranslation} from 'react-i18next'
-import React from "react";
+import React, {useEffect} from "react";
+import {usePackageList} from "@entities/package";
+import {useFlightDates} from "@entities/package/hooks/useFlightDates.ts";
 
 interface PackageBannerProps extends LinkBoxProps {
     isHotel: number;
@@ -12,13 +14,22 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
     const date = new Date()
     const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1);
     const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
+    const { data: dates = {flightStartDate: '', flightReturnDate: ''}} = useFlightDates()
 
-    const fmt = (d: Date) =>
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const fmt = (d: Date | string | undefined | null) => {
+    if (!d) return "";
 
-    const dateFrom = fmt(firstOfTarget);
-    const dateTo = fmt(lastOfTarget);
+    if (typeof d === "string") {
+      return d.slice(0, 10); // "2025-10-17"
+    }
 
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+  };
+
+    const dateFrom = fmt(!isHotel ? firstOfTarget : new Date(dates?.flightStartDate));
+    const dateTo = fmt(!isHotel ? lastOfTarget : new Date(dates?.flightReturnDate));
     return (
         <LinkBox
             height={{
@@ -88,10 +99,6 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                         {isHotel ? t`packageBanner.subtitle1.package` : t`packageBanner.subtitle1.hotel`}
                     </Text>
 
-                    {/*<Text size={{ base: 'sm', sm: 'md' }} mt="4">*/}
-                    {/*  {t`packageBanner.subtitle2`}*/}
-                    {/*</Text>*/}
-
                     <LinkOverlay>
                         <Button
                             background='white'
@@ -101,7 +108,8 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                             variant="solid-blue"
                             mt="6"
                             width="fit-content"
-                            href={`https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel`}
+                            href={!isHotel ? `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel` :
+                            `https://www.mytour.am/packages?from=${dates?.flightStartDate}&to=${dates?.flightReturnDate}&city=1&adultsCount=2&childrenCount=0&childrenAges=&days=6&dateMode=approximate&tab=packages`}
                             target="_blank"
                             rel="noopener noreferrer"
                             zIndex="0 !important"

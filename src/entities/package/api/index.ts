@@ -7,6 +7,7 @@ import { CityService } from './CityService.ts'
 import { SearchService } from './SearchService.ts'
 import { PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { PromoCodeService } from './PromoCodeService.ts'
+import { FlightDatesService } from './FlightDatesService.ts';
 
 export const packageUseCases = new PackageUseCases({
   packageService: new PackageService(),
@@ -14,6 +15,7 @@ export const packageUseCases = new PackageUseCases({
   requestService: new RequestService(),
   dictionaryService: new DictionaryService(),
   cityService: new CityService(),
+  flightDatesService: new FlightDatesService(),
   searchService: new SearchService(),
   prepaymentInfoCalculationService: new PrepaymentInfoCalculationService(),
   promoCodeService: new PromoCodeService()

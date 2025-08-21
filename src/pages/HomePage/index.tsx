@@ -55,7 +55,7 @@ export const HomePage = () => {
       <Header />
       <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
       <PackageBanner mt={{ base: 4, md: 20 }} isHotel={isHotel}/>
-      <HotOffersSection mt={{ base: '62px', md: '84px' }} />
+      {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}
       {/*<AppSection />*/}
       {/*<AboutUsBanner />*/}
