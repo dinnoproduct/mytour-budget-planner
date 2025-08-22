@@ -17,6 +17,7 @@ import {
   useCitiesOnlyHotel,
   useSearchAsync
 } from '@entities/package'
+import {defaultSelectedHotelCity} from "@/constants/constants.ts";
 
 const LOCAL_STORAGE_KEY = 'hotel_packages_search_params'
 
@@ -109,7 +110,7 @@ export const HotelPackagesSearchProvider: React.FC<{
       setSearchData({
         fromDate: moment().toDate(),
         toDate: moment().add(1, 'day').toDate(),
-        selectedCity: cities[0] ? [cities[0].id] : []
+        selectedCity: cities[0] ? [...defaultSelectedHotelCity] : []
       })
     }
   }, [cities])
