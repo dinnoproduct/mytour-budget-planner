@@ -55,7 +55,7 @@ export const HomePage = () => {
     <Box overflowX="hidden">
       <Header />
       <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
-      <PackageBanner mt={{ base: 4, md: 20 }} isHotel={isHotel}/>
+      <PackageBanner mx={{base: 4, md: "auto"}} mt={{ base: 4, md: 20 }} isHotel={isHotel} maxWidth='1376px'/>
       <CityOffersSection mt={{ base: '62px', md: '84px' }} isHotel={isHotel}/>
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}

@@ -36,6 +36,8 @@ export enum Methods {
   // DELETE = ' delete',
 }
 
+export const defaultSelectedPackageCity = [1]
+export const defaultSelectedHotelCity = [16, 18, 19, 20, 21]
 export const packageCards = [
   {
     id: 1,
