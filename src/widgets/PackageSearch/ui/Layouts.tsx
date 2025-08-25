@@ -24,7 +24,6 @@ export const Layout = ({
   <Box
     position="relative"
     width="full"
-    zIndex="1"
     {...packageSearchVariants[variant].wrapper}
   >
     <Box
@@ -98,7 +97,6 @@ export const Layouts = (props: StackProps) => (
     direction={{ base: 'column', md: 'row' }}
     spacing={{ base: 4, md: 2 }}
     px={{ base: 4, md: '6' }}
-    zIndex="1"
     width="full"
     align="center"
     justify="center"

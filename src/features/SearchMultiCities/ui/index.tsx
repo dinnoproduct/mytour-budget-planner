@@ -7,7 +7,7 @@ import {
   VStack,
   Text
 } from '@chakra-ui/react'
-import { Icon, Input } from '@ui'
+import { Icon, Input, Button } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
@@ -96,18 +96,19 @@ export const SearchMultiCities = ({
         border='none'
       >
         <Input
+          color='gray.700'
+          borderRadius='12px'
           type="text"
           value={activeCityNames}
           placeholder={t(placeholder)}
           leftIconName="location-pin"
           border='none'
-          _placeholder={{ color: 'blackAlpha.900' }}
+          _placeholder={{ color: 'gray.500' }}
+          _hover={{ bgColor: 'whiteAlpha.900' }}
         />
       </MenuButton>
 
       <MenuList
-        px="0"
-        py="4"
         minWidth="fit-content"
         width={{ base: '328px', md: '350px', lg: '320px' }}
         height="auto"
@@ -117,7 +118,7 @@ export const SearchMultiCities = ({
           {Object.entries(groupedCities).map(([countryName, countryCities]) => (
             <Box key={countryName}>
               <Flex
-                px="4"
+                px='4'
                 py="2"
                 bgColor="gray.50"
                 cursor="pointer"
@@ -129,8 +130,8 @@ export const SearchMultiCities = ({
 
               {countryCities.map(city => (
                 <Flex
+                  px='4'
                   key={city.id}
-                  px="4"
                   py="2"
                   align="center"
                   justify="space-between"
@@ -141,7 +142,7 @@ export const SearchMultiCities = ({
                   {/* @ts-ignore*/}
                   <Text>{city[cityNameField]}</Text>
                   {selectedCities.includes(city.id) ?
-                    <Icon name="check" size="20" color="white" p='2px'
+                    <Icon name="check" size="20" color="white"
                           borderRadius='2px'
                           border="1px solid"
                           borderColor="blue.500"
@@ -156,6 +157,14 @@ export const SearchMultiCities = ({
             </Box>
           ))}
         </VStack>
+        <Button
+          size="lg"
+          borderRadius='12px'
+          width='calc(100% - 32px)'
+          onClick={() => setDropdownOpen(!isDropdownOpen)}
+        >
+          {t`apply`}
+        </Button>
       </MenuList>
     </Menu>
   )

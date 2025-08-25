@@ -53,6 +53,9 @@ export const DatePickerInput = ({
       width="full"
       borderColor={isFocused ? 'blue.500' : undefined}
       leftIconName="calendar-today"
+      border='none'
+      borderRadius='12px'
+      _hover={{ bgColor: 'whiteAlpha.900' }}
     />
   )
 }

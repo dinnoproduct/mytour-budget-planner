@@ -118,7 +118,6 @@ export const DatePickerFlexibleSearch = ({
               pointerEvents: 'auto'
             }
           }}
-          border='none'
         >
           <CustomButton
             fromDate={inputFromDate as any}
@@ -137,7 +136,6 @@ export const DatePickerFlexibleSearch = ({
           }}
           onClick={handleCalendarOpen}
           cursor="pointer"
-          border='none'
         >
           <DatePickerInput
             fromDate={inputFromDate as any}
