@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { ChildAge, SearchTravelersProps } from './types.ts'
 import { getPluralForm } from '@shared/helpers'
 import { FormState } from '@components/Form'
+import {ChevronRightIcon} from "@chakra-ui/icons";
 
 const MAX_TRAVELERS = 6
 
@@ -155,6 +156,7 @@ export const SearchTravelers = ({ defaultData, onChange, CustomButton, menuProps
 				</MenuButton>
 			) : (
 				<MenuButton
+                    position='relative'
 					as={Box}
 					width={{
 						base: 'full',
@@ -168,6 +170,15 @@ export const SearchTravelers = ({ defaultData, onChange, CustomButton, menuProps
 						roomsCount={1}
 						isFocused={isDropdownOpen}
 					/>
+
+                    <ChevronRightIcon
+                      position="absolute"
+                      right='12px'
+                      top='16px'
+                      style={{rotate: '90deg'}}
+                      transform={isDropdownOpen ? 'rotate(180deg)' : ''}
+                      color='gray.700'
+                    />
 				</MenuButton>
 			)}
 
@@ -463,7 +474,6 @@ const SearchInput = ({ travelersCount, isFocused, roomsCount }: {
 			width="full"
 			borderColor={isFocused ? 'blue.500' : undefined}
 			leftIconName="people-alt"
-      border='none'
       borderRadius='12px'
       _hover={{ bgColor: 'whiteAlpha.900' }}
 		/>

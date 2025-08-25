@@ -12,7 +12,7 @@ import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 
 export const Footer = () => (
-  <Layout>
+  <Layout >
     <Flex direction={{ base: 'column', md: 'row' }} width='full' justify={{ lg: 'space-between' }} gap='6'>
       <Contact />
       <FollowUs />
@@ -26,7 +26,7 @@ const Contact = () => {
   const { t } = useTranslation()
 
   return (
-    <Flex direction="column" maxWidth="400px" width="full" >
+    <Flex direction="column" maxWidth="400px" width="full">
       <Text size="md" color="gray.700" fontWeight={700} mb={3}>
         {t`contact`}
       </Text>
@@ -169,6 +169,7 @@ const ItemsList = ({ items }: { items: string[] }) => (
 const Layout = ({ children }: { children: ReactNode | ReactNode[] }) => (
   <Box as="footer" bgColor="white" borderTop="1px solid" borderColor="gray.100">
     <Flex
+      mt='120'
       px={{ base: 4, md: 10 }}
       py="10"
       direction={{ base: 'column', lg: 'row' }}
