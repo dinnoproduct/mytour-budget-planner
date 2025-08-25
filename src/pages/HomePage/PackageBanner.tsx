@@ -55,7 +55,8 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
               `https://www.mytour.am/packages?from=${dates?.flightStartDate}&to=${dates?.flightReturnDate}&city=1&adultsCount=2&childrenCount=0&childrenAges=&days=6&dateMode=approximate&tab=packages`}
             target="_blank"
             textDecoration='none'
-            _hover={{ textDecoration: 'none' }}>
+            _hover={{ textDecoration: 'none' }}
+            zIndex="0 !important">
             <Box
               height={{
                 base: '200px',
@@ -67,7 +68,7 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
               }}
               top={{base: !isHotel ? '200px' : '190px', sm: !isHotel ? '-8px' : '-130px'}}
               right={!isHotel ? 0 : 5}
-              zIndex={1}
+              zIndex={-2}
               position='absolute'
               bgImage={` url('/assets/package-banner/${!isHotel ? '4' : ''}0.png')`}
               bgBlendMode="overlay"
@@ -90,7 +91,7 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                   lg: '900px'
                 }}
                 width="full"
-                zIndex={1}
+                zIndex={-2}
               >
                 <Heading
                   color='white'

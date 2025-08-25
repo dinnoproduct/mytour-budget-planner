@@ -93,13 +93,14 @@ export const SearchMultiCities = ({
         width={{ base: 'full', md: '350px', lg: '320px' }}
         onClick={() => setDropdownOpen(!isDropdownOpen)}
         cursor="pointer"
+        border='none'
       >
         <Input
           type="text"
           value={activeCityNames}
           placeholder={t(placeholder)}
           leftIconName="location-pin"
-          borderColor={isDropdownOpen ? 'blue.500' : undefined}
+          border='none'
           _placeholder={{ color: 'blackAlpha.900' }}
         />
       </MenuButton>
@@ -130,7 +131,7 @@ export const SearchMultiCities = ({
                 <Flex
                   key={city.id}
                   px="4"
-                  py="1"
+                  py="2"
                   align="center"
                   justify="space-between"
                   cursor="pointer"
@@ -138,10 +139,18 @@ export const SearchMultiCities = ({
                   onClick={() => handleCityToggle(city)}
                 >
                   {/* @ts-ignore*/}
-                  <Text ml='4'>{city[cityNameField]}</Text>
-                  {selectedCities.includes(city.id) && (
-                    <Icon name="check" size="20" color="blue.500" />
-                  )}
+                  <Text>{city[cityNameField]}</Text>
+                  {selectedCities.includes(city.id) ?
+                    <Icon name="check" size="20" color="white" p='2px'
+                          borderRadius='2px'
+                          border="1px solid"
+                          borderColor="blue.500"
+                          bgColor='blue.500'/>
+                  : <Box width="20px"
+                         height='20px'
+                         borderRadius='2px'
+                         border="1px solid"
+                         borderColor="gray.300"/>}
                 </Flex>
               ))}
             </Box>

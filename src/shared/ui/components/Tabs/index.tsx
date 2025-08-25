@@ -10,7 +10,7 @@ import { type TabsProps } from './types'
 export const Tabs = ({ labels, children, showTabs = true, ...props }: TabsProps) => (
   <ChakraTabs {...props}>
     {showTabs &&
-    <TabList>
+    <TabList gap={2}>
       {labels.map((label, index) => (
         <Tab key={`${label}-${index}`}>{label}</Tab>
       ))}

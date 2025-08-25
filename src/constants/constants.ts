@@ -45,7 +45,7 @@ export const packageCards = [
   },
   {
     id: 2,
-    image: '/assets/cities/city2.jpg',
+    image: '/assets/cities/city2.png',
   }
 ]
 export const countryCards = [
@@ -56,7 +56,7 @@ export const countryCards = [
   },
   {
     countryId: 4,
-    image: '/assets/cities/uae.jpg',
+    image: '/assets/cities/uae.png',
     cities: '16%2C18%2C19%2C20%2C21'
   },
   {
