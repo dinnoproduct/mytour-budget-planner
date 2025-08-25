@@ -48,6 +48,7 @@ export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
       />
 
       <Button
+        borderRadius='12px'
         size="lg"
         width={{ base: 'full', md: 'auto' }}
         onClick={handleSearchClick}

@@ -71,12 +71,15 @@ export const SearchCities = ({
         cursor="pointer"
       >
         <Input
+          color='gray.700'
           type="text"
           value={activeCityValue}
           width="full"
           borderColor={isDropdownOpen ? 'blue.500' : undefined}
           leftIconName="location-pin"
           placeholder={t(placeholder)}
+          borderRadius='12px'
+          border='none'
           _placeholder={{
             color: 'blackAlpha.900'
           }}
@@ -122,10 +125,18 @@ export const SearchCities = ({
                     onClick={() => handleCitySelect(city.id)}
                   >
                     {/* @ts-ignore*/}
-                    <Text ml='4'>{city[cityNameField]}</Text>
-                    {selectedCity === city.id && (
-                      <Icon name="check" size="20" color="blue.500" />
-                      )}
+                    <Text>{city[cityNameField]}</Text>
+                    {selectedCity === city.id ?
+                      <Icon name="check" size="20" color="white"
+                            borderRadius='2px'
+                            border="1px solid"
+                            borderColor="blue.500"
+                            bgColor='blue.500'/>
+                      : <Box width="20px"
+                             height='20px'
+                             borderRadius='2px'
+                             border="1px solid"
+                             borderColor="gray.300"/>}
                   </Flex>
                 ))}
               </Box>

@@ -463,6 +463,9 @@ const SearchInput = ({ travelersCount, isFocused, roomsCount }: {
 			width="full"
 			borderColor={isFocused ? 'blue.500' : undefined}
 			leftIconName="people-alt"
+      border='none'
+      borderRadius='12px'
+      _hover={{ bgColor: 'whiteAlpha.900' }}
 		/>
 	)
 }

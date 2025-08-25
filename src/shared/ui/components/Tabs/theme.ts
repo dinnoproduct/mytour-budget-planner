@@ -33,7 +33,7 @@ export const tabsComponentTheme = {
         tab: {
           fontWeight: '500',
           rounded: 'full',
-          color: 'white',
+          color: 'gray.600',
           px: 4,
 
           _selected: {
@@ -46,11 +46,14 @@ export const tabsComponentTheme = {
           }
         },
         tablist: {
+          gap: '3',
           p: 1,
           mt: { md: 1 },
           mb: 1,
           mx: 'auto',
           width: 'fit-content',
+          backgroundColor: 'gray.100',
+          borderRadius: '100px',
         },
         tabpanels: {
           height: { base: 'calc(100% - 36px)', md: 'auto' }
