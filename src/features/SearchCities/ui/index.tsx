@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { type SearchCitiesProps } from './types.ts'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
+import {ChevronRightIcon} from "@chakra-ui/icons";
 
 export const SearchCities = ({
   defaultSelectedCity,
@@ -61,6 +62,7 @@ export const SearchCities = ({
       offset={[0, 4]}
     >
       <MenuButton
+        position="relative"
         as={Box}
         width={{
           base: 'full',
@@ -79,10 +81,18 @@ export const SearchCities = ({
           leftIconName="location-pin"
           placeholder={t(placeholder)}
           borderRadius='12px'
-          border='none'
           _placeholder={{
             color: 'blackAlpha.900'
           }}
+        />
+
+        <ChevronRightIcon
+          position="absolute"
+          right='12px'
+          top='16px'
+          style={{rotate: '90deg'}}
+          transform={isDropdownOpen ? 'rotate(180deg)' : ''}
+          color='gray.700'
         />
       </MenuButton>
 

@@ -10,6 +10,7 @@ import {
 import {useTranslation} from "react-i18next";
 
 export const Layout = ({
+  className,
   children,
   contentProps,
   containerProps,
@@ -22,6 +23,7 @@ export const Layout = ({
   const { t } = useTranslation()
   return (
   <Box
+    className={className}
     position="relative"
     width="full"
     {...packageSearchVariants[variant].wrapper}

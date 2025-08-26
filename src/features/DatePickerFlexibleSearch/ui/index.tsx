@@ -11,6 +11,7 @@ import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePick
 import { useHotelPackagesSearchContext } from '@/entities/package/index.ts'
 import { MONTHS } from '@/shared/model/index.ts'
 import moment from 'moment'
+import {ChevronRightIcon} from "@chakra-ui/icons";
 
 export const DatePickerFlexibleSearch = ({
   fromDate,
@@ -128,6 +129,7 @@ export const DatePickerFlexibleSearch = ({
         </MenuButton>
       ) : (
         <MenuButton
+          position="relative"
           as={Box}
           width={{
             base: 'full',
@@ -142,6 +144,15 @@ export const DatePickerFlexibleSearch = ({
             toDate={inputToDate as any}
             isFocused={isCalendarOpen}
             days={days}
+          />
+
+          <ChevronRightIcon
+            position="absolute"
+            right='12px'
+            top='16px'
+            style={{rotate: '90deg'}}
+            transform={isCalendarOpen ? 'rotate(180deg)' : ''}
+            color='gray.700'
           />
         </MenuButton>
       )}

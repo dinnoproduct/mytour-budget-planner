@@ -8,6 +8,7 @@ import { Button, Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
 import { DatePickerFooter } from '@features/DatePickerFlights/ui/DatePickerFooter.tsx'
+import {ChevronRightIcon} from "@chakra-ui/icons";
 
 export const DatePickerFlights = ({
   fromDate,
@@ -127,6 +128,7 @@ export const DatePickerFlights = ({
         </MenuButton>
       ) : (
         <MenuButton
+          position='relative'
           as={Box}
           width={{
             base: 'full',
@@ -140,6 +142,15 @@ export const DatePickerFlights = ({
             fromDate={inputFromDate as any}
             toDate={inputToDate as any}
             isFocused={isCalendarOpen}
+          />
+
+          <ChevronRightIcon
+            position="absolute"
+            right='12px'
+            top='16px'
+            style={{rotate: '90deg'}}
+            transform={isCalendarOpen ? 'rotate(180deg)' : ''}
+            color='gray.700'
           />
         </MenuButton>
       )}

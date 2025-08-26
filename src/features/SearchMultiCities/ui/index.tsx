@@ -5,7 +5,7 @@ import {
   MenuButton,
   MenuList,
   VStack,
-  Text
+  Text, IconButton
 } from '@chakra-ui/react'
 import { Icon, Input, Button } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
 import {SearchMultiCitiesProps} from "@features/SearchMultiCities/ui/types.ts";
+import {ChevronRightIcon} from "@chakra-ui/icons";
 
 export const SearchMultiCities = ({
                                defaultSelectedCity,
@@ -89,11 +90,11 @@ export const SearchMultiCities = ({
       offset={[0, 4]}
     >
       <MenuButton
+        position="relative"
         as={Box}
         width={{ base: 'full', md: '350px', lg: '320px' }}
         onClick={() => setDropdownOpen(!isDropdownOpen)}
         cursor="pointer"
-        border='none'
       >
         <Input
           color='gray.700'
@@ -102,9 +103,17 @@ export const SearchMultiCities = ({
           value={activeCityNames}
           placeholder={t(placeholder)}
           leftIconName="location-pin"
-          border='none'
           _placeholder={{ color: 'gray.500' }}
           _hover={{ bgColor: 'whiteAlpha.900' }}
+        />
+
+        <ChevronRightIcon
+          position="absolute"
+          right='12px'
+          top='16px'
+          style={{rotate: '90deg'}}
+          transform={isDropdownOpen ? 'rotate(180deg)' : ''}
+          color='gray.700'
         />
       </MenuButton>
 

@@ -18,4 +18,5 @@ export type LayoutProps = {
   defaultTabIndex?: number
   onTabChange?: (index: number) => void
   showTabs?: boolean
+  className?: string
 }

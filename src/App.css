@@ -39,6 +39,9 @@ input {
     border-radius: 300px;
 }
 
+.showTabs input {
+  border: none;
+}
 @media (max-width: 1170px) {
 	.container {
         width: 100%;

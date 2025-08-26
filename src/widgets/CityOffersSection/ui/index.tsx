@@ -14,7 +14,6 @@ import React, { type ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFlightDates } from '@entities/package/hooks/useFlightDates.ts'
 import {
-  type PackageCity,
   useCities,
   useHotelPackagesSearchContext,
 } from '@entities/package'
@@ -24,7 +23,6 @@ import {
 } from '@/constants/constants.ts'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
-/** Country type for countryCards mode */
 export interface PackageCountry {
   id: number
   nameArm: string
@@ -61,7 +59,7 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
       obj?: T
     ) => (obj ? (obj as any)[nameKey] ?? obj.nameEng : '')
 
-    if (!isHotel) {
+    if (isHotel) {
       const countryMap = new Map<number, PackageCountry>()
       ; cities.forEach((c: any) => {
         const cnt = c?.country
@@ -99,11 +97,11 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
       const cityId = city?.id ?? card.id
 
       return {
-        id: cityId,                        // city id
+        id: cityId,
         image: card.image,
         titleLeft: countryName,
         titleRight: cityName,
-        cityParam: String(cityId),         // single city id
+        cityParam: String(cityId),
       }
     })
   }, [isHotel, cities, packageCities, nameKey])
@@ -117,27 +115,27 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
     <Layout {...props}>
       <Heading
         as="h3"
-        fontSize={{ base: 'lg', md: '2xl' }}
-        mb={{ base: 4, md: 6 }}
+        fontSize={{ base: '2xl', md: '4xl' }}
+        mb={{ base: 6, md: 10 }}
       >
         {t`packageOffers`}
       </Heading>
 
-      <SimpleGrid columns={{ base: 1, md: isHotel ? 2 : 3 }} spacing={{ base: 3, md: 6 }}>
+      <SimpleGrid columns={{ base: 1, md: !isHotel ? 2 : 3 }} spacing={6}>
         {!hasDates
-          ? Array.from({ length: isHotel ? 2 : 3 }).map((_, i) => (
+          ? Array.from({ length: !isHotel ? 2 : 3 }).map((_, i) => (
             <SkeletonCard key={`skeleton-${i}`} />
           ))
           : cards.map((card) => (
             <Link
-              key={`${isHotel ? 'city' : 'country'}-${card.id}`}
+              key={`${!isHotel ? 'city' : 'country'}-${card.id}`}
               position="relative"
-              rounded="lg"
+              borderRadius='12px'
               overflow="hidden"
               role="group"
-              minH={{ base: '180px', md: '220px' }}
+              minH={{ base: '196px', sm: '362px' }}
               href={`https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=&days=6&dateMode=approximate&tab=${
-                !isHotel ? 'hotel' : 'packages'
+                isHotel ? 'hotel' : 'packages'
               }`}
               target="_blank"
               _before={{
@@ -172,31 +170,32 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
                 p={{ base: 4, md: 6 }}
                 gap={2}
               >
-                <Heading
-                  as="h4"
-                  fontSize={{ base: 'md', md: 'xl' }}
-                  color="white"
-                >
-                  {card.titleLeft}
-                  {card.titleRight ? ` | ${card.titleRight}` : ''}
-                </Heading>
+                <Box>
+                  <Heading
+                    as="h4"
+                    fontSize={{ base: 'xl', md: '2xl' }}
+                    color="white"
+                  >
+                    {card.titleLeft}
+                    {card.titleRight ? ` | ${card.titleRight}` : ''}
+                  </Heading>
+
+                  <IconButton
+                    aria-label="View offer"
+                    icon={<ChevronRightIcon />}
+                    color="white"
+                    position="absolute"
+                    right={{ base: 4, md: 6 }}
+                    transform="translateY(-50%)"
+                    rounded="full"
+                    bg="whiteAlpha.400"
+                  />
+                </Box>
                 <Text color="whiteAlpha.900" fontSize={{ base: 'sm', md: 'md' }}>
-                  {t`included`} • {isHotel ? (<>{t`flight`} + {t`hotel`}</>) : t`hotel`}
+                  {t`included`} • {!isHotel ? (<>{t`flight`} + {t`hotel`}</>) : t`hotel`}
                 </Text>
               </Flex>
 
-              <IconButton
-                aria-label="View offer"
-                icon={<ChevronRightIcon />}
-                position="absolute"
-                right={{ base: 3, md: 4 }}
-                top="50%"
-                transform="translateY(-50%)"
-                rounded="full"
-                bg="whiteAlpha.900"
-                _hover={{ bg: 'white' }}
-                zIndex={2}
-              />
             </Link>
           ))}
       </SimpleGrid>

@@ -35,8 +35,7 @@ export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInput
 			borderColor={isFocused ? 'blue.500' : undefined}
 			leftIconName="calendar-today"
 			placeholder={t`duration`}
-      // border='none'
-      borderRadius='12px'
+            borderRadius='12px'
 		/>
 	)
 }
