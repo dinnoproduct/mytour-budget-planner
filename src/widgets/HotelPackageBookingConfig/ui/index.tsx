@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { CURRENCY_MAP } from '@/shared/model'
 import { formatNumber } from '@shared/utils'
 import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
+import { useBookingDrawer } from '@/modules/packages/hooks/useBookingDrawer'
 
 export const HotelPackageBookingConfig = ({
   tourPackage,
@@ -55,11 +56,10 @@ export const HotelPackageBookingConfig = ({
     }
   }, [isFixed, isMd, containerRef?.current])
 
+  const { openBookingDrawer } = useBookingDrawer()
+
   const handleBookClick = () => {
-    onBookClick &&
-      onBookClick({
-        childrenAges: bookingData.travelersData.childrenAges
-      })
+    openBookingDrawer(tourPackage, bookingData.travelersData.childrenAges)
   }
 
   return (

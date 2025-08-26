@@ -24,6 +24,9 @@ import {
   HotelPackageDetailsHeader
 } from '@widgets/HotelPackageDetails'
 import { HotelPackageBookingConfig } from '@widgets/HotelPackageBookingConfig'
+import { BookingDrawer } from '@/widgets/HotelBookingDrawer'
+import { useRecoilState } from 'recoil'
+import { isBookingFlowOpenAtom } from '@/modules/packages/store/store'
 
 export const HotelPackageDetailsPage = () => {
   const navigate = useNavigate()
@@ -31,7 +34,7 @@ export const HotelPackageDetailsPage = () => {
   const { user } = useUserContext()
   const { dispatchModal } = useModalContext()
   const [isModalOpen, setModalOpen] = useState(false)
-  const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
+  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(isBookingFlowOpenAtom)
   const { packageDetails, isFetched } = useSearchHotelPackage()
   const currentOfferPackage = useCurrentHotelPackageOfferValue()
 
@@ -159,6 +162,7 @@ export const HotelPackageDetailsPage = () => {
         isOpen={isBookingFlowOpen}
         onClose={() => setBookingFlowOpen(false)}
       />
+      <BookingDrawer />
     </Box>
   )
 }

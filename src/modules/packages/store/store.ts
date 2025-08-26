@@ -1,6 +1,7 @@
 import { atom, atomFamily } from 'recoil';
 import {
   type IGeneratedOffer,
+  type IGeneratedMultivendorOffer,
   type IPackage,
   type IPackageTravelDetails,
   type TCities,
@@ -72,6 +73,11 @@ export const generatedOffersAtom = atom<IGeneratedOffer[]>({
   default: [],
 });
 
+export const generatedMultivendorOffersAtom = atom<IGeneratedMultivendorOffer[]>({
+  key: 'generatedMultivendorOffers',
+  default: [],
+});
+
 export const noResultModalIsOpenAtom = atom<boolean>({
   key: 'noResultModalIsOpen',
   default: false,
@@ -89,6 +95,11 @@ export const userTokenAtom = atom<string>({
 
 export const isBookModalOpenAtom = atom<boolean>({
   key: 'isBookModalOpen',
+  default: false,
+});
+
+export const isBookingFlowOpenAtom = atom<boolean>({
+  key: 'isBookingFlowOpen',
   default: false,
 });
 
@@ -115,4 +126,21 @@ export const preventSideModalCloseAtom = atom<boolean>({
 export const preventParentSlideAtom = atom<boolean>({
   key: 'preventParentSlide',
   default: false,
+});
+
+export const bookingDrawerAtom = atom<{
+  isOpen: boolean;
+  packageData: PackageEntity | null;
+  childrenAges: number[];
+  selectedMealPlan: number;
+  selectedRoomPackageId: string | null;
+}>({
+  key: 'bookingDrawer',
+  default: {
+    isOpen: false,
+    packageData: null,
+    childrenAges: [],
+    selectedMealPlan: 0,
+    selectedRoomPackageId: null
+  }
 });

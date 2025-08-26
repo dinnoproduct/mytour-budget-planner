@@ -135,6 +135,43 @@ export interface IGeneratedOffer {
   [PackagesFields.checkout]: string;
 }
 
+export interface IGenerateMultivendorOffer {
+  [PackagesFields.hotelId]: number;
+  [PackagesFields.dateFrom]: string;
+  [PackagesFields.dateTo]: string;
+  [PackagesFields.adults]: number;
+  [PackagesFields.childs]: number[];
+  [PackagesFields.lateCheckout]: boolean;
+  [PackagesFields.bookingType]: number;
+}
+
+export interface IGeneratedMultivendorOffer {
+  [PackagesFields.offerId]: number;
+  [PackagesFields.roomType]: number;
+  [PackagesFields.price]: number;
+  [PackagesFields.nights]: number;
+  [PackagesFields.checkin]: string;
+  [PackagesFields.checkout]: string;
+  [PackagesFields.foodType]: number;
+  [PackagesFields.agency]: {
+    [PackagesFields.id]: number;
+    [PackagesFields.name]: string;
+    address: string;
+    phoneNumber: string;
+    email: string;
+    facebook: string;
+    instagram: string;
+    telegram: string;
+    establishmentDate: string;
+    contactPersonDetails: string;
+  };
+  [PackagesFields.priceInCurrency]: number;
+  [PackagesFields.rate]: number;
+  [PackagesFields.partnerPrice]: number;
+  [PackagesFields.currency]: string;
+  [PackagesFields.cancellationDate]: string;
+}
+
 export interface ITraveler {
   [PackagesFields.id]?: number;
   [PackagesFields.firstName]: string;
