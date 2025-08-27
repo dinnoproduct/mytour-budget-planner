@@ -131,16 +131,14 @@ export const preventParentSlideAtom = atom<boolean>({
 export const bookingDrawerAtom = atom<{
   isOpen: boolean;
   packageData: PackageEntity | null;
-  childrenAges: number[];
   selectedMealPlan: number;
-  selectedRoomPackageId: string | null;
+  selectedRoomPackage: IGeneratedMultivendorOffer | null;
 }>({
   key: 'bookingDrawer',
   default: {
     isOpen: false,
     packageData: null,
-    childrenAges: [],
     selectedMealPlan: 0,
-    selectedRoomPackageId: null
+    selectedRoomPackage: null
   }
 });

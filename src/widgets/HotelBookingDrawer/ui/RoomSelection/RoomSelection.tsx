@@ -1,34 +1,34 @@
-import React, { useMemo } from 'react';
-import { VStack } from '@chakra-ui/react';
-import { IGeneratedMultivendorOffer } from '../../../../modules/packages/data/packagesTypes';
-import { RoomTypeSection } from './RoomTypeSection';
+import React, { useMemo } from "react";
+import { VStack } from "@chakra-ui/react";
+import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
+import { RoomTypeSection } from "./RoomTypeSection";
 
 export interface RoomSelectionProps {
   offers: IGeneratedMultivendorOffer[];
   selectedMealPlan?: number;
-  updateChildrenAges: (childrenAges: number[]) => void;
   closeBookingDrawer: () => void;
+  updateSelectedRoomPackage: (offer: IGeneratedMultivendorOffer) => void;
 }
 
 export const RoomSelection: React.FC<RoomSelectionProps> = ({
   offers,
   selectedMealPlan,
-  updateChildrenAges,
-  closeBookingDrawer
+  closeBookingDrawer,
+  updateSelectedRoomPackage,
 }) => {
   const filteredOffers = useMemo(() => {
-    const result: Record<number, IGeneratedMultivendorOffer[]> = {}
-    offers.forEach(offer => {
+    const result: Record<number, IGeneratedMultivendorOffer[]> = {};
+    offers.forEach((offer) => {
       if (offer.foodType !== selectedMealPlan) {
-        return
+        return;
       }
       if (!result[offer.roomType]) {
-        result[offer.roomType] = [offer]
+        result[offer.roomType] = [offer];
       } else {
-        result[offer.roomType].push(offer)
+        result[offer.roomType].push(offer);
       }
-    })
-    return result
+    });
+    return result;
   }, [selectedMealPlan, offers]);
 
   return (
@@ -38,8 +38,8 @@ export const RoomSelection: React.FC<RoomSelectionProps> = ({
           key={roomTypeKey}
           roomTypeKey={roomTypeKey}
           roomTypeOffers={filteredOffers[Number(roomTypeKey)]}
-          updateChildrenAges={updateChildrenAges}
           closeBookingDrawer={closeBookingDrawer}
+          updateSelectedRoomPackage={updateSelectedRoomPackage}
         />
       ))}
     </VStack>

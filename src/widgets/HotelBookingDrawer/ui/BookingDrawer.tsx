@@ -1,54 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { VStack } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
-import { SideDrawer } from '@/components/SideDrawer';
-import { useBookingDrawer } from '@/modules/packages/hooks/useBookingDrawer';
-import useMultivendorOffer from '@/modules/packages/hooks/useMultivendorOffer';
-import { ActionsSection } from './ActionsSection';
-import { PackagesFields } from '@/modules/packages/data/packagesEnums';
-import { RoomTypesList } from './RoomTypesList';
-import { RoomSelectionSkeleton } from '@/widgets/HotelBookingDrawer/ui/RoomSelection';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { SideDrawer } from "@/components/SideDrawer";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
+import useMultivendorOffer from "@/modules/packages/hooks/useMultivendorOffer";
+import { ActionsSection } from "./ActionsSection";
+import { PackagesFields } from "@/modules/packages/data/packagesEnums";
+import { RoomTypesList } from "./RoomTypesList";
+import { VStack } from "@chakra-ui/react";
 
-export const BookingDrawer: React.FC = () => {
+export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAges }) => {
   const { t } = useTranslation();
   const {
     isOpen,
     packageData,
     selectedMealPlan,
-    selectedRoomPackageId,
     closeBookingDrawer,
     updateMealPlan,
     updateSelectedRoomPackage,
-    updateChildrenAges
   } = useBookingDrawer();
 
-  const { generateMultivendorOffers, loading, clearGeneratedMultivendorOffers, generatedMultivendorOffers } = useMultivendorOffer();
-  const [lateCheckout, setLateCheckout] = useState(false)
+  const {
+    generateMultivendorOffers,
+    loading,
+    clearGeneratedMultivendorOffers,
+    generatedMultivendorOffers,
+  } = useMultivendorOffer();
+  
+  const [lateCheckout, setLateCheckout] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      generateMultivendorOffers({
-        [PackagesFields.hotelId]: packageData?.hotel?.id || 0,
-        [PackagesFields.dateFrom]: packageData?.checkin || "",
-        [PackagesFields.dateTo]: packageData?.checkout || "",
-        [PackagesFields.adults]: packageData?.adultTravelers || 0,
-        [PackagesFields.childs]: [
-          0
-        ],
-        [PackagesFields.lateCheckout]: lateCheckout,
-        [PackagesFields.bookingType]: 2
-      }, (data) => {
-        console.log(data)
-      })
+      generateMultivendorOffers(
+        {
+          [PackagesFields.hotelId]: packageData?.hotel?.id || 0,
+          [PackagesFields.dateFrom]: packageData?.checkin || "",
+          [PackagesFields.dateTo]: packageData?.checkout || "",
+          [PackagesFields.adults]: packageData?.adultTravelers || 0,
+          [PackagesFields.childs]: childrenAges,
+          [PackagesFields.lateCheckout]: lateCheckout,
+          [PackagesFields.bookingType]: 2,
+        },
+      );
     }
     return () => {
-      clearGeneratedMultivendorOffers()
-    }
-  }, [lateCheckout, packageData, isOpen])
+      clearGeneratedMultivendorOffers();
+    };
+  }, [lateCheckout, packageData, isOpen]);
 
   const handleLateCheckoutChange = (value: boolean) => {
-    setLateCheckout(value)
-  }
+    setLateCheckout(value);
+  };
 
   return (
     <SideDrawer
@@ -68,17 +69,13 @@ export const BookingDrawer: React.FC = () => {
           />
         )}
 
-        {loading ? (
-          <RoomSelectionSkeleton />
-        ) : (
-          <RoomTypesList
-            selectedMealPlan={selectedMealPlan}
-            generatedMultivendorOffers={generatedMultivendorOffers}
-            loading={loading}
-            updateChildrenAges={updateChildrenAges}
-            closeBookingDrawer={closeBookingDrawer}
-          />
-        )}
+        <RoomTypesList
+          selectedMealPlan={selectedMealPlan}
+          generatedMultivendorOffers={generatedMultivendorOffers}
+          loading={loading}
+          updateSelectedRoomPackage={updateSelectedRoomPackage}
+          closeBookingDrawer={closeBookingDrawer}
+        />
       </VStack>
     </SideDrawer>
   );

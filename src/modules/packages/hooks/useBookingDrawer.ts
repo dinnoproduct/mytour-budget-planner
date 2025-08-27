@@ -1,62 +1,69 @@
-import { useRecoilState } from 'recoil';
-import { bookingDrawerAtom } from '../store/store';
-import { type PackageEntity } from '@entities/package';
+import { useRecoilState } from "recoil";
+import { bookingDrawerAtom } from "../store/store";
+import { type PackageEntity } from "@entities/package";
+import { IGeneratedMultivendorOffer } from "../data/packagesTypes";
 
 export const useBookingDrawer = () => {
   const [bookingDrawer, setBookingDrawer] = useRecoilState(bookingDrawerAtom);
 
-  const openBookingDrawer = (packageData: PackageEntity, childrenAges: number[] = []) => {
+  const openBookingDrawer = (packageData: PackageEntity) => {
     setBookingDrawer({
       isOpen: true,
       packageData,
-      childrenAges,
       selectedMealPlan: 0,
-      selectedRoomPackageId: null
+      selectedRoomPackage: null,
     });
   };
 
   const closeBookingDrawer = () => {
-    setBookingDrawer({
+    setBookingDrawer((prev) => ({
+      ...prev,
       isOpen: false,
-      packageData: null,
-      childrenAges: [],
-      selectedMealPlan: 0,
-      selectedRoomPackageId: null
-    });
+    }));
   };
 
-  const updateChildrenAges = (childrenAges: number[]) => {
-    setBookingDrawer(prev => ({
+  const clearBookingDrawerData = () => {
+    setBookingDrawer((prev) => ({
       ...prev,
-      childrenAges
+      isOpen: false,
+      packageData: null,
+      selectedMealPlan: 0,
+      selectedRoomPackage: null,
     }));
   };
 
   const updateMealPlan = (selectedMealPlan: number) => {
-    setBookingDrawer(prev => ({
+    setBookingDrawer((prev) => ({
       ...prev,
-      selectedMealPlan
+      selectedMealPlan,
     }));
   };
 
-  const updateSelectedRoomPackage = (packageId: string) => {
-    setBookingDrawer(prev => ({
+  const updateSelectedRoomPackage = (offer: IGeneratedMultivendorOffer) => {
+    setBookingDrawer((prev) => ({
       ...prev,
-      selectedRoomPackageId: packageId
+      selectedRoomPackage: offer,
+      packageData: prev.packageData ? {
+        ...prev.packageData,
+        offerId: offer.offerId,
+        foodType: offer.foodType,
+        roomType: offer.roomType,
+        price: offer.price,
+        partnerPrice: offer.partnerPrice,
+        priceInCurrency: offer.priceInCurrency.toString(),
+      } : prev.packageData,
     }));
   };
 
   return {
     isOpen: bookingDrawer.isOpen,
     packageData: bookingDrawer.packageData,
-    childrenAges: bookingDrawer.childrenAges,
     selectedMealPlan: bookingDrawer.selectedMealPlan,
-    selectedRoomPackageId: bookingDrawer.selectedRoomPackageId,
+    selectedRoomPackage: bookingDrawer.selectedRoomPackage,
     openBookingDrawer,
     closeBookingDrawer,
-    updateChildrenAges,
+    clearBookingDrawerData,
     updateMealPlan,
     updateSelectedRoomPackage,
-    
   };
 };

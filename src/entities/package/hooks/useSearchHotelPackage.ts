@@ -109,6 +109,7 @@ export const useSearchHotelPackage = (options?: Options) => {
 
   return {
     packageDetails,
+    childrenAges,
     isLoading,
     isFetched: hasInitialized,
     error

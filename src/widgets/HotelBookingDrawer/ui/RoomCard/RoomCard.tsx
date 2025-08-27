@@ -1,23 +1,22 @@
-import React from 'react';
-import { Card, Divider } from '@chakra-ui/react';
-import { IGeneratedMultivendorOffer } from '../../../../modules/packages/data/packagesTypes';
-import { Header } from './Header';
-import { Footer } from './Footer';
+import React from "react";
+import { Card, Divider } from "@chakra-ui/react";
+import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
 
 export interface RoomCardProps {
   fullWidth?: boolean;
   offer: IGeneratedMultivendorOffer;
-  updateChildrenAges: (childrenAges: number[]) => void;
   closeBookingDrawer: () => void;
+  updateSelectedRoomPackage: (offer: IGeneratedMultivendorOffer) => void;
 }
 
 export const RoomCard: React.FC<RoomCardProps> = ({
   fullWidth = false,
   offer,
-  updateChildrenAges,
-  closeBookingDrawer
+  closeBookingDrawer,
+  updateSelectedRoomPackage,
 }) => {
-
   return (
     <Card
       p={3}
@@ -30,7 +29,11 @@ export const RoomCard: React.FC<RoomCardProps> = ({
 
       <Divider my={3} color="white" borderWidth="1px" />
 
-      <Footer offer={offer} updateChildrenAges={updateChildrenAges} closeBookingDrawer={closeBookingDrawer} />
+      <Footer
+        offer={offer}
+        closeBookingDrawer={closeBookingDrawer}
+        updateSelectedRoomPackage={updateSelectedRoomPackage}
+      />
     </Card>
   );
 };

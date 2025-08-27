@@ -7,7 +7,6 @@ import {
 } from '@features/PackageImagesGallery'
 import {
   type PackageEntity,
-  useCurrentHotelPackageOfferValue,
   useHotelPackagesSearchContext,
   useSearchHotelPackage
 } from '@entities/package'
@@ -16,9 +15,7 @@ import { type LayoutProps } from '@widgets/PackageDetails/ui/types.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBreakpoint } from '@shared/hooks'
-import { useModalContext } from '@app/providers'
 import { BookingFlow } from '@widgets/BookingFlow'
-import { useUserContext } from '@/entities/user'
 import {
   HotelPackageDetails,
   HotelPackageDetailsHeader
@@ -27,18 +24,15 @@ import { HotelPackageBookingConfig } from '@widgets/HotelPackageBookingConfig'
 import { BookingDrawer } from '@/widgets/HotelBookingDrawer'
 import { useRecoilState } from 'recoil'
 import { isBookingFlowOpenAtom } from '@/modules/packages/store/store'
+import { useBookingDrawer } from '@/modules/packages/hooks/useBookingDrawer'
 
 export const HotelPackageDetailsPage = () => {
   const navigate = useNavigate()
   const { isMd } = useBreakpoint()
-  const { user } = useUserContext()
-  const { dispatchModal } = useModalContext()
   const [isModalOpen, setModalOpen] = useState(false)
   const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(isBookingFlowOpenAtom)
-  const { packageDetails, isFetched } = useSearchHotelPackage()
-  const currentOfferPackage = useCurrentHotelPackageOfferValue()
-
-  const [childrenAges, setChildrenAges] = useState<number[]>([])
+  const { packageDetails, childrenAges, isFetched } = useSearchHotelPackage()
+  const { packageData, clearBookingDrawerData } = useBookingDrawer()
 
   const { filteredHotelPackages } = useHotelPackagesSearchContext()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -56,6 +50,14 @@ export const HotelPackageDetailsPage = () => {
 
     return filteredImages.map(img => img.url)
   }, [packageDetails?.hotel?.images])
+
+  useEffect(() => {
+    return () => {
+      clearBookingDrawerData()
+      setBookingFlowOpen(false)
+      setModalOpen(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
@@ -82,34 +84,12 @@ export const HotelPackageDetailsPage = () => {
     }
   }, [isMd])
 
-  const openAuthModal = () => {
-    if (user?.id) {
-      setBookingFlowOpen(true)
-
-      return
-    }
-
-    dispatchModal({
-      type: 'open',
-      modalType: 'auth',
-      props: {
-        view: 'signUp',
-        isCloseOnSuccess: true,
-        onSuccess: () => {
-          setBookingFlowOpen(true)
-        }
-      }
-    })
-  }
-
-  const handleBookClick = ({ childrenAges }: { childrenAges: number[] }) => {
-    setChildrenAges(childrenAges)
-    openAuthModal()
-  }
-
   if (!packageDetails?.offerId) {
     return <Loader loading />
   }
+
+
+  const tourPackage = !!packageData? packageData :packageDetails
 
   return (
     <Box overflowX="hidden" mb={{ base: '117px', md: '0' }}>
@@ -123,7 +103,7 @@ export const HotelPackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <HotelPackageDetailsHeader
-          tourPackage={packageDetails as PackageEntity}
+          tourPackage={tourPackage}
           onMoreImagesClick={() => setModalOpen(true)}
         />
 
@@ -132,15 +112,14 @@ export const HotelPackageDetailsPage = () => {
           mt={{ md: '10' }}
           ref={containerRef}
         >
-          <HotelPackageDetails tourPackage={packageDetails as PackageEntity} />
+          <HotelPackageDetails tourPackage={tourPackage} />
 
           <HotelPackageBookingConfig
-            tourPackage={packageDetails as PackageEntity}
+            tourPackage={tourPackage}
             ml={{ md: '20' }}
             mt={{ base: '5', md: '0' }}
             flexShrink={0}
             containerRef={containerRef}
-            onBookClick={handleBookClick}
           />
         </Flex>
       </PackageDetailsLayout>
@@ -155,14 +134,14 @@ export const HotelPackageDetailsPage = () => {
       />
 
       <BookingFlow
-        packageDetails={currentOfferPackage as PackageEntity}
+        packageDetails={packageData as PackageEntity}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}
         isOpen={isBookingFlowOpen}
         onClose={() => setBookingFlowOpen(false)}
       />
-      <BookingDrawer />
+      <BookingDrawer childrenAges={childrenAges} />
     </Box>
   )
 }

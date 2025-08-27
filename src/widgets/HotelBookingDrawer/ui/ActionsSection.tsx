@@ -24,7 +24,7 @@ export const ActionsSection = ({
 
     return (
         <VStack bg="white" align="stretch" py={4} px={6}>
-            <VStack align="stretch">
+            <VStack align="stretch" overflowX="auto">
                 <MealPlanSelector
                     selectedMealPlan={selectedMealPlan}
                     onMealPlanChange={updateMealPlan}

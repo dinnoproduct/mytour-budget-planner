@@ -32,7 +32,7 @@ export type ButtonVariant =
   | 'outline-red'
   | 'text-blue'
 
-export type ButtonSize = 'lg' | 'md' | 'sm' | 'xs'
+export type ButtonSize = 'lg' | 'md' | 'sm' | 'xs' | 'xl'
 
 export type LinkProps = {
   as: any

@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import { HStack, Text } from "@chakra-ui/react";
+import { Button, HStack, Text } from "@chakra-ui/react";
 import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { useDictionary } from "@/entities/package";
 import { DictionaryTypes } from "@/entities/package";
-import { Button } from "@/shared/ui";
 
 export type MealPlan =
   | "all_inclusive"
@@ -14,14 +13,12 @@ export type MealPlan =
 export interface MealPlanSelectorProps {
   selectedMealPlan: number;
   onMealPlanChange: (mealPlan: number) => void;
-  disabled?: boolean;
   generatedMultivendorOffers?: IGeneratedMultivendorOffer[];
 }
 
 export const MealPlanSelector: React.FC<MealPlanSelectorProps> = ({
   selectedMealPlan,
   onMealPlanChange,
-  disabled = false,
   generatedMultivendorOffers = [],
 }) => {
   const { data: foodTypes = [] } = useDictionary(
@@ -48,34 +45,22 @@ export const MealPlanSelector: React.FC<MealPlanSelectorProps> = ({
   }, [generatedMultivendorOffers]);
 
   return (
-    <HStack p={3} width="full" overflowX="auto">
+    <HStack py={3} width="fit-content" overflowX="auto">
       {mealPlans.map((mealPlan) => {
         const isSelected = selectedMealPlan === mealPlan.key;
         return (
           <Button
             key={mealPlan.key}
             onClick={() => onMealPlanChange(mealPlan.key)}
-            disabled={disabled}
-            size="md"
-            borderRadius="lg"
+            borderRadius="3xl"
             px={4}
             py={2}
-            minW="auto"
-            height="auto"
-            bg={isSelected ? "blue.500" : "white"}
-            color={isSelected ? "white" : "gray.600"}
-            border="1px solid"
-            borderColor={isSelected ? "blue.500" : "gray.300"}
-            _hover={{
-              bg: isSelected ? "blue.600" : "gray.50",
-              borderColor: isSelected ? "blue.600" : "gray.300",
-            }}
-            _active={{
-              bg: isSelected ? "blue.700" : "gray.100",
-            }}
-            transition="all 0.2s"
+            size={{ base: "lg"}}
+            fontSize="lg"
+            variant={isSelected ? "solid" : "outline"}
+            colorScheme={isSelected ? "blue" : "gray"}
           >
-            <Text fontSize="sm" fontWeight="medium">
+            <Text fontSize="sm" fontWeight="medium" color={isSelected ? "white" : "gray.600"}>
               {mealPlan.labelArm}
             </Text>
           </Button>
