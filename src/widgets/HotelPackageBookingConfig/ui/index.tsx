@@ -1,7 +1,7 @@
 import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
 import { Box, Flex, Grid } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { Button, Icon, Text } from "@ui";
+import { Button, Icon, SkeletonText, Text } from "@ui";
 import { useBookingConfig, useFreeCancellation } from "../hooks";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 import { useBreakpoint } from "@shared/hooks";
@@ -23,10 +23,10 @@ export const HotelPackageBookingConfig = ({
   const { isMd } = useBreakpoint();
 
   const {
-    selectedOffer,
     isNotFound,
     isLoadingTourPackage,
     currentOfferPackage,
+    isCalculatingPrepayment,
   } = useBookingConfig(tourPackage, tourPackage.offerId);
 
   const [isFixed, setIsFixed] = useState(false);
@@ -76,7 +76,6 @@ export const HotelPackageBookingConfig = ({
         },
       },
     });
-    // openBookingDrawer(tourPackage)
   };
 
   return (
@@ -94,27 +93,30 @@ export const HotelPackageBookingConfig = ({
         width="full"
       >
         <Flex width="full" justify="space-between" align="center" height="28px">
-          <Text size="sm">{t`total`}</Text>
+          <Text size="sm">{t`total`} :</Text>
+          {isCalculatingPrepayment ? (
+            <SkeletonText noOfLines={1} lineHeight={28} width="100px" />
+          ) : (
+            <Flex>
+              <Text size="lg" fontWeight="bold" ml="2">
+                {numberWithCommaNormalizer(currentOfferPackage?.price)} ֏
+              </Text>
+              <Flex align="center" ml="2">
+                {currentOfferPackage ? (
+                  <>
+                    <Icon name="approximate" size="20" color="gray.500" />
 
-          <Flex>
-            <Text size="lg" fontWeight="bold" ml="2">
-              {numberWithCommaNormalizer(selectedOffer?.price)} ֏
-            </Text>
-            <Flex align="center" ml="2">
-              {currentOfferPackage ? (
-                <>
-                  <Icon name="approximate" size="20" color="gray.500" />
-
-                  <Text size="sm" color="gray.500" ml="0.5">
-                    {CURRENCY_MAP[currentOfferPackage.currency]}{" "}
-                    {formatNumber(
-                      parseFloat(currentOfferPackage.priceInCurrency),
-                    )}
-                  </Text>
-                </>
-              ) : null}
+                    <Text size="sm" color="gray.500" ml="0.5">
+                      {CURRENCY_MAP[currentOfferPackage.currency]}{" "}
+                      {formatNumber(
+                        parseFloat(currentOfferPackage.priceInCurrency),
+                      )}
+                    </Text>
+                  </>
+                ) : null}
+              </Flex>
             </Flex>
-          </Flex>
+          )}
         </Flex>
 
         <Button
