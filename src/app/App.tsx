@@ -6,6 +6,7 @@ import Routes from './Routes.tsx'
 import '../App.css'
 import Toaster from '../components/Toaster/Toaster.tsx'
 import { UserProvider } from '@entities/user'
+import { RouteTracker } from './RouteTracker'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <ThemeProvider>
             <ModalProvider>
               <BrowserRouter>
+                <RouteTracker />
                 <Routes />
                 <Toaster />
               </BrowserRouter>
