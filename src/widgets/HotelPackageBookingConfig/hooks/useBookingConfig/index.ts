@@ -13,8 +13,8 @@ import { useSearchParams } from 'react-router-dom'
 import { type SearchTravelersProps } from '@features/SearchTravelers/ui/types.ts'
 import moment from 'moment'
 
-export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
-  const [searchParams, setSearchParams] = useSearchParams()
+export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: number) => {
+  const [searchParams, setSearchParams] = useSearchParams()  
   const roomId = useMemo(() => {
     const roomId = searchParams.get('roomId')
 
@@ -162,6 +162,13 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
 
   const selectedOffer = useMemo(() => {
     if (offers.length === 0) return null
+    
+    // If offerId is provided, find the specific offer
+    if (offerId) {
+      return offers.find(offer => offer.offerId === offerId) || null
+    }
+    
+    // Otherwise, use the selected meal and room
     const mealOffer =
       bookingData.mealId >= 0
         ? offers.find(
@@ -172,7 +179,7 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         : offers.filter(offer => offer.roomType === bookingData.roomId)[0]
 
     return mealOffer
-  }, [bookingData.mealId, bookingData.roomId, JSON.stringify(offers)])
+  }, [offerId, bookingData.mealId, bookingData.roomId, JSON.stringify(offers)])
 
   const {
     data: currentOfferPackage,

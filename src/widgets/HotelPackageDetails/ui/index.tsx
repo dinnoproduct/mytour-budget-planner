@@ -1,50 +1,34 @@
 import { type PackageDetailsProps } from './types.ts'
-import { Divider, Flex } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
 import { SectionLayout } from './SectionLayout.tsx'
 import { formatDate } from '../utils'
 import { useTranslation } from 'react-i18next'
 import { HotelPackageDescription } from './HotelPackageDescription.tsx'
-import { CompanyPolicy } from './CompanyPolicy.tsx'
-import { type DictionaryTypes, useDictionary } from '@entities/package'
-import { useMemo } from 'react'
+import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 
 export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
   const { t } = useTranslation()
 
-  const { data: foodTypes = [] } = useDictionary(
-    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
-  )
-
-  const foodType = useMemo<string>(
-    () =>
-      foodTypes.find(({ key }) => key === tourPackage.foodType)?.value || '',
-    [JSON.stringify(foodTypes)]
-  )
-
   return (
     <Flex direction="column" mt={{ base: 5, md: 0 }}>
-      <SectionLayout
-        title={t`hotelDetails`}
-        listItems={[
-          { key: t`checkIn`, value: formatDate(tourPackage.checkin) },
-          { key: t`checkOut`, value: formatDate(tourPackage.checkout) }
-        ]}
-      />
-
-      <SectionLayout
-        mt="8"
-        subtitle={t`reviewsAccordingToBooking`}
-        listItems={[
-          { key: t`guestsReviews`, value: tourPackage.hotel?.travellersRating },
-          { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness }
-        ]}
-      />
-
-      <HotelPackageDescription tourPackage={tourPackage} />
-
-      <Divider my={{ base: 5, md: 10 }} />
-
-      <CompanyPolicy tourPackage={tourPackage} />
+      <CardSectionLayout>
+        <SectionLayout
+          title={t`hotelDetails`}
+          listItems={[
+            { key: t`checkIn`, value: formatDate(tourPackage.checkin) },
+            { key: t`checkOut`, value: formatDate(tourPackage.checkout) }
+          ]}
+        />
+        <SectionLayout
+          mt="8"
+          subtitle={t`reviewsAccordingToBooking`}
+          listItems={[
+            { key: t`guestsReviews`, value: tourPackage.hotel?.travellersRating },
+            { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness }
+          ]}
+        />
+        <HotelPackageDescription tourPackage={tourPackage} />
+      </CardSectionLayout>
     </Flex>
   )
 }

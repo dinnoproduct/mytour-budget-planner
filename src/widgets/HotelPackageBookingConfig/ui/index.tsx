@@ -1,145 +1,92 @@
-import { type LayoutProps, type PackageBookingConfigProps } from './types.ts'
-import { Box, type BoxProps, Flex, Grid, VStack } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
-import { AlertCardMessage, Button, Icon, Text } from '@ui'
-import { FlightsConfigButton } from '@widgets/PackageBookingConfig/ui/FlightsConfigButton.tsx'
-import { SearchTravelers } from '@features/SearchTravelers'
-import { TravelersConfigButton } from '@widgets/PackageBookingConfig/ui/TravelersConfigButton.tsx'
-import { RoomsMenuHotel } from '@features/RoomsMenuHotel'
-import { useBookingConfig, useFreeCancellation } from '../hooks'
-import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
-import { useBreakpoint } from '@shared/hooks'
-import { useEffect, useState } from 'react'
-import { DatePicker } from '@features/DatePicker'
-import { CURRENCY_MAP } from '@/shared/model'
-import { formatNumber } from '@shared/utils'
+import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
+import { Box, Flex, Grid } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+import { Button, Icon, Text } from "@ui";
+import { useBookingConfig, useFreeCancellation } from "../hooks";
+import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
+import { useBreakpoint } from "@shared/hooks";
+import { useEffect, useState } from "react";
+import { CURRENCY_MAP } from "@/shared/model";
+import { formatNumber } from "@shared/utils";
+import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
+import { useUserContext } from "@/entities/user/index.ts";
+import { useModalContext } from "@/app/providers/index.ts";
 
 export const HotelPackageBookingConfig = ({
   tourPackage,
   onLateCheckoutChange,
   containerRef,
-  onBookClick,
   ...props
 }: PackageBookingConfigProps) => {
-  const { t } = useTranslation()
-  const { isMd } = useBreakpoint()
+  const { t } = useTranslation();
+  const { isMd } = useBreakpoint();
 
   const {
-    bookingData,
     selectedOffer,
-    flightsDatePickerProps,
-    searchTravelersProps,
-    roomsMenuProps,
     isNotFound,
     isLoadingTourPackage,
     currentOfferPackage,
-    prepaymentInfo
-  } = useBookingConfig(tourPackage)
-  const { showFreeCancellation, freeCancellationDate } = useFreeCancellation(
-    bookingData.checkIn,
-    bookingData.checkOut
-  )
+  } = useBookingConfig(tourPackage, tourPackage.offerId);
 
-  const [isFixed, setIsFixed] = useState(false)
+  const [isFixed, setIsFixed] = useState(false);
+  const { user } = useUserContext();
+  const { dispatchModal } = useModalContext();
 
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef?.current && isMd) {
-        const layoutTop = containerRef.current.getBoundingClientRect().top
+        const layoutTop = containerRef.current.getBoundingClientRect().top;
 
         if (layoutTop <= 40 && !isFixed) {
-          setIsFixed(true)
+          setIsFixed(true);
         } else if (layoutTop > 40 && isFixed) {
-          setIsFixed(false)
+          setIsFixed(false);
         }
       }
-    }
+    };
 
     if (!isMd) {
-      setIsFixed(false)
+      setIsFixed(false);
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [isFixed, isMd, containerRef?.current])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFixed, isMd, containerRef?.current]);
+
+  const { openBookingDrawer } = useBookingDrawer();
 
   const handleBookClick = () => {
-    onBookClick &&
-      onBookClick({
-        childrenAges: bookingData.travelersData.childrenAges
-      })
-  }
+    if (user?.id) {
+      openBookingDrawer(tourPackage);
+      return;
+    }
+
+    dispatchModal({
+      type: "open",
+      modalType: "auth",
+      props: {
+        view: "signUp",
+        isCloseOnSuccess: true,
+        onSuccess: () => {
+          openBookingDrawer(tourPackage);
+        },
+      },
+    });
+    // openBookingDrawer(tourPackage)
+  };
 
   return (
     <Layout isFixed={isFixed} {...props}>
-      <VStack
-        align="stretch"
-        py="4"
-        spacing="4"
-        gridArea="config"
-        borderTop="1px solid"
-        borderColor={{ base: 'gray.100', md: 'transparent' }}
-      >
-        <DatePicker
-          CustomButton={FlightsConfigButton}
-          menuProps={{ offset: [-4, -28] }}
-          {...flightsDatePickerProps}
-        />
-
-        <SearchTravelers
-          menuProps={{ offset: [12, -28] }}
-          {...searchTravelersProps}
-          CustomButton={TravelersConfigButton}
-        />
-
-        <RoomsMenuHotel {...roomsMenuProps} priceType="room" />
-
-        {isNotFound ? (
-          <Box px="4">
-            <AlertCardMessage
-              status="error"
-              message={t`noRoomsFoundWithParams`}
-            />
-          </Box>
-        ) : null}
-      </VStack>
-
-      {/*{showFreeCancellation ? (*/}
-      {/*  <SectionLayout*/}
-      {/*    gridArea="availability"*/}
-      {/*    borderColor={{ base: 'transparent', md: 'gray.100' }}*/}
-      {/*  >*/}
-      {/*<HStack px="4" spacing="2">*/}
-      {/*	<Icon name="status-info" size="20"/>*/}
-      {/*	<Text size="sm">*/}
-      {/*		{t('availableSeats', { count: availableSeats as any })}*/}
-      {/*	</Text>*/}
-      {/*</HStack>*/}
-
-      {/*{showFreeCancellation ? (*/}
-      {/*  <HStack*/}
-      {/*    px="4"*/}
-      {/*    spacing="2"*/}
-      {/*    // mt="4"*/}
-      {/*  >*/}
-      {/*    <Icon name="status-success" size="20" />*/}
-      {/*    <Text size="sm">*/}
-      {/*      {t`freeCancellationUntil`} {freeCancellationDate}*/}
-      {/*    </Text>*/}
-      {/*  </HStack>*/}
-      {/*) : null}*/}
-      {/*</SectionLayout>*/}
-      {/*) : null}*/}
-
-      <SectionLayout
+      <CardSectionLayout
         px="4"
         gridArea="totalPrice"
         position={{
-          base: 'fixed',
-          md: 'static'
+          base: "fixed",
+          md: "static",
         }}
         bottom="0"
         left="0"
@@ -149,54 +96,57 @@ export const HotelPackageBookingConfig = ({
         <Flex width="full" justify="space-between" align="center" height="28px">
           <Text size="sm">{t`total`}</Text>
 
-          <Text size="lg" fontWeight="bold" ml="2">
-            {numberWithCommaNormalizer(selectedOffer?.price)} ֏
-          </Text>
-        </Flex>
+          <Flex>
+            <Text size="lg" fontWeight="bold" ml="2">
+              {numberWithCommaNormalizer(selectedOffer?.price)} ֏
+            </Text>
+            <Flex align="center" ml="2">
+              {currentOfferPackage ? (
+                <>
+                  <Icon name="approximate" size="20" color="gray.500" />
 
-        <Flex height="28px" mt="2" align="center" ml="auto" justify="end">
-          {currentOfferPackage ? (
-            <>
-              <Icon name="approximate" size="20" color="gray.500" />
-
-              <Text size="sm" color="gray.500" ml="0.5">
-                {CURRENCY_MAP[currentOfferPackage.currency]}{' '}
-                {formatNumber(parseFloat(currentOfferPackage.priceInCurrency))}
-              </Text>
-            </>
-          ) : null}
+                  <Text size="sm" color="gray.500" ml="0.5">
+                    {CURRENCY_MAP[currentOfferPackage.currency]}{" "}
+                    {formatNumber(
+                      parseFloat(currentOfferPackage.priceInCurrency),
+                    )}
+                  </Text>
+                </>
+              ) : null}
+            </Flex>
+          </Flex>
         </Flex>
 
         <Button
-          mt="2"
+          mt="4"
           width="full"
           isDisabled={isNotFound}
           isLoading={isLoadingTourPackage}
           onClick={handleBookClick}
           size="lg"
         >
-          {prepaymentInfo?.paymentType === 'NoDownPayment' ? t`bookWithoutPrepayment` : t`book`}
+          {t`bookingDetails`}
         </Button>
-      </SectionLayout>
+      </CardSectionLayout>
     </Layout>
-  )
-}
+  );
+};
 
 export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
-  <Box width={{ base: 'full', md: '442px' }} {...props}>
+  <Box width={{ base: "full", md: "442px" }} {...props}>
     <Grid
-      width={{ base: 'full', md: '442px' }}
+      width={{ base: "full", md: "442px" }}
       borderY="1px solid"
       borderX={{
-        base: 'none',
-        md: '1px solid'
+        base: "none",
+        md: "1px solid",
       }}
       bgColor="white"
       borderTopColor="gray.100"
-      borderLeftColor={{ base: 'transparent', md: 'gray.100' }}
-      borderRightColor={{ base: 'transparent', md: 'gray.100' }}
+      borderLeftColor={{ base: "transparent", md: "gray.100" }}
+      borderRightColor={{ base: "transparent", md: "gray.100" }}
       borderBottomColor="gray.100"
-      rounded={{ base: 'none', md: 'md' }}
+      rounded={{ base: "none", md: "md" }}
       height="fit-content"
       templateAreas={{
         base: `
@@ -210,24 +160,14 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
         "availability"
         "lateCheckout"
         "totalPrice"
-        `
+        `,
       }}
       gridTemplateRows="auto"
       gridTemplateColumns="1fr"
-      position={isFixed ? 'fixed' : 'static'}
-      top={isFixed ? '40px' : 'auto'}
+      position={isFixed ? "fixed" : "static"}
+      top={isFixed ? "40px" : "auto"}
     >
       {children}
     </Grid>
   </Box>
-)
-
-const SectionLayout = (props: BoxProps) => (
-  <Box
-    py={{ base: '5', md: '4' }}
-    borderTop="1px solid"
-    borderColor="gray.100"
-    bgColor="white"
-    {...props}
-  />
-)
+);

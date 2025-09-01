@@ -42,7 +42,7 @@ export const HotelPackageDescription = ({
 
       <UnorderedList listStyleType="none" spacing="4" mx="0" mt="4">
         {hotelFacilities?.map(({ key, value }) => (
-          <ListItem>
+          <ListItem key={key}>
             <SummaryCard
               iconName={PACKAGE_FACILITY_ICON_MAP[key]}
               children={value}

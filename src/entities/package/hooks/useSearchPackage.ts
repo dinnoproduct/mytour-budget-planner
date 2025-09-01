@@ -9,7 +9,7 @@ type Options = {
   onSuccess?: (packageDetails: PackageEntity | EmptyObject) => void
 } & Omit<UseQueryOptions<PackageEntity[]>, 'queryKey' | 'queryFn'>
 
-export const useSearchPackage = (options?: Options) => {
+export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const [searchInput, setSearchInput] = useState<any>({})
@@ -20,7 +20,7 @@ export const useSearchPackage = (options?: Options) => {
     isFetched
   } = useSearchPackages(searchInput, {
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    enabled: !!searchInput.flightId,
+    enabled: !!searchInput.flightId && !isDataCached,
     ...options
   })
 

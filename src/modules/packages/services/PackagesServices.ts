@@ -1,6 +1,8 @@
 import { request } from '../../../services/RequestService.ts';
 import { ApiUrls, Methods } from '../../../constants/constants.ts';
 import {
+  IGeneratedMultivendorOffer,
+  IGenerateMultivendorOffer,
   type IBookRequest,
   type IBookResponse,
   type IGeneratedOffer,
@@ -63,6 +65,13 @@ export const generateOfferService = (data: IGenerateOffer): Promise<{ data: IGen
     data,
   });
 
+export const generateMultivendorOfferService = (data: IGenerateMultivendorOffer): Promise<{ data: IGeneratedMultivendorOffer[] }> => {
+  const baseUrl = import.meta.env.VITE_API_URL;
+  return request(Methods.POST, `${baseUrl}/${ApiUrls.V2}/${ApiUrls.package}/${ApiUrls.generateMultivendorOffers}`, {
+    headers: { 'Content-Type': 'application/json-patch+json' },
+    data,
+  })
+};
 
 export const updateUserService = (token: string): Promise<{ data: { [CustomFields.email]: string } }> =>
   request(Methods.POST, `/${ApiUrls.api}/${ApiUrls.user}`, { headers: { Authorization: `Bearer ${token}` } });

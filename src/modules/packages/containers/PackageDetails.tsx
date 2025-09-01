@@ -30,7 +30,7 @@ import BookModal from '../components/BookModal/BookModal.tsx'
 import Modal from '../../../components/Modal/Modal.tsx'
 import { Header } from '@widgets/Header'
 import { Img, Link } from '@chakra-ui/react'
-import { usePackagesSearchContext, useSearchPackages } from '@entities/package'
+import { usePackagesSearchContext } from '@entities/package'
 
 const PackageDetails = () => {
 	const { t, i18n } = useTranslation()

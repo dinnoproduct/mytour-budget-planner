@@ -23,6 +23,7 @@ export enum ApiUrls {
   subscription = 'subscription',
   subscribe = 'subscribe',
   generateOffers = 'generateOffers',
+  generateMultivendorOffers = 'GenerateMultivendorOffers',
   user = 'user',
   request = 'request',
   book = 'book',

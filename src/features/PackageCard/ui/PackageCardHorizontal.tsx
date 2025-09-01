@@ -15,8 +15,9 @@ import {
 } from '@entities/package'
 import { getPluralForm } from '@shared/helpers'
 import { type PackageCardHorizontalProps } from './types.ts'
-import { useBreakpoint } from '@/shared/hooks/useBreakpoint.ts'
 import { PackageCardHorizontalDetail } from './PackageCardHorizontalDetail.tsx'
+import { useSelectedPackage } from '@/modules/packages/hooks/useSelectedPackage.ts'
+import { type EmptyObject } from 'global'
 
 export const PackageCardHorizontal = ({
   tourPackage = {},
@@ -78,7 +79,7 @@ export const PackageCardHorizontal = ({
   const foodType = foodTypes[tourPackage?.foodType]?.value
 
   return (
-    <Layout link={link} {...props}>
+    <Layout link={link} tourPackage={tourPackage} {...props}>
       <Flex flexDirection={{ base: 'column', md: 'row' }}>
         {/* hotel details layout */}
         <Flex
@@ -147,27 +148,41 @@ export const PackageCardHorizontal = ({
 const Layout = ({
   children,
   link,
+  tourPackage,
   ...props
-}: { children: ReactNode | ReactNode[]; link: string } & LinkProps) => {
-    return (
-      <Link
-        as={ReactLink}
-        to={link}
-        _hover={{ textTransform: 'none' }}
-        maxWidth={{ base: '362px', md: 'full' }}
+}: { 
+  children: ReactNode | ReactNode[]; 
+  link: string; 
+  tourPackage: PackageEntity | EmptyObject;
+} & LinkProps) => {
+  const { storeSelectedPackage } = useSelectedPackage()
+
+  const handleClick = () => {
+    if (tourPackage && 'offerId' in tourPackage && tourPackage.offerId) {
+      storeSelectedPackage(tourPackage as PackageEntity);
+    }
+  };
+
+  return (
+    <Link
+      as={ReactLink}
+      to={link}
+      onClick={handleClick}
+      _hover={{ textTransform: 'none' }}
+      maxWidth={{ base: '362px', md: 'full' }}
+      width={{ base: 'auto', md: 'full' }}
+      {...props}
+    >
+      <Box
         width={{ base: 'auto', md: 'full' }}
+        rounded="lg"
+        overflow="hidden"
+        border="1px solid"
+        borderColor="gray.200"
         {...props}
       >
-        <Box
-          width={{ base: 'auto', md: 'full' }}
-          rounded="lg"
-          overflow="hidden"
-          border="1px solid"
-          borderColor="gray.200"
-          {...props}
-        >
-          {children}
-        </Box>
-      </Link>
-    )
+        {children}
+      </Box>
+    </Link>
+  )
 }

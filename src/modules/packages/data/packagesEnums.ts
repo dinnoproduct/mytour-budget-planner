@@ -53,6 +53,15 @@ export enum PackagesFields {
   amountToBePaid = 'amountToBePaid',
   usdRate = 'usdRate',
   size = 'size',
+  bookingType = 'bookingType',
+  dateFrom = 'dateFrom',
+  dateTo = 'dateTo',
+  agency = 'agency',
+  priceInCurrency = 'priceInCurrency',
+  rate = 'rate',
+  partnerPrice = 'partnerPrice',
+  currency = 'currency',
+  cancellationDate = 'cancellationDate',
 }
 
 export enum PackagesNestedFields {
