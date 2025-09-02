@@ -7,7 +7,7 @@ import {
   IconButton,
   Flex,
   type LinkBoxProps,
-  Link,
+  Link, Image,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import React, { type ReactNode, useMemo } from 'react'
@@ -127,6 +127,22 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
             <SkeletonCard key={`skeleton-${i}`} />
           ))
           : cards.map((card) => (
+            card.id === 2 ?
+              <Box
+                display='flex'
+                flexDirection='column'
+                borderRadius='12px'
+                minH={{ base: '196px', sm: '362px' }}
+                bgColor='gray.100'
+                textAlign='center'
+              >
+                <Box m='auto'>
+                  <Image src="/images/no_direction.svg" alt="" mx='auto'/>
+                  <Text color="gray.800" fontWeight="700" fontSize='16px' mt='6px'>
+                    {t`noDirection`}
+                  </Text>
+                </Box>
+              </Box> :
             <Link
               key={`${!isHotel ? 'city' : 'country'}-${card.id}`}
               position="relative"
@@ -181,14 +197,19 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
                   </Heading>
 
                   <IconButton
+                    height={{ base: "24px", sm: "40px" }}
+                    width={{ base: "24px", sm: "40px" }}
+                    minWidth='initial'
                     aria-label="View offer"
-                    icon={<ChevronRightIcon />}
+                    icon={<ChevronRightIcon boxSize={{ base: "16px", md: "24px" }} />}
                     color="white"
                     position="absolute"
                     right={{ base: 4, md: 6 }}
                     transform="translateY(-50%)"
                     rounded="full"
                     bg="whiteAlpha.400"
+                    _hover={{pointerEvents: 'none'}}
+                    _focus={{pointerEvents: 'none'}}
                   />
                 </Box>
                 <Text color="whiteAlpha.900" fontSize={{ base: 'sm', md: 'md' }}>

@@ -52,9 +52,10 @@ export const DatePickerInput = ({
       }
       width="full"
       borderColor={isFocused ? 'blue.500' : undefined}
-      leftIconName="calendar-today"
+      px='36px'
       borderRadius='12px'
-      _hover={{ bgColor: 'whiteAlpha.900' }}
+      _groupHover={{bgColor: 'whiteAlpha.800 !important'}}
+      _focus={{bgColor: 'whiteAlpha.800 !important'}}
     />
   )
 }

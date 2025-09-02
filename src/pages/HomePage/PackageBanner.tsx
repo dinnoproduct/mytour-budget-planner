@@ -66,7 +66,8 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                 base: '330px',
                 sm: !isHotel ? '610px' : '640px'
               }}
-              top={{base: !isHotel ? '200px' : '190px', sm: !isHotel ? '-8px' : '-130px'}}
+              top={{base: 'initial', sm: !isHotel ? '-8px' : '-130px'}}
+              bottom={{base: '0', sm: !isHotel ? '-8px' : '-130px'}}
               right={!isHotel ? 0 : 5}
               zIndex={-2}
               position='absolute'

@@ -22,7 +22,7 @@ const LOCAL_STORAGE_KEY = 'package_search_params'
 const defaultSearchData: SearchData = {
   fromDate: null,
   toDate: null,
-  selectedCity: -1,
+  selectedCity: 1,
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,

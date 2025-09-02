@@ -167,9 +167,8 @@ const ItemsList = ({ items }: { items: string[] }) => (
 )
 
 const Layout = ({ children }: { children: ReactNode | ReactNode[] }) => (
-  <Box as="footer" bgColor="white" borderTop="1px solid" borderColor="gray.100">
+  <Box as="footer" bgColor="white" borderTop="1px solid" borderColor="gray.100" mt={{ base: '100px', md: '120px' }}>
     <Flex
-      mt='120'
       px={{ base: 4, md: 10 }}
       py="10"
       direction={{ base: 'column', lg: 'row' }}

@@ -4,7 +4,7 @@ import { type DatePickerProps } from './types.ts'
 import { DatePickerInput } from './DatePickerInput.tsx'
 import { DatePickerCalendar } from './DatePickerCalendar.tsx'
 import { DatePickerConfirmButton } from './DatePickerConfirmButton.tsx'
-import { Button, Text, Tabs } from '@ui'
+import {Button, Text, Tabs, Icon} from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint, useDisablePageScroll } from '@shared/hooks'
 import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePicker/index.tsx'
@@ -138,7 +138,18 @@ export const DatePickerFlexibleSearch = ({
           }}
           onClick={handleCalendarOpen}
           cursor="pointer"
+          role="group"
         >
+
+          <Icon
+            name="calendar-today"
+            position="absolute"
+            left='12px'
+            top='12px'
+            width='16px !important'
+            color="gray.700"
+            zIndex={1}/>
+
           <DatePickerInput
             fromDate={inputFromDate as any}
             toDate={inputToDate as any}
@@ -149,7 +160,9 @@ export const DatePickerFlexibleSearch = ({
           <ChevronRightIcon
             position="absolute"
             right='12px'
-            top='16px'
+            top='14px'
+            height='20px'
+            width='20px'
             style={{rotate: '90deg'}}
             transform={isCalendarOpen ? 'rotate(180deg)' : ''}
             color='gray.700'

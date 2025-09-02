@@ -4,7 +4,7 @@ import { type DatePickerProps, type DateSelectState } from './types'
 import { DatePickerInput } from './DatePickerInput'
 import { DatePickerCalendar } from './DatePickerCalendar'
 import { DatePickerHeader } from './DatePickerHeader'
-import { Button, Text } from '@ui'
+import {Button, Icon, Text} from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
 import { DatePickerFooter } from '@features/DatePickerFlights/ui/DatePickerFooter.tsx'
@@ -137,7 +137,17 @@ export const DatePickerFlights = ({
           }}
           onClick={handleCalendarOpen}
           cursor="pointer"
+          role="group"
         >
+          <Icon
+            name="calendar-today"
+            position="absolute"
+            left='12px'
+            top='12px'
+            width='16px !important'
+            color="gray.700"
+            zIndex={1}/>
+
           <DatePickerInput
             fromDate={inputFromDate as any}
             toDate={inputToDate as any}
@@ -147,7 +157,9 @@ export const DatePickerFlights = ({
           <ChevronRightIcon
             position="absolute"
             right='12px'
-            top='16px'
+            top='14px'
+            height='20px'
+            width='20px'
             style={{rotate: '90deg'}}
             transform={isCalendarOpen ? 'rotate(180deg)' : ''}
             color='gray.700'
