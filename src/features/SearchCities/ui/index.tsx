@@ -126,6 +126,7 @@ export const SearchCities = ({
         }}
         height="auto"
         overflowY="auto"
+        zIndex={2}
       >
         <Box>
 

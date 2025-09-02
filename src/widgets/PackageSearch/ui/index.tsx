@@ -78,7 +78,7 @@ const FormSearchView = ({
       containerProps={containerProps}
       contentProps={contentProps}
       variant={variant}
-      defaultTabIndex={isHotelSearchView ? 1 : 0}
+      defaultTabIndex={isPackageSearchView ? 1 : 0}
       onTabChange={handleTabChange}
       showTabs={showTabs}
     >

@@ -37,7 +37,7 @@ const variantLinkHoverCommonStyles = {
 export const buttonComponentTheme = {
   Button: {
     baseStyle: {
-      borderRadius: '6px',
+      borderRadius: '12px',
       fontFamily: 'heading',
       fontWeight: 'medium',
       background: 'transparent',
@@ -659,6 +659,7 @@ export const buttonComponentTheme = {
         lineHeight: 'text-md'
       },
       sm: {
+        borderRadius: '6px',
         height: '8',
         px: '3',
         '.chakra-button__icon': {
@@ -671,6 +672,7 @@ export const buttonComponentTheme = {
         lineHeight: 'text-sm'
       },
       xs: {
+        borderRadius: '6px',
         height: '6',
         px: '2',
         '.chakra-button__icon': {

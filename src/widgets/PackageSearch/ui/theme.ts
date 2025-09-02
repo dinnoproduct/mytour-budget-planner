@@ -59,7 +59,8 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   fixedWithoutTabs: {
     wrapper: {
       height: { base: 'auto', md: '96px' },
-      width: 'full'
+      width: 'full',
+      zIndex: 1
     },
     container: {
       height: { base: 'auto', md: '96px' },
