@@ -48,6 +48,7 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
             bgRepeat="no-repeat"
             bgSize={{base: 'cover'}}
             bgPosition={{base: '50%'}}
+            position="relative"
             {...props}
         >
           <Link
@@ -56,7 +57,76 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
             target="_blank"
             textDecoration='none'
             _hover={{ textDecoration: 'none' }}
-            zIndex="0 !important">
+            zIndex="0 !important"
+            display="block"
+          >
+            <Box
+              height="-webkit-fill-available"
+              display='flex'
+              alignItems={{base: 'start', sm: "center"}}
+            >
+              <Flex
+                align='start'
+                direction="column"
+                px={{base: 5, sm: 10}}
+                pt={{base: 5, sm: 0}}
+                maxWidth={{
+                  base: 'full',
+                  sm: '70%',
+                  lg: '900px'
+                }}
+                width="full"
+              >
+                <Heading
+                  color='white'
+                  fontSize={{
+                    base: '30px',
+                    sm: '48px'
+                  }}
+                  lineHeight={{
+                    base: '36px',
+                    sm: '48px'
+                  }}
+                  as="h2"
+                >
+                  {isHotel ? t`packageBanner.title.package` : t`packageBanner.title.hotel`}
+                </Heading>
+
+                <Text color='white'
+                      fontSize={{
+                        base: '16px',
+                        sm: '24px'
+                      }}
+                      lineHeight={{
+                        base: '24px',
+                        sm: '32px'
+                      }} mt="11px">
+                  {isHotel ? t`packageBanner.subtitle1.package` : t`packageBanner.subtitle1.hotel`}
+                </Text>
+
+                <LinkOverlay>
+                  <Box
+                    background='white'
+                    borderRadius='100px'
+                    color={!isHotel ? 'green.500' : 'orange.500'}
+                    p='12px 24px'
+                    mt="4"
+                    width="fit-content"
+                    zIndex="0 !important"
+                    fontSize={{
+                      base: '14px',
+                      sm: '16px'
+                    }}
+                    lineHeight={{
+                      base: '20px',
+                      sm: '24px'
+                    }}
+                  >
+                    {isHotel ? t`packageBanner.buttonLabel.package` : t`packageBanner.buttonLabel.hotel`}
+                  </Box>
+                </LinkOverlay>
+              </Flex>
+            </Box>
             <Box
               height={{
                 base: '200px',
@@ -66,69 +136,17 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                 base: '330px',
                 sm: !isHotel ? '610px' : '640px'
               }}
-              top={{base: 'initial', sm: !isHotel ? '-8px' : '-130px'}}
-              bottom={{base: '0', sm: !isHotel ? '-8px' : '-130px'}}
-              right={!isHotel ? 0 : 5}
+              bottom={0}
+              top={{base: '240px', sm: !isHotel ? '-8px' : '-130px'}}
+              right={!isHotel ? 0 : '30px'}
               zIndex={-2}
               position='absolute'
               bgImage={` url('/assets/package-banner/${!isHotel ? '4' : ''}0.png')`}
               bgBlendMode="overlay"
               bgRepeat="no-repeat"
               bgSize='cover'
-              bgPosition={{base: '40%', md: ''}}>
+              bgPosition={{ base: '40%', md: 'center' }}>
             </Box>
-            <Flex
-              height="full"
-              align={{base: 'start', sm: 'center'}}
-              px={{base: 5, sm: 10}}
-              pt={{base: 5, sm: 0}}
-            >
-              <Flex
-                direction="column"
-                maxWidth={{
-                  base: 'full',
-                  // xs: '52%',
-                  sm: '70%',
-                  lg: '900px'
-                }}
-                width="full"
-                zIndex={-2}
-              >
-                <Heading
-                  color='white'
-                  fontSize={{
-                    base: 'text-3xl',
-                    sm: 'text-5xl'
-                  }}
-                  lineHeight={{
-                    base: 'text-3xl',
-                    sm: 'text-5xl'
-                  }}
-                  as="h2"
-                >
-                  {isHotel ? t`packageBanner.title.package` : t`packageBanner.title.hotel`}
-                </Heading>
-
-                <Text color='white' size={{base: 'md', sm: '2xl'}} mt="11px">
-                  {isHotel ? t`packageBanner.subtitle1.package` : t`packageBanner.subtitle1.hotel`}
-                </Text>
-
-                <LinkOverlay>
-                  <Box
-                    background='white'
-                    borderRadius='100px'
-                    color={!isHotel ? 'green.500' : 'orange.500'}
-                    fontSize="lg"
-                    p='12px 24px'
-                    mt="4"
-                    width="fit-content"
-                    zIndex="0 !important"
-                  >
-                    {isHotel ? t`packageBanner.buttonLabel.package` : t`packageBanner.buttonLabel.hotel`}
-                  </Box>
-                </LinkOverlay>
-              </Flex>
-            </Flex>
 
           </Link>
         </LinkBox>

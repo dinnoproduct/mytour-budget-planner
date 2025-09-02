@@ -71,7 +71,7 @@ export const LayoutFixed = ({
   contentProps,
   containerProps
 }: LayoutProps) => (
-  <Box position="relative" width="full" zIndex="1" height="80px">
+  <Box position="relative" width="full" zIndex="99999" height="80px">
     <Box
       bgSize="cover"
       bgPosition="center"

@@ -46,11 +46,11 @@ export function MonthsSelect({
             },
             '&::-webkit-scrollbar-track': {
               background: 'gray.200',
-              borderRadius: '6px'
+              borderRadius: '12px'
             },
             '&::-webkit-scrollbar-thumb': {
               background: 'gray.400',
-              borderRadius: '6px'
+              borderRadius: '12px'
             },
           }}
         >

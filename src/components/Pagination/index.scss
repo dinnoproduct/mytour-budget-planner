@@ -6,7 +6,7 @@
 .rc-pagination-item {
     width: 40px;
     height: 40px;
-    border-radius: 6px;
+    border-radius: 12px;
     border: 1px solid #DEE2E7;
     padding-top: 10px;
     box-sizing: border-box;
@@ -96,7 +96,7 @@
     display: none;
 }
 
-.rc-pagination-item-active:focus a, 
+.rc-pagination-item-active:focus a,
 .rc-pagination-item-active:hover a {
     color: #fff;
 }

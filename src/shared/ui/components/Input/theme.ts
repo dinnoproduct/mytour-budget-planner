@@ -9,7 +9,7 @@ export const inputComponentTheme = {
           backgroundColor: 'white',
           border: '1px solid',
           borderColor: 'gray.400',
-          rounded: 'lg',
+          rounded: 'xl',
           fontFamily: 'heading',
           fontWeight: 'normal',
           fontSize: 'text-sm',

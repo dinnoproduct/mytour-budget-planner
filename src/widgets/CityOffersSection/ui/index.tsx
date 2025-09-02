@@ -118,7 +118,7 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
         fontSize={{ base: '2xl', md: '4xl' }}
         mb={{ base: 6, md: 10 }}
       >
-        {t`packageOffers`}
+        {!isHotel ? t`packageOffers` : t`hotelOffers`}
       </Heading>
 
       <SimpleGrid columns={{ base: 1, md: !isHotel ? 2 : 3 }} spacing={6}>

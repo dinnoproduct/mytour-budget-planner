@@ -142,6 +142,7 @@ export const SearchMultiCities = ({
         width={{ base: '328px', md: '350px', lg: '320px' }}
         height="auto"
         overflowY="auto"
+        zIndex={2}
       >
         <VStack width="full" spacing="1" align="stretch">
           {Object.entries(groupedCities).map(([countryName, countryCities]) => (
@@ -187,6 +188,7 @@ export const SearchMultiCities = ({
           ))}
         </VStack>
         <Button
+          mt='16px'
           size="lg"
           borderRadius='12px'
           width='calc(100% - 32px)'
