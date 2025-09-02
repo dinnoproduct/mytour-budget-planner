@@ -71,25 +71,44 @@ export const SearchCities = ({
         }}
         onClick={() => setDropdownOpen(!isDropdownOpen)}
         cursor="pointer"
+        role="group"
       >
+
+        <Icon
+          name="location-pin"
+          position="absolute"
+          left='12px'
+          top='12px'
+          width='16px !important'
+          color="gray.700"
+          zIndex={1}/>
         <Input
           color='gray.700'
           type="text"
           value={activeCityValue}
           width="full"
           borderColor={isDropdownOpen ? 'blue.500' : undefined}
-          leftIconName="location-pin"
           placeholder={t(placeholder)}
           borderRadius='12px'
+          px='36px'
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
           _placeholder={{
             color: 'blackAlpha.900'
           }}
+          _groupHover={{bgColor: 'whiteAlpha.800 !important'}}
+          _focus={{bgColor: 'whiteAlpha.800 !important'}}
         />
 
         <ChevronRightIcon
           position="absolute"
           right='12px'
-          top='16px'
+          top='14px'
+          height='20px'
+          width='20px'
           style={{rotate: '90deg'}}
           transform={isDropdownOpen ? 'rotate(180deg)' : ''}
           color='gray.700'

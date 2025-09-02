@@ -74,6 +74,7 @@ export const tabsComponentTheme = {
           px: 6,
           py: 4,
           _selected: {
+            pointerEvents: 'none',
             bgColor: 'white',
             color: 'gray.700 !important',
             borderRadius: '200px',
@@ -86,6 +87,9 @@ export const tabsComponentTheme = {
             '>': {
               color: 'gray.700'
             }
+          },
+          _hover: {
+            bgColor: 'whiteAlpha.600',
           },
           _active: {
             bgColor: 'transparent'

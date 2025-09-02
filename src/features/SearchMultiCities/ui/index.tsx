@@ -95,22 +95,42 @@ export const SearchMultiCities = ({
         width={{ base: 'full', md: '350px', lg: '320px' }}
         onClick={() => setDropdownOpen(!isDropdownOpen)}
         cursor="pointer"
+        role="group"
       >
+
+        <Icon
+          name="location-pin"
+          position="absolute"
+          left='12px'
+          top='12px'
+          width='16px !important'
+          color="gray.700"
+          zIndex={1}
+        />
+
         <Input
           color='gray.700'
           borderRadius='12px'
           type="text"
           value={activeCityNames}
           placeholder={t(placeholder)}
-          leftIconName="location-pin"
           _placeholder={{ color: 'gray.500' }}
-          _hover={{ bgColor: 'whiteAlpha.900' }}
+          px='36px'
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          _groupHover={{bgColor: 'whiteAlpha.800 !important'}}
+          _focus={{bgColor: 'whiteAlpha.800 !important'}}
         />
 
         <ChevronRightIcon
           position="absolute"
           right='12px'
-          top='16px'
+          top='14px'
+          height='20px'
+          width='20px'
           style={{rotate: '90deg'}}
           transform={isDropdownOpen ? 'rotate(180deg)' : ''}
           color='gray.700'
