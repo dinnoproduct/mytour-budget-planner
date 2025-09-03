@@ -43,7 +43,6 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
           <Link
             href={!isHotel ? `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel` :
               `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}&days=6&tab=packages`}
-            target="_blank"
             textDecoration='none'
             _hover={{ textDecoration: 'none' }}
             zIndex="0 !important"
