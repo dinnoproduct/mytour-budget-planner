@@ -156,6 +156,8 @@ export type UpdateRequestInput = {
 export type FlightDates = {
   flightStartDate: string;
   flightReturnDate: string;
+  returnFlightId: string | number;
+  startFlightId: string | number;
 };
 
 export enum DictionaryTypes {

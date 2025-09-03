@@ -18,9 +18,9 @@ interface PackageBannerProps extends LinkBoxProps {
 export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props }) => {
     const {t} = useTranslation()
     const date = new Date()
-    const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 1);
-    const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 4, 0);
-    const { data: dates = {flightStartDate: '', flightReturnDate: ''}} = useFlightDates()
+    const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1);
+    const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
+    const { data: data = {flightStartDate: '', flightReturnDate: '', returnFlightId: '', startFlightId: ''}} = useFlightDates()
 
   const fmt = (d: Date | string | undefined | null) => {
     if (!d) return "";
@@ -34,8 +34,9 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
     ).padStart(2, "0")}`;
   };
 
-    const dateFrom = fmt(!isHotel ? firstOfTarget : new Date(dates?.flightStartDate));
-    const dateTo = fmt(!isHotel ? lastOfTarget : new Date(dates?.flightReturnDate));
+    const dateFrom = fmt(!isHotel ? firstOfTarget : new Date(data?.flightStartDate));
+    const dateTo = fmt(!isHotel ? lastOfTarget : new Date(data?.flightReturnDate));
+    console.log(data)
     return (
         <LinkBox
             height={{
@@ -53,7 +54,7 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
         >
           <Link
             href={!isHotel ? `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel` :
-              `https://www.mytour.am/packages?from=${dates?.flightStartDate}&to=${dates?.flightReturnDate}&city=1&adultsCount=2&childrenCount=0&childrenAges=&days=6&dateMode=approximate&tab=packages`}
+              `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}&days=6&tab=packages`}
             target="_blank"
             textDecoration='none'
             _hover={{ textDecoration: 'none' }}
