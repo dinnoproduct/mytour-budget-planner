@@ -10,6 +10,7 @@ import {Button, Heading, Text} from '@ui'
 import {useTranslation} from 'react-i18next'
 import React from "react";
 import {useFlightDates} from "@entities/package/hooks/useFlightDates.ts";
+import {fmt} from "@/utils/methods.ts";
 
 interface PackageBannerProps extends LinkBoxProps {
     isHotel: number;
@@ -22,21 +23,8 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
     const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
     const { data: data = {flightStartDate: '', flightReturnDate: '', returnFlightId: '', startFlightId: ''}} = useFlightDates()
 
-  const fmt = (d: Date | string | undefined | null) => {
-    if (!d) return "";
-
-    if (typeof d === "string") {
-      return d.slice(0, 10); // "2025-10-17"
-    }
-
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-      d.getDate()
-    ).padStart(2, "0")}`;
-  };
-
     const dateFrom = fmt(!isHotel ? firstOfTarget : new Date(data?.flightStartDate));
     const dateTo = fmt(!isHotel ? lastOfTarget : new Date(data?.flightReturnDate));
-    console.log(data)
     return (
         <LinkBox
             height={{

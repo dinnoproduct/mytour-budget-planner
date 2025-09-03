@@ -22,6 +22,7 @@ import {
   packageCards as baseCityCards,
 } from '@/constants/constants.ts'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
+import {fmt} from "@/utils/methods.ts";
 
 export interface PackageCountry {
   id: number
@@ -45,6 +46,7 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
   const { i18n, t } = useTranslation()
   const { cities } = useHotelPackagesSearchContext()
   const { data: packageCities = [] } = useCities()
+  const { data: data = {flightStartDate: '', flightReturnDate: '', returnFlightId: '', startFlightId: ''}} = useFlightDates()
 
   const nameKey = useMemo(
     () =>
@@ -106,10 +108,13 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
     })
   }, [isHotel, cities, packageCities, nameKey])
 
-  // dates to YYYY-MM-DD (avoid timezone shifts)
-  const dateFrom = dates.flightStartDate?.slice(0, 10)
-  const dateTo = dates.flightReturnDate?.slice(0, 10)
+  const date = new Date()
+  const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1);
+  const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
+  const dateFrom = (isHotel ? fmt(firstOfTarget) : data.flightStartDate)?.slice(0, 10);
+  const dateTo = (isHotel ? fmt(lastOfTarget) : data?.flightReturnDate)?.slice(0, 10);
   const hasDates = Boolean(dateFrom && dateTo)
+
 
   return (
     <Layout {...props}>
@@ -150,9 +155,9 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
               overflow="hidden"
               role="group"
               minH={{ base: '196px', sm: '362px' }}
-              href={`https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=&days=6&dateMode=approximate&tab=${
-                isHotel ? 'hotel' : 'packages'
-              }`}
+              href={`https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
+              ${isHotel ? '' : `&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}`}
+              &days=${isHotel ? '7' : '6'}${isHotel ? '&dateMode=approximate' : ''}&tab=${isHotel ? 'hotel' : 'packages'}`}
               target="_blank"
               _before={{
                 content: '""',

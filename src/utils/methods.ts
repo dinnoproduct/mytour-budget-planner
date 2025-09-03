@@ -31,3 +31,15 @@ export const getDateMinusDays = (date: string | Date, days: number): Date => {
 
   return new Date(validDate.getTime() - days * 24 * 60 * 60 * 1000);
 };
+
+export const fmt = (d: Date | string | undefined | null) => {
+  if (!d) return "";
+
+  if (typeof d === "string") {
+    return d.slice(0, 10); // "2025-10-17"
+  }
+
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+};
