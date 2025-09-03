@@ -59,6 +59,7 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
             _hover={{ textDecoration: 'none' }}
             zIndex="0 !important"
             display="block"
+            height='100%'
           >
             <Box
               height="-webkit-fill-available"
