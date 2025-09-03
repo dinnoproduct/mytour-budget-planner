@@ -158,7 +158,6 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
               href={`https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
               ${isHotel ? '' : `&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}`}
               &days=${isHotel ? '7' : '6'}${isHotel ? '&dateMode=approximate' : ''}&tab=${isHotel ? 'hotel' : 'packages'}`}
-              target="_blank"
               _before={{
                 content: '""',
                 position: 'absolute',
