@@ -13,6 +13,8 @@ import { useUserContext } from "@/entities/user/index.ts";
 import { useModalContext } from "@/app/providers/index.ts";
 import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
 import { metaEvents, generateEventId } from "@/shared/configs/metaEvents";
+import { useRecoilState } from "recoil";
+import { isBookingFlowOpenAtom } from "@/modules/packages/store/store.ts";
 
 export const HotelPackageBookingConfig = ({
   tourPackage,
@@ -29,6 +31,9 @@ export const HotelPackageBookingConfig = ({
     currentOfferPackage,
     isCalculatingPrepayment,
   } = useBookingConfig(tourPackage, tourPackage.offerId);
+  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
+    isBookingFlowOpenAtom,
+  );
 
   const [isFixed, setIsFixed] = useState(false);
   const { user } = useUserContext();
@@ -61,12 +66,11 @@ export const HotelPackageBookingConfig = ({
   const { openBookingDrawer } = useBookingDrawer();
 
   const handleBookClick = () => {
-    if (selectedOffer && tourPackage) {
+    if (currentOfferPackage && tourPackage) {
       metaEvents.initiateCheckout({
-        event_id: generateEventId(),
         content_type: "hotel",
         content_ids: [`hotel_${tourPackage.hotel.id}`], // TODO: add content_ids
-        value: selectedOffer.price,
+        value: currentOfferPackage.price,
         currency: "AMD",
         num_items: 1,
         hotel_id: tourPackage.hotel.id,
@@ -104,6 +108,7 @@ export const HotelPackageBookingConfig = ({
         view: "signUp",
         isCloseOnSuccess: true,
         onSuccess: () => {
+          setBookingFlowOpen(true);
           openBookingDrawer(tourPackage);
         },
       },

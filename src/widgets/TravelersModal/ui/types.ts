@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import { type PackageEntity } from '@entities/package'
+import { BookingStep } from '@/shared/configs/metaEvents'
 
 export type TravelersModalProps = {
   closeModal: () => void
@@ -8,7 +9,8 @@ export type TravelersModalProps = {
   travelers: Travelers
   isOpen?: boolean
   onChange?: (data: Travelers) => void
-  isLoading?: boolean
+  isLoading?: boolean,
+  handleLogEvent: (step: { name: BookingStep; number: number }) => void
 }
 
 export type Travelers = {

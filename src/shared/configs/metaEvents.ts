@@ -2,6 +2,14 @@ import { v4 as uuid } from "uuid";
 
 // Meta Events Configuration
 
+// Booking Funnel Micro-Events
+export enum BookingStep {
+  RoomSelection = "room_selection",
+  GuestDetailsEntered = "guest_details_entered",
+  PaymentMethodSelected = "payment_method_selected",
+  TermsConfirmed = "terms_confirmed",
+}
+
 interface FacebookPixel {
   (command: "init", pixelId: string): void;
   (command: "track", event: string, parameters?: Record<string, unknown>): void;
@@ -32,6 +40,7 @@ export const metaEvents = {
   pageView: (pageName?: string) => {
     if (window.fbq) {
       window.fbq("track", "PageView", {
+        event_id: generateEventId(),
         page_name: pageName || window.location.pathname,
         timestamp: new Date().toISOString(),
       });
@@ -42,7 +51,6 @@ export const metaEvents = {
 
   // 1.1 InitiateCheckout
   initiateCheckout: (data: {
-    event_id: string;
     content_type: "hotel" | "package" | "flight";
     content_ids: string[];
     value: number;
@@ -64,6 +72,7 @@ export const metaEvents = {
     if (window.fbq) {
       window.fbq("track", "InitiateCheckout", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }
@@ -71,7 +80,6 @@ export const metaEvents = {
 
   // 1.2 AddPaymentInfo
   addPaymentInfo: (data: {
-    event_id: string;
     content_type: "hotel" | "package" | "flight";
     content_ids: string[];
     value: number;
@@ -86,6 +94,7 @@ export const metaEvents = {
     if (window.fbq) {
       window.fbq("track", "AddPaymentInfo", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }
@@ -93,12 +102,11 @@ export const metaEvents = {
 
   // 1.3 Purchase
   purchase: (data: {
-    event_id: string;
     content_type: "hotel" | "package" | "flight";
     content_ids: string[];
     value: number;
     currency: string;
-    order_id: string;
+    order_id: number;
     hotel_id?: number;
     destination?: string;
     checkin_date?: string;
@@ -112,6 +120,7 @@ export const metaEvents = {
     if (window.fbq) {
       window.fbq("track", "Purchase", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }
@@ -121,18 +130,14 @@ export const metaEvents = {
 
   // 2.1 BookingStepCompleted
   bookingStepCompleted: (data: {
-    event_id: string;
     hotel_id: number;
     step_number: number;
-    step_name:
-      | "room_selection"
-      | "guest_details_entered"
-      | "payment_method_selected"
-      | "terms_confirmed";
+    step_name: BookingStep;
   }) => {
     if (window.fbq) {
       window.fbq("trackCustom", "BookingStepCompleted", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }
@@ -142,7 +147,6 @@ export const metaEvents = {
 
   // 3.1 HotelGalleryOpened
   hotelGalleryOpened: (data: {
-    event_id: string;
     hotel_id: number;
     images_viewed: number;
     gallery_time_seconds: number;
@@ -151,6 +155,7 @@ export const metaEvents = {
     if (window.fbq) {
       window.fbq("trackCustom", "HotelGalleryOpened", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }
@@ -158,7 +163,6 @@ export const metaEvents = {
 
   // 3.2 PriceCalendarViewed
   priceCalendarViewed: (data: {
-    event_id: string;
     hotel_id: number;
     dates_checked: string[];
     price_range_viewed: { min: number; max: number };
@@ -167,6 +171,7 @@ export const metaEvents = {
     if (window.fbq) {
       window.fbq("trackCustom", "PriceCalendarViewed", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }
@@ -174,7 +179,6 @@ export const metaEvents = {
 
   // 3.3 RoomComparison
   roomComparison: (data: {
-    event_id: string;
     hotel_id: number;
     rooms_compared: string[];
     amenities_focused: string[];
@@ -183,6 +187,7 @@ export const metaEvents = {
     if (window.fbq) {
       window.fbq("trackCustom", "RoomComparison", {
         ...data,
+        event_id: generateEventId(),
         timestamp: new Date().toISOString(),
       });
     }

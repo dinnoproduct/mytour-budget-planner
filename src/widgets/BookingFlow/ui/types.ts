@@ -6,7 +6,7 @@ export type BookingFlowProps = {
   initialView: 'travelers' | 'payment'
   isOpen?: boolean
   onClose?: () => void
-  childrenAges?: number[]
+  childrenAges: number[]
   request?: NormalizedRequestEntity | null
   defaultTravelers?: Travelers
   isBooked?: boolean

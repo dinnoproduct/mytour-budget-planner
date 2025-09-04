@@ -15,6 +15,7 @@ import { Button, Input } from '@/shared/ui/index.ts'
 import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
 import { validateTraveler } from '@widgets/TravelersModal/helpers'
 import moment from 'moment'
+import { BookingStep } from '@/shared/configs/metaEvents.ts'
 
 export const TravelersModal = ({
   closeModal,
@@ -23,7 +24,8 @@ export const TravelersModal = ({
   travelers,
   isOpen = false,
   onChange,
-  isLoading
+  isLoading,
+  handleLogEvent
 }: TravelersModalProps) => {
   const { t } = useTranslation()
   const [normalizedTravelers, setNormalizedTravelers] = useState<Traveler[]>([])
@@ -72,6 +74,10 @@ export const TravelersModal = ({
   })
 
   const handleFormSubmit = (data: FormData) => {
+    handleLogEvent({
+      name: BookingStep.GuestDetailsEntered,
+      number: 2
+    })
     onSuccess(data)
   }
 

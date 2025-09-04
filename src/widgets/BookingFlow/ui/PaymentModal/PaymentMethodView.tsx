@@ -7,10 +7,12 @@ import {
   type PaymentMethodViewProps
 } from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
 import { useState } from 'react'
+import { BookingStep, generateEventId, metaEvents } from '@/shared/configs/metaEvents'
 
 export const PaymentMethodView = ({
   onSubmit,
-  isLoadingBooking
+  isLoadingBooking,
+  packageDetails
 }: PaymentMethodViewProps) => {
   const { t } = useTranslation()
 
@@ -24,6 +26,15 @@ export const PaymentMethodView = ({
 
   const handleContinue = async () => {
     try {
+      // Track payment method selection step
+      if (packageDetails) {
+        metaEvents.bookingStepCompleted({
+          event_id: generateEventId(),
+          hotel_id: packageDetails.hotel.id,
+          step_number: 3,
+          step_name: BookingStep.PaymentMethodSelected,
+        });
+      }
       await onSubmit(selectedMethod)
     } catch (error) {
       console.error('Error submitting payment method:', error)

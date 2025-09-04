@@ -3,10 +3,9 @@ import { TravelersModal } from "@widgets/TravelersModal";
 import type { BookingFlowProps } from "@widgets/BookingFlow/ui/types.ts";
 import { useBookingFlow } from "../hooks";
 import { PaymentSuccessModal } from "@entities/package";
-import { Travelers } from "@/widgets/TravelersModal/ui/types";
-import { generateEventId, metaEvents } from "@/shared/configs/metaEvents";
 import { useRecoilValue } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const BookingFlow = ({
   packageDetails,
@@ -47,14 +46,12 @@ export const BookingFlow = ({
     return null;
   }
 
-  function handleTravelersModalSuccess(travelers: Travelers) {
-    onTravelersModalSuccess(travelers);
+  function handleLogEvent(step: { name: BookingStep; number: number }) {
     if (packageDetails) {
       metaEvents.bookingStepCompleted({
-        event_id: generateEventId(),
         hotel_id: packageDetails.hotel.id,
-        step_number: 2, // TODO: add step_number
-        step_name: "guest_details_entered",
+        step_number: step.number,
+        step_name: step.name,
       });
     }
   }
@@ -67,7 +64,8 @@ export const BookingFlow = ({
           closeModal={() => closeModal()}
           packageDetails={packageDetails}
           travelers={travelers}
-          onSuccess={handleTravelersModalSuccess}
+          onSuccess={onTravelersModalSuccess}
+          handleLogEvent={handleLogEvent}
           onChange={handleTravelersChange}
           isLoading={isLoadingTravelersModal}
         />
@@ -88,6 +86,7 @@ export const BookingFlow = ({
           prepaymentInfo={prepaymentInfo}
           travelers={travelers}
           validatePromoCode={validatePromoCode}
+          handleLogEvent={handleLogEvent}
         />
       )}
 

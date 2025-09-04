@@ -18,7 +18,7 @@ import {
   type PaymentSystem,
 } from "@entities/package";
 import { PreviewDetailsView } from "@widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView.tsx";
-import { generateEventId, metaEvents } from "@/shared/configs/metaEvents.ts";
+import { BookingStep, metaEvents } from "@/shared/configs/metaEvents.ts";
 
 export const PaymentModal = ({
   closeModal,
@@ -32,6 +32,7 @@ export const PaymentModal = ({
   prepaymentInfo,
   travelers,
   validatePromoCode,
+  handleLogEvent,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const isFullPricePayment = useMemo(
@@ -120,19 +121,15 @@ export const PaymentModal = ({
     },
   );
 
-  // console.log(packageDetails, travelers);
-
   const handlePay = async () => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
-    console.log("paaaaaay");
     try {
       metaEvents.purchase({
-        event_id: generateEventId(),
         content_type: isHotelPackage ? "hotel" : "package",
         content_ids: ["hotel_547"], // TODO: add content_ids
         value: amount,
         currency: packageDetails.currency,
-        order_id: generateEventId(),
+        order_id: packageDetails.offerId, // TODO: check and add order_id
         hotel_id: packageDetails.hotel.id,
         destination: packageDetails.city.nameEng,
         checkin_date: packageDetails.checkin,
@@ -145,6 +142,7 @@ export const PaymentModal = ({
           ({ key }: any) => key === packageDetails.roomType,
         )?.value,
       });
+      handleLogEvent({ name: BookingStep.PaymentMethodSelected, number: 3 });
       if (selectedPaymentMethod === PaymentMethod.ameriaPay && onSuccess) {
         const url = await onSuccess(
           amount,
@@ -169,7 +167,6 @@ export const PaymentModal = ({
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
 
     metaEvents.addPaymentInfo({
-      event_id: generateEventId(),
       content_type: isHotelPackage ? "hotel" : "package",
       content_ids: ["hotel_547"], // TODO: add content_ids
       value: amount,
