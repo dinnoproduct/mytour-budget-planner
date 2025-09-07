@@ -23,7 +23,7 @@ import {
 import { HotelPackageBookingConfig } from '@widgets/HotelPackageBookingConfig'
 import { BookingDrawer } from '@/widgets/HotelBookingDrawer'
 import { useRecoilState } from 'recoil'
-import { isBookingFlowOpenAtom } from '@/modules/packages/store/store'
+import { isBookingFlowOpenAtom, isLateCheckoutAtom } from '@/modules/packages/store/store'
 import { useBookingDrawer } from '@/modules/packages/hooks/useBookingDrawer'
 
 export const HotelPackageDetailsPage = () => {
@@ -37,6 +37,9 @@ export const HotelPackageDetailsPage = () => {
   const { filteredHotelPackages } = useHotelPackagesSearchContext()
   const containerRef = useRef<HTMLDivElement>(null)
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0)
+  const { isOpen: isOpenBookingDrawer } = useBookingDrawer();
+  const [isLateCheckout, setIsLateCheckout] = useRecoilState(isLateCheckoutAtom)
+
 
   const uniqueImageUrls = useMemo(() => {
     const imagesArr =
@@ -56,6 +59,7 @@ export const HotelPackageDetailsPage = () => {
       clearBookingDrawerData()
       setBookingFlowOpen(false)
       setModalOpen(false)
+      setIsLateCheckout(false)
     }
   }, [])
 
@@ -133,6 +137,7 @@ export const HotelPackageDetailsPage = () => {
         activeIndex={imageModalActiveIndex}
       />
 
+      {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow
         packageDetails={packageData as PackageEntity}
         initialView="travelers"
@@ -141,7 +146,6 @@ export const HotelPackageDetailsPage = () => {
         isOpen={isBookingFlowOpen}
         onClose={() => setBookingFlowOpen(false)}
       />
-      <BookingDrawer childrenAges={childrenAges} />
     </Box>
   )
 }

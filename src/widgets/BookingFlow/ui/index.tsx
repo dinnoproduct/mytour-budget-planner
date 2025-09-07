@@ -3,6 +3,8 @@ import { TravelersModal } from '@widgets/TravelersModal'
 import type { BookingFlowProps } from '@widgets/BookingFlow/ui/types.ts'
 import { useBookingFlow } from '../hooks'
 import { PaymentSuccessModal } from '@entities/package'
+import { useRecoilValue } from 'recoil'
+import { isLateCheckoutAtom } from '@/modules/packages/store/store'
 
 export const BookingFlow = ({
   packageDetails,
@@ -12,9 +14,10 @@ export const BookingFlow = ({
   isOpen,
   onClose,
   defaultTravelers,
-  isLateCheckout,
   isBooked
 }: BookingFlowProps) => {
+  const isLateCheckout = useRecoilValue(isLateCheckoutAtom)
+  
   const {
     paymentModalView,
     onTravelersModalSuccess,

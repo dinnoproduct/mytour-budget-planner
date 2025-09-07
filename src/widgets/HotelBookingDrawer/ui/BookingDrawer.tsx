@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SideDrawer } from "@/components/SideDrawer";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
@@ -7,6 +7,8 @@ import { ActionsSection } from "./ActionsSection";
 import { PackagesFields } from "@/modules/packages/data/packagesEnums";
 import { RoomTypesList } from "./RoomTypesList";
 import { VStack } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
+import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 
 export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAges }) => {
   const { t } = useTranslation();
@@ -24,9 +26,14 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
     loading,
     clearGeneratedMultivendorOffers,
     generatedMultivendorOffers,
+    mealPlans,
   } = useMultivendorOffer();
+
+  useEffect(()=>{
+    updateMealPlan(mealPlans[0].key)
+  }, [JSON.stringify(mealPlans)])
   
-  const [lateCheckout, setLateCheckout] = useState(false);
+  const [lateCheckout, setLateCheckout] = useRecoilState(isLateCheckoutAtom);
 
   useEffect(() => {
     if (isOpen) {
@@ -63,7 +70,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
           <ActionsSection
             selectedMealPlan={selectedMealPlan}
             updateMealPlan={updateMealPlan}
-            generatedMultivendorOffers={generatedMultivendorOffers}
+            mealPlans={mealPlans}
             lateCheckout={lateCheckout}
             handleLateCheckoutChange={handleLateCheckoutChange}
           />

@@ -3,7 +3,6 @@ import { Box } from '@chakra-ui/react'
 import { ImagesGrid } from './ImagesGrid.tsx'
 import ImagesSlider from '@features/PackageImagesGallery/ui/ImagesSlider.tsx'
 import { useBreakpoint } from '@shared/hooks'
-import { useMemo } from 'react'
 
 export const PackageImagesGallery = ({ imageUrls, onImageClick, ...props }: PackageImagesGalleryProps) => {
 	const { isMd } = useBreakpoint()

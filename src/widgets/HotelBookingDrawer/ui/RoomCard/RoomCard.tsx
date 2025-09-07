@@ -1,8 +1,12 @@
 import React from "react";
-import { Card, Divider } from "@chakra-ui/react";
+import { Box, Card, Divider } from "@chakra-ui/react";
 import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
+import { Body } from "./Body";
+import { FlightInfoSection } from "./FlightInfoSection";
+import { useFreeCancellation } from "@/widgets/PackageBookingConfig/hooks";
 
 export interface RoomCardProps {
   fullWidth?: boolean;
@@ -17,6 +21,12 @@ export const RoomCard: React.FC<RoomCardProps> = ({
   closeBookingDrawer,
   updateSelectedRoomPackage,
 }) => {
+  const { isHotelPackage, packageData } = useBookingDrawer();
+  const { freeCancellationDate } = useFreeCancellation(
+    new Date(offer.checkin),
+    new Date(offer.checkout),
+  );
+
   return (
     <Card
       p={3}
@@ -28,6 +38,20 @@ export const RoomCard: React.FC<RoomCardProps> = ({
       <Header offer={offer} />
 
       <Divider my={3} color="white" borderWidth="1px" />
+
+      {!isHotelPackage && (
+        <>
+          <FlightInfoSection
+            airCompanyName={packageData?.destinationFlight?.airCompany?.name || ''}
+            departureDate={packageData?.destinationFlight?.departureDate || ''}
+            returnDate={packageData?.returnFlight?.departureDate || ''}
+          />
+          {freeCancellationDate && (
+            <Body offer={offer} freeCancellationDate={freeCancellationDate} />
+          )}
+          <Divider my={3} color="white" borderWidth="1px" />
+        </>
+      )}
 
       <Footer
         offer={offer}

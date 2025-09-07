@@ -1,109 +1,116 @@
-import { Box, Flex } from '@chakra-ui/react'
-import { Button, Footer } from '@ui'
-import { useTranslation } from 'react-i18next'
+import { Box, Flex } from "@chakra-ui/react";
+import { Button, Footer } from "@ui";
+import { useTranslation } from "react-i18next";
 import {
   PackageImagesGallery,
-  PackageImagesSliderModal
-} from '@features/PackageImagesGallery'
-import { PackageDetails, PackageDetailsHeader } from '@widgets/PackageDetails'
+  PackageImagesSliderModal,
+} from "@features/PackageImagesGallery";
+import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
 import {
   PackageEntity,
   useCurrentPackageOfferValue,
   usePackagesSearchContext,
-  useSearchPackage
-} from '@entities/package'
-import Loader from '@/components/Loader/Loader.tsx'
-import { type LayoutProps } from '@widgets/PackageDetails/ui/types.ts'
-import { PackageBookingConfig } from '@widgets/PackageBookingConfig'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useBreakpoint } from '@shared/hooks'
-import { useModalContext } from '@app/providers'
-import { BookingFlow } from '@widgets/BookingFlow'
-import { useUserContext } from '@/entities/user'
-import { usePackageDetailsFromStore } from '@/modules/packages/hooks'
+} from "@entities/package";
+import Loader from "@/components/Loader/Loader.tsx";
+import { type LayoutProps } from "@widgets/PackageDetails/ui/types.ts";
+import { PackageBookingConfig } from "@widgets/PackageBookingConfig";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useBreakpoint } from "@shared/hooks";
+import { useModalContext } from "@app/providers";
+import { BookingFlow } from "@widgets/BookingFlow";
+import { useUserContext } from "@/entities/user";
+import { usePackageDetailsFromStore } from "@/modules/packages/hooks";
+import { BookingDrawer } from "@/widgets/HotelBookingDrawer";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
+import { useRecoilState } from "recoil";
+import { isBookingFlowOpenAtom } from "@/modules/packages/store/store";
 
 export const PackageDetailsPage = () => {
-  const navigate = useNavigate()
-  const { isMd } = useBreakpoint()
-  const { user } = useUserContext()
-  const { dispatchModal } = useModalContext()
-  const [isModalOpen, setModalOpen] = useState(false)
-  const [isBookingFlowOpen, setBookingFlowOpen] = useState(false)
-  const { packageDetails, isFetched } = usePackageDetailsFromStore()
-  const currentOfferPackage = useCurrentPackageOfferValue()
+  const navigate = useNavigate();
+  const { isMd } = useBreakpoint();
+  const { user } = useUserContext();
+  const { dispatchModal } = useModalContext();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
+    isBookingFlowOpenAtom,
+  );
+  const { packageDetails, isFetched } = usePackageDetailsFromStore();
+  const currentOfferPackage = useCurrentPackageOfferValue();
 
-  const [childrenAges, setChildrenAges] = useState<number[]>([])
+  const [childrenAges, setChildrenAges] = useState<number[]>([]);
 
-  const { filteredPackages } = usePackagesSearchContext()
-  const [isLateCheckout, setLateCheckout] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0)
+  const { filteredPackages } = usePackagesSearchContext();
+  const [isLateCheckout] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
   const uniqueImageUrls = useMemo(
     () =>
       packageDetails?.hotel?.images
-        .filter(img => img.size === 3)
-        .map(img => img.url) || [],
-    [packageDetails?.hotel?.images]
-  )
+        .filter((img) => img.size === 3)
+        .map((img) => img.url) || [],
+    [packageDetails?.hotel?.images],
+  );
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
-      handleBackClick()
+      handleBackClick();
     }
-  }, [packageDetails?.offerId, isFetched])
+  }, [packageDetails?.offerId, isFetched]);
 
   const handleImageClick = (index: number) => {
-    setImageModalActiveIndex(index)
-    setModalOpen(true)
-  }
+    setImageModalActiveIndex(index);
+    setModalOpen(true);
+  };
 
   const handleBackClick = () => {
     if (filteredPackages?.length) {
-      navigate(-1)
+      navigate(-1);
     } else {
-      navigate('/', { replace: true })
+      navigate("/", { replace: true });
     }
-  }
+  };
 
   useEffect(() => {
     if (!isMd) {
-      setModalOpen(false)
+      setModalOpen(false);
     }
-  }, [isMd])
+  }, [isMd]);
+
+  const { openBookingDrawer, isOpen: isOpenBookingDrawer } = useBookingDrawer();
 
   const openAuthModal = () => {
     if (user?.id) {
-      setBookingFlowOpen(true)
+      openBookingDrawer(packageDetails as PackageEntity);
 
-      return
+      return;
     }
 
     dispatchModal({
-      type: 'open',
-      modalType: 'auth',
+      type: "open",
+      modalType: "auth",
       props: {
-        view: 'signUp',
+        view: "signUp",
         isCloseOnSuccess: true,
         onSuccess: () => {
-          setBookingFlowOpen(true)
-        }
-      }
-    })
-  }
+          setBookingFlowOpen(true);
+        },
+      },
+    });
+  };
 
   const handleBookClick = ({ childrenAges }: { childrenAges: number[] }) => {
-    setChildrenAges(childrenAges)
-    openAuthModal()
-  }
+    setChildrenAges(childrenAges);
+    openAuthModal();
+  };
 
   if (!packageDetails?.offerId) {
-    return <Loader loading />
+    return <Loader loading />;
   }
 
   return (
-    <Box overflowX="hidden" mb={{ base: '117px', md: '0' }}>
+    <Box overflowX="hidden" mb={{ base: "117px", md: "0" }}>
       <Header onBackClick={handleBackClick} />
 
       <PackageImagesGallery
@@ -119,8 +126,8 @@ export const PackageDetailsPage = () => {
         />
 
         <Flex
-          direction={{ base: 'column-reverse', md: 'row' }}
-          mt={{ md: '10' }}
+          direction={{ base: "column-reverse", md: "row" }}
+          mt={{ md: "10" }}
           ref={containerRef}
         >
           <PackageDetails
@@ -130,8 +137,8 @@ export const PackageDetailsPage = () => {
 
           <PackageBookingConfig
             tourPackage={packageDetails}
-            ml={{ md: '20' }}
-            mt={{ base: '5', md: '0' }}
+            ml={{ md: "20" }}
+            mt={{ base: "5", md: "0" }}
             flexShrink={0}
             containerRef={containerRef}
             onBookClick={handleBookClick}
@@ -147,7 +154,7 @@ export const PackageDetailsPage = () => {
         imageUrls={uniqueImageUrls}
         activeIndex={imageModalActiveIndex}
       />
-
+      {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow
         packageDetails={currentOfferPackage as PackageEntity}
         initialView="travelers"
@@ -155,14 +162,13 @@ export const PackageDetailsPage = () => {
         // onBookingSuccess={handleBackClick}
         isOpen={isBookingFlowOpen}
         onClose={() => setBookingFlowOpen(false)}
-        isLateCheckout={isLateCheckout}
       />
     </Box>
-  )
-}
+  );
+};
 
 const Header = ({ onBackClick }: { onBackClick: () => void }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Box height="80px">
@@ -173,7 +179,7 @@ const Header = ({ onBackClick }: { onBackClick: () => void }) => {
         px={{ base: 4, md: 6 }}
         borderBottom="1px solid"
         borderColor="gray.100"
-        position={{ base: 'fixed', md: 'static' }}
+        position={{ base: "fixed", md: "static" }}
         bgColor="white"
         zIndex="3"
       >
@@ -184,8 +190,8 @@ const Header = ({ onBackClick }: { onBackClick: () => void }) => {
         >{t`packages`}</Button>
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 const PackageDetailsLayout = ({ children, ...props }: LayoutProps) => (
   <Box
@@ -199,4 +205,4 @@ const PackageDetailsLayout = ({ children, ...props }: LayoutProps) => (
   >
     {children}
   </Box>
-)
+);

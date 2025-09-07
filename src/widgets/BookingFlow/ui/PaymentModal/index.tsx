@@ -71,7 +71,6 @@ export const PaymentModal = ({
           }}
           isLoadingBooking={isLoadingBooking}
           packageDetails={packageDetails}
-          isLateCheckout={isLateCheckout}
           travelers={travelers || {adults: [], children: []}}
           paymentAmount={isFullPricePayment ? packageDetails.price : paymentAmount}
           isFullPricePayment={isFullPricePayment}

@@ -51,7 +51,6 @@ export type PreviewDetailsViewProps = {
   onUsePromocode: () => void
   isLoadingBooking?: boolean
   packageDetails: PackageEntity
-  isLateCheckout?: boolean
   travelers: Travelers
   paymentAmount: number
   isFullPricePayment: boolean
