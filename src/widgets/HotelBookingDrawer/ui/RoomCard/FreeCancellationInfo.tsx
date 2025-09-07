@@ -2,7 +2,7 @@ import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesType
 import { Box, VStack, HStack, Text } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-export const Body = ({ offer, freeCancellationDate }: { offer: IGeneratedMultivendorOffer, freeCancellationDate: string }) => {
+export const FreeCancellationInfo = ({ offer, freeCancellationDate }: { offer: IGeneratedMultivendorOffer, freeCancellationDate: string }) => {
   const { t } = useTranslation();
 
   return (

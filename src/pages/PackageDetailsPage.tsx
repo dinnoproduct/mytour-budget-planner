@@ -1,20 +1,14 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { Button, Footer } from "@ui";
-import { useTranslation } from "react-i18next";
+import { Footer } from "@ui";
 import {
   PackageImagesGallery,
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
-import {
-  PackageEntity,
-  useCurrentPackageOfferValue,
-  usePackagesSearchContext,
-} from "@entities/package";
+import { PackageEntity, usePackagesSearchContext } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
-import { type LayoutProps } from "@widgets/PackageDetails/ui/types.ts";
 import { PackageBookingConfig } from "@widgets/PackageBookingConfig";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBreakpoint } from "@shared/hooks";
 import { useModalContext } from "@app/providers";
@@ -24,7 +18,13 @@ import { usePackageDetailsFromStore } from "@/modules/packages/hooks";
 import { BookingDrawer } from "@/widgets/HotelBookingDrawer";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useRecoilState } from "recoil";
-import { isBookingFlowOpenAtom } from "@/modules/packages/store/store";
+import {
+  isBookingFlowOpenAtom,
+  isLateCheckoutAtom,
+} from "@/modules/packages/store/store";
+import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
+import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
+import { usePackageImages } from "@/hooks/usePackageImages";
 
 export const PackageDetailsPage = () => {
   const navigate = useNavigate();
@@ -36,22 +36,27 @@ export const PackageDetailsPage = () => {
     isBookingFlowOpenAtom,
   );
   const { packageDetails, isFetched } = usePackageDetailsFromStore();
-  const currentOfferPackage = useCurrentPackageOfferValue();
 
   const [childrenAges, setChildrenAges] = useState<number[]>([]);
 
   const { filteredPackages } = usePackagesSearchContext();
-  const [isLateCheckout] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
-  const uniqueImageUrls = useMemo(
-    () =>
-      packageDetails?.hotel?.images
-        .filter((img) => img.size === 3)
-        .map((img) => img.url) || [],
-    [packageDetails?.hotel?.images],
-  );
+  const { uniqueImageUrls } = usePackageImages(packageDetails);
+  const { packageData, clearBookingDrawerData } = useBookingDrawer();
+
+  const [isLateCheckout, setIsLateCheckout] =
+    useRecoilState(isLateCheckoutAtom);
+
+  useEffect(() => {
+    return () => {
+      clearBookingDrawerData();
+      setBookingFlowOpen(false);
+      setModalOpen(false);
+      setIsLateCheckout(false);
+    };
+  }, []);
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
@@ -109,9 +114,11 @@ export const PackageDetailsPage = () => {
     return <Loader loading />;
   }
 
+  const tourPackage = !!packageData ? packageData : packageDetails;
+
   return (
     <Box overflowX="hidden" mb={{ base: "117px", md: "0" }}>
-      <Header onBackClick={handleBackClick} />
+      <SharedHeader onBackClick={handleBackClick} packageType="package" />
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
@@ -121,7 +128,7 @@ export const PackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <PackageDetailsHeader
-          tourPackage={packageDetails}
+          tourPackage={tourPackage}
           onMoreImagesClick={() => setModalOpen(true)}
         />
 
@@ -131,12 +138,12 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
         >
           <PackageDetails
-            tourPackage={packageDetails}
+            tourPackage={tourPackage}
             isLateCheckout={isLateCheckout}
           />
 
           <PackageBookingConfig
-            tourPackage={packageDetails}
+            tourPackage={tourPackage}
             ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
@@ -156,7 +163,7 @@ export const PackageDetailsPage = () => {
       />
       {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow
-        packageDetails={currentOfferPackage as PackageEntity}
+        packageDetails={packageData as PackageEntity}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}
@@ -166,43 +173,3 @@ export const PackageDetailsPage = () => {
     </Box>
   );
 };
-
-const Header = ({ onBackClick }: { onBackClick: () => void }) => {
-  const { t } = useTranslation();
-
-  return (
-    <Box height="80px">
-      <Flex
-        height="80px"
-        width="full"
-        alignItems="center"
-        px={{ base: 4, md: 6 }}
-        borderBottom="1px solid"
-        borderColor="gray.100"
-        position={{ base: "fixed", md: "static" }}
-        bgColor="white"
-        zIndex="3"
-      >
-        <Button
-          variant="text-blue"
-          iconBefore="arrow-back"
-          onClick={onBackClick}
-        >{t`packages`}</Button>
-      </Flex>
-    </Box>
-  );
-};
-
-const PackageDetailsLayout = ({ children, ...props }: LayoutProps) => (
-  <Box
-    maxWidth="1188px"
-    width="full"
-    mx="auto"
-    {...props}
-    px={{ base: 4, sm: 6 }}
-    pt={{ base: 4, md: 6, lg: 10 }}
-    pb={{ base: 10, md: 20, lg: 16 }}
-  >
-    {children}
-  </Box>
-);

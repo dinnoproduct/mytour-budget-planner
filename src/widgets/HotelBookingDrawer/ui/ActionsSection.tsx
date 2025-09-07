@@ -1,7 +1,6 @@
-import { Flex, VStack } from "@chakra-ui/react";
-import { Checkbox, Icon, Tooltip } from "@/shared/ui";
-import { useTranslation } from "react-i18next";
+import { VStack } from "@chakra-ui/react";
 import { MealPlanSelector } from "./MealPlanSelector";
+import { LateCheckoutSection } from "./LateCheckoutSection";
 
 interface IActionsSectionProps {
   selectedMealPlan: number;
@@ -9,6 +8,7 @@ interface IActionsSectionProps {
   lateCheckout: boolean;
   handleLateCheckoutChange: (value: boolean) => void;
   mealPlans: { key: number; label: string; labelArm: string }[];
+  isHotelPackage: boolean;
 }
 
 export const ActionsSection = ({
@@ -17,9 +17,8 @@ export const ActionsSection = ({
   lateCheckout,
   handleLateCheckoutChange,
   mealPlans,
+  isHotelPackage,
 }: IActionsSectionProps) => {
-  const { t } = useTranslation();
-
   return (
     <VStack spacing={4} bg="white" align="stretch" py={4} px={6}>
       <VStack align="stretch" overflowX="auto">
@@ -30,21 +29,12 @@ export const ActionsSection = ({
         />
       </VStack>
 
-      <Checkbox
-        size="lg"
-        isChecked={lateCheckout}
-        onChange={(e) => handleLateCheckoutChange(e.target.checked)}
-      >
-        <Flex align="center">
-          {t`lateCheckoutFromHotel`}
-
-          <Tooltip label={t`availableSeatsTooltip`}>
-            <Flex justify="center" align="center">
-              <Icon name="info-outline" size="16" color="gray.800" ml="1" />
-            </Flex>
-          </Tooltip>
-        </Flex>
-      </Checkbox>
+      {!isHotelPackage && (
+        <LateCheckoutSection
+          lateCheckout={lateCheckout}
+          onLateCheckoutChange={handleLateCheckoutChange}
+        />
+      )}
     </VStack>
   );
 };

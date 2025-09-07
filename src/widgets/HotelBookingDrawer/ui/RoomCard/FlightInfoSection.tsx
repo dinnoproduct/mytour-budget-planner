@@ -47,7 +47,7 @@ export const FlightInfoSection: React.FC<FlightInfoSectionProps> = ({
           </Text>
         </HStack>
 
-        <HStack spacing={2} align="center" flex={1} justify="center" minW={0}>
+        <HStack spacing={1.5} align="center" flex={1} justify="center" minW={0}>
           {/* Airplane icon pointing right */}
           <Icon name="departure" size="16" color="gray.500" flexShrink={0} />
 

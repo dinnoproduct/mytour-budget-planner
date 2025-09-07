@@ -19,6 +19,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
     closeBookingDrawer,
     updateMealPlan,
     updateSelectedRoomPackage,
+    isHotelPackage,
   } = useBookingDrawer();
 
   const {
@@ -45,14 +46,14 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
           [PackagesFields.adults]: packageData?.adultTravelers || 0,
           [PackagesFields.childs]: childrenAges,
           [PackagesFields.lateCheckout]: lateCheckout,
-          [PackagesFields.bookingType]: 2,
+          [PackagesFields.bookingType]: isHotelPackage ? 2 : 1,
         },
       );
     }
     return () => {
       clearGeneratedMultivendorOffers();
     };
-  }, [lateCheckout, packageData, isOpen]);
+  }, [lateCheckout, packageData, isOpen, isHotelPackage]);
 
   const handleLateCheckoutChange = (value: boolean) => {
     setLateCheckout(value);
@@ -73,6 +74,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
             mealPlans={mealPlans}
             lateCheckout={lateCheckout}
             handleLateCheckoutChange={handleLateCheckoutChange}
+            isHotelPackage={isHotelPackage}
           />
         )}
 
