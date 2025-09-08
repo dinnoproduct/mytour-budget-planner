@@ -7,12 +7,12 @@ import {
   type PaymentMethodViewProps
 } from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
 import { useState } from 'react'
-import { BookingStep, generateEventId, metaEvents } from '@/shared/configs/metaEvents'
+import { BookingStep, metaEvents } from '@/shared/configs/metaEvents'
 
 export const PaymentMethodView = ({
   onSubmit,
   isLoadingBooking,
-  packageDetails
+  packageDetails,
 }: PaymentMethodViewProps) => {
   const { t } = useTranslation()
 
@@ -29,7 +29,6 @@ export const PaymentMethodView = ({
       // Track payment method selection step
       if (packageDetails) {
         metaEvents.bookingStepCompleted({
-          event_id: generateEventId(),
           hotel_id: packageDetails.hotel.id,
           step_number: 3,
           step_name: BookingStep.PaymentMethodSelected,
