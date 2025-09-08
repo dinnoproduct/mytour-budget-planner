@@ -34,7 +34,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
     updateMealPlan(mealPlans[0].key)
   }, [JSON.stringify(mealPlans)])
   
-  const [lateCheckout, setLateCheckout] = useRecoilState(isLateCheckoutAtom);
+  const [isLateCheckout, setIsLateCheckout] = useRecoilState(isLateCheckoutAtom);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,7 +45,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
           [PackagesFields.dateTo]: packageData?.checkout || "",
           [PackagesFields.adults]: packageData?.adultTravelers || 0,
           [PackagesFields.childs]: childrenAges,
-          [PackagesFields.lateCheckout]: lateCheckout,
+          [PackagesFields.lateCheckout]: isLateCheckout,
           [PackagesFields.bookingType]: isHotelPackage ? 2 : 1,
         },
       );
@@ -53,10 +53,10 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
     return () => {
       clearGeneratedMultivendorOffers();
     };
-  }, [lateCheckout, packageData, isOpen, isHotelPackage]);
+  }, [isLateCheckout, packageData, isOpen, isHotelPackage]);
 
   const handleLateCheckoutChange = (value: boolean) => {
-    setLateCheckout(value);
+    setIsLateCheckout(value);
   };
 
   return (
@@ -72,7 +72,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
             selectedMealPlan={selectedMealPlan}
             updateMealPlan={updateMealPlan}
             mealPlans={mealPlans}
-            lateCheckout={lateCheckout}
+            lateCheckout={isLateCheckout}
             handleLateCheckoutChange={handleLateCheckoutChange}
             isHotelPackage={isHotelPackage}
           />
