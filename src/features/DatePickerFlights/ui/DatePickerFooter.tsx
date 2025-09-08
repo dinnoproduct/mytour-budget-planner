@@ -37,7 +37,6 @@ export const DatePickerFooter = ({
 				onClick={onConfirm}
 				variant="solid-blue"
 				width="full"
-        size='lg'
 				isDisabled={isConfirmDisabled}
 			>
 				{t`confirm`} ({nights} {t`night`})

@@ -190,6 +190,7 @@ export const SearchMultiCities = ({
         <Button
           mt='16px'
           size="lg"
+          borderRadius='12px'
           width='calc(100% - 32px)'
           onClick={() => setDropdownOpen(!isDropdownOpen)}
         >

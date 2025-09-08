@@ -145,7 +145,7 @@ const MonthHeader = ({
           onClick={() => onPrevClick()}
           icon="chevron-left"
           variant="solid-gray"
-          size="lg"
+          size="sm"
           isDisabled={isPrevDisabled}
           display={{ base: 'none', md: 'inline-flex' }}
         />
@@ -160,7 +160,7 @@ const MonthHeader = ({
           onClick={() => onNextClick()}
           icon="chevron-right"
           variant="solid-gray"
-          size="lg"
+          size="sm"
           isDisabled={isNextDisabled}
           display={{ base: 'none', md: 'inline-flex' }}
         />

@@ -7,7 +7,6 @@ export const DatePickerConfirmButton = ({ onClick }: DatePickerConfirmButtonProp
 	const { t } = useTranslation()
 	return (
 		<Button
-      size='lg'
 			onClick={onClick}
 			variant="solid-blue"
 		>

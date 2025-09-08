@@ -214,7 +214,7 @@ export const DatePickerFlights = ({
               icon="close"
               aria-label="Close calendar"
               variant="solid-gray"
-              size="lg"
+              size="sm"
               onClick={() => setCalendarOpen(false)}
             />
           </Flex>
