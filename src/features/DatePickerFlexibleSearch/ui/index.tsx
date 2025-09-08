@@ -219,7 +219,7 @@ export const DatePickerFlexibleSearch = ({
               icon="close"
               aria-label="Close calendar"
               variant="solid-gray"
-              size="sm"
+              size="lg"
               onClick={() => setCalendarOpen(false)}
             />
           </Flex>

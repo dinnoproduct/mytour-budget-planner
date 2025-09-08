@@ -255,7 +255,7 @@ export const SearchTravelers = ({
                 icon="close"
                 aria-label="Close calendar"
                 variant="solid-gray"
-                size="sm"
+                size="lg"
                 onClick={() => setDropdownOpen(false)}
               />
             </Flex>
@@ -310,7 +310,7 @@ export const SearchTravelers = ({
               bottom={{base: 0, md: undefined}}
               width="full"
             >
-              <Button width="full" onClick={handleConfirm}>{t`confirm`}</Button>
+              <Button size='lg' width="full" onClick={handleConfirm}>{t`confirm`}</Button>
             </Box>
           </Box>
         </MenuList>

@@ -11,6 +11,7 @@ export const DatePickerConfirmButton = ({
 
   return (
     <Button
+      size='lg'
       width="full"
       onClick={onClick}
       variant="solid-blue"
