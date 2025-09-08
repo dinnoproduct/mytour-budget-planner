@@ -1,19 +1,23 @@
-import { Box, Grid } from '@chakra-ui/react'
-import { type LayoutProps, RequestsGroupStatus } from './types'
-import { Container, Heading, Tabs } from '@ui'
-import { useUserRequestsManager } from '@widgets/UserPackages/hooks'
-import { RequestCard } from '@widgets/UserPackages/ui/RequestCard'
+import { Box, Grid } from "@chakra-ui/react";
+import { type LayoutProps, RequestsGroupStatus } from "./types";
+import { Container, Heading, Tabs } from "@ui";
+import { useUserRequestsManager } from "@widgets/UserPackages/hooks";
+import { RequestCard } from "@widgets/UserPackages/ui/RequestCard";
 import {
   CanceledTabEmptyState,
   IncompleteTabEmptyState,
   PastTabEmptyState,
-  UpcomingTabEmptyState
-} from '@widgets/UserPackages/ui/EmptyStates.tsx'
-import { useTranslation } from 'react-i18next'
-import { BookingFlow } from '@widgets/BookingFlow'
+  UpcomingTabEmptyState,
+} from "@widgets/UserPackages/ui/EmptyStates.tsx";
+import { useTranslation } from "react-i18next";
+import { BookingFlow } from "@widgets/BookingFlow";
+import { useSetRecoilState } from "recoil";
+import { isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { useEffect } from "react";
 
 export const UserPackages = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+  const setIsLateCheckout = useSetRecoilState(isLateCheckoutAtom);
   const {
     activeRequests,
     pendingRequests,
@@ -33,8 +37,14 @@ export const UserPackages = () => {
     activeRequestPackage,
     incompleteInitialView,
     isActiveRequestDraft,
-    isLoadingActiveRequestPackage
-  } = useUserRequestsManager()
+    isLoadingActiveRequestPackage,
+  } = useUserRequestsManager();
+
+  useEffect(() => {
+    if (activeRequest?.notes.isLateCheckout !== undefined) {
+      setIsLateCheckout(activeRequest.notes.isLateCheckout);
+    }
+  }, [activeRequest?.notes.isLateCheckout, setIsLateCheckout]);
 
   return (
     <Layout>
@@ -50,7 +60,7 @@ export const UserPackages = () => {
           <UpcomingTabEmptyState isLoading={isLoadingUserRequests} />
         ) : (
           <TabContentLayout>
-            {activeRequests.map(request => (
+            {activeRequests.map((request) => (
               <RequestCard
                 request={request}
                 key={request.id}
@@ -75,7 +85,7 @@ export const UserPackages = () => {
           <IncompleteTabEmptyState isLoading={isLoadingUserRequests} />
         ) : (
           <TabContentLayout>
-            {pendingRequests.map(request => (
+            {pendingRequests.map((request) => (
               <RequestCard
                 request={request}
                 key={request.id}
@@ -96,7 +106,7 @@ export const UserPackages = () => {
           <PastTabEmptyState isLoading={isLoadingUserRequests} />
         ) : (
           <TabContentLayout>
-            {passedRequests.map(request => (
+            {passedRequests.map((request) => (
               <RequestCard
                 request={request}
                 key={request.id}
@@ -110,7 +120,7 @@ export const UserPackages = () => {
           <CanceledTabEmptyState isLoading={isLoadingUserRequests} />
         ) : (
           <TabContentLayout>
-            {cancelledRequests.map(request => (
+            {cancelledRequests.map((request) => (
               <RequestCard
                 request={request}
                 key={request.id}
@@ -130,29 +140,28 @@ export const UserPackages = () => {
         packageDetails={activeRequestPackage}
         request={activeRequest}
         defaultTravelers={activeRequest?.notes.travelers}
-        isLateCheckout={activeRequest?.notes.isLateCheckout}
         isBooked={!isActiveRequestDraft}
       />
     </Layout>
-  )
-}
+  );
+};
 
 const TabContentLayout = ({ children }: LayoutProps) => (
   <Grid
     templateColumns={{
-      base: '1fr',
-      md: 'repeat(4, minmax(240px, 1fr))'
+      base: "1fr",
+      md: "repeat(4, minmax(240px, 1fr))",
     }}
     columnGap={{ base: 4, lg: 6 }}
     rowGap="4"
-    justifyItems={{ base: 'center', md: 'stretch' }}
+    justifyItems={{ base: "center", md: "stretch" }}
   >
     {children}
   </Grid>
-)
+);
 
 const Layout = ({ children }: LayoutProps) => (
   <Box py={{ base: 6, md: 10 }}>
     <Container>{children}</Container>
   </Box>
-)
+);
