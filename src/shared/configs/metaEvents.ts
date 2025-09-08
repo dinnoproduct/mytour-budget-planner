@@ -29,10 +29,8 @@ declare global {
   }
 }
 
-import {
-  PaymentMethod,
-  PaymentModalView,
-} from "@/widgets/BookingFlow/ui/PaymentModal/types";
+import { PaymentMethod } from "@/widgets/BookingFlow/ui/PaymentModal/types";
+import { getTabSessionId } from "@/utils/session";
 
 // Facebook Pixel Events
 export const metaEvents = {
@@ -156,7 +154,7 @@ export const metaEvents = {
       window.fbq("trackCustom", "HotelGalleryOpened", {
         ...data,
         event_id: generateEventId(),
-        timestamp: new Date().toISOString(),
+        user_session_id: getTabSessionId(),
       });
     }
   },

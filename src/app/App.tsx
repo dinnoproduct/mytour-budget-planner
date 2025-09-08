@@ -1,14 +1,21 @@
-import { RecoilRoot } from 'recoil'
-import { BrowserRouter } from 'react-router-dom'
-import { ModalProvider, QueryProvider, ThemeProvider } from './providers'
+import { RecoilRoot } from "recoil";
+import { BrowserRouter } from "react-router-dom";
+import { ModalProvider, QueryProvider, ThemeProvider } from "./providers";
 
-import Routes from './Routes.tsx'
-import '../App.css'
-import Toaster from '../components/Toaster/Toaster.tsx'
-import { UserProvider } from '@entities/user'
-import { RouteTracker } from './RouteTracker'
+import Routes from "./Routes.tsx";
+import "../App.css";
+import Toaster from "../components/Toaster/Toaster.tsx";
+import { UserProvider } from "@entities/user";
+import { RouteTracker } from "./RouteTracker";
+import { useEffect } from "react";
+import { getTabSessionId } from "@/utils/session.ts";
 
 function App() {
+  useEffect(() => {
+    // Make sure the session ID exists before first event
+    getTabSessionId();
+  }, []);
+
   return (
     // <GoogleOAuthProvider clientId="174037716864-g19hqju9dqo4oked1ecb9cg1antitca5.apps.googleusercontent.com">
     <RecoilRoot>
@@ -27,7 +34,7 @@ function App() {
       </QueryProvider>
     </RecoilRoot>
     // </GoogleOAuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
