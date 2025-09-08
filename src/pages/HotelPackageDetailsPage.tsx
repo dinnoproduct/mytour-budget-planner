@@ -29,6 +29,7 @@ import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
 import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
+import { metaEvents } from "@/shared/configs/metaEvents";
 
 export const HotelPackageDetailsPage = () => {
   const navigate = useNavigate();
@@ -67,6 +68,12 @@ export const HotelPackageDetailsPage = () => {
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index);
     setModalOpen(true);
+    metaEvents.hotelGalleryOpened({
+      hotel_id: packageDetails?.hotel?.id || 0,
+      images_viewed: index,
+      gallery_time_seconds: 0,
+      user_session_id: "",
+    });
   };
 
   const handleBackClick = () => {
@@ -130,6 +137,7 @@ export const HotelPackageDetailsPage = () => {
         imageUrls={uniqueImageUrls}
         activeIndex={imageModalActiveIndex}
       />
+      <BookingDrawer childrenAges={childrenAges} />
 
       {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow

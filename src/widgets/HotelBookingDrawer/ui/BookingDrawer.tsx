@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SideDrawer } from "@/components/SideDrawer";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
@@ -9,8 +9,12 @@ import { RoomTypesList } from "./RoomTypesList";
 import { VStack } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
+import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
-export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAges }) => {
+export const BookingDrawer: React.FC<{
+  childrenAges: number[];
+}> = ({ childrenAges }) => {
   const { t } = useTranslation();
   const {
     isOpen,
@@ -36,6 +40,11 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
   
   const [isLateCheckout, setIsLateCheckout] = useRecoilState(isLateCheckoutAtom);
 
+  const hanldePackageSelect = (selectedPackage: IGeneratedMultivendorOffer) => {
+    updateSelectedRoomPackage(selectedPackage);
+    handleLogEvent({ name: BookingStep.RoomSelection, number: 1 });
+  };
+
   useEffect(() => {
     if (isOpen) {
       generateMultivendorOffers(
@@ -58,6 +67,16 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
   const handleLateCheckoutChange = (value: boolean) => {
     setIsLateCheckout(value);
   };
+
+  function handleLogEvent(step: { name: BookingStep; number: number }) {
+    if (packageData) {
+      metaEvents.bookingStepCompleted({
+        hotel_id: packageData.hotel.id,
+        step_number: step.number,
+        step_name: step.name,
+      });
+    }
+  }
 
   return (
     <SideDrawer
@@ -82,7 +101,7 @@ export const BookingDrawer: React.FC<{ childrenAges: number[] }> = ({ childrenAg
           selectedMealPlan={selectedMealPlan}
           generatedMultivendorOffers={generatedMultivendorOffers}
           loading={loading}
-          updateSelectedRoomPackage={updateSelectedRoomPackage}
+          updateSelectedRoomPackage={hanldePackageSelect}
           closeBookingDrawer={closeBookingDrawer}
         />
       </VStack>

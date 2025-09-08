@@ -1,4 +1,3 @@
-import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
 import { Box, Flex, Grid } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, SkeletonText, Text } from "@ui";
@@ -12,6 +11,10 @@ import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useUserContext } from "@/entities/user/index.ts";
 import { useModalContext } from "@/app/providers/index.ts";
+import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
+import { metaEvents, generateEventId } from "@/shared/configs/metaEvents";
+import { useRecoilState } from "recoil";
+import { isBookingFlowOpenAtom } from "@/modules/packages/store/store.ts";
 
 export const HotelPackageBookingConfig = ({
   tourPackage,
@@ -28,6 +31,9 @@ export const HotelPackageBookingConfig = ({
     currentOfferPackage,
     isCalculatingPrepayment,
   } = useBookingConfig(tourPackage, tourPackage.offerId);
+  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
+    isBookingFlowOpenAtom,
+  );
 
   const [isFixed, setIsFixed] = useState(false);
   const { user } = useUserContext();
@@ -60,6 +66,36 @@ export const HotelPackageBookingConfig = ({
   const { openBookingDrawer } = useBookingDrawer();
 
   const handleBookClick = () => {
+    if (currentOfferPackage && tourPackage) {
+      metaEvents.initiateCheckout({
+        content_type: "hotel",
+        content_ids: [`hotel_${tourPackage.hotel.id}`], // TODO: add content_ids
+        value: currentOfferPackage.price,
+        currency: "AMD",
+        num_items: 1,
+        hotel_id: tourPackage.hotel.id,
+        hotel_name: tourPackage.hotel.name,
+        destination:
+          tourPackage.city.nameEng || tourPackage.city.nameArm || "Unknown",
+        destination_country:
+          tourPackage.city.country?.nameEng ||
+          tourPackage.city.country?.nameArm ||
+          "Unknown",
+        checkin_date: tourPackage.checkin,
+        checkout_date: tourPackage.checkout,
+        num_nights: Math.ceil(
+          (new Date(tourPackage.checkout).getTime() -
+            new Date(tourPackage.checkin).getTime()) /
+            (1000 * 60 * 60 * 24),
+        ),
+        num_adults: tourPackage.adultTravelers,
+        num_children:
+          tourPackage.childrenTravelers + tourPackage.infantTravelers,
+        num_rooms: 1,
+        room_type: "standard",
+        booking_step: "hotel_selection",
+      });
+    }
     if (user?.id) {
       openBookingDrawer(tourPackage);
       return;
@@ -72,6 +108,7 @@ export const HotelPackageBookingConfig = ({
         view: "signUp",
         isCloseOnSuccess: true,
         onSuccess: () => {
+          setBookingFlowOpen(true);
           openBookingDrawer(tourPackage);
         },
       },

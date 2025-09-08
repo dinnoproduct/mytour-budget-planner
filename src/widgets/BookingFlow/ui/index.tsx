@@ -1,10 +1,11 @@
-import { PaymentModal } from './PaymentModal'
-import { TravelersModal } from '@widgets/TravelersModal'
-import type { BookingFlowProps } from '@widgets/BookingFlow/ui/types.ts'
-import { useBookingFlow } from '../hooks'
-import { PaymentSuccessModal } from '@entities/package'
-import { useRecoilValue } from 'recoil'
-import { isLateCheckoutAtom } from '@/modules/packages/store/store'
+import { PaymentModal } from "./PaymentModal";
+import { TravelersModal } from "@widgets/TravelersModal";
+import type { BookingFlowProps } from "@widgets/BookingFlow/ui/types.ts";
+import { useBookingFlow } from "../hooks";
+import { PaymentSuccessModal } from "@entities/package";
+import { useRecoilValue } from "recoil";
+import { isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const BookingFlow = ({
   packageDetails,
@@ -14,10 +15,9 @@ export const BookingFlow = ({
   isOpen,
   onClose,
   defaultTravelers,
-  isBooked
+  isBooked,
 }: BookingFlowProps) => {
-  const isLateCheckout = useRecoilValue(isLateCheckoutAtom)
-  
+  const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
   const {
     paymentModalView,
     onTravelersModalSuccess,
@@ -30,7 +30,7 @@ export const BookingFlow = ({
     isLoadingBooking,
     isLoadingTravelersModal,
     prepaymentInfo,
-    validatePromoCode
+    validatePromoCode,
   } = useBookingFlow({
     initialView,
     packageDetails,
@@ -39,28 +39,39 @@ export const BookingFlow = ({
     childrenAges,
     request,
     defaultTravelers,
-    isLateCheckout
-  })
+    isLateCheckout,
+  });
 
   if (!packageDetails?.offerId || !isOpen) {
-    return null
+    return null;
+  }
+
+  function handleLogEvent(step: { name: BookingStep; number: number }) {
+    if (packageDetails) {
+      metaEvents.bookingStepCompleted({
+        hotel_id: packageDetails.hotel.id,
+        step_number: step.number,
+        step_name: step.name,
+      });
+    }
   }
 
   return (
     <>
-      {modalView === 'travelers' && (
+      {modalView === "travelers" && (
         <TravelersModal
           isOpen={true}
           closeModal={() => closeModal()}
           packageDetails={packageDetails}
           travelers={travelers}
           onSuccess={onTravelersModalSuccess}
+          handleLogEvent={handleLogEvent}
           onChange={handleTravelersChange}
           isLoading={isLoadingTravelersModal}
         />
       )}
 
-      {modalView === 'payment' && (
+      {modalView === "payment" && (
         <PaymentModal
           isOpen={true}
           closeModal={() => closeModal()}
@@ -68,20 +79,20 @@ export const BookingFlow = ({
           onSuccess={onPaymentModalSuccess}
           view={paymentModalView}
           onBackClick={
-            initialView === 'payment' ? undefined : openTravelersModal
+            initialView === "payment" ? undefined : openTravelersModal
           }
           isLoadingBooking={isLoadingBooking}
           isBooked={isBooked}
           prepaymentInfo={prepaymentInfo}
-          isLateCheckout={isLateCheckout}
           travelers={travelers}
           validatePromoCode={validatePromoCode}
+          handleLogEvent={handleLogEvent}
         />
       )}
 
-      {modalView === 'success' && (
+      {modalView === "success" && (
         <PaymentSuccessModal closeModal={() => closeModal()} />
       )}
     </>
-  )
-}
+  );
+};

@@ -9,6 +9,7 @@ import { type BoxProps, type ListProps } from '@chakra-ui/react'
 import { type Travelers } from '@widgets/TravelersModal/ui/types'
 import { type UseMutationResult } from '@tanstack/react-query'
 import { type PromoCodeValidationResponse, type PromoCodeValidationParams } from '@entities/package'
+import { BookingStep } from '@/shared/configs/metaEvents'
 
 export type PaymentModalProps = {
   closeModal: () => void
@@ -30,6 +31,7 @@ export type PaymentModalProps = {
     unknown,
     Omit<PromoCodeValidationParams, 'userId'>
   >
+  handleLogEvent: (step: { name: BookingStep; number: number }) => void
 }
 
 export type PaymentFormViewProps = {
