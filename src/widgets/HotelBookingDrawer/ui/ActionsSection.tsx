@@ -1,54 +1,40 @@
-import { Flex, VStack } from "@chakra-ui/react";
-import { Checkbox, Icon, Tooltip } from "@/shared/ui";
-import { SectionLayout } from "../../HotelPackageDetails/ui/SectionLayout";
-import { useTranslation } from "react-i18next";
-import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
+import { VStack } from "@chakra-ui/react";
 import { MealPlanSelector } from "./MealPlanSelector";
+import { LateCheckoutSection } from "./LateCheckoutSection";
 
 interface IActionsSectionProps {
-    selectedMealPlan: number;
-    updateMealPlan: (mealPlan: number) => void;
-    generatedMultivendorOffers: IGeneratedMultivendorOffer[];
-    lateCheckout: boolean;
-    handleLateCheckoutChange: (value: boolean) => void;
+  selectedMealPlan: number;
+  updateMealPlan: (mealPlan: number) => void;
+  lateCheckout: boolean;
+  handleLateCheckoutChange: (value: boolean) => void;
+  mealPlans: { key: number; label: string; labelArm: string }[];
+  isHotelPackage: boolean;
 }
 
 export const ActionsSection = ({
-    selectedMealPlan,
-    updateMealPlan,
-    generatedMultivendorOffers,
-    lateCheckout,
-    handleLateCheckoutChange
+  selectedMealPlan,
+  updateMealPlan,
+  lateCheckout,
+  handleLateCheckoutChange,
+  mealPlans,
+  isHotelPackage,
 }: IActionsSectionProps) => {
-    const { t } = useTranslation();
+  return (
+    <VStack spacing={4} bg="white" align="stretch" py={4} px={6}>
+      <VStack align="stretch" overflowX="auto">
+        <MealPlanSelector
+          selectedMealPlan={selectedMealPlan}
+          onMealPlanChange={updateMealPlan}
+          mealPlans={mealPlans}
+        />
+      </VStack>
 
-    return (
-        <VStack bg="white" align="stretch" py={4} px={6}>
-            <VStack align="stretch" overflowX="auto">
-                <MealPlanSelector
-                    selectedMealPlan={selectedMealPlan}
-                    onMealPlanChange={updateMealPlan}
-                    generatedMultivendorOffers={generatedMultivendorOffers}
-                />
-            </VStack>
-
-            <SectionLayout gridArea="lateCheckout">
-                <Checkbox
-                    size="lg"
-                    isChecked={lateCheckout}
-                    onChange={e => handleLateCheckoutChange(e.target.checked)}
-                >
-                    <Flex align="center">
-                        {t`lateCheckoutFromHotel`}
-
-                        <Tooltip label={t`availableSeatsTooltip`}>
-                            <Flex justify="center" align="center">
-                                <Icon name="info-outline" size="16" color="gray.800" ml="1" />
-                            </Flex>
-                        </Tooltip>
-                    </Flex>
-                </Checkbox>
-            </SectionLayout>
-        </VStack>
-    )
-}
+      {!isHotelPackage && (
+        <LateCheckoutSection
+          lateCheckout={lateCheckout}
+          onLateCheckoutChange={handleLateCheckoutChange}
+        />
+      )}
+    </VStack>
+  );
+};

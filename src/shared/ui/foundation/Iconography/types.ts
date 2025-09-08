@@ -70,6 +70,7 @@ export type IconName =
   | 'approximate'
   | 'search'
   | 'filter-list'
+  | 'departure'
 
 export type IconSize =
   | '12'

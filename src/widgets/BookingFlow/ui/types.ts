@@ -9,6 +9,5 @@ export type BookingFlowProps = {
   childrenAges?: number[]
   request?: NormalizedRequestEntity | null
   defaultTravelers?: Travelers
-  isLateCheckout?: boolean
   isBooked?: boolean
 }

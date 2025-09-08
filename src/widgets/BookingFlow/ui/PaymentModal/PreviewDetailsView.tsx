@@ -14,6 +14,8 @@ import {
   type SectionLayoutProps,
   type SectionListProps
 } from './types.ts'
+import { useRecoilValue } from 'recoil'
+import { isLateCheckoutAtom } from '@/modules/packages/store/store'
 import { formatNumber } from '@shared/utils'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { useMemo, useState } from 'react'
@@ -39,7 +41,6 @@ export const PreviewDetailsView = ({
   onUsePromocode,
   isLoadingBooking,
   packageDetails,
-  isLateCheckout,
   travelers,
   paymentAmount,
   isFullPricePayment,
@@ -49,6 +50,7 @@ export const PreviewDetailsView = ({
   const { t, i18n } = useTranslation()
   const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false)
   const [promoCodeValue, setPromoCodeValue] = useState('')
+  const isLateCheckout = useRecoilValue(isLateCheckoutAtom)
 
   const handleUsePromocode = () => {
     setIsPromoCodeModalOpen(true)
@@ -130,7 +132,6 @@ export const PreviewDetailsView = ({
 
     return (packageDetails?.city[key] as string) || ''
   }, [i18n.language, packageDetails?.city.nameArm])
-  console.log('packageDetails : ', packageDetails)
 
   const isHotelPackage = useMemo(
     () =>

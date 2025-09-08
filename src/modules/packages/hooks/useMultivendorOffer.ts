@@ -40,7 +40,7 @@ const useMultivendorOffer = () => {
       { key: number; label: string; labelArm: string }
     > = {};
     generatedMultivendorOffers.forEach((offer) => {
-      if (!result[offer.foodType]) {
+      if (offer.foodType && !result[offer.foodType]) {
         result[offer.foodType] = {
           key: offer.foodType,
           label:
@@ -50,8 +50,19 @@ const useMultivendorOffer = () => {
         };
       }
     });
+
+    if (Object.keys(result).length === 0) {
+      const allInclusive = foodTypes.find(({ value }) => value.toLocaleLowerCase() === "All Inclusive".toLocaleLowerCase())
+      return [
+        {
+          key: allInclusive?.key || 0,
+          label: allInclusive?.value || "",
+          labelArm: allInclusive?.value || "",
+        },
+      ];
+    }
     return Object.values(result);
-  }, [generatedMultivendorOffers, foodTypes]);
+  }, [JSON.stringify(generatedMultivendorOffers), foodTypes]);
 
   return {
     generatedMultivendorOffers,

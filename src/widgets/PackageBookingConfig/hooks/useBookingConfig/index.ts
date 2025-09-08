@@ -1,26 +1,21 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from "react";
 import {
   type DictionaryTypes,
   type PackageEntity,
-  useAvailableFlights,
+  useCalculatePrepayment,
   useCurrentOfferPackage,
   useDictionary,
   useGenerateOffers,
-  useReturnFlights
-} from '@entities/package'
-import moment from 'moment/moment'
-import { type DatePickerProps } from '@features/DatePickerFlights/ui/types.ts'
-import { useSearchParams } from 'react-router-dom'
-import { type SearchTravelersProps } from '@features/SearchTravelers/ui/types.ts'
-import { type RoomsMenuProps } from '@features/RoomsMenu/ui/types.ts'
+} from "@entities/package";
+import { useSearchParams } from "react-router-dom";
 
-export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
-  const [searchParams, setSearchParams] = useSearchParams()
+export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: number) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const roomId = useMemo(() => {
-    const roomId = searchParams.get('roomId')
+    const roomId = searchParams.get("roomId");
 
-    return roomId ? parseInt(roomId, 10) : 0
-  }, [searchParams])
+    return roomId ? parseInt(roomId, 10) : 0;
+  }, [searchParams]);
   const [bookingData, setBookingData] = useState({
     fromDate: new Date(defaultTourPackage.destinationFlight.departureDate),
     toDate: new Date(defaultTourPackage.returnFlight.arrivalDate),
@@ -33,94 +28,39 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
         defaultTourPackage.infantTravelers,
       childrenAges:
         searchParams
-          .get('childrenAges')
-          ?.split(',')
+          .get("childrenAges")
+          ?.split(",")
           .filter(Boolean)
-          .map(Number) || []
+          .map(Number) || [],
     },
     hotelId: defaultTourPackage.hotel.id,
     lateCheckout: false,
-    roomId
-  })
+    roomId,
+  });
 
   const updateBookingData = (
     data: Partial<typeof bookingData>,
-    updateSearchParams: boolean = true
+    updateSearchParams: boolean = true,
   ) => {
-    setBookingData(prevState => {
-      const updatedData = { ...prevState, ...data }
+    setBookingData((prevState) => {
+      const updatedData = { ...prevState, ...data };
 
-      if (!updateSearchParams) return updatedData
+      if (!updateSearchParams) return updatedData;
 
       setSearchParams({
-        city: searchParams.get('city') || '0',
+        city: searchParams.get("city") || "0",
         adultsCount: String(updatedData.travelersData.adultsCount),
         childrenCount: String(updatedData.travelersData.childrenCount),
-        childrenAges: updatedData.travelersData.childrenAges.join(','),
+        childrenAges: updatedData.travelersData.childrenAges.join(","),
         hotelId: String(updatedData.hotelId),
         roomId: String(updatedData.roomId),
         departureFlightId: String(updatedData.departureFlightId),
-        returnFlightId: String(updatedData.returnFlightId)
-      })
+        returnFlightId: String(updatedData.returnFlightId),
+      });
 
-      return updatedData
-    })
-  }
-
-  // flight
-  const { data: departureFlights } = useAvailableFlights({
-    city: defaultTourPackage.city.id
-  })
-  const { data: returnFlights, isLoading: isLoadingReturnFlights } =
-    useReturnFlights(
-      {
-        flightId: bookingData.departureFlightId
-      },
-      {
-        enabled: !!bookingData.departureFlightId
-      }
-    )
-
-  const availableDepartureDates = useMemo(() => {
-    if (!departureFlights?.length) return []
-
-    return departureFlights.map(flight => new Date(flight.departureDate))
-  }, [JSON.stringify(departureFlights)])
-
-  const availableReturnDates = useMemo(() => {
-    if (!returnFlights?.length) return []
-
-    return returnFlights.map(flight => new Date(flight.arrivalDate))
-  }, [JSON.stringify(returnFlights)])
-
-  const handleFromDateClick = (date: Date) => {
-    const selectedFlight = departureFlights?.find(flight =>
-      moment(flight.departureDate).isSame(date, 'day')
-    )
-
-    if (selectedFlight) {
-      updateBookingData(
-        {
-          departureFlightId: selectedFlight.id
-        },
-        false
-      )
-    }
-  }
-
-  const handleFlightConfirm = (fromDate: Date, toDate?: Date | null) => {
-    if (!fromDate || !toDate) return
-
-    const returnFlight = returnFlights?.find(flight =>
-      moment(flight.arrivalDate).isSame(toDate, 'day')
-    )
-
-    updateBookingData({
-      fromDate,
-      toDate,
-      returnFlightId: returnFlight?.id
-    })
-  }
+      return updatedData;
+    });
+  };
 
   // offers
   const { data: offers = [], isLoading: isLoadingOffers } = useGenerateOffers(
@@ -130,95 +70,77 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity) => {
       adults: bookingData.travelersData.adultsCount,
       childs: bookingData.travelersData.childrenAges,
       hotelId: bookingData.hotelId,
-      lateCheckout: bookingData.lateCheckout
+      lateCheckout: bookingData.lateCheckout,
     },
     {
-      enabled: true
-    }
-  )
+      enabled: true,
+    },
+  );
 
   // rooms
   const { data: roomTypes = [] } = useDictionary(
-    'RoomTypeDictionary' as DictionaryTypes.RoomTypeDictionary
-  )
+    "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
+  );
   const roomOffers = useMemo(() => {
-    if (!offers?.length) return []
+    if (!offers?.length) return [];
 
-    const offerRoomTypes = roomTypes.filter(roomType =>
-      offers.some(offer => offer.roomType === roomType.key)
-    )
+    const offerRoomTypes = roomTypes.filter((roomType) =>
+      offers.some((offer) => offer.roomType === roomType.key),
+    );
 
     return offerRoomTypes
-      .map(roomType => {
-        const offer = offers.find(offer => offer.roomType === roomType.key)
+      .map((roomType) => {
+        const offer = offers.find((offer) => offer.roomType === roomType.key);
 
         return {
           id: roomType.key,
           name: roomType.value,
-          price: offer?.price || 0
-        }
+          price: offer?.price || 0,
+        };
       })
-      .sort((a, b) => a.price - b.price)
-  }, [JSON.stringify(offers), JSON.stringify(roomTypes)])
+      .sort((a, b) => a.price - b.price);
+  }, [JSON.stringify(offers), JSON.stringify(roomTypes)]);
 
   const isNotFound = useMemo(
     () => !isLoadingOffers && roomOffers.length === 0,
-    [roomOffers?.length, isLoadingOffers]
-  )
-
-  const selectedRoomOffer = useMemo(
-    () =>
-      roomOffers.find(room => room.id === bookingData.roomId) || roomOffers[0],
-    [JSON.stringify(roomOffers), bookingData.roomId]
-  )
-
-  const handleRoomSelect = (roomId: number) => {
-    updateBookingData({
-      roomId
-    })
-  }
-
-  const selectedOffer = useMemo(
-    () => offers.find(offer => offer.roomType === selectedRoomOffer.id),
-    [selectedRoomOffer, JSON.stringify(offers)]
-  )
+    [roomOffers?.length, isLoadingOffers],
+  );
 
   const {
     data: currentOfferPackage,
     refetch: refetchCurrentOfferPackage,
-    isFetching: isFetchingCurrentOfferPackage
-  } = useCurrentOfferPackage(selectedOffer?.offerId || 0, {
-    enabled: !!selectedOffer?.offerId
-  })
+    isFetching: isFetchingCurrentOfferPackage,
+  } = useCurrentOfferPackage(offerId || 0, {
+    enabled: !! offerId,
+  });
 
   useEffect(() => {
-    selectedOffer?.offerId && refetchCurrentOfferPackage()
-  }, [selectedOffer?.offerId, refetchCurrentOfferPackage])
+    offerId && refetchCurrentOfferPackage();
+  }, [offerId, refetchCurrentOfferPackage]);
+
+  // calculate prepayment
+  const { data: prepaymentInfo = null, ...rest } = useCalculatePrepayment(
+    {
+      travelAgencyId: defaultTourPackage.travelAgency.id,
+      bookingType: 2,
+      destinationId: defaultTourPackage.city.id,
+      startDate: currentOfferPackage?.checkin || "",
+      fullPrice: currentOfferPackage?.price || 0,
+      calculationSource: "search",
+    },
+    { enabled: !!currentOfferPackage && !!currentOfferPackage?.checkin },
+  );
+
+  const isCalculatingPrepayment = useMemo(() => {
+    return rest.isPending || rest.isRefetching;
+  }, [rest.isPending, rest.isRefetching]);
 
   return {
     bookingData,
-    selectedOffer,
     updateBookingData,
     isNotFound,
-    flightsDatePickerProps: {
-      fromDate: bookingData.fromDate,
-      toDate: bookingData.toDate,
-      onAccept: handleFlightConfirm,
-      onFromDateClick: handleFromDateClick,
-      availableDepartureDates,
-      availableReturnDates,
-      isLoadingReturnDates: isLoadingReturnFlights
-    } as DatePickerProps,
-    searchTravelersProps: {
-      defaultData: bookingData.travelersData,
-      onChange: travelersData => updateBookingData({ travelersData })
-    } as SearchTravelersProps,
     currentOfferPackage,
-    roomsMenuProps: {
-      rooms: roomOffers,
-      defaultRoom: selectedRoomOffer?.id,
-      onChange: handleRoomSelect
-    } as RoomsMenuProps,
-    isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage
-  }
-}
+    isLoadingTourPackage: isLoadingOffers || isFetchingCurrentOfferPackage,
+    isCalculatingPrepayment,
+  };
+};

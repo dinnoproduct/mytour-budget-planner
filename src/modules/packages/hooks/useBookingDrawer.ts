@@ -2,6 +2,7 @@ import { useRecoilState } from "recoil";
 import { bookingDrawerAtom } from "../store/store";
 import { type PackageEntity } from "@entities/package";
 import { IGeneratedMultivendorOffer } from "../data/packagesTypes";
+import { useMemo } from "react";
 
 export const useBookingDrawer = () => {
   const [bookingDrawer, setBookingDrawer] = useRecoilState(bookingDrawerAtom);
@@ -43,17 +44,24 @@ export const useBookingDrawer = () => {
     setBookingDrawer((prev) => ({
       ...prev,
       selectedRoomPackage: offer,
-      packageData: prev.packageData ? {
-        ...prev.packageData,
-        offerId: offer.offerId,
-        foodType: offer.foodType,
-        roomType: offer.roomType,
-        price: offer.price,
-        partnerPrice: offer.partnerPrice,
-        priceInCurrency: offer.priceInCurrency.toString(),
-      } : prev.packageData,
+      packageData: prev.packageData
+        ? {
+            ...prev.packageData,
+            offerId: offer.offerId,
+            foodType: offer.foodType,
+            roomType: offer.roomType,
+            price: offer.price,
+            partnerPrice: offer.partnerPrice,
+            priceInCurrency: offer.priceInCurrency.toString(),
+          }
+        : prev.packageData,
     }));
   };
+
+  const isHotelPackage = useMemo(
+    () => !bookingDrawer.packageData?.destinationFlight?.departureDate,
+    [bookingDrawer.packageData?.destinationFlight?.departureDate],
+  );
 
   return {
     isOpen: bookingDrawer.isOpen,
@@ -65,5 +73,6 @@ export const useBookingDrawer = () => {
     clearBookingDrawerData,
     updateMealPlan,
     updateSelectedRoomPackage,
+    isHotelPackage,
   };
 };

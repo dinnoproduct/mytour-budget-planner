@@ -4,33 +4,16 @@ import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/pa
 import { RoomTypeSection } from "./RoomTypeSection";
 
 export interface RoomSelectionProps {
-  offers: IGeneratedMultivendorOffer[];
-  selectedMealPlan?: number;
+  filteredOffers: Record<number, IGeneratedMultivendorOffer[]>;
   closeBookingDrawer: () => void;
   updateSelectedRoomPackage: (offer: IGeneratedMultivendorOffer) => void;
 }
 
 export const RoomSelection: React.FC<RoomSelectionProps> = ({
-  offers,
-  selectedMealPlan,
+  filteredOffers,
   closeBookingDrawer,
   updateSelectedRoomPackage,
 }) => {
-  const filteredOffers = useMemo(() => {
-    const result: Record<number, IGeneratedMultivendorOffer[]> = {};
-    offers.forEach((offer) => {
-      if (offer.foodType !== selectedMealPlan) {
-        return;
-      }
-      if (!result[offer.roomType]) {
-        result[offer.roomType] = [offer];
-      } else {
-        result[offer.roomType].push(offer);
-      }
-    });
-    return result;
-  }, [selectedMealPlan, offers]);
-
   return (
     <VStack spacing={6} align="stretch" width="full">
       {Object.keys(filteredOffers).map((roomTypeKey) => (

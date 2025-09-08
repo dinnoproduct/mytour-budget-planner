@@ -142,3 +142,8 @@ export const bookingDrawerAtom = atom<{
     selectedRoomPackage: null
   }
 });
+
+export const isLateCheckoutAtom = atom<boolean>({
+  key: 'isLateCheckout',
+  default: false
+});

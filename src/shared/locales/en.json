@@ -298,5 +298,6 @@
   "planTrip": "Start planning your trip here",
   "packageOffers" : "Package offers for other destinations",
   "hotelOffers" : "Hotel offers for other destinations",
-  "noDirection" : "New destinations are on the way"
+  "noDirection" : "New destinations are on the way",
+  "bookWithoutPayment" : "Book without payment"
 }

@@ -2,7 +2,7 @@ import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
 import { Box, Flex, Grid } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, SkeletonText, Text } from "@ui";
-import { useBookingConfig, useFreeCancellation } from "../hooks";
+import { useBookingConfig } from "../hooks";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 import { useBreakpoint } from "@shared/hooks";
 import { useEffect, useState } from "react";
