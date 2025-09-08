@@ -46,6 +46,7 @@ export type PaymentFormViewProps = {
 export type PaymentMethodViewProps = {
   onSubmit: (method: PaymentMethod) => void
   isLoadingBooking?: boolean
+  packageDetails: PackageEntity
 }
 
 export type PreviewDetailsViewProps = {

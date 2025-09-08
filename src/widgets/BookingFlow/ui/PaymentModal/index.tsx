@@ -54,6 +54,7 @@ export const PaymentModal = ({
         <PaymentMethodView
           onSubmit={handlePaymentMethodSelect}
           isLoadingBooking={isLoadingBooking}
+          packageDetails={packageDetails}
         />
       ),
       ameriaPay: () => <AmeriaPayView paymentUrl={ameriaPayUrl} />,
