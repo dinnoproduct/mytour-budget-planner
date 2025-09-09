@@ -25,6 +25,7 @@ import {
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
 import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
+import { metaEvents } from "@/shared/configs/metaEvents";
 
 export const PackageDetailsPage = () => {
   const navigate = useNavigate();
@@ -64,9 +65,18 @@ export const PackageDetailsPage = () => {
     }
   }, [packageDetails?.offerId, isFetched]);
 
+  const handleLogEvent = (index: number) => {
+    metaEvents.hotelGalleryOpened({
+      hotel_id: packageDetails?.hotel?.id || 0,
+      images_viewed: index,
+      gallery_time_seconds: 0,
+    });
+  };
+
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index);
     setModalOpen(true);
+    handleLogEvent(index)
   };
 
   const handleBackClick = () => {

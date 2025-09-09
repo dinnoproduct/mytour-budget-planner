@@ -50,8 +50,8 @@ export const BookingDrawer: React.FC<{
       generateMultivendorOffers(
         {
           [PackagesFields.hotelId]: packageData?.hotel?.id || 0,
-          [PackagesFields.dateFrom]: packageData?.checkin || "",
-          [PackagesFields.dateTo]: packageData?.checkout || "",
+          [PackagesFields.dateFrom]:isHotelPackage? packageData?.checkin || "" : packageData?.destinationFlight?.departureDate || "",
+          [PackagesFields.dateTo]: isHotelPackage? packageData?.checkout || "" : packageData?.returnFlight?.departureDate || "",
           [PackagesFields.adults]: packageData?.adultTravelers || 0,
           [PackagesFields.childs]: childrenAges,
           [PackagesFields.lateCheckout]: isLateCheckout,

@@ -50,7 +50,6 @@ export const metaEvents = {
   // 1.1 InitiateCheckout
   initiateCheckout: (data: {
     content_type: "hotel" | "package" | "flight";
-    content_ids: string[];
     value: number;
     currency: string;
     num_items: number;
@@ -79,11 +78,10 @@ export const metaEvents = {
   // 1.2 AddPaymentInfo
   addPaymentInfo: (data: {
     content_type: "hotel" | "package" | "flight";
-    content_ids: string[];
     value: number;
     currency: string;
     payment_type: PaymentMethod | null;
-    hotel_id?: number;
+    hotel_id: number;
     destination?: string;
     checkin_date?: string;
     checkout_date?: string;
@@ -101,10 +99,9 @@ export const metaEvents = {
   // 1.3 Purchase
   purchase: (data: {
     content_type: "hotel" | "package" | "flight";
-    content_ids: string[];
     value: number;
     currency: string;
-    order_id: number;
+    offer_id: number;
     hotel_id?: number;
     destination?: string;
     checkin_date?: string;
@@ -112,7 +109,6 @@ export const metaEvents = {
     num_nights?: number;
     num_adults?: number;
     num_children?: number;
-    num_rooms?: number;
     room_type?: string;
   }) => {
     if (window.fbq) {
@@ -148,7 +144,6 @@ export const metaEvents = {
     hotel_id: number;
     images_viewed: number;
     gallery_time_seconds: number;
-    user_session_id: string;
   }) => {
     if (window.fbq) {
       window.fbq("trackCustom", "HotelGalleryOpened", {

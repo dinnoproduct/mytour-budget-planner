@@ -22,8 +22,7 @@ export type PackageUseCasesParams = {
 }
 
 export type GetAvailableFlightsParams = {
-  city?: number
-  travelAgency?: number
+  destinationId: number
 }
 
 export type GetReturnFlightsParams = {
@@ -71,8 +70,8 @@ export type GetFlightsByDateParams = {
 
 export type GenerateOffersInput = {
   hotelId: number
-  flightId: number
-  returnFlightId: number
+  dateFrom: string
+  dateTo: string
   adults: number
   childs: number[]
   lateCheckout: boolean

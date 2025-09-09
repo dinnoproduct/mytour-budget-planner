@@ -54,11 +54,12 @@ export class PackageService {
     })
   }
 
-  async generateOffers(input: GenerateOffersInput): Promise<OfferEntity[]> {
+  async generateOffers(input: GenerateOffersInput, params: { travelAgency: number }): Promise<OfferEntity[]> {
     return this.request<OfferEntity[]>({
-      url: '/generateOffers',
+      url: `/generateOffers?travelAgency=${params.travelAgency}`,
       method: 'post',
-      data: input
+      data: input,
+      version: 'V2',
     })
   }
 

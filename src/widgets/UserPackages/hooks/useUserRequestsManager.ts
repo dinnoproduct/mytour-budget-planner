@@ -234,9 +234,12 @@ export const useUserRequestsManager = () => {
       childrenAges: activeRequest?.notes.childrenAges || [],
       flightId: activeRequest?.destinationFlightId || 0,
       returnFlightId: activeRequest?.returnFlightId || 0,
+      dateFrom: activeRequest?.startDate || '',
+      dateTo: activeRequest?.endDate || '',
       hotelId: activeRequest?.hotel.id || 0,
       roomId: activeRequest?.roomType || 0,
-      lateCheckout: activeRequest?.notes.isLateCheckout || false
+      lateCheckout: activeRequest?.notes.isLateCheckout || false,
+      travelAgency: activeRequest?.travelAgencyId || 0
     },
     {
       enabled:
