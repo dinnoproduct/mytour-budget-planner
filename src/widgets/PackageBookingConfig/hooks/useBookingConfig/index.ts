@@ -137,8 +137,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: nu
   );
 
   const isCalculatingPrepayment = useMemo(() => {
-    return rest.isPending || rest.isRefetching;
-  }, [rest.isPending, rest.isRefetching]);
+    return rest.isPending || rest.isRefetching || isLoadingOffers || isFetchingCurrentOfferPackage;
+  }, [rest.isPending, rest.isRefetching, isLoadingOffers, isFetchingCurrentOfferPackage]);
 
   return {
     bookingData,

@@ -34,11 +34,12 @@ export const BookingDrawer: React.FC<{
     mealPlans,
   } = useMultivendorOffer();
 
-  useEffect(()=>{
-    updateMealPlan(mealPlans[0].key)
-  }, [JSON.stringify(mealPlans)])
-  
-  const [isLateCheckout, setIsLateCheckout] = useRecoilState(isLateCheckoutAtom);
+  useEffect(() => {
+    updateMealPlan(mealPlans[0].key);
+  }, [JSON.stringify(mealPlans)]);
+
+  const [isLateCheckout, setIsLateCheckout] =
+    useRecoilState(isLateCheckoutAtom);
 
   const hanldePackageSelect = (selectedPackage: IGeneratedMultivendorOffer) => {
     updateSelectedRoomPackage(selectedPackage);
@@ -47,17 +48,19 @@ export const BookingDrawer: React.FC<{
 
   useEffect(() => {
     if (isOpen) {
-      generateMultivendorOffers(
-        {
-          [PackagesFields.hotelId]: packageData?.hotel?.id || 0,
-          [PackagesFields.dateFrom]:isHotelPackage? packageData?.checkin || "" : packageData?.destinationFlight?.departureDate || "",
-          [PackagesFields.dateTo]: isHotelPackage? packageData?.checkout || "" : packageData?.returnFlight?.departureDate || "",
-          [PackagesFields.adults]: packageData?.adultTravelers || 0,
-          [PackagesFields.childs]: childrenAges,
-          [PackagesFields.lateCheckout]: isLateCheckout,
-          [PackagesFields.bookingType]: isHotelPackage ? 2 : 1,
-        },
-      );
+      generateMultivendorOffers({
+        [PackagesFields.hotelId]: packageData?.hotel?.id || 0,
+        [PackagesFields.dateFrom]: isHotelPackage
+          ? packageData?.checkin || ""
+          : packageData?.destinationFlight?.departureDate || "",
+        [PackagesFields.dateTo]: isHotelPackage
+          ? packageData?.checkout || ""
+          : packageData?.returnFlight?.departureDate || "",
+        [PackagesFields.adults]: packageData?.adultTravelers || 0,
+        [PackagesFields.childs]: childrenAges,
+        [PackagesFields.lateCheckout]: isLateCheckout,
+        [PackagesFields.bookingType]: isHotelPackage ? 2 : 1,
+      });
     }
     return () => {
       clearGeneratedMultivendorOffers();

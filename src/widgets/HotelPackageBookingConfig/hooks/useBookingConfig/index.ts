@@ -65,7 +65,7 @@ export const useBookingConfig = (
       return updatedData;
     });
   };
-  
+
   const {
     data: currentOfferPackage,
     refetch: refetchCurrentOfferPackage,
@@ -103,8 +103,8 @@ export const useBookingConfig = (
   );
 
   const isCalculatingPrepayment = useMemo(() => {
-    return rest.isPending || rest.isRefetching;
-  }, [rest.isPending, rest.isRefetching]);
+    return rest.isPending || rest.isRefetching || isFetchingCurrentOfferPackage;
+  }, [rest.isPending, rest.isRefetching, isFetchingCurrentOfferPackage]);
 
   return {
     bookingData,

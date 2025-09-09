@@ -257,11 +257,11 @@ export const PreviewDetailsView = ({
               title={t`travelers`}
               listItems={[
                 ...travelers.adults.map(traveler => ({
-                  key: t`nameSurname`,
+                  key: traveler.firstName + ' ' + traveler.lastName,
                   value: formatDate(traveler.dateOfBirth)
                 })),
                 ...travelers.children.map(traveler => ({
-                  key: t`nameSurname`,
+                  key: traveler.firstName + ' ' + traveler.lastName,
                   value: formatDate(traveler.dateOfBirth)
                 }))
               ]}

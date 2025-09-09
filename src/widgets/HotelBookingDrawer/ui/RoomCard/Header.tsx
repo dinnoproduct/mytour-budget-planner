@@ -3,9 +3,10 @@ import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/pa
 import { useTranslation } from "react-i18next";
 import { Icon, Tooltip } from "@/shared/ui";
 
-export const Header: React.FC<{ offer: IGeneratedMultivendorOffer }> = ({
-  offer,
-}) => {
+export const Header: React.FC<{
+  offer: IGeneratedMultivendorOffer;
+  freeCancellationDate: string | null;
+}> = ({ offer, freeCancellationDate }) => {
   const { t } = useTranslation();
 
   return (
@@ -22,16 +23,18 @@ export const Header: React.FC<{ offer: IGeneratedMultivendorOffer }> = ({
 
       {/* Info Section */}
 
-      <HStack spacing={1} align="center">
-        <Text fontSize="xs" color="blue.500">
-          {t`bookWithoutPayment`}
-        </Text>
-        <Tooltip label={t`availableSeatsTooltip`}>
-          <Flex justify="center" align="center">
-            <Icon name="info-outline" size="16" color="blue.500" />
-          </Flex>
-        </Tooltip>
-      </HStack>
+      {freeCancellationDate && (
+        <HStack spacing={1} align="center">
+          <Text fontSize="xs" color="blue.500">
+            {t`bookWithoutPayment`}
+          </Text>
+          <Tooltip label={t`availableSeatsTooltip`}>
+            <Flex justify="center" align="center">
+              <Icon name="info-outline" size="16" color="blue.500" />
+            </Flex>
+          </Tooltip>
+        </HStack>
+      )}
     </HStack>
   );
 };
