@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { formatNumber } from "@shared/utils";
 import { CURRENCY_MAP } from "@/shared/model/index.ts";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
+import { metaEvents } from "@/shared/configs/metaEvents.ts";
 
 export const PackageBookingConfig = ({
   tourPackage,
@@ -54,6 +55,34 @@ export const PackageBookingConfig = ({
   }, [isFixed, isMd, containerRef?.current]);
 
   const handleBookClick = () => {
+    if (currentOfferPackage && tourPackage) {
+      metaEvents.initiateCheckout({
+        content_type: "package",
+        value: currentOfferPackage.price,
+        currency: "AMD",
+        num_items: 1,
+        hotel_id: tourPackage.hotel.id,
+        hotel_name: tourPackage.hotel.name,
+        destination:
+          tourPackage.city.nameEng || tourPackage.city.nameArm || "Unknown",
+        destination_country:
+          tourPackage.city.country?.nameEng ||
+          tourPackage.city.country?.nameArm ||
+          "Unknown",
+        checkin_date: tourPackage.checkin,
+        checkout_date: tourPackage.checkout,
+        num_nights: Math.ceil(
+          (new Date(tourPackage.checkout).getTime() -
+            new Date(tourPackage.checkin).getTime()) /
+            (1000 * 60 * 60 * 24),
+        ),
+        num_adults: tourPackage.adultTravelers,
+        num_children:
+          tourPackage.childrenTravelers + tourPackage.infantTravelers,
+        room_type: "standard",
+        booking_step: "hotel_selection",
+      });
+    }
     onBookClick &&
       onBookClick({
         childrenAges: bookingData.travelersData.childrenAges,
