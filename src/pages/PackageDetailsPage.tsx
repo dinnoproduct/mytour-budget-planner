@@ -76,7 +76,7 @@ export const PackageDetailsPage = () => {
   const handleImageClick = (index: number) => {
     setImageModalActiveIndex(index);
     setModalOpen(true);
-    handleLogEvent(index)
+    handleLogEvent(index);
   };
 
   const handleBackClick = () => {
@@ -139,7 +139,10 @@ export const PackageDetailsPage = () => {
       <PackageDetailsLayout>
         <PackageDetailsHeader
           tourPackage={tourPackage}
-          onMoreImagesClick={() => setModalOpen(true)}
+          onMoreImagesClick={() => {
+            handleLogEvent(0);
+            setModalOpen(true);
+          }}
         />
 
         <Flex
