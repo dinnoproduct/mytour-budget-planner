@@ -69,7 +69,6 @@ export const HotelPackageBookingConfig = ({
     if (currentOfferPackage && tourPackage) {
       metaEvents.initiateCheckout({
         content_type: "hotel",
-        content_ids: [`hotel_${tourPackage.hotel.id}`], // TODO: add content_ids
         value: currentOfferPackage.price,
         currency: "AMD",
         num_items: 1,
@@ -91,7 +90,6 @@ export const HotelPackageBookingConfig = ({
         num_adults: tourPackage.adultTravelers,
         num_children:
           tourPackage.childrenTravelers + tourPackage.infantTravelers,
-        num_rooms: 1,
         room_type: "standard",
         booking_step: "hotel_selection",
       });

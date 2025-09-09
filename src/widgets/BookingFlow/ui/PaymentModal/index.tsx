@@ -127,10 +127,9 @@ export const PaymentModal = ({
     try {
       metaEvents.purchase({
         content_type: isHotelPackage ? "hotel" : "package",
-        content_ids: ["hotel_547"], // TODO: add content_ids
         value: amount,
         currency: packageDetails.currency,
-        order_id: packageDetails.offerId, // TODO: check and add order_id
+        offer_id: packageDetails.offerId,
         hotel_id: packageDetails.hotel.id,
         destination: packageDetails.city.nameEng,
         checkin_date: packageDetails.checkin,
@@ -138,12 +137,11 @@ export const PaymentModal = ({
         num_nights: packageDetails.nights,
         num_adults: travelers?.adults.length || 0,
         num_children: travelers?.children.length || 0,
-        num_rooms: 1, // TODO: add num_rooms
         room_type: roomTypes.find(
           ({ key }: any) => key === packageDetails.roomType,
         )?.value,
       });
-      handleLogEvent({ name: BookingStep.PaymentMethodSelected, number: 3 });
+      handleLogEvent({ name: BookingStep.TermsConfirmed, number: 4 });
       if (selectedPaymentMethod === PaymentMethod.ameriaPay && onSuccess) {
         const url = await onSuccess(
           amount,
@@ -169,7 +167,6 @@ export const PaymentModal = ({
 
     metaEvents.addPaymentInfo({
       content_type: isHotelPackage ? "hotel" : "package",
-      content_ids: ["hotel_547"], // TODO: add content_ids
       value: amount,
       currency: packageDetails.currency,
       payment_type: selectedPaymentMethod,

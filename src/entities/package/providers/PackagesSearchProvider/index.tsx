@@ -186,12 +186,13 @@ export const PackagesSearchProvider: React.FC<{
 
   const { data: departureFlights } = useAvailableFlights(
     {
-      city: searchData.selectedCity
+      destinationId: searchData.selectedCity
     },
     {
       enabled: searchData.selectedCity !== -1 && isAllowedPackageRoute
     }
   )
+
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
       {

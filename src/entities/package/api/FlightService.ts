@@ -23,13 +23,12 @@ export class FlightService {
   }
 
   async getAvailableFlights({
-    city = 1,
-    travelAgency = 1
+    destinationId
   }: GetAvailableFlightsParams): Promise<FlightEntity[]> {
     return this.api('getAvailableFlights', {
+      baseURL: `${import.meta.env.VITE_API_URL}/V2/flight`,
       params: {
-        travelAgency,
-        city
+        destinationId
       }
     })
   }

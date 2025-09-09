@@ -75,8 +75,8 @@ export class PackageUseCases {
     })
   }
 
-  async generateOffers(input: GenerateOffersInput) {
-    return this.packageService.generateOffers(input)
+  async generateOffers(input: GenerateOffersInput, params: { travelAgency: number }) {
+    return this.packageService.generateOffers(input, params)
   }
 
   async getPackage(offerId: number) {

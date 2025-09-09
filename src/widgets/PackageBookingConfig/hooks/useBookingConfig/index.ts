@@ -8,6 +8,7 @@ import {
   useGenerateOffers,
 } from "@entities/package";
 import { useSearchParams } from "react-router-dom";
+import { toLocalIsoString } from "@/utils/dateTime";
 
 export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: number) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,9 +17,10 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: nu
 
     return roomId ? parseInt(roomId, 10) : 0;
   }, [searchParams]);
+
   const [bookingData, setBookingData] = useState({
     fromDate: new Date(defaultTourPackage.destinationFlight.departureDate),
-    toDate: new Date(defaultTourPackage.returnFlight.arrivalDate),
+    toDate: new Date(defaultTourPackage.returnFlight.departureDate),
     departureFlightId: defaultTourPackage.destinationFlight.id,
     returnFlightId: defaultTourPackage.returnFlight.id,
     travelersData: {
@@ -65,12 +67,15 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: nu
   // offers
   const { data: offers = [], isLoading: isLoadingOffers } = useGenerateOffers(
     {
-      flightId: bookingData.departureFlightId,
-      returnFlightId: bookingData.returnFlightId,
+      dateFrom: toLocalIsoString(bookingData.fromDate),
+      dateTo: toLocalIsoString(bookingData.toDate),
       adults: bookingData.travelersData.adultsCount,
       childs: bookingData.travelersData.childrenAges,
       hotelId: bookingData.hotelId,
       lateCheckout: bookingData.lateCheckout,
+    },
+    {
+      travelAgency: defaultTourPackage.travelAgency.id,
     },
     {
       enabled: true,
@@ -132,8 +137,8 @@ export const useBookingConfig = (defaultTourPackage: PackageEntity, offerId?: nu
   );
 
   const isCalculatingPrepayment = useMemo(() => {
-    return rest.isPending || rest.isRefetching;
-  }, [rest.isPending, rest.isRefetching]);
+    return rest.isPending || rest.isRefetching || isLoadingOffers || isFetchingCurrentOfferPackage;
+  }, [rest.isPending, rest.isRefetching, isLoadingOffers, isFetchingCurrentOfferPackage]);
 
   return {
     bookingData,

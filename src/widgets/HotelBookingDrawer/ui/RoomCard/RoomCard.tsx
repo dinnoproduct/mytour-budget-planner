@@ -35,7 +35,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
       cursor="pointer"
       minW={fullWidth ? "100%" : "313px"}
     >
-      <Header offer={offer} />
+      <Header offer={offer} freeCancellationDate={freeCancellationDate} />
 
       <Divider my={3} color="white" borderWidth="1px" />
 

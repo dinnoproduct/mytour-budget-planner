@@ -65,15 +65,18 @@ export const HotelPackageDetailsPage = () => {
     }
   }, [packageDetails?.offerId, isFetched]);
 
-  const handleImageClick = (index: number) => {
-    setImageModalActiveIndex(index);
-    setModalOpen(true);
+  const handleLogEvent = (index: number) => {
     metaEvents.hotelGalleryOpened({
       hotel_id: packageDetails?.hotel?.id || 0,
       images_viewed: index,
       gallery_time_seconds: 0,
-      user_session_id: "",
     });
+  };
+
+  const handleImageClick = (index: number) => {
+    setImageModalActiveIndex(index);
+    setModalOpen(true);
+    handleLogEvent(index);
   };
 
   const handleBackClick = () => {

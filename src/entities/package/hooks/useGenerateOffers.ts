@@ -7,10 +7,11 @@ import {
 
 export const useGenerateOffers = (
   input: GenerateOffersInput,
+  params: { travelAgency: number },
   options?: GenerateOffersOptions
 ) =>
   useQuery({
-    queryFn: () => packageUseCases.generateOffers(input),
+    queryFn: () => packageUseCases.generateOffers(input, params),
     queryKey: ['generate-offers', input],
     ...(options || {})
   })

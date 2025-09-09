@@ -14,12 +14,15 @@ export const useSearchOfferPackage = (
   const { data: offers, isLoading: isLoadingGenerateOffers } =
     useGenerateOffers(
       {
-        flightId: searchData.flightId,
-        returnFlightId: searchData.returnFlightId,
+        dateFrom: searchData.dateFrom,
+        dateTo: searchData.dateTo,
         adults: searchData.adultsCount,
         childs: searchData.childrenAges,
         lateCheckout: searchData.lateCheckout || false,
         hotelId: searchData?.hotelId
+      },
+      {
+        travelAgency: searchData.travelAgency,
       },
       {
         refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
@@ -57,11 +60,14 @@ export const useSearchOfferPackage = (
 type SearchData = {
   flightId: number
   returnFlightId: number
+  dateFrom: string
+  dateTo: string
   adultsCount: number
   childrenAges: number[]
   hotelId: number
   roomId: number
   lateCheckout?: boolean
+  travelAgency: number
 }
 
 type Options = {
