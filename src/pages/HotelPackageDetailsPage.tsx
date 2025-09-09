@@ -112,7 +112,10 @@ export const HotelPackageDetailsPage = () => {
       <PackageDetailsLayout>
         <HotelPackageDetailsHeader
           tourPackage={tourPackage}
-          onMoreImagesClick={() => setModalOpen(true)}
+          onMoreImagesClick={() => {
+            handleLogEvent(0);
+            setModalOpen(true);
+          }}
         />
 
         <Flex
