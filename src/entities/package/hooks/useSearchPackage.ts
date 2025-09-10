@@ -13,7 +13,10 @@ export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const [searchInput, setSearchInput] = useState<any>({})
-
+  const childrenAgesParam = searchParams.get('childrenAges')
+  const childrenAges = childrenAgesParam
+    ? childrenAgesParam?.split(',').filter(Boolean).map(Number) || []
+    : []
   const {
     data: packages = [],
     isLoading,
@@ -61,6 +64,7 @@ export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
   return {
     packageDetails,
     isLoading,
-    isFetched
+    isFetched,
+    childrenAges
   }
 }

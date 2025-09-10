@@ -18,7 +18,7 @@ export const BookingDrawer: React.FC<{
   const { t } = useTranslation();
   const {
     isOpen,
-    packageData,
+    selectedPackage,
     selectedMealPlan,
     closeBookingDrawer,
     updateMealPlan,
@@ -49,14 +49,14 @@ export const BookingDrawer: React.FC<{
   useEffect(() => {
     if (isOpen) {
       generateMultivendorOffers({
-        [PackagesFields.hotelId]: packageData?.hotel?.id || 0,
+        [PackagesFields.hotelId]: selectedPackage?.hotel?.id || 0,
         [PackagesFields.dateFrom]: isHotelPackage
-          ? packageData?.checkin || ""
-          : packageData?.destinationFlight?.departureDate || "",
+          ? selectedPackage?.checkin || ""
+          : selectedPackage?.destinationFlight?.departureDate || "",
         [PackagesFields.dateTo]: isHotelPackage
-          ? packageData?.checkout || ""
-          : packageData?.returnFlight?.departureDate || "",
-        [PackagesFields.adults]: packageData?.adultTravelers || 0,
+          ? selectedPackage?.checkout || ""
+          : selectedPackage?.returnFlight?.departureDate || "",
+        [PackagesFields.adults]: selectedPackage?.adultTravelers || 0,
         [PackagesFields.childs]: childrenAges,
         [PackagesFields.lateCheckout]: isLateCheckout,
         [PackagesFields.bookingType]: isHotelPackage ? 2 : 1,
@@ -65,16 +65,16 @@ export const BookingDrawer: React.FC<{
     return () => {
       clearGeneratedMultivendorOffers();
     };
-  }, [isLateCheckout, packageData, isOpen, isHotelPackage]);
+  }, [isLateCheckout, selectedPackage, isOpen, isHotelPackage]);
 
   const handleLateCheckoutChange = (value: boolean) => {
     setIsLateCheckout(value);
   };
 
   function handleLogEvent(step: { name: BookingStep; number: number }) {
-    if (packageData) {
+    if (selectedPackage) {
       metaEvents.bookingStepCompleted({
-        hotel_id: packageData.hotel.id,
+        hotel_id: selectedPackage.hotel.id,
         step_number: step.number,
         step_name: step.name,
       });
