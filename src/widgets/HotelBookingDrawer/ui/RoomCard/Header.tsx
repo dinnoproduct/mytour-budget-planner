@@ -28,7 +28,7 @@ export const Header: React.FC<{
           <Text fontSize="xs" color="blue.500">
             {t`bookWithoutPayment`}
           </Text>
-          <Tooltip label={t`availableSeatsTooltip`}>
+          <Tooltip label={t`noPrepaymentText`}>
             <Flex justify="center" align="center">
               <Icon name="info-outline" size="16" color="blue.500" />
             </Flex>

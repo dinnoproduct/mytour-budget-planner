@@ -31,7 +31,6 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
   closeOnOverlayClick = true,
   closeOnEsc = true,
 }) => {
-
   return (
     <Drawer
       isOpen={isOpen}
@@ -77,9 +76,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
           </DrawerHeader>
         )}
 
-        <DrawerBody p={0}>
-          <Box>{children}</Box>
-        </DrawerBody>
+        <DrawerBody p={0}>{children}</DrawerBody>
       </DrawerContent>
     </Drawer>
   );
