@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useBreakpoint } from "@shared/hooks";
 import { BookingFlow } from "@widgets/BookingFlow";
 import { usePackageDetailsFromStore } from "@/modules/packages/hooks";
-import { BookingDrawer } from "@/widgets/HotelBookingDrawer";
+import { BookingDrawer } from "@shared/ui";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useRecoilState } from "recoil";
 import {

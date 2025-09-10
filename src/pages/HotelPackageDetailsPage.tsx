@@ -18,7 +18,7 @@ import {
   HotelPackageDetails,
   HotelPackageDetailsHeader,
 } from "@widgets/HotelPackageDetails";
-import { BookingDrawer } from "@/widgets/HotelBookingDrawer";
+import { BookingDrawer } from "@shared/ui";
 import { useRecoilState } from "recoil";
 import {
   isBookingFlowOpenAtom,

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Divider } from "@chakra-ui/react";
-import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
+import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";

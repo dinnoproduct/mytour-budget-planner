@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { VStack } from "@chakra-ui/react";
-import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
+import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { RoomTypeSection } from "./RoomTypeSection";
 
 export interface RoomSelectionProps {
