@@ -252,7 +252,7 @@ export const PaymentFormView = ({
 
           {selectedOption === 'noPrepayment' && (
             <AlertCardMessage
-              message={t('noPrepaymentText', {
+              message={t('noPrepaymentTextWithDetails', {
                 amount: noPrepaymentData.paymentAmount,
                 dueDate: noPrepaymentData.paymentDueDate,
                 days: noPrepaymentData.days
