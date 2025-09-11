@@ -39,11 +39,8 @@ export const HotelPackageDetailsPage = () => {
     isBookingFlowOpenAtom,
   );
   const { packageDetails, childrenAges, isFetched } = useSearchHotelPackage();
-  const {
-    selectedPackage,
-    clearBookingDrawerData,
-    isOpen: isOpenBookingDrawer,
-  } = useBookingDrawer();
+  const { clearBookingDrawerData, isOpen: isOpenBookingDrawer } =
+    useBookingDrawer();
 
   const { filteredHotelPackages } = useHotelPackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,8 +98,6 @@ export const HotelPackageDetailsPage = () => {
     return <Loader loading />;
   }
 
-  const tourPackage = !!selectedPackage ? selectedPackage : packageDetails;
-
   return (
     <Box overflowX="hidden" mb={{ base: "117px", md: "0" }}>
       <SharedHeader onBackClick={handleBackClick} packageType="hotel" />
@@ -115,7 +110,7 @@ export const HotelPackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <HotelPackageDetailsHeader
-          tourPackage={tourPackage}
+          tourPackage={packageDetails}
           onMoreImagesClick={() => {
             handleLogEvent(0);
             setModalOpen(true);
@@ -127,9 +122,9 @@ export const HotelPackageDetailsPage = () => {
           mt={{ md: "10" }}
           ref={containerRef}
         >
-          <HotelPackageDetails tourPackage={tourPackage} />
+          <HotelPackageDetails tourPackage={packageDetails} />
           <PriceSummaryCard
-            tourPackage={tourPackage}
+            tourPackage={packageDetails}
             ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
@@ -151,7 +146,7 @@ export const HotelPackageDetailsPage = () => {
 
       {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow
-        packageDetails={tourPackage}
+        packageDetails={packageDetails}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}

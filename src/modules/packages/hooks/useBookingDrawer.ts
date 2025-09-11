@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { bookingDrawerAtom, selectedPackageAtom } from "../store/store";
+import { bookingDrawerAtom } from "../store/store";
 import { type PackageEntity } from "@entities/package";
 import { IGeneratedMultivendorOffer } from "../data/packagesTypes";
 import { useMemo } from "react";

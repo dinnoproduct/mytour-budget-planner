@@ -32,14 +32,15 @@ export const PackageDetailsPage = () => {
   const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
     isBookingFlowOpenAtom,
   );
-  const { packageDetails, isFetched, childrenAges } = usePackageDetailsFromStore();
+  const { packageDetails, isFetched, childrenAges } =
+    usePackageDetailsFromStore();
 
   const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
   const { uniqueImageUrls } = usePackageImages(packageDetails);
-  const { selectedPackage, clearBookingDrawerData } = useBookingDrawer();
+  const { clearBookingDrawerData } = useBookingDrawer();
 
   const [isLateCheckout, setIsLateCheckout] =
     useRecoilState(isLateCheckoutAtom);
@@ -93,8 +94,6 @@ export const PackageDetailsPage = () => {
     return <Loader loading />;
   }
 
-  const tourPackage = !!selectedPackage ? selectedPackage : packageDetails;
-
   return (
     <Box overflowX="hidden" mb={{ base: "117px", md: "0" }}>
       <SharedHeader onBackClick={handleBackClick} packageType="package" />
@@ -107,7 +106,7 @@ export const PackageDetailsPage = () => {
 
       <PackageDetailsLayout>
         <PackageDetailsHeader
-          tourPackage={tourPackage}
+          tourPackage={packageDetails}
           onMoreImagesClick={() => {
             handleLogEvent(0);
             setModalOpen(true);
@@ -120,11 +119,11 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
         >
           <PackageDetails
-            tourPackage={tourPackage}
+            tourPackage={packageDetails}
             isLateCheckout={isLateCheckout}
           />
           <PriceSummaryCard
-            tourPackage={tourPackage}
+            tourPackage={packageDetails}
             ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
@@ -144,7 +143,7 @@ export const PackageDetailsPage = () => {
       />
       {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow
-        packageDetails={selectedPackage as PackageEntity}
+        packageDetails={packageDetails}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}
