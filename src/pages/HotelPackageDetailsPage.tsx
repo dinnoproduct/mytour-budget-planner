@@ -18,8 +18,7 @@ import {
   HotelPackageDetails,
   HotelPackageDetailsHeader,
 } from "@widgets/HotelPackageDetails";
-import { HotelPackageBookingConfig } from "@widgets/HotelPackageBookingConfig";
-import { BookingDrawer } from "@/widgets/HotelBookingDrawer";
+import { BookingDrawer } from "@shared/ui";
 import { useRecoilState } from "recoil";
 import {
   isBookingFlowOpenAtom,
@@ -30,6 +29,7 @@ import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/Package
 import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
 import { metaEvents } from "@/shared/configs/metaEvents";
+import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 
 export const HotelPackageDetailsPage = () => {
   const navigate = useNavigate();
@@ -39,12 +39,16 @@ export const HotelPackageDetailsPage = () => {
     isBookingFlowOpenAtom,
   );
   const { packageDetails, childrenAges, isFetched } = useSearchHotelPackage();
-  const { packageData, clearBookingDrawerData } = useBookingDrawer();
+  const {
+    selectedPackage,
+    clearBookingDrawerData,
+    isOpen: isOpenBookingDrawer,
+  } = useBookingDrawer();
 
   const { filteredHotelPackages } = useHotelPackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
-  const { isOpen: isOpenBookingDrawer } = useBookingDrawer();
+
   const [isLateCheckout, setIsLateCheckout] =
     useRecoilState(isLateCheckoutAtom);
 
@@ -97,7 +101,7 @@ export const HotelPackageDetailsPage = () => {
     return <Loader loading />;
   }
 
-  const tourPackage = !!packageData ? packageData : packageDetails;
+  const tourPackage = !!selectedPackage ? selectedPackage : packageDetails;
 
   return (
     <Box overflowX="hidden" mb={{ base: "117px", md: "0" }}>
@@ -124,13 +128,13 @@ export const HotelPackageDetailsPage = () => {
           ref={containerRef}
         >
           <HotelPackageDetails tourPackage={tourPackage} />
-
-          <HotelPackageBookingConfig
+          <PriceSummaryCard
             tourPackage={tourPackage}
             ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
             containerRef={containerRef}
+            contentType="hotel"
           />
         </Flex>
       </PackageDetailsLayout>
@@ -147,7 +151,7 @@ export const HotelPackageDetailsPage = () => {
 
       {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
       <BookingFlow
-        packageDetails={packageData as PackageEntity}
+        packageDetails={tourPackage}
         initialView="travelers"
         childrenAges={childrenAges}
         // onBookingSuccess={handleBackClick}

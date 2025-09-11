@@ -1,6 +1,6 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
+import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { numberWithCommaNormalizer } from "@/utils/normalizers";
 import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@/shared/utils";

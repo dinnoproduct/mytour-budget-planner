@@ -1,7 +1,6 @@
 import { Box, Flex, Grid } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { Button, Icon, SkeletonText, Text } from "@ui";
-import { useBookingConfig } from "../hooks";
+import { Button, Icon, Text } from "@ui";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 import { useBreakpoint } from "@shared/hooks";
 import { useEffect, useState } from "react";
@@ -11,33 +10,22 @@ import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useUserContext } from "@/entities/user/index.ts";
 import { useModalContext } from "@/app/providers/index.ts";
-import { type LayoutProps, type PackageBookingConfigProps } from "./types.ts";
-import { metaEvents, generateEventId } from "@/shared/configs/metaEvents";
-import { useRecoilState } from "recoil";
-import { isBookingFlowOpenAtom } from "@/modules/packages/store/store.ts";
+import { type PriceSummaryCardProps, type LayoutProps } from "./types.ts";
+import { metaEvents } from "@/shared/configs/metaEvents";
 
-export const HotelPackageBookingConfig = ({
+export const PriceSummaryCard = ({
   tourPackage,
-  onLateCheckoutChange,
   containerRef,
+  contentType = "hotel",
   ...props
-}: PackageBookingConfigProps) => {
+}: PriceSummaryCardProps) => {
   const { t } = useTranslation();
   const { isMd } = useBreakpoint();
-
-  const {
-    isNotFound,
-    isLoadingTourPackage,
-    currentOfferPackage,
-    isCalculatingPrepayment,
-  } = useBookingConfig(tourPackage, tourPackage.offerId);
-  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
-    isBookingFlowOpenAtom,
-  );
 
   const [isFixed, setIsFixed] = useState(false);
   const { user } = useUserContext();
   const { dispatchModal } = useModalContext();
+  const { openBookingDrawer } = useBookingDrawer();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,13 +51,11 @@ export const HotelPackageBookingConfig = ({
     };
   }, [isFixed, isMd, containerRef?.current]);
 
-  const { openBookingDrawer } = useBookingDrawer();
-
   const handleBookClick = () => {
-    if (currentOfferPackage && tourPackage) {
+    if (tourPackage) {
       metaEvents.initiateCheckout({
-        content_type: "hotel",
-        value: currentOfferPackage.price,
+        content_type: contentType,
+        value: tourPackage.price,
         currency: "AMD",
         num_items: 1,
         hotel_id: tourPackage.hotel.id,
@@ -91,7 +77,7 @@ export const HotelPackageBookingConfig = ({
         num_children:
           tourPackage.childrenTravelers + tourPackage.infantTravelers,
         room_type: "standard",
-        booking_step: "hotel_selection",
+        booking_step: "personal_details",
       });
     }
     if (user?.id) {
@@ -106,7 +92,6 @@ export const HotelPackageBookingConfig = ({
         view: "signUp",
         isCloseOnSuccess: true,
         onSuccess: () => {
-          setBookingFlowOpen(true);
           openBookingDrawer(tourPackage);
         },
       },
@@ -129,39 +114,27 @@ export const HotelPackageBookingConfig = ({
       >
         <Flex width="full" justify="space-between" align="center" height="28px">
           <Text size="sm">{t`total`} :</Text>
-          {isCalculatingPrepayment ? (
-            <SkeletonText noOfLines={1} lineHeight={28} width="100px" />
-          ) : (
-            <Flex>
-              <Text size="lg" fontWeight="bold" ml="2">
-                {numberWithCommaNormalizer(currentOfferPackage?.price)} ֏
-              </Text>
-              <Flex align="center" ml="2">
-                {currentOfferPackage ? (
-                  <>
-                    <Icon name="approximate" size="20" color="gray.500" />
 
-                    <Text size="sm" color="gray.500" ml="0.5">
-                      {CURRENCY_MAP[currentOfferPackage.currency]}{" "}
-                      {formatNumber(
-                        parseFloat(currentOfferPackage.priceInCurrency),
-                      )}
-                    </Text>
-                  </>
-                ) : null}
-              </Flex>
+          <Flex>
+            <Text size="lg" fontWeight="bold" ml="2">
+              {numberWithCommaNormalizer(tourPackage?.price)} ֏
+            </Text>
+            <Flex align="center" ml="2">
+              {tourPackage ? (
+                <>
+                  <Icon name="approximate" size="20" color="gray.500" />
+
+                  <Text size="sm" color="gray.500" ml="0.5">
+                    {CURRENCY_MAP[tourPackage.currency]}{" "}
+                    {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+                  </Text>
+                </>
+              ) : null}
             </Flex>
-          )}
+          </Flex>
         </Flex>
 
-        <Button
-          mt="4"
-          width="full"
-          isDisabled={isNotFound}
-          isLoading={isLoadingTourPackage}
-          onClick={handleBookClick}
-          size="lg"
-        >
+        <Button mt="4" width="full" onClick={handleBookClick} size="lg">
           {t`bookingDetails`}
         </Button>
       </CardSectionLayout>

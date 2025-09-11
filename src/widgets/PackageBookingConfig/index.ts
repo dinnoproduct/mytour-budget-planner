@@ -1,1 +1,0 @@
-export { PackageBookingConfig } from './ui'

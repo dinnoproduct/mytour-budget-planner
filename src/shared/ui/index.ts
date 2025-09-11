@@ -23,3 +23,7 @@ export * from '@components/Badge'
 export * from '@components/SnackBar'
 export * from '@components/Container'
 export * from '@components/Radio'
+
+// shared components
+export { BookingDrawer } from './BookingDrawer'
+export { PriceSummaryCard } from './PriceSummaryCard'

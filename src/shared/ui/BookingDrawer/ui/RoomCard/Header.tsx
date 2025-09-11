@@ -1,5 +1,5 @@
 import { Box, HStack, Text, Avatar, VStack, Flex } from "@chakra-ui/react";
-import { IGeneratedMultivendorOffer } from "../../../../modules/packages/data/packagesTypes";
+import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { useTranslation } from "react-i18next";
 import { Icon, Tooltip } from "@/shared/ui";
 

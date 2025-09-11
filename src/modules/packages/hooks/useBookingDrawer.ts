@@ -1,18 +1,22 @@
 import { useRecoilState } from "recoil";
-import { bookingDrawerAtom } from "../store/store";
+import { bookingDrawerAtom, selectedPackageAtom } from "../store/store";
 import { type PackageEntity } from "@entities/package";
 import { IGeneratedMultivendorOffer } from "../data/packagesTypes";
 import { useMemo } from "react";
+import { useSelectedPackage } from "./useSelectedPackage";
 
 export const useBookingDrawer = () => {
   const [bookingDrawer, setBookingDrawer] = useRecoilState(bookingDrawerAtom);
 
+  const { storeSelectedPackage, selectedPackage, clearSelectedPackage } =
+    useSelectedPackage();
+
   const openBookingDrawer = (packageData: PackageEntity) => {
+    storeSelectedPackage(packageData);
     setBookingDrawer({
       isOpen: true,
-      packageData,
-      selectedMealPlan: 0,
-      selectedRoomPackage: null,
+      selectedMealPlan: packageData.foodType,
+      selectedRoomOffer: null,
     });
   };
 
@@ -24,12 +28,12 @@ export const useBookingDrawer = () => {
   };
 
   const clearBookingDrawerData = () => {
+    clearSelectedPackage();
     setBookingDrawer((prev) => ({
       ...prev,
       isOpen: false,
-      packageData: null,
       selectedMealPlan: 0,
-      selectedRoomPackage: null,
+      selectedRoomOffer: null,
     }));
   };
 
@@ -43,31 +47,31 @@ export const useBookingDrawer = () => {
   const updateSelectedRoomPackage = (offer: IGeneratedMultivendorOffer) => {
     setBookingDrawer((prev) => ({
       ...prev,
-      selectedRoomPackage: offer,
-      packageData: prev.packageData
-        ? {
-            ...prev.packageData,
-            offerId: offer.offerId,
-            foodType: offer.foodType,
-            roomType: offer.roomType,
-            price: offer.price,
-            partnerPrice: offer.partnerPrice,
-            priceInCurrency: offer.priceInCurrency.toString(),
-          }
-        : prev.packageData,
+      selectedRoomOffer: offer,
     }));
+
+    if (selectedPackage) {
+      storeSelectedPackage({
+        ...selectedPackage,
+        offerId: offer.offerId,
+        foodType: offer.foodType,
+        roomType: offer.roomType,
+        price: offer.price,
+        priceInCurrency: offer.priceInCurrency.toString(),
+      });
+    }
   };
 
   const isHotelPackage = useMemo(
-    () => !bookingDrawer.packageData?.destinationFlight?.departureDate,
-    [bookingDrawer.packageData?.destinationFlight?.departureDate],
+    () => !selectedPackage?.destinationFlight?.departureDate,
+    [selectedPackage?.destinationFlight?.departureDate],
   );
 
   return {
     isOpen: bookingDrawer.isOpen,
-    packageData: bookingDrawer.packageData,
+    selectedPackage,
     selectedMealPlan: bookingDrawer.selectedMealPlan,
-    selectedRoomPackage: bookingDrawer.selectedRoomPackage,
+    selectedRoomOffer: bookingDrawer.selectedRoomOffer,
     openBookingDrawer,
     closeBookingDrawer,
     clearBookingDrawerData,
