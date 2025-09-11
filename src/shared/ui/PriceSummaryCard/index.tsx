@@ -76,8 +76,7 @@ export const PriceSummaryCard = ({
         num_adults: tourPackage.adultTravelers,
         num_children:
           tourPackage.childrenTravelers + tourPackage.infantTravelers,
-        room_type: "standard",
-        booking_step: "personal_details",
+        room_type: tourPackage.roomType,
       });
     }
     if (user?.id) {

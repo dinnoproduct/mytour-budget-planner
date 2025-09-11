@@ -7,6 +7,8 @@ import {
 import { type EmptyObject } from 'react-hook-form'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
+import { useRecoilValue } from 'recoil'
+import { selectedPackageAtom } from '@/modules/packages/store/store'
 
 type Options = {
   onSuccess?: (packageDetails: PackageEntity | EmptyObject) => void
@@ -15,6 +17,8 @@ type Options = {
 export const useSearchHotelPackage = (options?: Options) => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
+  
+  const selectedPackage = useRecoilValue(selectedPackageAtom)
   
   const from = searchParams.get('from')
   const to = searchParams.get('to')
@@ -44,9 +48,18 @@ export const useSearchHotelPackage = (options?: Options) => {
     [to]
   )
 
-  // Single useEffect with sequential async calls
+  // Check for selectedPackage first, then fetch if needed
   useEffect(() => {
     const fetchData = async () => {
+      // If we have a selectedPackage, use it directly
+      if (selectedPackage?.offerId) {
+        setPackageDetails(selectedPackage)
+        setHasInitialized(true)
+        setIsLoading(false)
+        return
+      }
+
+      // Otherwise, proceed with API calls
       if (!checkin || !checkout || !hotelId || hasInitialized) {
         return
       }
@@ -98,7 +111,7 @@ export const useSearchHotelPackage = (options?: Options) => {
     }
 
     fetchData()
-  }, []) // Only run once on mount
+  }, [selectedPackage]) // Depend on selectedPackage
 
   // Handle success callback
   useEffect(() => {

@@ -63,8 +63,7 @@ export const metaEvents = {
     num_adults?: number;
     num_children?: number;
     num_rooms?: number;
-    room_type?: string;
-    booking_step?: string;
+    room_type?: string | number;
   }) => {
     if (window.fbq) {
       window.fbq("track", "InitiateCheckout", {
