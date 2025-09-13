@@ -16,7 +16,7 @@ const Organization = () => {
       <div className="organization-logo">
         <img src="/images/sky_tour_logo.svg" alt="" />
       </div>
-      <div className="organization-title font-bold">{t('bookingRules')}</div>
+      <div className="organization-title font-bold">{t('bookingAndPaymentRules')}</div>
       <div className="organization-text">
         {parsedPolicy.before}{' '}
         <a href={parsedPolicy.url} target="_blank" rel="noreferrer" className="policy-url">

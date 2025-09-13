@@ -17,7 +17,7 @@ import {
   useDictionary,
   type PaymentSystem,
 } from "@entities/package";
-import { PreviewDetailsView } from "@widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView.tsx";
+import { PreviewDetailsView } from "@/widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView/index.tsx";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents.ts";
 
 export const PaymentModal = ({
