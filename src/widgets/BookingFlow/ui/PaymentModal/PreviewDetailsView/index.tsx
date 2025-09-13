@@ -465,7 +465,7 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
               mt="0.5"
               minW="100px"
             />
-            <Text fontWeight="semibold" size="sm" noOfLines={1}>
+            <Text textAlign="right" fontWeight="semibold" size="sm">
               {value}
             </Text>
           </>
