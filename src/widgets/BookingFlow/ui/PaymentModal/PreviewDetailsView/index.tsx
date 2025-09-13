@@ -354,15 +354,17 @@ export const PreviewDetailsView = ({
             {t("pay")}
           </Button>
 
-          <Button
-            variant="solid-gray"
-            width="full"
-            mt="2"
-            onClick={handleUsePromocode}
-            size="lg"
-          >
-            {t("usePromoCode")}
-          </Button>
+          {prepaymentInfo?.paymentType !== "NoDownPayment" && (
+            <Button
+              variant="solid-gray"
+              width="full"
+              mt="2"
+              onClick={handleUsePromocode}
+              size="lg"
+            >
+              {t("usePromoCode")}
+            </Button>
+          )}
         </Box>
       </Flex>
 
