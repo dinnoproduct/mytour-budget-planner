@@ -5,36 +5,38 @@ import {
   ListItem,
   Portal,
   UnorderedList,
-  VStack
-} from '@chakra-ui/react'
-import { Button, Heading, HotelStarBadge, Input, Text } from '@ui'
-import { useTranslation } from 'react-i18next'
+  VStack,
+} from "@chakra-ui/react";
+import { Button, Heading, HotelStarBadge, Input, Text } from "@ui";
+import { useTranslation } from "react-i18next";
 import {
   type PreviewDetailsViewProps,
   type SectionLayoutProps,
-  type SectionListProps
-} from './types.ts'
-import { useRecoilValue } from 'recoil'
-import { isLateCheckoutAtom } from '@/modules/packages/store/store'
-import { formatNumber } from '@shared/utils'
-import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
-import { useMemo, useState } from 'react'
+  type SectionListProps,
+} from "../types.ts";
+import { useRecoilValue } from "recoil";
+import { isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { formatNumber } from "@shared/utils";
+import { LANGUAGE_PREFIX, type LanguageName } from "@shared/model";
+import { useMemo, useState } from "react";
 import {
   type DictionaryTypes,
   type PackageEntity,
-  useDictionary
-} from '@entities/package'
-import { Icon, type IconName } from '@foundation/Iconography'
-import moment from 'moment'
-import { Layout } from './Layout.tsx'
+  useDictionary,
+} from "@entities/package";
+import { Icon, type IconName } from "@foundation/Iconography";
+import moment from "moment";
+import { Layout } from "../Layout.tsx";
+import { TermsAndConditionsSection } from "./ui/TermsAndConditionsSection.tsx";
+import { BookingRulesModal } from "./ui/BookingRulesModal.tsx";
 
 const formatDate = (date: string, includeTime = false) => {
   if (!date) {
-    return ''
+    return "";
   }
 
-  return moment(date).format(includeTime ? 'DD.MM.YYYY HH:mm' : 'DD.MM.YYYY')
-}
+  return moment(date).format(includeTime ? "DD.MM.YYYY HH:mm" : "DD.MM.YYYY");
+};
 
 export const PreviewDetailsView = ({
   onPay,
@@ -45,25 +47,26 @@ export const PreviewDetailsView = ({
   paymentAmount,
   isFullPricePayment,
   prepaymentInfo,
-  validatePromoCode
+  validatePromoCode,
 }: PreviewDetailsViewProps) => {
-  const { t, i18n } = useTranslation()
-  const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false)
-  const [promoCodeValue, setPromoCodeValue] = useState('')
-  const isLateCheckout = useRecoilValue(isLateCheckoutAtom)
+  const { t, i18n } = useTranslation();
+  const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false);
+  const [promoCodeValue, setPromoCodeValue] = useState("");
+  const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
+  const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
 
   const handleUsePromocode = () => {
-    setIsPromoCodeModalOpen(true)
-    onUsePromocode()
-  }
+    setIsPromoCodeModalOpen(true);
+    onUsePromocode();
+  };
 
   const handleClosePromoCodeModal = () => {
-    setIsPromoCodeModalOpen(false)
-    setPromoCodeValue('') // Reset promo code when closing modal
-  }
+    setIsPromoCodeModalOpen(false);
+    setPromoCodeValue(""); // Reset promo code when closing modal
+  };
 
   const handleApplyPromoCode = () => {
-    if (isApplyButtonDisabled) return
+    if (isApplyButtonDisabled) return;
 
     validatePromoCode.mutate(
       {
@@ -71,95 +74,95 @@ export const PreviewDetailsView = ({
         price: packageDetails.price,
         agencyId: packageDetails.travelAgency.id,
         destinationId: packageDetails.city.id,
-        hotelId: packageDetails.hotel.id
+        hotelId: packageDetails.hotel.id,
       },
       {
         onSuccess: (data: any) => {
           if (data.success && data.isValid) {
             console.log(
-              `Promo code applied! Discount: ${data.discount}, Final Amount: ${data.finalAmount}`
-            )
+              `Promo code applied! Discount: ${data.discount}, Final Amount: ${data.finalAmount}`,
+            );
             // You can add logic here to update the payment amount or show success message
-            handleClosePromoCodeModal()
+            handleClosePromoCodeModal();
           } else {
-            console.log(`Promo code error: ${data.message}`)
+            console.log(`Promo code error: ${data.message}`);
             // You can add logic here to show error message
           }
         },
         onError: (error: any) => {
-          console.error('Failed to validate promo code:', error)
+          console.error("Failed to validate promo code:", error);
           // You can add logic here to show error message
-        }
-      }
-    )
-  }
+        },
+      },
+    );
+  };
 
-  const isApplyButtonDisabled = promoCodeValue.trim().length < 3
+  const isApplyButtonDisabled = promoCodeValue.trim().length < 3;
 
   const paymentDetailsItems = useMemo(() => {
     const items = [
-      { key: t`price`, value: formatNumber(packageDetails.price) + '֏' },
+      { key: t`price`, value: formatNumber(packageDetails.price) + "֏" },
       {
         key: t`amountToBePaid`,
-        value: formatNumber(paymentAmount || 0) + '֏'
-      }
-    ]
+        value: formatNumber(paymentAmount || 0) + "֏",
+      },
+    ];
 
     if (!isFullPricePayment) {
       items.push({
         key: t`balance`,
-        value: formatNumber(packageDetails.price - (paymentAmount || 0)) + '֏'
-      })
+        value: formatNumber(packageDetails.price - (paymentAmount || 0)) + "֏",
+      });
       items.push({
         key: t`nextPaymentDate`,
-        value: formatDate(prepaymentInfo?.firstPaymentDate || '')
-      })
+        value: formatDate(prepaymentInfo?.firstPaymentDate || ""),
+      });
     }
 
-    return items
-  }, [isFullPricePayment, packageDetails.price, paymentAmount, t])
+    return items;
+  }, [isFullPricePayment, packageDetails.price, paymentAmount, t]);
 
   const countryName = useMemo(() => {
     const key =
-      `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity['city']['country']
+      `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity["city"]["country"];
 
-    return (packageDetails?.city.country[key] as string) || ''
-  }, [i18n.language, packageDetails?.city.country.nameArm])
+    return (packageDetails?.city.country[key] as string) || "";
+  }, [i18n.language, packageDetails?.city.country.nameArm]);
 
   const cityName = useMemo(() => {
     const key =
-      `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity['city']
+      `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity["city"];
 
-    return (packageDetails?.city[key] as string) || ''
-  }, [i18n.language, packageDetails?.city.nameArm])
+    return (packageDetails?.city[key] as string) || "";
+  }, [i18n.language, packageDetails?.city.nameArm]);
 
   const isHotelPackage = useMemo(
     () =>
       !(
         packageDetails?.destinationFlight?.id && packageDetails?.returnFlight.id
       ),
-    [packageDetails?.destinationFlight?.id, packageDetails?.returnFlight?.id]
-  )
+    [packageDetails?.destinationFlight?.id, packageDetails?.returnFlight?.id],
+  );
   const { data: foodTypes = [] } = useDictionary(
-    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary,
+    "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
     {
-      enabled: !isHotelPackage
-    }
-  )
+      enabled: !isHotelPackage,
+    },
+  );
 
   const { data: roomTypes = [] } = useDictionary(
-    'RoomTypeDictionary' as DictionaryTypes.RoomTypeDictionary,
+    "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
     {
-      enabled: !isHotelPackage
-    }
-  )
+      enabled: !isHotelPackage,
+    },
+  );
 
   const foodType = useMemo<string>(
     () =>
       foodTypes.find(({ key }: any) => key === packageDetails.foodType)
-        ?.value || '',
-    [JSON.stringify(foodTypes)]
-  )
+        ?.value || "",
+    [JSON.stringify(foodTypes)],
+  );
 
   const summaryCards = useMemo(() => {
     const cards = isHotelPackage
@@ -185,17 +188,17 @@ export const PreviewDetailsView = ({
               iconName="directions-car"
               children={t`transportation`}
             />
-          ) : null
-        ].filter(Boolean) as React.ReactNode[])
+          ) : null,
+        ].filter(Boolean) as React.ReactNode[]);
 
-    const chunkedCards = []
+    const chunkedCards = [];
 
     for (let i = 0; i < cards.length; i += 2) {
-      chunkedCards.push(cards.slice(i, i + 2))
+      chunkedCards.push(cards.slice(i, i + 2));
     }
 
-    return chunkedCards
-  }, [packageDetails, foodType, t])
+    return chunkedCards;
+  }, [packageDetails, foodType, t]);
 
   return (
     <>
@@ -204,7 +207,7 @@ export const PreviewDetailsView = ({
         justify="space-between"
         width="full"
         height="full"
-        maxH={{ base: 'calc(100dvh - 82px)', md: '526px' }}
+        maxH={{ base: "calc(100dvh - 82px)", md: "526px" }}
       >
         <Box
           flex="1"
@@ -228,7 +231,7 @@ export const PreviewDetailsView = ({
             </Flex>
 
             <Text
-              size={{ base: 'sm', md: 'md' }}
+              size={{ base: "sm", md: "md" }}
               color="gray.800"
               mt="2"
               fontWeight="medium"
@@ -256,14 +259,14 @@ export const PreviewDetailsView = ({
               mt="4"
               title={t`travelers`}
               listItems={[
-                ...travelers.adults.map(traveler => ({
-                  key: traveler.firstName + ' ' + traveler.lastName,
-                  value: formatDate(traveler.dateOfBirth)
+                ...travelers.adults.map((traveler) => ({
+                  key: traveler.firstName + " " + traveler.lastName,
+                  value: formatDate(traveler.dateOfBirth),
                 })),
-                ...travelers.children.map(traveler => ({
-                  key: traveler.firstName + ' ' + traveler.lastName,
-                  value: formatDate(traveler.dateOfBirth)
-                }))
+                ...travelers.children.map((traveler) => ({
+                  key: traveler.firstName + " " + traveler.lastName,
+                  value: formatDate(traveler.dateOfBirth),
+                })),
               ]}
             />
           )}
@@ -277,16 +280,16 @@ export const PreviewDetailsView = ({
                   key: t`departure`,
                   value: formatDate(
                     packageDetails.destinationFlight.departureDate,
-                    true
-                  )
+                    true,
+                  ),
                 },
                 {
                   key: t`returning`,
                   value: formatDate(
                     packageDetails.returnFlight.departureDate,
-                    true
-                  )
-                }
+                    true,
+                  ),
+                },
               ]}
             />
           )}
@@ -299,22 +302,26 @@ export const PreviewDetailsView = ({
                 key: t`room`,
                 value:
                   roomTypes.find(
-                    ({ key }: any) => key === packageDetails.roomType
-                  )?.value || ''
+                    ({ key }: any) => key === packageDetails.roomType,
+                  )?.value || "",
               },
               {
                 key: t`checkIn`,
-                value: formatDate(packageDetails.checkin, true)
+                value: formatDate(packageDetails.checkin, true),
               },
               {
                 key: t`checkOut`,
-                value: formatDate(packageDetails.checkout, true)
+                value: formatDate(packageDetails.checkout, true),
               },
               {
                 key: t`lateCheckOut`,
-                value: isLateCheckout ? t`included` : t`notIncluded`
-              }
+                value: isLateCheckout ? t`included` : t`notIncluded`,
+              },
             ]}
+          />
+          {/* Terms and Conditions Section */}
+          <TermsAndConditionsSection
+            openBookingRulesModal={() => setIsBookingRulesModalOpen(true)}
           />
         </Box>
 
@@ -328,7 +335,7 @@ export const PreviewDetailsView = ({
         >
           <Flex justify="space-between" align="center">
             <Text size="md" fontWeight="medium" color="gray.600">
-              {t('total')}
+              {t("total")}
             </Text>
 
             <Text size="md" fontWeight="bold" color="black">
@@ -344,24 +351,26 @@ export const PreviewDetailsView = ({
             isLoading={isLoadingBooking}
             size="lg"
           >
-            {t('pay')}
+            {t("pay")}
           </Button>
 
-          <Button
-            variant="solid-gray"
-            width="full"
-            mt="2"
-            onClick={handleUsePromocode}
-            size="lg"
-          >
-            {t('usePromoCode')}
-          </Button>
+          {prepaymentInfo?.paymentType !== "NoDownPayment" && (
+            <Button
+              variant="solid-gray"
+              width="full"
+              mt="2"
+              onClick={handleUsePromocode}
+              size="lg"
+            >
+              {t("usePromoCode")}
+            </Button>
+          )}
         </Box>
       </Flex>
 
       <Portal>
         <Layout
-          title={t('usePromoCode')}
+          title={t("usePromoCode")}
           isOpen={isPromoCodeModalOpen}
           closeModal={handleClosePromoCodeModal}
         >
@@ -370,13 +379,13 @@ export const PreviewDetailsView = ({
             py="6"
             width="full"
             maxW="420px"
-            height={{ base: 'calc(100dvh - 164px)', md: 'auto' }}
+            height={{ base: "calc(100dvh - 164px)", md: "auto" }}
             minH="136px"
           >
             <Input
               width="full"
               value={promoCodeValue}
-              onChange={e => setPromoCodeValue(e.target.value)}
+              onChange={(e) => setPromoCodeValue(e.target.value)}
             />
           </Box>
 
@@ -388,14 +397,20 @@ export const PreviewDetailsView = ({
               isDisabled={isApplyButtonDisabled}
               onClick={handleApplyPromoCode}
             >
-              {t('apply')}
+              {t("apply")}
             </Button>
           </Box>
         </Layout>
       </Portal>
+      <Portal>
+        <BookingRulesModal
+          isOpen={isBookingRulesModalOpen}
+          handleClose={() => setIsBookingRulesModalOpen(false)}
+        />
+      </Portal>
     </>
-  )
-}
+  );
+};
 
 const SectionLayout = ({
   children,
@@ -424,7 +439,7 @@ const SectionLayout = ({
       {listItems?.length ? <SectionList listItems={listItems} mt={4} /> : null}
     </Box>
   </Box>
-)
+);
 
 const SectionList = ({ listItems, ...props }: SectionListProps) => (
   <UnorderedList
@@ -452,7 +467,7 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
               mt="0.5"
               minW="100px"
             />
-            <Text fontWeight="semibold" size="sm" noOfLines={1}>
+            <Text textAlign="right" fontWeight="semibold" size="sm">
               {value}
             </Text>
           </>
@@ -460,14 +475,14 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
       </ListItem>
     ))}
   </UnorderedList>
-)
+);
 
 const SummaryCard = ({
   iconName,
-  children
+  children,
 }: {
-  iconName: IconName
-  children: string
+  iconName: IconName;
+  children: string;
 }) => (
   <HStack spacing="2" align="center">
     <Flex
@@ -483,4 +498,4 @@ const SummaryCard = ({
 
     <Text size="sm">{children}</Text>
   </HStack>
-)
+);

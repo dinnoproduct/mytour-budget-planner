@@ -98,7 +98,7 @@ const BookModalReview: FC<IBookModalReview> = ({
         title={
           (termsAndConditionType as TermsAndConditionTypes) ===
           TermsAndConditionTypes.bookTerms
-            ? t('bookingRules')
+            ? t('bookingAndPaymentRules')
             : t('cancelRules')
         }
       />
@@ -268,7 +268,7 @@ const BookModalReview: FC<IBookModalReview> = ({
             setTermsAndConditionType(TermsAndConditionTypes.bookTerms)
           }
         >
-          {t('bookingRules')}
+          {t('bookingAndPaymentRules')}
         </span>{' '}
         {t('and')}{' '}
         <span

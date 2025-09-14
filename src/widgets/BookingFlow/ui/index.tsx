@@ -87,6 +87,7 @@ export const BookingFlow = ({
           travelers={travelers}
           validatePromoCode={validatePromoCode}
           handleLogEvent={handleLogEvent}
+          skipPreviewStep={!!request}
         />
       )}
 

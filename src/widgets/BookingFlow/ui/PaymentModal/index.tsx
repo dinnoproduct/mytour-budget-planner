@@ -17,7 +17,7 @@ import {
   useDictionary,
   type PaymentSystem,
 } from "@entities/package";
-import { PreviewDetailsView } from "@widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView.tsx";
+import { PreviewDetailsView } from "@/widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView/index.tsx";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents.ts";
 
 export const PaymentModal = ({
@@ -33,6 +33,7 @@ export const PaymentModal = ({
   travelers,
   validatePromoCode,
   handleLogEvent,
+  skipPreviewStep = false,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const isFullPricePayment = useMemo(
@@ -71,7 +72,7 @@ export const PaymentModal = ({
       paymentError: () => <PaymentErrorView />,
       previewDetails: () => (
         <PreviewDetailsView
-          onPay={handlePay}
+          onPay={() => handlePay(selectedPaymentMethod || PaymentMethod.bankCard)}
           onUsePromocode={() => {
             // TODO: implement promocode logic
           }}
@@ -122,27 +123,31 @@ export const PaymentModal = ({
     },
   );
 
-  const handlePay = async () => {
+  const handleLogPurchaseEvent = (amount: number) => {
+    metaEvents.purchase({
+      content_type: isHotelPackage ? "hotel" : "package",
+      value: amount,
+      currency: packageDetails.currency,
+      offer_id: packageDetails.offerId,
+      hotel_id: packageDetails.hotel.id,
+      destination: packageDetails.city.nameEng,
+      checkin_date: packageDetails.checkin,
+      checkout_date: packageDetails.checkout,
+      num_nights: packageDetails.nights,
+      num_adults: travelers?.adults.length || 0,
+      num_children: travelers?.children.length || 0,
+      room_type: roomTypes.find(
+        ({ key }: any) => key === packageDetails.roomType,
+      )?.value,
+    });
+  }
+
+  const handlePay = async (paymentMethod: PaymentMethod) => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
     try {
-      metaEvents.purchase({
-        content_type: isHotelPackage ? "hotel" : "package",
-        value: amount,
-        currency: packageDetails.currency,
-        offer_id: packageDetails.offerId,
-        hotel_id: packageDetails.hotel.id,
-        destination: packageDetails.city.nameEng,
-        checkin_date: packageDetails.checkin,
-        checkout_date: packageDetails.checkout,
-        num_nights: packageDetails.nights,
-        num_adults: travelers?.adults.length || 0,
-        num_children: travelers?.children.length || 0,
-        room_type: roomTypes.find(
-          ({ key }: any) => key === packageDetails.roomType,
-        )?.value,
-      });
+      handleLogPurchaseEvent(amount);
       handleLogEvent({ name: BookingStep.TermsConfirmed, number: 4 });
-      if (selectedPaymentMethod === PaymentMethod.ameriaPay && onSuccess) {
+      if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {
         const url = await onSuccess(
           amount,
           "MyAmeriaPay" as PaymentSystem.MyAmeriaPay,
@@ -152,7 +157,7 @@ export const PaymentModal = ({
           setAmeriaPayUrl(url);
           setActiveView("ameriaPay");
         }
-      } else if (selectedPaymentMethod === PaymentMethod.bankCard) {
+      } else if (paymentMethod === PaymentMethod.bankCard) {
         await onSuccess(amount, "VPos" as PaymentSystem.VPos);
       }
     } catch (error) {
@@ -160,9 +165,7 @@ export const PaymentModal = ({
     }
   };
 
-  const handlePaymentMethodSelect = (paymentMethod: PaymentMethod) => {
-    setSelectedPaymentMethod(paymentMethod);
-    setActiveView("previewDetails");
+  const handleLogPaymentInfoEvent = () => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
 
     metaEvents.addPaymentInfo({
@@ -178,6 +181,19 @@ export const PaymentModal = ({
         ({ key }: any) => key === packageDetails.roomType,
       )?.value,
     });
+  };
+
+  const handlePaymentMethodSelect = (paymentMethod: PaymentMethod = selectedPaymentMethod || PaymentMethod.bankCard) => {
+    setSelectedPaymentMethod(paymentMethod);
+    handleLogPaymentInfoEvent();
+    // Skip preview step if requested
+    if (skipPreviewStep) {
+      // Go directly to payment processing
+      handlePay(paymentMethod);
+      return;
+    }
+
+    setActiveView("previewDetails");
   };
 
   const handleContinue = (amount: number, paymentOption: PaymentOption) => {
