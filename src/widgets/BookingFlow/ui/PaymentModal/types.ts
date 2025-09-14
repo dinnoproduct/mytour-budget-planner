@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 import {
   type PrepaymentInfo,
   type PackageEntity,
-  type PaymentSystem
+  type PaymentSystem,
 } from '@entities/package'
 import { type RadioProps } from '@ui'
 import { type BoxProps, type ListProps } from '@chakra-ui/react'
@@ -32,6 +32,7 @@ export type PaymentModalProps = {
     Omit<PromoCodeValidationParams, 'userId'>
   >
   handleLogEvent: (step: { name: BookingStep; number: number }) => void
+  skipPreviewStep?: boolean
 }
 
 export type PaymentFormViewProps = {
