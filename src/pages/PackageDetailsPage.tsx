@@ -24,6 +24,7 @@ import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
 import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
+import { usePackage } from "@/entities/package/hooks/usePackage";
 
 export const PackageDetailsPage = () => {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ export const PackageDetailsPage = () => {
   const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
     isBookingFlowOpenAtom,
   );
-  const { packageDetails, isFetched, childrenAges } =
-    usePackageDetailsFromStore();
+  const { packageDetails, isFetched, childrenAges, generatedMultivendorOffers, mealPlans, loading } =
+    usePackage();
 
   const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -141,7 +142,14 @@ export const PackageDetailsPage = () => {
         imageUrls={uniqueImageUrls}
         activeIndex={imageModalActiveIndex}
       />
-      {isOpenBookingDrawer && <BookingDrawer childrenAges={childrenAges} />}
+      {isOpenBookingDrawer && (
+        <BookingDrawer
+          childrenAges={childrenAges}
+          generatedMultivendorOffers={generatedMultivendorOffers}
+          mealPlans={mealPlans}
+          loading={loading}
+        />
+      )}
       <BookingFlow
         packageDetails={packageDetails}
         initialView="travelers"

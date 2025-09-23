@@ -6,8 +6,6 @@ export type SearchData = {
   selectedCity: number
   days?: number
   travelersData: SearchTravelersData
-  departureFlightId: number | null
-  returnFlightId: number | null
 }
 
 export type SearchContextType = {

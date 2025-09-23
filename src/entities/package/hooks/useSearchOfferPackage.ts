@@ -40,7 +40,7 @@ export const useSearchOfferPackage = (
   }, [offers, searchData?.roomId, isLoadingGenerateOffers])
 
   const { data: packageDetails, isLoading: isLoadingPackage } =
-    usePackageByOfferId(offerId, {
+    usePackageByOfferId(offerId, searchData.travelAgency, {
       enabled: !!offerId,
       gcTime: 0
     })

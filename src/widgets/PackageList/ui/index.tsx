@@ -56,9 +56,8 @@ export const PackageList = () => {
     }
 
     if (isPackagesSearchView) {
-      queryParams.departureFlightId =
-        tourPackage.destinationFlight.id.toString()
-      queryParams.returnFlightId = tourPackage.returnFlight.id.toString()
+      queryParams.from = moment(tourPackage.checkin).format('YYYY-MM-DD')
+      queryParams.to = moment(tourPackage.checkout).format('YYYY-MM-DD')
       queryParams.childrenAges =
         packagesSearchData.travelersData.childrenAges.join(',')
       pagePath = 'package'
@@ -67,7 +66,6 @@ export const PackageList = () => {
         hotelSearchData.travelersData.childrenAges.join(',')
       queryParams.from = moment(tourPackage.checkin).format('YYYY-MM-DD')
       queryParams.to = moment(tourPackage.checkout).format('YYYY-MM-DD')
-      queryParams.travelAgency = tourPackage.travelAgency.id.toString()
     }
 
     const searchParams = new URLSearchParams(queryParams).toString()

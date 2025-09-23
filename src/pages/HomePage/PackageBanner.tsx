@@ -1,10 +1,8 @@
 import {
   Box,
   Flex,
-  Link,
   LinkBox,
-  type LinkBoxProps,
-  LinkOverlay
+  type LinkBoxProps
 } from '@chakra-ui/react'
 import {Button, Heading, Text} from '@ui'
 import {useTranslation} from 'react-i18next'
@@ -27,6 +25,11 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
     const dateTo = fmt(!isHotel ? lastOfTarget : new Date(data?.flightReturnDate));
     return (
         <LinkBox
+            as="a"
+            href={!isHotel ? `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel` :
+              `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}&days=6&tab=packages`}
+            textDecoration='none'
+            _hover={{ textDecoration: 'none' }}
             height={{
                 base: '440px',
                 sm: !isHotel ? '330px' : '270px'
@@ -38,17 +41,9 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
             bgSize={{base: 'cover'}}
             bgPosition={{base: '50%'}}
             position="relative"
+            display="block"
             {...props}
         >
-          <Link
-            href={!isHotel ? `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel` :
-              `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}&days=6&tab=packages`}
-            textDecoration='none'
-            _hover={{ textDecoration: 'none' }}
-            zIndex="0 !important"
-            display="block"
-            height='100%'
-          >
             <Box
               height="-webkit-fill-available"
               display='flex'
@@ -93,27 +88,25 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                   {isHotel ? t`packageBanner.subtitle1.package` : t`packageBanner.subtitle1.hotel`}
                 </Text>
 
-                <LinkOverlay>
-                  <Box
-                    background='white'
-                    borderRadius='100px'
-                    color={!isHotel ? 'green.500' : 'orange.500'}
-                    p='12px 24px'
-                    mt="4"
-                    width="fit-content"
-                    zIndex="0 !important"
-                    fontSize={{
-                      base: '14px',
-                      sm: '16px'
-                    }}
-                    lineHeight={{
-                      base: '20px',
-                      sm: '24px'
-                    }}
-                  >
-                    {isHotel ? t`packageBanner.buttonLabel.package` : t`packageBanner.buttonLabel.hotel`}
-                  </Box>
-                </LinkOverlay>
+                <Box
+                  background='white'
+                  borderRadius='100px'
+                  color={!isHotel ? 'green.500' : 'orange.500'}
+                  p='12px 24px'
+                  mt="4"
+                  width="fit-content"
+                  zIndex="0 !important"
+                  fontSize={{
+                    base: '14px',
+                    sm: '16px'
+                  }}
+                  lineHeight={{
+                    base: '20px',
+                    sm: '24px'
+                  }}
+                >
+                  {isHotel ? t`packageBanner.buttonLabel.package` : t`packageBanner.buttonLabel.hotel`}
+                </Box>
               </Flex>
             </Box>
             <Box
@@ -137,7 +130,6 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
               bgPosition={{ base: '40%', md: 'center' }}>
             </Box>
 
-          </Link>
         </LinkBox>
     )
 }

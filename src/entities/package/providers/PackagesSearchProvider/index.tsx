@@ -3,21 +3,22 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState
-} from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import moment from 'moment'
-import { type SearchContextType, type SearchData } from './types'
+  useState,
+} from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import moment from "moment";
+import { type SearchContextType, type SearchData } from "./types";
 import {
+  type FlightEntity,
   type PackageEntity,
   useAvailableFlights,
   useCities,
   usePackageList,
   useReturnFlights,
-  useSearchAsync
-} from '@entities/package'
+  useSearchAsync,
+} from "@entities/package";
 
-const LOCAL_STORAGE_KEY = 'package_search_params'
+const LOCAL_STORAGE_KEY = "package_search_params";
 
 const defaultSearchData: SearchData = {
   fromDate: null,
@@ -26,128 +27,130 @@ const defaultSearchData: SearchData = {
   travelersData: {
     adultsCount: 2,
     childrenCount: 0,
-    childrenAges: []
+    childrenAges: [],
   },
-  departureFlightId: null,
-  returnFlightId: null
-}
+};
 
 const ALLOWED_SEARCH_ROUTES = [
-  { path: '/packages', query: [['tab', 'packages']] }
-]
+  { path: "/packages", query: [["tab", "packages"]] },
+];
 
 const ALLOWED_PACKAGE_ROUTES = [
-  { path: '/packages', query: [['tab', 'packages']] },
-  { path: '/' },
-  { path: '/package' }
-]
+  { path: "/packages", query: [["tab", "packages"]] },
+  { path: "/" },
+  { path: "/package" },
+];
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined)
+const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export const PackagesSearchProvider: React.FC<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }> = ({ children }) => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [searchParams] = useSearchParams()
-  const [isCityChanged, setIsCityChanged] = useState(false)
-  const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false)
-  useState(false)
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const [isCityChanged, setIsCityChanged] = useState(false);
+  const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false);
+  useState(false);
 
   const isAllowedSearchRoute = useMemo(() => {
-    const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
+    const isAllowed = ALLOWED_SEARCH_ROUTES.some((route) => {
       if (route.path === location.pathname) {
         if (route.query.length === 0) {
-          return true
+          return true;
         }
 
-        return route.query.every(query => {
-          const value = searchParams.get(query[0])
+        return route.query.every((query) => {
+          const value = searchParams.get(query[0]);
 
-          return value && value === query[1]
-        })
+          return value && value === query[1];
+        });
       }
 
-      return false
-    })
+      return false;
+    });
 
-    return isAllowed
-  }, [location.pathname, searchParams])
+    return isAllowed;
+  }, [location.pathname, searchParams]);
 
   const isAllowedPackageRoute = useMemo(() => {
-    const isAllowed = ALLOWED_PACKAGE_ROUTES.some(route => {
+    const isAllowed = ALLOWED_PACKAGE_ROUTES.some((route) => {
       if (route.path === location.pathname) {
         if (!route.query || route.query.length === 0) {
-          return true
+          return true;
         }
 
-        return route.query.every(query => {
-          const value = searchParams.get(query[0])
+        return route.query.every((query) => {
+          const value = searchParams.get(query[0]);
 
-          return value && value === query[1]
-        })
+          return value && value === query[1];
+        });
       }
 
-      return false
-    })
+      return false;
+    });
 
-    return isAllowed
-  }, [location.pathname, searchParams])
+    return isAllowed;
+  }, [location.pathname, searchParams]);
 
   const { data: cities = [] } = useCities({
-    enabled: isAllowedPackageRoute
-  })
+    enabled: isAllowedPackageRoute,
+  });
 
   const { data: packageList = [] } = usePackageList({
-    enabled: isAllowedSearchRoute
-  })
-  const [filteredPackages, setFilteredPackages] = useState<PackageEntity[]>([])
+    enabled: isAllowedSearchRoute,
+  });
+  const [filteredPackages, setFilteredPackages] = useState<PackageEntity[]>([]);
   const [isLoadingFilteredPackages, setIsLoadingFilteredPackages] =
-    useState(false)
-  const [isSearchError, setIsSearchError] = useState(false)
-  const searchAsync = useSearchAsync()
+    useState(false);
+  const [isSearchError, setIsSearchError] = useState(false);
+  const searchAsync = useSearchAsync();
   const [searchData, setSearchDataState] =
-    useState<SearchData>(defaultSearchData)
+    useState<SearchData>(defaultSearchData);
   const [availableDepartureDates, setAvailableDepartureDates] = useState<
     Date[]
-  >([])
-  const [availableReturnDates, setAvailableReturnDates] = useState<Date[]>([])
+  >([]);
+  const [availableReturnDates, setAvailableReturnDates] = useState<Date[]>([]);
+
+  const [selectedDepartureFlight, setSelectedDepartureFlight] =
+    useState<FlightEntity | null>(null);
+
+  const [selectedReturnFlight, setSelectedReturnFlight] =
+    useState<FlightEntity | null>(null);
 
   const saveSearchDataToLocalStorage = (data: SearchData) => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
-  }
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+  };
 
   // Function to load searchData from localStorage
   const loadSearchDataFromLocalStorage = (): SearchData | null => {
-    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY)
+    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
 
-    return savedData ? JSON.parse(savedData) : null
-  }
+    return savedData ? JSON.parse(savedData) : null;
+  };
 
   // set default search data
   useEffect(() => {
     // if search data is already set, do nothing
     if (searchData.fromDate && searchData.toDate) {
-      return
+      return;
     }
 
-    const savedSearchData = loadSearchDataFromLocalStorage()
+    const savedSearchData = loadSearchDataFromLocalStorage();
     const fromDate = savedSearchData?.fromDate
       ? moment(savedSearchData?.fromDate)
-      : null
-    const today = moment().startOf('day')
+      : null;
+    const today = moment().startOf("day");
 
-    let updatedSearchData = { ...searchData }
+    let updatedSearchData = { ...searchData };
 
     if (!updatedSearchData.selectedCity && cities[0]?.id) {
-      updatedSearchData.selectedCity = cities[0]?.id
+      updatedSearchData.selectedCity = cities[0]?.id;
     }
 
     if (
       savedSearchData?.fromDate &&
       savedSearchData?.toDate &&
-      savedSearchData?.departureFlightId &&
-      savedSearchData?.returnFlightId &&
       fromDate &&
       fromDate.isSameOrAfter(today) &&
       savedSearchData.selectedCity
@@ -156,263 +159,232 @@ export const PackagesSearchProvider: React.FC<{
         ...updatedSearchData,
         ...savedSearchData,
         fromDate: new Date(savedSearchData.fromDate),
-        toDate: new Date(savedSearchData.toDate)
-      }
+        toDate: new Date(savedSearchData.toDate),
+      };
     }
     // set search data from default packages
     else {
-      const packageItem = packageList?.[0]
+      const packageItem = packageList?.[0];
 
       if (
         packageItem?.offerId &&
         !searchData.fromDate &&
-        !searchData.toDate &&
-        !searchData.departureFlightId &&
-        !searchData.returnFlightId
+        !searchData.toDate
       ) {
         updatedSearchData = {
           ...updatedSearchData,
           fromDate: new Date(packageItem.destinationFlight.departureDate),
           toDate: new Date(packageItem.returnFlight.arrivalDate),
-          departureFlightId: packageItem.destinationFlight.id,
-          returnFlightId: packageItem.returnFlight.id,
-          selectedCity: packageItem.city.id
-        }
+          selectedCity: packageItem.city.id,
+        };
       }
     }
 
-    setSearchData(updatedSearchData, true)
-  }, [JSON.stringify(packageList), cities])
+    setSearchData(updatedSearchData, true);
+  }, [JSON.stringify(packageList), cities]);
 
   const { data: departureFlights } = useAvailableFlights(
     {
-      destinationId: searchData.selectedCity
+      destinationId: searchData.selectedCity,
     },
     {
-      enabled: searchData.selectedCity !== -1 && isAllowedPackageRoute
-    }
-  )
+      enabled: searchData.selectedCity !== -1 && isAllowedPackageRoute,
+    },
+  );
 
   const { data: returnFlights, isLoading: isLoadingReturnFlights } =
     useReturnFlights(
+      selectedDepartureFlight as FlightEntity,
       {
-        flightId: searchData.departureFlightId as number
+        destinationId: searchData.selectedCity as number,
       },
       {
-        enabled: !!searchData.departureFlightId && isAllowedPackageRoute
-      }
-    )
+        enabled:
+          !!selectedDepartureFlight?.id &&
+          isAllowedPackageRoute,
+      },
+    );
 
   useEffect(() => {
     if (Array.isArray(departureFlights)) {
       const dates = departureFlights.map(
-        flight => new Date(flight.departureDate)
-      )
-      setAvailableDepartureDates(dates)
-
-      // set first flight on city change
-      if (isCityChanged) {
-        setSearchData({
-          departureFlightId: departureFlights[0].id
-        })
-      }
+        (flight) => new Date(flight.departureDate),
+      );
+      setAvailableDepartureDates(dates);
+      setSelectedDepartureFlight(departureFlights[0]);
     }
-  }, [departureFlights])
+  }, [departureFlights]);
 
   useEffect(() => {
     if (returnFlights) {
-      const dates = returnFlights.map(flight => new Date(flight.arrivalDate))
-      setAvailableReturnDates(dates)
+      const dates = returnFlights.map((flight) => new Date(flight.arrivalDate));
+      setAvailableReturnDates(dates);
 
       if (isCityChanged && departureFlights) {
-        const packageItem = packageList?.[0]
+        const packageItem = packageList?.[0];
 
         if (returnFlights[0]) {
           setSearchData({
-            returnFlightId: returnFlights[0].id,
             toDate: dates[0],
-            fromDate: new Date(departureFlights[0].departureDate)
-          })
+            fromDate: new Date(departureFlights[0].departureDate),
+          });
         } else if (
           packageItem &&
           searchData.selectedCity === packageItem.city.id
         ) {
           setSearchData({
-            departureFlightId: packageItem.destinationFlight.id,
-            returnFlightId: packageItem.returnFlight.id,
             toDate: new Date(packageItem.returnFlight.arrivalDate),
-            fromDate: new Date(packageItem.destinationFlight.departureDate)
-          })
+            fromDate: new Date(packageItem.destinationFlight.departureDate),
+          });
         }
 
-        setIsCityChanged(false)
+        setIsCityChanged(false);
       }
     }
-  }, [JSON.stringify(returnFlights)])
+  }, [JSON.stringify(returnFlights)]);
 
   useEffect(() => {
-    const selectedFlight = returnFlights?.find(flight =>
-      moment(flight.arrivalDate).isSame(searchData.toDate, 'day')
-    )
+    const selectedFlight = returnFlights?.find((flight) =>
+      moment(flight.arrivalDate).isSame(searchData.toDate, "day"),
+    );
 
-    if (selectedFlight) {
-      setSearchData({
-        returnFlightId: selectedFlight.id
-      })
+    if(selectedFlight) {
+      setSelectedReturnFlight(selectedFlight);
     }
-  }, [searchData.toDate])
+  }, [searchData.toDate]);
 
   const handleFromDateClick = (date: Date) => {
-    const selectedFlight = departureFlights?.find(flight =>
-      moment(flight.departureDate).isSame(date, 'day')
-    )
+    const selectedFlight = departureFlights?.find((flight) =>
+      moment(flight.departureDate).isSame(date, "day"),
+    );
 
     if (selectedFlight) {
-      setSearchData({
-        departureFlightId: selectedFlight.id
-      })
+      setSelectedDepartureFlight(selectedFlight);
     }
-  }
+  };
 
   const generateSearchQueryParams = (searchData: SearchData) => {
     const formatDate = (date: Date | null) =>
-      date ? moment(date).format('YYYY-MM-DD') : ''
+      date ? moment(date).format("YYYY-MM-DD") : "";
 
     const queryParams = new URLSearchParams({
       from: formatDate(searchData.fromDate),
       to: formatDate(searchData.toDate),
-      city: searchData.selectedCity + '',
+      city: searchData.selectedCity + "",
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
-      childrenAges: searchData.travelersData.childrenAges.join(','),
-      departureFlightId: searchData.departureFlightId?.toString() || '',
-      returnFlightId: searchData.returnFlightId?.toString() || '',
-      tab: 'packages'
-    })
+      childrenAges: searchData.travelersData.childrenAges.join(","),
+      tab: "packages",
+    });
 
-    return queryParams
-  }
+    return queryParams;
+  };
 
   const handleSearch = async (searchData: SearchData) => {
     try {
-      setIsSearchError(false)
+      setIsSearchError(false);
       const {
         fromDate,
         toDate,
         selectedCity,
         travelersData,
-        departureFlightId,
-        returnFlightId
-      } = searchData
-      const queryParams = generateSearchQueryParams(searchData)
-      navigate(`/packages?${queryParams.toString()}`)
+      } = searchData;
+      const queryParams = generateSearchQueryParams(searchData);
+      navigate(`/packages?${queryParams.toString()}`);
 
-      setIsLoadingFilteredPackages(true)
-      saveSearchDataToLocalStorage(searchData)
+      setIsLoadingFilteredPackages(true);
+      saveSearchDataToLocalStorage(searchData);
 
       const searchPackagesResponse = await searchAsync({
-        dateFrom: moment(fromDate).format('YYYY-MM-DD'),
-        dateTo: moment(toDate).format('YYYY-MM-DD'),
+        dateFrom: moment(fromDate).format("YYYY-MM-DD"),
+        dateTo: moment(toDate).format("YYYY-MM-DD"),
         cities: [selectedCity],
         adults: travelersData.adultsCount,
         childs: travelersData.childrenAges,
         // nightsCorrectionLowerValue: 0,
         // nightsCorrectionUpperValue: 0,
         lateCheckout: false,
-        bookingType: 1
-      })
-      setFilteredPackages(searchPackagesResponse)
+        bookingType: 1,
+      });
+      setFilteredPackages(searchPackagesResponse);
     } catch (error) {
-      setIsSearchError(true)
+      setIsSearchError(true);
     } finally {
-      setIsLoadingFilteredPackages(false)
+      setIsLoadingFilteredPackages(false);
     }
-  }
+  };
 
   const setSearchData = (
     data: Partial<SearchData>,
-    isDefaultData?: boolean
+    isDefaultData?: boolean,
   ) => {
     if (!isDefaultData && data.selectedCity) {
-      setIsCityChanged(true)
+      setIsCityChanged(true);
     }
 
-    setSearchDataState(prevData => ({ ...prevData, ...data }))
-  }
+    setSearchDataState((prevData) => ({ ...prevData, ...data }));
+  };
 
   const navigateToDefaultSearch = () => {
-    const queryParams = generateSearchQueryParams(searchData)
-    navigate(`/packages?${queryParams.toString()}`)
-  }
+    const queryParams = generateSearchQueryParams(searchData);
+    navigate(`/packages?${queryParams.toString()}`);
+  };
 
   useEffect(() => {
     if (
       isAllowedSearchRoute &&
-      searchData.departureFlightId &&
-      searchData.returnFlightId &&
       filteredPackages.length === 0 &&
       !isDefaultSearchDone
     ) {
-      handleSearch(searchData)
-      setIsDefaultSearchDone(true)
+      handleSearch(searchData);
+      setIsDefaultSearchDone(true);
     }
   }, [
-    searchData.departureFlightId,
-    searchData.returnFlightId,
     filteredPackages.length,
-    isAllowedSearchRoute
-  ])
+    isAllowedSearchRoute,
+  ]);
 
   useEffect(() => {
     if (!isAllowedSearchRoute) {
-      return
+      return;
     }
 
     const getDateFromParam = (param: string | null) =>
-      param ? new Date(param) : null
+      param ? new Date(param) : null;
 
-    const currentData = {} as SearchData
+    const currentData = {} as SearchData;
 
-    const fromParam = searchParams.get('from')
-    const toParam = searchParams.get('to')
-    const cityParam = searchParams.get('city')
-    const adultsCountParam = searchParams.get('adultsCount')
-    const childrenCountParam = searchParams.get('childrenCount')
-    const childrenAgesParam = searchParams.get('childrenAges')
-    const departureFlightIdParam = searchParams.get('departureFlightId')
-    const returnFlightIdParam = searchParams.get('returnFlightId')
+    const fromParam = searchParams.get("from");
+    const toParam = searchParams.get("to");
+    const cityParam = searchParams.get("city");
+    const adultsCountParam = searchParams.get("adultsCount");
+    const childrenCountParam = searchParams.get("childrenCount");
+    const childrenAgesParam = searchParams.get("childrenAges");
 
     if (fromParam) {
-      currentData.fromDate = getDateFromParam(fromParam)
+      currentData.fromDate = getDateFromParam(fromParam);
     }
 
     if (toParam) {
-      currentData.toDate = getDateFromParam(toParam)
+      currentData.toDate = getDateFromParam(toParam);
     }
 
     if (cityParam) {
-      currentData.selectedCity = parseInt(cityParam, 10)
+      currentData.selectedCity = parseInt(cityParam, 10);
     }
 
     if (childrenCountParam || childrenAgesParam || adultsCountParam) {
       currentData.travelersData = {
-        adultsCount: parseInt(adultsCountParam || '0', 10),
-        childrenCount: parseInt(childrenCountParam || '0', 10),
+        adultsCount: parseInt(adultsCountParam || "0", 10),
+        childrenCount: parseInt(childrenCountParam || "0", 10),
         childrenAges:
-          (childrenAgesParam || '').split(',').filter(Boolean).map(Number) || []
-      }
+          (childrenAgesParam || "").split(",").filter(Boolean).map(Number) ||
+          [],
+      };
     }
 
-    if (departureFlightIdParam) {
-      currentData.departureFlightId = parseInt(departureFlightIdParam, 10)
-    }
-
-    if (returnFlightIdParam) {
-      currentData.returnFlightId = parseInt(returnFlightIdParam, 10)
-    }
-
-    setSearchData(currentData, true)
-  }, [searchParams, isAllowedSearchRoute])
+    setSearchData(currentData, true);
+  }, [searchParams, isAllowedSearchRoute]);
 
   return (
     <SearchContext.Provider
@@ -430,22 +402,22 @@ export const PackagesSearchProvider: React.FC<{
         generateSearchQueryParams,
         isAllowedSearchRoute,
         navigateToDefaultSearch,
-        cities
+        cities,
       }}
     >
       {children}
     </SearchContext.Provider>
-  )
-}
+  );
+};
 
 export const usePackagesSearchContext = () => {
-  const context = useContext(SearchContext)
+  const context = useContext(SearchContext);
 
   if (!context) {
     throw new Error(
-      'useSearchContext must be used within a PackagesSearchProvider'
-    )
+      "useSearchContext must be used within a PackagesSearchProvider",
+    );
   }
 
-  return context
-}
+  return context;
+};

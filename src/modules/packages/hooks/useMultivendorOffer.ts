@@ -8,7 +8,7 @@ import {
 } from "../data/packagesTypes";
 import { DictionaryTypes, useDictionary } from "@/entities/package";
 
-const useMultivendorOffer = () => {
+export const useMultivendorOffer = () => {
   const [loading, setLoading] = useState(false);
   const [generatedMultivendorOffers, setGeneratedMultivendorOffers] =
     useRecoilState(generatedMultivendorOffersAtom);
@@ -73,4 +73,3 @@ const useMultivendorOffer = () => {
   };
 };
 
-export default useMultivendorOffer;

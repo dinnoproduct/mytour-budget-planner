@@ -12,11 +12,10 @@ import {
   type PackageUseCasesParams,
   type ReservePackageInput,
   type UpdateRequestInput,
-  type SearchPackagesParams,
   type SearchParams,
   type PrepaymentCalculationParams,
   type PromoCodeValidationParams,
-  type FlightDatesParams
+  type FlightDatesParams,
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
@@ -26,6 +25,7 @@ import { type FlightDatesService } from './FlightDatesService.ts'
 import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
+import { type FlightEntity } from '../model/entities.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
@@ -68,19 +68,13 @@ export class PackageUseCases {
   async flightDatesSearch(params: FlightDatesParams) {
     return this.flightDatesService.getFlightDates(params)
   }
-  async searchPackages(search: SearchPackagesParams) {
-    return this.packageService.searchPackages({
-      travelAgencyId: 1,
-      ...search
-    })
-  }
 
   async generateOffers(input: GenerateOffersInput, params: { travelAgency: number }) {
     return this.packageService.generateOffers(input, params)
   }
 
-  async getPackage(offerId: number) {
-    return this.packageService.getPackage(offerId)
+  async getPackage(offerId: number, travelAgency: number) {
+    return this.packageService.getPackage(offerId, travelAgency)
   }
 
   async generateHotelOffers(input: GenerateHotelOffersInput) {
@@ -96,8 +90,8 @@ export class PackageUseCases {
     return this.flightService.getAvailableFlights(params)
   }
 
-  async getReturnFlights(params: GetReturnFlightsParams) {
-    return this.flightService.getReturnFlights(params)
+  async getReturnFlights(input: FlightEntity, params: GetReturnFlightsParams) {
+    return this.flightService.getReturnFlights(input, params)
   }
 
   async getFlightsByDate(params: GetFlightsByDateParams) {

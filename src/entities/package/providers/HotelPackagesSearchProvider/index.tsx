@@ -3,6 +3,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
@@ -53,6 +54,8 @@ export const HotelPackagesSearchProvider: React.FC<{
   const searchAsync = useSearchAsync()
   const [searchData, setSearchDataState] =
     useState<SearchData>(defaultSearchData)
+  const hasInitializedData = useRef(false)
+  const hasPerformedDefaultSearch = useRef(false)
 
   const saveSearchDataToLocalStorage = (data: SearchData) => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
@@ -83,7 +86,7 @@ export const HotelPackagesSearchProvider: React.FC<{
   }
 
   useEffect(() => {
-    if (searchData.fromDate && searchData.toDate) return
+    if (hasInitializedData.current || (searchData.fromDate && searchData.toDate)) return
     if (cities.length === 0) return
 
     const savedSearchData = loadSearchDataFromLocalStorage()
@@ -113,6 +116,8 @@ export const HotelPackagesSearchProvider: React.FC<{
         selectedCity: cities[0] ? [...defaultSelectedHotelCity] : []
       })
     }
+    
+    hasInitializedData.current = true
   }, [cities])
 
   const generateSearchQueryParams = (searchData: SearchData) => {
@@ -212,11 +217,13 @@ export const HotelPackagesSearchProvider: React.FC<{
       isAllowedSearchRoute &&
       searchData.fromDate &&
       searchData.toDate &&
-      filteredHotelPackages.length === 0
+      filteredHotelPackages.length === 0 &&
+      !hasPerformedDefaultSearch.current
     ) {
       handleSearch(searchData)
+      hasPerformedDefaultSearch.current = true
     }
-  }, [searchData.fromDate, searchData.toDate, filteredHotelPackages.length])
+  }, [isAllowedSearchRoute, searchData.fromDate, searchData.toDate, filteredHotelPackages.length])
 
   useEffect(() => {
     const getDateFromParam = (param: string | null) =>
@@ -230,7 +237,7 @@ export const HotelPackagesSearchProvider: React.FC<{
     const adultsCountParam = searchParams.get('adultsCount')
     const childrenCountParam = searchParams.get('childrenCount')
     const childrenAgesParam = searchParams.get('childrenAges')
-    const dateMode = searchParams.get('dateMode')
+    const dateModeParam = searchParams.get('dateMode')
     const daysParam = searchParams.get('days')
 
     if (fromParam) {
@@ -257,15 +264,19 @@ export const HotelPackagesSearchProvider: React.FC<{
       }
     }
 
-    if (dateMode) {
-      setDateMode(dateMode as DateModeType)
+    if (dateModeParam) {
+      setDateMode(dateModeParam as DateModeType)
     }
 
     if (daysParam) {
       currentData.days = parseInt(daysParam, 10)
     }
 
-    setSearchData(currentData)
+    // Only update if we have meaningful data from URL params
+    const hasUrlData = Object.keys(currentData).length > 0
+    if (hasUrlData) {
+      setSearchData(currentData)
+    }
   }, [searchParams])
 
   return (

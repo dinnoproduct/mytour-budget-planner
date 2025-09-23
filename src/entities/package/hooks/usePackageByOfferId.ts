@@ -4,11 +4,12 @@ import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
 export const usePackageByOfferId = (
   offerId: number,
+  travelAgency: number,
   options?: Omit<UseQueryOptions<PackageEntity>, 'queryFn' | 'queryKey'>
 ) =>
   useQuery({
     ...(options || {}),
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    queryFn: () => packageUseCases.getPackage(offerId),
-    queryKey: ['package-by-offer-id', offerId]
+    queryFn: () => packageUseCases.getPackage(offerId, travelAgency),
+    queryKey: ['package-by-offer-id', offerId, travelAgency]
   })

@@ -170,6 +170,20 @@ export interface IGeneratedMultivendorOffer {
   [PackagesFields.partnerPrice]: number;
   [PackagesFields.currency]: string;
   [PackagesFields.cancellationDate]: string;
+  [PackagesFields.departureFlight]: {
+    [PackagesFields.id]: number;
+    [PackagesFields.departureDate]: string;
+    [PackagesFields.airCompany]: {
+      [PackagesFields.id]: number;
+      [PackagesFields.name]: string;
+    };
+  };
+  [PackagesFields.returnFlight]: {
+    [PackagesFields.airCompany]: {
+      [PackagesFields.id]: number;
+    };
+    [PackagesFields.departureDate]: string;
+  };
 }
 
 export interface ITraveler {

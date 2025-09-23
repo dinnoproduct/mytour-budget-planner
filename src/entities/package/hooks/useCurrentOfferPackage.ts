@@ -11,12 +11,13 @@ const QUERY_KEY = 'current-offer-package'
 
 export const useCurrentOfferPackage = (
   offerId: number,
+  travelAgency: number,
   options?: Omit<UseQueryOptions<PackageEntity>, 'queryFn' | 'queryKey'>
 ) =>
   useQuery({
     ...(options || {}),
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    queryFn: () => packageUseCases.getPackage(offerId),
+    queryFn: () => packageUseCases.getPackage(offerId, travelAgency),
     queryKey: [QUERY_KEY]
   })
 
