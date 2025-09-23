@@ -9,6 +9,8 @@ import { useRecoilState } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
+import { useUserContext } from "@/entities/user";
+import { useModalContext } from "@/app/providers";
 
 export const BookingDrawer: React.FC<{
   childrenAges: number[];
@@ -27,6 +29,9 @@ export const BookingDrawer: React.FC<{
     isHotelPackage,
   } = useBookingDrawer();
 
+  const { user } = useUserContext();
+  const { dispatchModal } = useModalContext();
+
   useEffect(() => {
     updateMealPlan(mealPlans[0].key);
   }, [JSON.stringify(mealPlans)]);
@@ -35,8 +40,22 @@ export const BookingDrawer: React.FC<{
     useRecoilState(isLateCheckoutAtom);
 
   const hanldePackageSelect = (selectedPackage: IGeneratedMultivendorOffer) => {
-    updateSelectedRoomPackage(selectedPackage);
     handleLogEvent({ name: BookingStep.RoomSelection, number: 1 });
+    if (!user?.id) {
+      dispatchModal({
+        type: "open",
+        modalType: "auth",
+        props: {
+          view: "signUp",
+          isCloseOnSuccess: true,
+          onSuccess: () => {
+            updateSelectedRoomPackage(selectedPackage);
+          },
+        },
+      });
+      return;
+    }
+    updateSelectedRoomPackage(selectedPackage);
   };
 
   const handleLateCheckoutChange = (value: boolean) => {
