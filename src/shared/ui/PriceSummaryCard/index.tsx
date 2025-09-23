@@ -8,8 +8,6 @@ import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@shared/utils";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { useUserContext } from "@/entities/user/index.ts";
-import { useModalContext } from "@/app/providers/index.ts";
 import { type PriceSummaryCardProps, type LayoutProps } from "./types.ts";
 import { metaEvents } from "@/shared/configs/metaEvents";
 
@@ -23,8 +21,7 @@ export const PriceSummaryCard = ({
   const { isMd } = useBreakpoint();
 
   const [isFixed, setIsFixed] = useState(false);
-  const { user } = useUserContext();
-  const { dispatchModal } = useModalContext();
+
   const { openBookingDrawer } = useBookingDrawer();
 
   useEffect(() => {
@@ -51,50 +48,38 @@ export const PriceSummaryCard = ({
     };
   }, [isFixed, isMd, containerRef?.current]);
 
+  const handeInitiateCheckoutEventLog = () => {
+    metaEvents.initiateCheckout({
+      content_type: contentType,
+      value: tourPackage.price,
+      currency: "AMD",
+      num_items: 1,
+      hotel_id: tourPackage.hotel.id,
+      hotel_name: tourPackage.hotel.name,
+      destination:
+        tourPackage.city.nameEng || tourPackage.city.nameArm || "Unknown",
+      destination_country:
+        tourPackage.city.country?.nameEng ||
+        tourPackage.city.country?.nameArm ||
+        "Unknown",
+      checkin_date: tourPackage.checkin,
+      checkout_date: tourPackage.checkout,
+      num_nights: Math.ceil(
+        (new Date(tourPackage.checkout).getTime() -
+          new Date(tourPackage.checkin).getTime()) /
+          (1000 * 60 * 60 * 24),
+      ),
+      num_adults: tourPackage.adultTravelers,
+      num_children: tourPackage.childrenTravelers + tourPackage.infantTravelers,
+      room_type: tourPackage.roomType,
+    });
+  };
+
   const handleBookClick = () => {
     if (tourPackage) {
-      metaEvents.initiateCheckout({
-        content_type: contentType,
-        value: tourPackage.price,
-        currency: "AMD",
-        num_items: 1,
-        hotel_id: tourPackage.hotel.id,
-        hotel_name: tourPackage.hotel.name,
-        destination:
-          tourPackage.city.nameEng || tourPackage.city.nameArm || "Unknown",
-        destination_country:
-          tourPackage.city.country?.nameEng ||
-          tourPackage.city.country?.nameArm ||
-          "Unknown",
-        checkin_date: tourPackage.checkin,
-        checkout_date: tourPackage.checkout,
-        num_nights: Math.ceil(
-          (new Date(tourPackage.checkout).getTime() -
-            new Date(tourPackage.checkin).getTime()) /
-            (1000 * 60 * 60 * 24),
-        ),
-        num_adults: tourPackage.adultTravelers,
-        num_children:
-          tourPackage.childrenTravelers + tourPackage.infantTravelers,
-        room_type: tourPackage.roomType,
-      });
-    }
-    if (user?.id) {
+      handeInitiateCheckoutEventLog();
       openBookingDrawer(tourPackage);
-      return;
     }
-
-    dispatchModal({
-      type: "open",
-      modalType: "auth",
-      props: {
-        view: "signUp",
-        isCloseOnSuccess: true,
-        onSuccess: () => {
-          openBookingDrawer(tourPackage);
-        },
-      },
-    });
   };
 
   return (
