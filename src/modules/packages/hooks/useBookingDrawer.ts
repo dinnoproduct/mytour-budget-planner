@@ -1,6 +1,5 @@
 import { useRecoilState } from "recoil";
 import { bookingDrawerAtom } from "../store/store";
-import { type PackageEntity } from "@entities/package";
 import { IGeneratedMultivendorOffer } from "../data/packagesTypes";
 import { useMemo } from "react";
 import { useSelectedPackage } from "./useSelectedPackage";
@@ -11,11 +10,10 @@ export const useBookingDrawer = () => {
   const { storeSelectedPackage, selectedPackage, clearSelectedPackage } =
     useSelectedPackage();
 
-  const openBookingDrawer = (packageData: PackageEntity) => {
-    storeSelectedPackage(packageData);
+  const openBookingDrawer = () => {
     setBookingDrawer({
       isOpen: true,
-      selectedMealPlan: packageData.foodType,
+      selectedMealPlan: selectedPackage?.foodType || 0,
       selectedRoomOffer: null,
     });
   };

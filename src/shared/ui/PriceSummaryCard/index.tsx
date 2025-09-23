@@ -76,10 +76,8 @@ export const PriceSummaryCard = ({
   };
 
   const handleBookClick = () => {
-    if (tourPackage) {
-      handeInitiateCheckoutEventLog();
-      openBookingDrawer(tourPackage);
-    }
+    handeInitiateCheckoutEventLog();
+    openBookingDrawer();
   };
 
   return (
