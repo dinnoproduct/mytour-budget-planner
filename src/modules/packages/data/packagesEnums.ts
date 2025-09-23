@@ -30,6 +30,7 @@ export enum PackagesFields {
   departureDate = 'departureDate',
   arrivalDate = 'arrivalDate',
   returnFlight = 'returnFlight',
+  departureFlight = 'departureFlight',
   airCompany = 'airCompany',
   name = 'name',
   ticketClass = 'ticketClass',

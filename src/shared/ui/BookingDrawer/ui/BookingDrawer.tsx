@@ -2,9 +2,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SideDrawer } from "@/components/SideDrawer";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import useMultivendorOffer from "@/modules/packages/hooks/useMultivendorOffer";
 import { ActionsSection } from "./ActionsSection";
-import { PackagesFields } from "@/modules/packages/data/packagesEnums";
 import { RoomTypesList } from "./RoomTypesList";
 import { VStack } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
@@ -14,7 +12,10 @@ import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const BookingDrawer: React.FC<{
   childrenAges: number[];
-}> = ({ childrenAges }) => {
+  generatedMultivendorOffers: IGeneratedMultivendorOffer[];
+  mealPlans: { key: number; label: string; labelArm: string }[];
+  loading: boolean;
+}> = ({ childrenAges, generatedMultivendorOffers, mealPlans, loading }) => {
   const { t } = useTranslation();
   const {
     isOpen,
@@ -25,14 +26,6 @@ export const BookingDrawer: React.FC<{
     updateSelectedRoomPackage,
     isHotelPackage,
   } = useBookingDrawer();
-
-  const {
-    generateMultivendorOffers,
-    loading,
-    clearGeneratedMultivendorOffers,
-    generatedMultivendorOffers,
-    mealPlans,
-  } = useMultivendorOffer();
 
   useEffect(() => {
     updateMealPlan(mealPlans[0].key);
@@ -45,27 +38,6 @@ export const BookingDrawer: React.FC<{
     updateSelectedRoomPackage(selectedPackage);
     handleLogEvent({ name: BookingStep.RoomSelection, number: 1 });
   };
-
-  useEffect(() => {
-    if (isOpen) {
-      generateMultivendorOffers({
-        [PackagesFields.hotelId]: selectedPackage?.hotel?.id || 0,
-        [PackagesFields.dateFrom]: isHotelPackage
-          ? selectedPackage?.checkin || ""
-          : selectedPackage?.destinationFlight?.departureDate || "",
-        [PackagesFields.dateTo]: isHotelPackage
-          ? selectedPackage?.checkout || ""
-          : selectedPackage?.returnFlight?.departureDate || "",
-        [PackagesFields.adults]: selectedPackage?.adultTravelers || 0,
-        [PackagesFields.childs]: childrenAges,
-        [PackagesFields.lateCheckout]: isLateCheckout,
-        [PackagesFields.bookingType]: isHotelPackage ? 2 : 1,
-      });
-    }
-    return () => {
-      clearGeneratedMultivendorOffers();
-    };
-  }, [isLateCheckout, selectedPackage, isOpen, isHotelPackage]);
 
   const handleLateCheckoutChange = (value: boolean) => {
     setIsLateCheckout(value);
@@ -89,7 +61,7 @@ export const BookingDrawer: React.FC<{
       placement="right"
     >
       <VStack spacing={6} align="stretch">
-        {!loading && generatedMultivendorOffers.length > 0 && (
+        {generatedMultivendorOffers.length > 0 && (
           <ActionsSection
             selectedMealPlan={selectedMealPlan}
             updateMealPlan={updateMealPlan}
@@ -103,9 +75,9 @@ export const BookingDrawer: React.FC<{
         <RoomTypesList
           selectedMealPlan={selectedMealPlan}
           generatedMultivendorOffers={generatedMultivendorOffers}
-          loading={loading}
           updateSelectedRoomPackage={hanldePackageSelect}
           closeBookingDrawer={closeBookingDrawer}
+          loading={loading}
         />
       </VStack>
     </SideDrawer>

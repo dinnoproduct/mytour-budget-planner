@@ -15,7 +15,7 @@ export const Header: React.FC<{
       <Box>
         <HStack>
           <Avatar name={offer.agency?.name} size="sm" />
-          <Text fontSize="sm" color="gray.900">
+          <Text fontSize="sm" color="gray.900" whiteSpace="nowrap">
             {offer.agency?.name || "Unknown Agency"}
           </Text>
         </HStack>
@@ -25,7 +25,7 @@ export const Header: React.FC<{
 
       {freeCancellationDate && (
         <HStack spacing={1} align="center">
-          <Text fontSize="xs" color="blue.500">
+          <Text fontSize="xs" color="blue.500" whiteSpace="nowrap">
             {t`bookWithoutPayment`}
           </Text>
           <Tooltip label={t`noPrepaymentText`}>

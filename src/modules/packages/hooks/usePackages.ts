@@ -27,12 +27,6 @@ const usePackages = (id?: number): IUsePackages => {
     }
   }, [packageD?.id])
 
-  // useEffect(() => {
-  //   if (id) {
-  //     setPackageDetails(packages.find((item) => item[PackagesFields.offerId] === id) ?? ({} as IPackage));
-  //   }
-  // }, [id, packages]);
-
   return {
     packages,
     packageDetails: packageD as any,

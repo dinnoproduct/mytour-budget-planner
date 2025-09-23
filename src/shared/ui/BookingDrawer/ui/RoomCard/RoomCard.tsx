@@ -43,12 +43,12 @@ export const RoomCard: React.FC<RoomCardProps> = ({
         <>
           <FlightInfoSection
             airCompanyName={
-              selectedPackage?.destinationFlight?.airCompany?.name || ""
+              offer?.departureFlight?.airCompany?.name || ""
             }
             departureDate={
-              selectedPackage?.destinationFlight?.departureDate || ""
+              offer?.departureFlight?.departureDate || ""
             }
-            returnDate={selectedPackage?.returnFlight?.departureDate || ""}
+            returnDate={offer?.returnFlight?.departureDate || ""}
           />
           {freeCancellationDate && (
             <FreeCancellationInfo

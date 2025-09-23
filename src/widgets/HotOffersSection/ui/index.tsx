@@ -32,8 +32,6 @@ export const HotOffersSection = (props: BoxProps) => {
     handleSearch({
       fromDate: new Date(defaultPackage.destinationFlight.departureDate),
       toDate: new Date(defaultPackage.returnFlight.arrivalDate),
-      departureFlightId: defaultPackage.destinationFlight.id,
-      returnFlightId: defaultPackage.returnFlight.id,
       travelersData: {
         adultsCount: defaultPackage.adultTravelers,
         childrenCount: 0,

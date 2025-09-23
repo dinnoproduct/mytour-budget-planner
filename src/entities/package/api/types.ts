@@ -26,7 +26,7 @@ export type GetAvailableFlightsParams = {
 }
 
 export type GetReturnFlightsParams = {
-  flightId?: number
+  destinationId: number,
 }
 
 export type SearchPackagesParams = {

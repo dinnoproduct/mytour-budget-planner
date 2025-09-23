@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, memo } from 'react'
 import { DatePickerInputProps } from './types.ts'
 import { Input } from '@ui'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment/moment'
 
-export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInputProps) => {
+export const DatePickerInput = memo(({ fromDate, toDate, isFocused }: DatePickerInputProps) => {
 	const {t, i18n} = useTranslation()
 
 	const formatDate = (date?: Date) => {
@@ -40,6 +40,6 @@ export const DatePickerInput = ({ fromDate, toDate, isFocused }: DatePickerInput
       _focus={{bgColor: 'whiteAlpha.800 !important'}}
 		/>
 	)
-}
+})
 
 

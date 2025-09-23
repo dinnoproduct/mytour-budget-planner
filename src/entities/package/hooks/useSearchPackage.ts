@@ -1,6 +1,6 @@
 import { type UseQueryOptions } from '@tanstack/react-query'
 import { useLocation } from 'react-router-dom'
-import { type PackageEntity, useSearchPackages } from '@entities/package'
+import { type PackageEntity, useSearch } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 import { type EmptyObject } from 'react-hook-form'
 import { useEffect, useMemo, useState } from 'react'
@@ -21,9 +21,9 @@ export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
     data: packages = [],
     isLoading,
     isFetched
-  } = useSearchPackages(searchInput, {
+  } = useSearch(searchInput, {
     refetchInterval: PACKAGE_REQUEST_REFETCH_INTERVAL,
-    enabled: !!searchInput.flightId && !isDataCached,
+    enabled: !!searchInput.cities?.length && !isDataCached,
     ...options
   })
 
@@ -35,11 +35,11 @@ export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
         : []
 
       setSearchInput({
-        flightId: parseInt(searchParams.get('departureFlightId') || '0', 10),
-        returnFlightId: parseInt(searchParams.get('returnFlightId') || '0', 10),
-        city: parseInt(searchParams.get('city') || '0', 10),
+        cities: [parseInt(searchParams.get('city') || '0', 10)].filter(id => id > 0),
         adults: parseInt(searchParams.get('adultsCount') || '0', 10),
-        childs: children
+        childs: children,
+        dateFrom: searchParams.get('from'),
+        dateTo: searchParams.get('to')
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

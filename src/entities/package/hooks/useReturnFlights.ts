@@ -3,13 +3,14 @@ import { FlightEntity, GetReturnFlightsParams, packageUseCases } from '@entities
 import { FLIGHT_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
 export const useReturnFlights = (
+	input: FlightEntity,
 	params: GetReturnFlightsParams,
 	options?: Omit<UseQueryOptions<FlightEntity[]>, 'queryKey' | 'queryFn'>
 ) => {
 	return useQuery({
 		...(options || {}),
 		refetchInterval: FLIGHT_REQUEST_REFETCH_INTERVAL,
-		queryFn: () => packageUseCases.getReturnFlights(params),
+		queryFn: () => packageUseCases.getReturnFlights(input, params),
 		queryKey: ['return-flights', params],
 	})
 }

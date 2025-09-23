@@ -48,9 +48,9 @@ export class PackageService {
     })
   }
 
-  async getPackage(offerId: number): Promise<PackageEntity> {
+  async getPackage(offerId: number, travelAgency: number): Promise<PackageEntity> {
     return this.request<PackageEntity>({
-      url: `/getPackage/?id=${offerId}`
+      url: `/getPackage?id=${offerId}&travelAgancy=${travelAgency}`
     })
   }
 

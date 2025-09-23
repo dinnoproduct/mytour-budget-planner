@@ -129,11 +129,14 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
       <SimpleGrid columns={{ base: 1, md: !isHotel ? 2 : 3 }} spacing={6}>
         {!hasDates
           ? Array.from({ length: !isHotel ? 2 : 3 }).map((_, i) => (
-            <SkeletonCard key={`skeleton-${i}`} />
+            <React.Fragment key={`skeleton-${i}`}>
+              <SkeletonCard />
+            </React.Fragment>
           ))
           : cards.map((card) => (
             card.id === 2 ?
               <Box
+                key={card.id}
                 display='flex'
                 flexDirection='column'
                 borderRadius='12px'

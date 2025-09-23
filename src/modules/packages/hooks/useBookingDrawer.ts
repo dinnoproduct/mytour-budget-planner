@@ -51,14 +51,16 @@ export const useBookingDrawer = () => {
     }));
 
     if (selectedPackage) {
-      storeSelectedPackage({
+      const updatedPackage = {
         ...selectedPackage,
         offerId: offer.offerId,
         foodType: offer.foodType,
         roomType: offer.roomType,
         price: offer.price,
         priceInCurrency: offer.priceInCurrency.toString(),
-      });
+      };
+
+      storeSelectedPackage(updatedPackage);
     }
   };
 
