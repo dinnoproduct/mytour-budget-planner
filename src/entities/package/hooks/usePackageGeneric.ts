@@ -4,15 +4,18 @@ import {
   IGenerateMultivendorOffer,
 } from "@/modules/packages/data/packagesTypes";
 import { generateMultivendorOfferService } from "@/modules/packages/services/PackagesServices";
-import { isLateCheckoutAtom, selectedPackageAtom } from "@/modules/packages/store/store";
+import {
+  isLateCheckoutAtom,
+} from "@/modules/packages/store/store";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { DictionaryTypes, packageUseCases } from "../api";
 import { useDictionary } from "./useDictionary";
+import { useSelectedPackage } from "@/modules/packages/hooks";
 
-export type PackageType = 'regular' | 'hotel';
+export type PackageType = "regular" | "hotel";
 
 export interface UsePackageOptions {
   packageType?: PackageType;
@@ -20,15 +23,15 @@ export interface UsePackageOptions {
 }
 
 export const usePackageGeneric = (options: UsePackageOptions = {}) => {
-  const { packageType = 'regular', autoFetch = true } = options;
-  
+  const { packageType = "regular", autoFetch = true } = options;
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [isLateCheckout] = useRecoilState(isLateCheckoutAtom);
 
-  const [selectedPackage, setSelectedPackage] =
-    useRecoilState(selectedPackageAtom);
-  
+  const { selectedPackage, storeSelectedPackage, clearSelectedPackage } =
+    useSelectedPackage();
+
   // Parse URL parameters
   const from = searchParams.get("from");
   const to = searchParams.get("to");
@@ -64,43 +67,42 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
   const getPackageDetails = async (offerId: number, travelAgency: number) => {
     try {
       if (offerId && travelAgency) {
-        const packageData = packageType === 'hotel' 
-          ? await packageUseCases.getHotelPackage(offerId, travelAgency)
-          : await packageUseCases.getPackage(offerId, travelAgency);
-        setSelectedPackage(packageData);
+        const packageData =
+          packageType === "hotel"
+            ? await packageUseCases.getHotelPackage(offerId, travelAgency)
+            : await packageUseCases.getPackage(offerId, travelAgency);
+        storeSelectedPackage(packageData);
       } else {
-        setSelectedPackage(null);
+        clearSelectedPackage();
       }
-      setIsFetched(true);
     } catch (error) {
       console.error("Error getting package details:", error);
       setError(error as string);
-      setIsFetched(true);
     }
   };
 
   // Fetch multivendor offers
-  const fetchMultivendorOffers = (data: IGenerateMultivendorOffer) => {
+  const fetchMultivendorOffers = async (data: IGenerateMultivendorOffer) => {
     setLoading(true);
     setError(null);
 
-    generateMultivendorOfferService(data)
-      .then(({ data }) => {
-        setGeneratedMultivendorOffers(data);
-        if (!!data.length) {
-          const offer = data[0]
-          getPackageDetails(offer.offerId, offer.agency.id);
-          return;
-        }
-        setSelectedPackage(null);
-        setIsFetched(true);
-        return;
-      })
-      .catch((error) => {
-        console.error("Error generating multivendor offers:", error);
-        setError(error);
-      })
-      .finally(() => setLoading(false));
+    try {
+      const { data: offers } = await generateMultivendorOfferService(data);
+      setGeneratedMultivendorOffers(offers);
+      
+      if (!!offers.length) {
+        const offer = offers[0];
+        await getPackageDetails(offer.offerId, offer.agency.id);
+      } else {
+        clearSelectedPackage();
+      }
+    } catch (error) {
+      console.error("Error generating multivendor offers:", error);
+      setError(error instanceof Error ? error.message : "Unknown error");
+    } finally {
+      setIsFetched(true)
+      setLoading(false);
+    }
   };
 
   // Get food types dictionary
@@ -108,6 +110,11 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
   );
 
+  useEffect(() => {
+    () => {
+      clearSelectedPackage();
+    };
+  }, []);
   // Auto-fetch on mount if enabled
   useEffect(() => {
     if (!autoFetch) return;
@@ -118,8 +125,9 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
       [PackagesFields.dateTo]: to || "",
       [PackagesFields.adults]: adultsCount,
       [PackagesFields.childs]: childrenAges,
-      [PackagesFields.lateCheckout]: packageType === 'hotel' ? false : isLateCheckout,
-      [PackagesFields.bookingType]: packageType === 'hotel' ? 2 : 1,
+      [PackagesFields.lateCheckout]:
+        packageType === "hotel" ? false : isLateCheckout,
+      [PackagesFields.bookingType]: packageType === "hotel" ? 2 : 1,
     };
     fetchMultivendorOffers(data);
   }, [autoFetch, packageType, isLateCheckout]);
@@ -163,7 +171,7 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
     generatedMultivendorOffers,
     packageDetails: selectedPackage,
     mealPlans,
-    
+
     // URL parameters
     childrenAges,
     hotelId,
@@ -171,16 +179,16 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
     mealId,
     checkin,
     checkout,
-    
+
     // State
     loading,
     error,
     isFetched,
-    
+
     // Actions
     getPackageDetails,
     fetchMultivendorOffers,
-    
+
     // Configuration
     packageType,
   };

@@ -40,14 +40,6 @@ export class PackageService {
     })
   }
 
-  async searchPackages(search: SearchPackagesParams): Promise<PackageEntity[]> {
-    return this.request<PackageEntity[]>({
-      url: '/searchPackages',
-      method: 'post',
-      data: search
-    })
-  }
-
   async getPackage(offerId: number, travelAgency: number): Promise<PackageEntity> {
     return this.request<PackageEntity>({
       url: `/getPackage?id=${offerId}&travelAgancy=${travelAgency}`
