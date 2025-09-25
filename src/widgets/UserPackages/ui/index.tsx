@@ -139,7 +139,14 @@ export const UserPackages = () => {
         onClose={handleBookingFlowClose}
         packageDetails={activeRequestPackage}
         request={activeRequest}
-        defaultTravelers={activeRequest?.notes.travelers}
+        defaultTravelers={(activeRequest?.travelers ? {
+          adults: activeRequest.travelers.map(traveler => ({
+            firstName: traveler.firstName,
+            lastName: traveler.lastName,
+            dateOfBirth: traveler.dateOfBirth
+          })),
+          children: []
+        } : undefined)}
         isBooked={!isActiveRequestDraft}
       />
     </Layout>

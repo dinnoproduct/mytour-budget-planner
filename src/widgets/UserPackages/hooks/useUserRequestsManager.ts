@@ -109,7 +109,7 @@ export const useUserRequestsManager = () => {
     let notes = {}
 
     try {
-      notes = JSON.parse(request.notes)
+      notes = JSON.parse(request.notes || '{}')
     } catch (e) {
       console.error('Failed to parse request notes', e)
     }
