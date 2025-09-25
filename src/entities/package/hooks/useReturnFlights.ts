@@ -11,6 +11,6 @@ export const useReturnFlights = (
 		...(options || {}),
 		refetchInterval: FLIGHT_REQUEST_REFETCH_INTERVAL,
 		queryFn: () => packageUseCases.getReturnFlights(input, params),
-		queryKey: ['return-flights', params],
+		queryKey: ['return-flights', input, params],
 	})
 }
