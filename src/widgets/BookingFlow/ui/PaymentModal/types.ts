@@ -125,4 +125,10 @@ export type SectionListProps = {
   listItems: ListItem[]
 } & ListProps
 
-type ListItem = { key: ReactNode; value: ReactNode }
+export type ListItem = { 
+  key: ReactNode; 
+  value: ReactNode;
+  isStrikethrough?: boolean;
+  isDiscount?: boolean;
+  isHighlighted?: boolean;
+}
