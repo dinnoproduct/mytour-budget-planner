@@ -1,1 +1,1 @@
-export type LanguageName = 'arm' | 'rus' | 'eng'
+export type LanguageName = 'hy' | 'en' | 'ru'

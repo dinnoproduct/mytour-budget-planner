@@ -2,7 +2,7 @@
 export const BASE_URL = import.meta.env.VITE_API_URL_OLD
 
 export enum AppPaths {
-  packages = 'egypt',
+  packages = 'packages',
 }
 
 export enum ApiUrls {

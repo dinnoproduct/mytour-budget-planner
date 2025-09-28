@@ -5,7 +5,7 @@ import { type ReactNode, useMemo } from 'react'
 import { LANGUAGE_PREFIX } from '@shared/model'
 import { type Language } from '@widgets/Header/model'
 import { Icon, StatusOnImageBadge, Text } from '@ui'
-import { Link as ReactLink } from 'react-router-dom'
+import { LanguageLink } from '../../../components/LanguageLink/LanguageLink'
 import {
   type DictionaryTypes,
   type PackageCity,
@@ -164,8 +164,7 @@ const Layout = ({
   };
 
   return (
-    <Link
-      as={ReactLink}
+    <LanguageLink
       to={link}
       onClick={handleClick}
       _hover={{ textTransform: 'none' }}
@@ -183,6 +182,6 @@ const Layout = ({
       >
         {children}
       </Box>
-    </Link>
+    </LanguageLink>
   )
 }

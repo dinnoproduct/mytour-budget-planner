@@ -1,7 +1,8 @@
 import usePackages from '../hooks/usePackages.ts'
 import { useEffect, useState } from 'react'
 import { useRecoilState, useResetRecoilState } from 'recoil'
-import { Link as ReactLink, useNavigate, useParams } from 'react-router-dom'
+import { Link as ReactLink, useParams } from 'react-router-dom'
+import { useLanguageNavigate } from '../../../hooks/useLanguageNavigate'
 import { useTranslation } from 'react-i18next'
 import ImageSlider from '../../../components/ImageSlider/ImageSlider.tsx'
 import { PackagesFields, PackagesNestedFields } from '../data/packagesEnums.ts'
@@ -35,7 +36,7 @@ import { usePackagesSearchContext } from '@entities/package'
 const PackageDetails = () => {
 	const { t, i18n } = useTranslation()
 	const { id } = useParams()
-	const navigate = useNavigate()
+	const { navigateBack, navigateToHome } = useLanguageNavigate()
 	const { packageDetails, loading } = usePackages(+id!)
 	const { filteredPackages } = usePackagesSearchContext()
 
@@ -69,9 +70,9 @@ const PackageDetails = () => {
 
 	const handleBackClick = () => {
 		if (filteredPackages?.length) {
-			navigate(-1)
+			navigateBack()
 		} else {
-			navigate('/', { replace: true })
+			navigateToHome({ replace: true })
 		}
 	}
 

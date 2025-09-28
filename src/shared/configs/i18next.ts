@@ -7,13 +7,13 @@ import translationEN from '../locales/en.json';
 import translationRU from '../locales/ru.json';
 
 const resources = {
-  arm: {
+  hy: {
     translation: translationHY,
   },
-  eng: {
+  en: {
     translation: translationEN,
   },
-  rus: {
+  ru: {
     translation: translationRU,
   },
 };

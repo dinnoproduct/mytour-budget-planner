@@ -2,17 +2,17 @@ import { Language } from './types'
 
 export const LANGUAGES: Language[] = [
 	{
-		name: 'arm',
+		name: 'hy',
 		label: 'Հայերեն',
 		icon: 'flag-arm'
 	},
 	{
-		name: 'rus',
+		name: 'ru',
 		label: 'Русский',
 		icon: 'flag-rus'
 	},
 	{
-		name: 'eng',
+		name: 'en',
 		label: 'English',
 		icon: 'flag-eng'
 	},

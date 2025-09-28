@@ -5,7 +5,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { useLanguageNavigate } from "../../../../hooks/useLanguageNavigate";
+import { getPathWithoutLanguage } from "../../../../utils/languageRoutes";
 import moment from "moment";
 import { type SearchContextType, type SearchData } from "./types";
 import {
@@ -46,7 +48,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 export const PackagesSearchProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const navigate = useNavigate();
+  const { navigateToPackages } = useLanguageNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const [isCityChanged, setIsCityChanged] = useState(false);
@@ -54,8 +56,9 @@ export const PackagesSearchProvider: React.FC<{
   useState(false);
 
   const isAllowedSearchRoute = useMemo(() => {
+    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
     const isAllowed = ALLOWED_SEARCH_ROUTES.some((route) => {
-      if (route.path === location.pathname) {
+      if (route.path === pathWithoutLanguage) {
         if (route.query.length === 0) {
           return true;
         }
@@ -74,8 +77,9 @@ export const PackagesSearchProvider: React.FC<{
   }, [location.pathname, searchParams]);
 
   const isAllowedPackageRoute = useMemo(() => {
+    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
     const isAllowed = ALLOWED_PACKAGE_ROUTES.some((route) => {
-      if (route.path === location.pathname) {
+      if (route.path === pathWithoutLanguage) {
         if (!route.query || route.query.length === 0) {
           return true;
         }
@@ -290,7 +294,7 @@ export const PackagesSearchProvider: React.FC<{
         travelersData,
       } = searchData;
       const queryParams = generateSearchQueryParams(searchData);
-      navigate(`/packages?${queryParams.toString()}`);
+      navigateToPackages(queryParams.toString());
 
       setIsLoadingFilteredPackages(true);
       saveSearchDataToLocalStorage(searchData);
@@ -327,7 +331,7 @@ export const PackagesSearchProvider: React.FC<{
 
   const navigateToDefaultSearch = () => {
     const queryParams = generateSearchQueryParams(searchData);
-    navigate(`/packages?${queryParams.toString()}`);
+    navigateToPackages(queryParams.toString());
   };
 
   useEffect(() => {
