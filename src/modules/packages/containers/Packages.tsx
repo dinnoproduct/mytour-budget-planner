@@ -9,10 +9,10 @@ import Loader from '../../../components/Loader/Loader.tsx'
 import { useQueryParams } from '../../../hooks/useQueryParams.ts'
 import BookAfterPaymentModal from '../components/BookAfterPaymentModal/BookAfterPaymentModal.tsx'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLanguageNavigate } from '../../../hooks/useLanguageNavigate'
 
 const Packages = () => {
-	const navigate = useNavigate()
+	const { navigateToHome } = useLanguageNavigate()
 	const { filteredPackages, loading } = usePackages()
 
 	const { searchParams } = useQueryParams()
@@ -24,8 +24,8 @@ const Packages = () => {
 	)
 
 	useEffect(() => {
-		navigate('/')
-	}, [])
+		navigateToHome()
+	}, [navigateToHome])
 
 	return (
 		<div>

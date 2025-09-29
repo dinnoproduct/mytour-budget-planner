@@ -7,9 +7,9 @@ export const CURRENT_HOTEL_PACKAGE_CITIES = [16, 18]
 export const PACKAGE_LANGUAGE_MAP: {
   [key in LanguageName]: number
 } = {
-  arm: 1,
-  eng: 2,
-  rus: 3
+  hy: 1,
+  en: 2,
+  ru: 3
 }
 
 //

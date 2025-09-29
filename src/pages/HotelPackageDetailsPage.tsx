@@ -11,7 +11,7 @@ import {
 } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
 import { BookingFlow } from "@widgets/BookingFlow";
 import {
@@ -33,7 +33,7 @@ import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 
 export const HotelPackageDetailsPage = () => {
-  const navigate = useNavigate();
+  const { navigateBack, navigateToHome } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
@@ -90,9 +90,9 @@ export const HotelPackageDetailsPage = () => {
 
   const handleBackClick = () => {
     if (filteredHotelPackages?.length) {
-      navigate(-1);
+      navigateBack();
     } else {
-      navigate("/", { replace: true });
+      navigateToHome({ replace: true });
     }
   };
 

@@ -5,7 +5,7 @@ import { langKeyAdapter, numberWithCommaNormalizer } from '../../../../utils/nor
 import { PackagesFields, PackagesNestedFields } from '../../data/packagesEnums.ts';
 import ImageSlider from '../../../../components/ImageSlider/ImageSlider.tsx';
 import { type IPackage } from '../../data/packagesTypes.ts';
-import { Link } from 'react-router-dom';
+import { LanguageLink } from '../../../../components/LanguageLink/LanguageLink';
 import useDictionaryByKey from '../../hooks/useDictionaryByKey.ts';
 import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
 
@@ -82,9 +82,9 @@ const Offer: FC<OfferProps> = ({ isBest, tourPackage, handleCardClick }) => {
                 {/*<div className="price-old font-bold">1,280,000֏</div>*/}
               </div>
             </div>
-            <Link to={`${tourPackage[PackagesFields.offerId]}`} className="see-more">
+            <LanguageLink to={`${tourPackage[PackagesFields.offerId]}`} className="see-more">
               <button>{t('viewMore')}</button>
-            </Link>
+            </LanguageLink>
           </div>
         </div>
       </div>

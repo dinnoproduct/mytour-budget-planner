@@ -16,7 +16,7 @@ const FilterInput: FC<IFilterInput> = ({ value, onChange, onSearch }) => {
 
   return (
     <div className="search-inp position-relative">
-      <input value={value} onChange={handleChange} placeholder="Փնտրել փաթեթն ըստ հյուրանոցի" />
+      <input value={value} onChange={handleChange} placeholder={t('searchPackagesByHotel')} />
       <button onClick={onSearch} className="position-absolute primary-button search_home">
         {t('search')}
       </button>

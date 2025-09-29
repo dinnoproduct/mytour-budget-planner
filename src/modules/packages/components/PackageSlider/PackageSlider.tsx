@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil';
 import { packagesAtom, preventParentSlideAtom, screenBreakpointAtom } from '../../store/store.ts';
 import { useTranslation } from 'react-i18next';
 import { PackagesFields } from '../../data/packagesEnums.ts';
-import { useNavigate } from 'react-router-dom';
+import { useLanguageNavigate } from '../../../../hooks/useLanguageNavigate';
 import { type IPackage } from '../../data/packagesTypes.ts';
 import useDragDetection from '../../../../hooks/useDragDetection.ts';
 
@@ -71,7 +71,7 @@ const PackageSlider = () => {
 
   const isDisabled = slideIndex === targetIndex;
 
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigate();
 
   const { handleMouseDown, dragging } = useDragDetection();
 
@@ -80,7 +80,7 @@ const PackageSlider = () => {
     if (dragging) {
       e.preventDefault();
     } else {
-      navigate(`${tourPackage[PackagesFields.offerId]}`);
+      navigateTo(`${tourPackage[PackagesFields.offerId]}`);
     }
   };
 

@@ -4,17 +4,17 @@ import { type Language } from '../../widgets/Header/model'
 export const LANGUAGE_PREFIX: {
   [key in Language['name']]: string
 } = {
-  arm: 'Arm',
-  rus: 'Rus',
-  eng: 'Eng'
+  hy: 'Arm',
+  ru: 'Rus',
+  en: 'Eng'
 }
 
 export const LANGUAGE_NAME_MAP: {
   [key in Language['name']]: string
 } = {
-  arm: 'am',
-  rus: 'ru',
-  eng: 'en'
+  hy: 'am',
+  ru: 'ru',
+  en: 'en'
 }
 
 export const CURRENCY_MAP: {

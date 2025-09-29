@@ -8,7 +8,7 @@ import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
 import useDictionary from '../../hooks/useDictionary.ts';
 import { useQueryParams } from '../../../../hooks/useQueryParams.ts';
 import { PackagesFields } from '../../data/packagesEnums.ts';
-import { useNavigate } from 'react-router-dom';
+import { useLanguageNavigate } from '../../../../hooks/useLanguageNavigate';
 import { type IPackage } from '../../data/packagesTypes.ts';
 
 const PackageList = () => {
@@ -16,7 +16,7 @@ const PackageList = () => {
   const filteredPackages = useRecoilValue(filteredPackagesAtom);
   const screenBreakpoint = useRecoilValue(screenBreakpointAtom);
 
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigate();
 
   useDictionary(DictionaryTypes.FoodTypeDictionary);
 
@@ -34,7 +34,7 @@ const PackageList = () => {
   );
 
   const onOfferClick = (tourPackage: IPackage) => {
-    navigate(`${tourPackage[PackagesFields.offerId]}`);
+    navigateTo(`${tourPackage[PackagesFields.offerId]}`);
   };
 
   return (

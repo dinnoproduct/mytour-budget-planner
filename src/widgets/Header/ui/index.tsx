@@ -5,24 +5,26 @@ import { LanguageMenu } from './LanguageMenu.tsx'
 import { useTranslation } from 'react-i18next'
 import { type LanguageName } from 'shared/model'
 import { AccountMenu } from './AccountMenu.tsx'
-import { Link } from 'react-router-dom'
+import { LanguageLink } from '../../../components/LanguageLink/LanguageLink'
+import { useLanguageRouting } from '../../../hooks/useLanguageRouting'
 
 export const Header = () => {
   const { i18n, t } = useTranslation()
+  const { changeLanguage, currentLanguage } = useLanguageRouting()
 
   const handleChangeLanguage = async (lang: LanguageName) => {
-    await i18n.changeLanguage(lang)
+    await changeLanguage(lang)
   }
 
   return (
     <Layout>
-      <Link to="/">
+      <LanguageLink to="/">
         <Logo width={{ base: '120px', md: '150px' }} />
-      </Link>
+      </LanguageLink>
 
       <HStack spacing="2">
         <LanguageMenu
-          activeLanguage={i18n.language as LanguageName}
+          activeLanguage={currentLanguage as LanguageName}
           onChange={handleChangeLanguage}
         />
 

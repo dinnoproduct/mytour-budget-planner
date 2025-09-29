@@ -301,7 +301,7 @@ export const SearchTravelers = ({
                 ))}
               </VStack>
 
-              <AlertMessage show={isMaxTravelersReached}/>
+              <AlertMessage show={isMaxTravelersReached} message={t('roomTravelersLimitExceeded', { maxTravelers: MAX_TRAVELERS })}/>
             </Box>
 
             <Box
@@ -446,13 +446,13 @@ const ChildrenAgeSelect = ({value, onChange, childrenIndex, isRequiredError}: {
   )
 }
 
-const AlertMessage = ({show = false}: { show?: boolean }) => {
+const AlertMessage = ({show = false, message}: { show?: boolean; message: string }) => {
   return (
     <AlertCardMessage
       show={show}
       mt="4"
       status="warning"
-      message="Սենյակում ճանապարհորդողների թիվը չի կարող գերազանցել {MAX_TRAVELERS}-ը"
+      message={message}
     />
   )
 }

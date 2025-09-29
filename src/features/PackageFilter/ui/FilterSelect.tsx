@@ -57,7 +57,7 @@ export const FilterSelect = ({
           isReadOnly
           value={
             selectedValues.length !== 0
-              ? `${selectedValues.length} ընտրված է`
+              ? `${selectedValues.length} ${t('isSelected')}`
               : ''
           }
           placeholder={t`selectHotel`}

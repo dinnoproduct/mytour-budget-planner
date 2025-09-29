@@ -6,7 +6,9 @@ import React, {
   useRef,
   useState
 } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLanguageNavigate } from '../../../../hooks/useLanguageNavigate'
+import { getPathWithoutLanguage } from '../../../../utils/languageRoutes'
 import moment from 'moment'
 import {
   type DateModeType,
@@ -40,7 +42,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined)
 export const HotelPackagesSearchProvider: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  const navigate = useNavigate()
+  const { navigateToPackages } = useLanguageNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const [isLoadingFilteredHotelPackages, setIsLoadingFilteredHotelPackages] =
@@ -62,8 +64,9 @@ export const HotelPackagesSearchProvider: React.FC<{
   }
 
   const isAllowedSearchRoute = useMemo(() => {
+    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname)
     const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
-      if (route.path === location.pathname) {
+      if (route.path === pathWithoutLanguage) {
         if (route.query.length === 0) return true
 
         return route.query.every(query => {
@@ -148,7 +151,7 @@ export const HotelPackagesSearchProvider: React.FC<{
       setIsSearchError(false)
       const { fromDate, toDate, selectedCity, travelersData, days } = searchData
       const queryParams = generateSearchQueryParams(searchData)
-      navigate(`/packages?${queryParams.toString()}`)
+      navigateToPackages(queryParams.toString())
 
       setIsLoadingFilteredHotelPackages(true)
 
@@ -209,7 +212,7 @@ export const HotelPackagesSearchProvider: React.FC<{
 
   const navigateToDefaultSearch = () => {
     const queryParams = generateSearchQueryParams(searchData)
-    navigate(`/packages?${queryParams.toString()}`)
+    navigateToPackages(queryParams.toString())
   }
 
   useEffect(() => {
