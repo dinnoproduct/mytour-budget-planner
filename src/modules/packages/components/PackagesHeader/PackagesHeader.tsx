@@ -1,16 +1,21 @@
 import './index.scss'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
-const PackagesHeader = () => (
-	<div className="header text-center font-bold background">
-		<div className="container">
-			<img className="packages-logo" src="/images/logo.svg" alt=""/>
-			<div className="top-title">Սկսիր պլանավորել հանգիստդ հիմա</div>
-			<div className="sub-title inline-block">
-				Ավիատոմսից մինչև հյուրանոց բոլոր ամրագրումներն ու վճարումները մի տեղում
+const PackagesHeader = () => {
+	const { t } = useTranslation()
+	
+	return (
+		<div className="header text-center font-bold background">
+			<div className="container">
+				<img className="packages-logo" src="/images/logo.svg" alt=""/>
+				<div className="top-title">{t('packagesHeader.title')}</div>
+				<div className="sub-title inline-block">
+					{t('packagesHeader.subtitle')}
+				</div>
 			</div>
 		</div>
-	</div>
-)
+	)
+}
 
 export default PackagesHeader
