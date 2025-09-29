@@ -13,6 +13,7 @@ import {
   type PreviewDetailsViewProps,
   type SectionLayoutProps,
   type SectionListProps,
+  type ListItem as ListItemType,
 } from "../types.ts";
 import { useRecoilValue } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
@@ -52,7 +53,19 @@ export const PreviewDetailsView = ({
   const { t, i18n } = useTranslation();
   const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false);
   const [promoCodeValue, setPromoCodeValue] = useState("");
+  const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
+  const [promoCodeStatus, setPromoCodeStatus] = useState<{
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }>({
+    isApplied: false,
+    code: "",
+    discount: 0,
+    finalAmount: packageDetails.price,
+  });
   const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
 
   const handleUsePromocode = () => {
@@ -63,6 +76,15 @@ export const PreviewDetailsView = ({
   const handleClosePromoCodeModal = () => {
     setIsPromoCodeModalOpen(false);
     setPromoCodeValue(""); // Reset promo code when closing modal
+    setPromoCodeError(null); // Clear error when closing modal
+  };
+
+  const handlePromoCodeInputChange = (value: string) => {
+    setPromoCodeValue(value);
+    // Clear error when user starts typing
+    if (promoCodeError) {
+      setPromoCodeError(null);
+    }
   };
 
   const handleApplyPromoCode = () => {
@@ -82,16 +104,28 @@ export const PreviewDetailsView = ({
             console.log(
               `Promo code applied! Discount: ${data.discount}, Final Amount: ${data.finalAmount}`,
             );
-            // You can add logic here to update the payment amount or show success message
+
+            // Update promo code status
+            setPromoCodeStatus({
+              isApplied: true,
+              code: promoCodeValue.trim(),
+              discount: data.discount,
+              finalAmount: data.finalAmount,
+            });
             handleClosePromoCodeModal();
           } else {
             console.log(`Promo code error: ${data.message}`);
-            // You can add logic here to show error message
+
+            // Set inline error message based on error code
+            const errorMessage = getPromoCodeErrorMessage(
+              data.errorCode || "INVALID_CODE",
+            );
+            setPromoCodeError(errorMessage);
           }
         },
         onError: (error: any) => {
           console.error("Failed to validate promo code:", error);
-          // You can add logic here to show error message
+          setPromoCodeError(t`promoCodeValidationFailed`);
         },
       },
     );
@@ -99,28 +133,79 @@ export const PreviewDetailsView = ({
 
   const isApplyButtonDisabled = promoCodeValue.trim().length < 3;
 
-  const paymentDetailsItems = useMemo(() => {
-    const items = [
-      { key: t`price`, value: formatNumber(packageDetails.price) + "֏" },
+  const getPromoCodeErrorMessage = (errorCode: string): string => {
+    const errorMessages: Record<string, string> = {
+      "Invalid-Expired-Code": t`promoCodeInvalid`,
+      "Usage-Limit-Reached": t`promoCodeExpired`,
+      "Minimum-Value-Not-Met": t`promoCodeMinimumValue`,
+      "Scope-Mismatch": t`promoCodeScopeMismatch`,
+      "New-User-Code-by-Existing-User": t`promoCodeNewUserOnly`,
+      INVALID_CODE: t`promoCodeInvalid`,
+    };
+
+    return errorMessages[errorCode] || t`promoCodeInvalid`;
+  };
+
+  const paymentDetailsItems = useMemo((): ListItemType[] => {
+    const currentPaymentAmount = promoCodeStatus.isApplied
+      ? promoCodeStatus.finalAmount -
+        (packageDetails.price - (paymentAmount || 0))
+      : paymentAmount || 0;
+
+    const items: ListItemType[] = [
       {
-        key: t`amountToBePaid`,
-        value: formatNumber(paymentAmount || 0) + "֏",
+        key: t`price`,
+        value: formatNumber(packageDetails.price) + "֏",
+        isStrikethrough: promoCodeStatus.isApplied,
       },
     ];
 
+    if (promoCodeStatus.isApplied) {
+      items.push({
+        key: t`discount`,
+        value: `-${formatNumber(promoCodeStatus.discount)}֏`,
+        isStrikethrough: false,
+        isDiscount: true,
+      });
+      items.push({
+        key: t`finalPrice`,
+        value: formatNumber(promoCodeStatus.finalAmount) + "֏",
+        isStrikethrough: false,
+        isHighlighted: true,
+      });
+    }
+
+    items.push({
+      key: t`amountToBePaid`,
+      value: formatNumber(currentPaymentAmount) + "֏",
+      isStrikethrough: false,
+    });
+
     if (!isFullPricePayment) {
+      const remainingAmount = promoCodeStatus.isApplied
+        ? promoCodeStatus.finalAmount - currentPaymentAmount
+        : packageDetails.price - currentPaymentAmount;
+
       items.push({
         key: t`balance`,
-        value: formatNumber(packageDetails.price - (paymentAmount || 0)) + "֏",
+        value: formatNumber(remainingAmount) + "֏",
+        isStrikethrough: false,
       });
       items.push({
         key: t`nextPaymentDate`,
         value: formatDate(prepaymentInfo?.firstPaymentDate || ""),
+        isStrikethrough: false,
       });
     }
 
     return items;
-  }, [isFullPricePayment, packageDetails.price, paymentAmount, t]);
+  }, [
+    isFullPricePayment,
+    packageDetails.price,
+    paymentAmount,
+    promoCodeStatus,
+    t,
+  ]);
 
   const countryName = useMemo(() => {
     const key =
@@ -337,10 +422,23 @@ export const PreviewDetailsView = ({
             <Text size="md" fontWeight="medium" color="gray.600">
               {t("total")}
             </Text>
-
-            <Text size="md" fontWeight="bold" color="black">
-              {formatNumber(paymentAmount || 0)}֏
-            </Text>
+            <Flex align="center" gap="2">
+              {promoCodeStatus.isApplied && (
+                <Text
+                  size="xs"
+                  fontWeight="medium"
+                  textDecoration="line-through"
+                  color="red.400"
+                >
+                  {formatNumber(packageDetails.price)}֏
+                </Text>
+              )}
+              <Text size="md" fontWeight="bold" color="black">
+                {promoCodeStatus.isApplied
+                  ? formatNumber(promoCodeStatus.finalAmount) + "֏"
+                  : formatNumber(paymentAmount || 0) + "֏"}
+              </Text>
+            </Flex>
           </Flex>
 
           <Button
@@ -354,17 +452,18 @@ export const PreviewDetailsView = ({
             {t("pay")}
           </Button>
 
-          {prepaymentInfo?.paymentType !== "NoDownPayment" && (
-            <Button
-              variant="solid-gray"
-              width="full"
-              mt="2"
-              onClick={handleUsePromocode}
-              size="lg"
-            >
-              {t("usePromoCode")}
-            </Button>
-          )}
+          {prepaymentInfo?.paymentType !== "NoDownPayment" &&
+            !promoCodeStatus.isApplied && (
+              <Button
+                variant="solid-gray"
+                width="full"
+                mt="2"
+                onClick={handleUsePromocode}
+                size="lg"
+              >
+                {t("usePromoCode")}
+              </Button>
+            )}
         </Box>
       </Flex>
 
@@ -382,11 +481,20 @@ export const PreviewDetailsView = ({
             height={{ base: "calc(100dvh - 164px)", md: "auto" }}
             minH="136px"
           >
-            <Input
-              width="full"
-              value={promoCodeValue}
-              onChange={(e) => setPromoCodeValue(e.target.value)}
-            />
+            <VStack spacing={2} align="stretch">
+              <Input
+                width="full"
+                value={promoCodeValue}
+                onChange={(e) => handlePromoCodeInputChange(e.target.value)}
+                state={promoCodeError ? "invalid" : "default"}
+                placeholder={t`promoCodePlaceholder`}
+              />
+              {promoCodeError && (
+                <Text color="red.500" fontSize="sm">
+                  {promoCodeError}
+                </Text>
+              )}
+            </VStack>
           </Box>
 
           <Box p="4" borderTop="1px solid" borderColor="gray.100" width="full">
@@ -450,30 +558,49 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
     spacing="4"
     mt="0"
   >
-    {listItems.map(({ key, value }: any) => (
-      <ListItem key={key} as={HStack} spacing="2" width="full">
-        <Text fontWeight="normal" size="sm" flexShrink={0}>
-          {key}
-        </Text>
+    {listItems.map(
+      (
+        { key, value, isStrikethrough, isDiscount, isHighlighted }: any,
+        index: number,
+      ) => (
+        <ListItem key={index} as={HStack} spacing="2" width="full">
+          <Text fontWeight="normal" size="sm" flexShrink={0}>
+            {key}
+          </Text>
 
-        {value && (
-          <>
-            <Box
-              backgroundImage="/assets/images/border.svg"
-              height="2px"
-              flexGrow={1}
-              backgroundRepeat="repeat-x"
-              borderRadius="full"
-              mt="0.5"
-              minW="100px"
-            />
-            <Text textAlign="right" fontWeight="semibold" size="sm">
-              {value}
-            </Text>
-          </>
-        )}
-      </ListItem>
-    ))}
+          {value && (
+            <>
+              <Box
+                backgroundImage="/assets/images/border.svg"
+                height="2px"
+                flexGrow={1}
+                backgroundRepeat="repeat-x"
+                borderRadius="full"
+                mt="0.5"
+                minW="100px"
+              />
+              <Text
+                textAlign="right"
+                fontWeight="semibold"
+                size="sm"
+                textDecoration={isStrikethrough ? "line-through" : "none"}
+                color={
+                  isDiscount
+                    ? "red.500"
+                    : isHighlighted
+                      ? "green.600"
+                      : isStrikethrough
+                        ? "gray.500"
+                        : "inherit"
+                }
+              >
+                {value}
+              </Text>
+            </>
+          )}
+        </ListItem>
+      ),
+    )}
   </UnorderedList>
 );
 

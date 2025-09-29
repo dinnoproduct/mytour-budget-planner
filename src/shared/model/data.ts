@@ -40,9 +40,3 @@ export const MONTHS = [
   'november',
   'december'
 ] as const
-
-export const MOMENT_LOCALE_MAP: Record<Language['name'], string> = {
-  arm: 'hy-am', // Armenian locale
-  eng: 'en', // English locale
-  rus: 'ru' // Russian locale
-}
