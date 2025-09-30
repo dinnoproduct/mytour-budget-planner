@@ -53,7 +53,6 @@ export const PackagesSearchProvider: React.FC<{
   const [searchParams] = useSearchParams();
   const [isCityChanged, setIsCityChanged] = useState(false);
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false);
-  useState(false);
 
   const isAllowedSearchRoute = useMemo(() => {
     const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
@@ -170,11 +169,7 @@ export const PackagesSearchProvider: React.FC<{
     else {
       const packageItem = packageList?.[0];
 
-      if (
-        packageItem?.offerId &&
-        !searchData.fromDate &&
-        !searchData.toDate
-      ) {
+      if (packageItem?.offerId && !searchData.fromDate && !searchData.toDate) {
         updatedSearchData = {
           ...updatedSearchData,
           fromDate: new Date(packageItem.destinationFlight.departureDate),
@@ -203,9 +198,7 @@ export const PackagesSearchProvider: React.FC<{
         destinationId: searchData.selectedCity as number,
       },
       {
-        enabled:
-          !!selectedDepartureFlight?.id &&
-          isAllowedPackageRoute,
+        enabled: !!selectedDepartureFlight?.id && isAllowedPackageRoute,
       },
     );
 
@@ -252,7 +245,7 @@ export const PackagesSearchProvider: React.FC<{
       moment(flight.arrivalDate).isSame(searchData.toDate, "day"),
     );
 
-    if(selectedFlight) {
+    if (selectedFlight) {
       setSelectedReturnFlight(selectedFlight);
     }
   }, [searchData.toDate]);
@@ -287,12 +280,7 @@ export const PackagesSearchProvider: React.FC<{
   const handleSearch = async (searchData: SearchData) => {
     try {
       setIsSearchError(false);
-      const {
-        fromDate,
-        toDate,
-        selectedCity,
-        travelersData,
-      } = searchData;
+      const { fromDate, toDate, selectedCity, travelersData } = searchData;
       const queryParams = generateSearchQueryParams(searchData);
       navigateToPackages(queryParams.toString());
 
@@ -337,6 +325,8 @@ export const PackagesSearchProvider: React.FC<{
   useEffect(() => {
     if (
       isAllowedSearchRoute &&
+      searchData.fromDate &&
+      searchData.toDate &&
       filteredPackages.length === 0 &&
       !isDefaultSearchDone
     ) {
@@ -344,8 +334,10 @@ export const PackagesSearchProvider: React.FC<{
       setIsDefaultSearchDone(true);
     }
   }, [
-    filteredPackages.length,
     isAllowedSearchRoute,
+    searchData.fromDate,
+    searchData.toDate,
+    filteredPackages.length,
   ]);
 
   useEffect(() => {
