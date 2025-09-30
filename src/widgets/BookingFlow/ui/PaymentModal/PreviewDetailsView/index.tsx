@@ -49,23 +49,14 @@ export const PreviewDetailsView = ({
   isFullPricePayment,
   prepaymentInfo,
   validatePromoCode,
+  promoCodeStatus,
+  setPromoCodeStatus,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false);
   const [promoCodeValue, setPromoCodeValue] = useState("");
   const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
-  const [promoCodeStatus, setPromoCodeStatus] = useState<{
-    isApplied: boolean;
-    code: string;
-    discount: number;
-    finalAmount: number;
-  }>({
-    isApplied: false,
-    code: "",
-    discount: 0,
-    finalAmount: packageDetails.price,
-  });
   const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
 
   const handleUsePromocode = () => {
