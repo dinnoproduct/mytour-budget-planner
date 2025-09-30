@@ -153,7 +153,7 @@ export const PackageList = () => {
             filteredActivePackages?.map(packageEntity => (
               <PackageCardHorizontal
                 tourPackage={packageEntity}
-                key={packageEntity.offerId}
+                key={packageEntity.offerId + "---" + packageEntity.hotel.id}
                 link={generateLink(packageEntity)}
                 nights={getNights()} // todo: check nights
               />
