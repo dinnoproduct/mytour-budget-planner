@@ -66,6 +66,7 @@ export const generateOfferService = (data: IGenerateOffer): Promise<{ data: IGen
   });
 
 export const generateMultivendorOfferService = (data: IGenerateMultivendorOffer): Promise<{ data: IGeneratedMultivendorOffer[] }> => {
+  // todo: remove this
   const baseUrl = import.meta.env.VITE_API_URL;
   return request(Methods.POST, `${baseUrl}/${ApiUrls.V2}/${ApiUrls.package}/${ApiUrls.generateMultivendorOffers}`, {
     headers: { 'Content-Type': 'application/json-patch+json' },
