@@ -4,7 +4,7 @@ import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesType
 import { RoomTypeSection } from "./RoomTypeSection";
 
 export interface RoomSelectionProps {
-  filteredOffers: Record<number, IGeneratedMultivendorOffer[]>;
+  filteredOffers: Map<number, IGeneratedMultivendorOffer[]>;
   closeBookingDrawer: () => void;
   updateSelectedRoomPackage: (offer: IGeneratedMultivendorOffer) => void;
 }
@@ -16,11 +16,11 @@ export const RoomSelection: React.FC<RoomSelectionProps> = ({
 }) => {
   return (
     <VStack spacing={6} align="stretch" width="full">
-      {Object.keys(filteredOffers).map((roomTypeKey) => (
+      {Array.from(filteredOffers).map(([key, value]) => (
         <RoomTypeSection
-          key={roomTypeKey}
-          roomTypeKey={roomTypeKey}
-          roomTypeOffers={filteredOffers[Number(roomTypeKey)]}
+          key={key}
+          roomTypeKey={key}
+          roomTypeOffers={value}
           closeBookingDrawer={closeBookingDrawer}
           updateSelectedRoomPackage={updateSelectedRoomPackage}
         />

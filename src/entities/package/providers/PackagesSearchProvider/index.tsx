@@ -353,7 +353,7 @@ export const PackagesSearchProvider: React.FC<{
       return;
     }
 
-    const getDateFromParam = (param: string | null) =>
+    const getDateParam = (param: string | null) =>
       param ? new Date(param) : null;
 
     const currentData = {} as SearchData;
@@ -366,11 +366,11 @@ export const PackagesSearchProvider: React.FC<{
     const childrenAgesParam = searchParams.get("childrenAges");
 
     if (fromParam) {
-      currentData.fromDate = getDateFromParam(fromParam);
+      currentData.fromDate = getDateParam(fromParam);
     }
 
     if (toParam) {
-      currentData.toDate = getDateFromParam(toParam);
+      currentData.toDate = getDateParam(toParam);
     }
 
     if (cityParam) {

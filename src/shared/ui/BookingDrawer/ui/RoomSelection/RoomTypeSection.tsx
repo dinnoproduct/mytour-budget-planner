@@ -10,7 +10,7 @@ export const RoomTypeSection = ({
   closeBookingDrawer,
   updateSelectedRoomPackage,
 }: {
-  roomTypeKey: string;
+  roomTypeKey: number;
   roomTypeOffers: IGeneratedMultivendorOffer[];
   closeBookingDrawer: () => void;
   updateSelectedRoomPackage: (offer: IGeneratedMultivendorOffer) => void;
@@ -20,7 +20,7 @@ export const RoomTypeSection = ({
   );
 
   const roomType = useMemo<string>(
-    () => roomTypes.find(({ key }) => key === Number(roomTypeKey))?.value || "",
+    () => roomTypes.find(({ key }) => key === roomTypeKey)?.value || "",
     [JSON.stringify(roomTypes)],
   );
 

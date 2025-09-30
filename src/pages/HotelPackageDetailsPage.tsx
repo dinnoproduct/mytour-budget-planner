@@ -150,7 +150,6 @@ export const HotelPackageDetailsPage = () => {
         imageUrls={uniqueImageUrls}
         activeIndex={imageModalActiveIndex}
       />
-      {/* <BookingDrawer childrenAges={childrenAges} /> */}
 
       {isOpenBookingDrawer && (
         <BookingDrawer
