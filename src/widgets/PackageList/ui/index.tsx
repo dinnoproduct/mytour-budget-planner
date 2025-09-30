@@ -54,13 +54,16 @@ export const PackageList = () => {
       hotelId: tourPackage.hotel.id.toString(),
       roomId: tourPackage.roomType.toString(),
     };
-    queryParams.from = moment(packagesSearchData.fromDate).format("YYYY-MM-DD");
-    queryParams.to = moment(packagesSearchData.toDate).format("YYYY-MM-DD");
+
     if (isPackagesSearchView) {
+      queryParams.from = moment(packagesSearchData.fromDate).format("YYYY-MM-DD");
+      queryParams.to = moment(packagesSearchData.toDate).format("YYYY-MM-DD");
       queryParams.childrenAges =
         packagesSearchData.travelersData.childrenAges.join(",");
       pagePath = "package";
     } else {
+      queryParams.from = moment(hotelSearchData.fromDate).format("YYYY-MM-DD");
+      queryParams.to = moment(hotelSearchData.toDate).format("YYYY-MM-DD");
       queryParams.childrenAges =
         hotelSearchData.travelersData.childrenAges.join(",");
     }

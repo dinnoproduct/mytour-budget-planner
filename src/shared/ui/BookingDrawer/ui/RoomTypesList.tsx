@@ -19,25 +19,27 @@ export const RoomTypesList: React.FC<IRoomTypesListProps> = ({
   updateSelectedRoomPackage,
 }) => {
   const filteredOffers = useMemo(() => {
-    const result: Record<number, IGeneratedMultivendorOffer[]> = {};
-        
+    const result: Map<number, IGeneratedMultivendorOffer[]> = new Map();
+
     generatedMultivendorOffers.forEach((offer) => {
       // If offer has no foodType property, include it in results (add by room type)
-      if (!('foodType' in offer) || offer.foodType === undefined) {
-        if (!result[offer.roomType]) {
-          result[offer.roomType] = [offer];
+      if (!("foodType" in offer) || offer.foodType === undefined) {
+        if (!result.has(offer.roomType)) {
+          result.set(offer.roomType, [offer]);
         } else {
-          result[offer.roomType].push(offer);
+          const offers = result.get(offer.roomType);
+          offers?.push(offer);
         }
         return;
       }
 
       // If offer has foodType property, only include if it matches selectedMealPlan
       if (offer.foodType === selectedMealPlan) {
-        if (!result[offer.roomType]) {
-          result[offer.roomType] = [offer];
+        if (!result.has(offer.roomType)) {
+          result.set(offer.roomType, [offer]);
         } else {
-          result[offer.roomType].push(offer);
+          const offers = result.get(offer.roomType);
+          offers?.push(offer);
         }
       }
     });
@@ -58,7 +60,7 @@ export const RoomTypesList: React.FC<IRoomTypesListProps> = ({
         )}
 
         {/* No Results */}
-        {!loading && Object.keys(filteredOffers).length === 0 && (
+        {!loading && filteredOffers.size === 0 && (
           <Box textAlign="center" py={12} bg="gray.50" borderRadius="lg">
             <Text fontSize="lg" color="gray.500" mb={4}>
               No offers generated.

@@ -4,9 +4,7 @@ import {
   IGenerateMultivendorOffer,
 } from "@/modules/packages/data/packagesTypes";
 import { generateMultivendorOfferService } from "@/modules/packages/services/PackagesServices";
-import {
-  isLateCheckoutAtom,
-} from "@/modules/packages/store/store";
+import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -89,7 +87,7 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
     try {
       const { data: offers } = await generateMultivendorOfferService(data);
       setGeneratedMultivendorOffers(offers);
-      
+
       if (!!offers.length) {
         const offer = offers[0];
         await getPackageDetails(offer.offerId, offer.agency.id);
@@ -100,7 +98,7 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
       console.error("Error generating multivendor offers:", error);
       setError(error instanceof Error ? error.message : "Unknown error");
     } finally {
-      setIsFetched(true)
+      setIsFetched(true);
       setLoading(false);
     }
   };
@@ -134,23 +132,23 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
 
   // Generate meal plans
   const mealPlans = useMemo(() => {
-    const result: Record<
-      number,
-      { key: number; label: string; labelArm: string }
-    > = {};
+    const seen = new Set<number>();
+    const result: { key: number; label: string; labelArm: string }[] = [];
+
     generatedMultivendorOffers.forEach((offer) => {
-      if (offer.foodType && !result[offer.foodType]) {
-        result[offer.foodType] = {
+      if (offer.foodType && !seen.has(offer.foodType)) {
+        seen.add(offer.foodType);
+        result.push({
           key: offer.foodType,
           label:
             foodTypes.find(({ key }) => key === offer.foodType)?.value || "",
           labelArm:
             foodTypes.find(({ key }) => key === offer.foodType)?.value || "",
-        };
+        });
       }
     });
 
-    if (Object.keys(result).length === 0) {
+    if (result.length === 0) {
       const allInclusive = foodTypes.find(
         ({ value }) =>
           value.toLocaleLowerCase() === "All Inclusive".toLocaleLowerCase(),
@@ -163,7 +161,7 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
         },
       ];
     }
-    return Object.values(result);
+    return result;
   }, [JSON.stringify(generatedMultivendorOffers), foodTypes]);
 
   return {
