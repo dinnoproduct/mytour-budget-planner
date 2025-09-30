@@ -48,6 +48,17 @@ export const PaymentModal = ({
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<PaymentMethod | null>(null);
+  const [promoCodeStatus, setPromoCodeStatus] = useState<{
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }>({
+    isApplied: false,
+    code: "",
+    discount: 0,
+    finalAmount: 0,
+  });
 
   const ViewComponent = useMemo(() => {
     const ViewComponentMap = {
@@ -85,6 +96,8 @@ export const PaymentModal = ({
           isFullPricePayment={isFullPricePayment}
           prepaymentInfo={prepaymentInfo}
           validatePromoCode={validatePromoCode}
+          promoCodeStatus={promoCodeStatus}
+          setPromoCodeStatus={setPromoCodeStatus}
         />
       ),
     };
@@ -98,6 +111,7 @@ export const PaymentModal = ({
     isBooked,
     paymentOption,
     prepaymentInfo,
+    promoCodeStatus,
   ]);
 
   useEffect(() => {
@@ -143,7 +157,9 @@ export const PaymentModal = ({
   }
 
   const handlePay = async (paymentMethod: PaymentMethod) => {
-    const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
+    // Calculate the final amount after promo code discount
+    const baseAmount = isFullPricePayment ? packageDetails.price : paymentAmount;
+    const amount = promoCodeStatus.isApplied ? promoCodeStatus.finalAmount : baseAmount;
     try {
       handleLogPurchaseEvent(amount);
       handleLogEvent({ name: BookingStep.TermsConfirmed, number: 4 });

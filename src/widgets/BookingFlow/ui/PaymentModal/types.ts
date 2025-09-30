@@ -60,6 +60,18 @@ export type PreviewDetailsViewProps = {
   isFullPricePayment: boolean
   prepaymentInfo?: PrepaymentInfo | null
   validatePromoCode: any
+  promoCodeStatus: {
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }
+  setPromoCodeStatus: (status: {
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }) => void
 }
 
 export type LayoutProps = {
