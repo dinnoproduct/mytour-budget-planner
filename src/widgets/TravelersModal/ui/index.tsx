@@ -145,14 +145,24 @@ export const TravelersModal = ({
             width="full"
             py="6"
             px="4"
-            overflowY="scroll"
+            overflowY="auto"
             maxHeight={{
               base: 'calc(100dvh - 160px)',
               md: 'calc(600px - 160px)'
             }}
             sx={{
               '&::-webkit-scrollbar': {
-                width: '0'
+                width: '4px'
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent'
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: '#E2E8F0',
+                borderRadius: '2px'
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: '#CBD5E0'
               }
             }}
           >
