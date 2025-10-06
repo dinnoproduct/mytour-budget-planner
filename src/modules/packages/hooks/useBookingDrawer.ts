@@ -56,6 +56,8 @@ export const useBookingDrawer = () => {
         roomType: offer.roomType,
         price: offer.price,
         priceInCurrency: offer.priceInCurrency.toString(),
+        rate: offer.rate,
+        travelAgency: offer.agency,
       };
 
       storeSelectedPackage(updatedPackage);
