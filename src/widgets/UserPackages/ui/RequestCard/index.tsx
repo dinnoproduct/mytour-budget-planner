@@ -131,8 +131,8 @@ export const RequestCard = ({
   const packageName = useMemo(() => request.hotel.name, [request.hotel.name])
 
   const totalTravelers = useMemo(
-    () => request.notes?.totalTravelersCount || request.travelers.length,
-    [request.notes?.totalTravelersCount, request.travelers.length]
+    () => request.travelers.length || request.notes?.totalTravelersCount,
+    [request.travelers.length, request.notes?.totalTravelersCount]
   )
 
   return (

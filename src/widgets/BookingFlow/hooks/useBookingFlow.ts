@@ -162,33 +162,7 @@ export const useBookingFlow = ({
     }
 
     if (defaultTravelers) {
-      const filledTravelers = {
-        adults: [
-          ...defaultTravelers.adults,
-          ...Array(
-            packageDetails.adultTravelers -
-              (defaultTravelers.adults.length || 0)
-          ).fill({
-            firstName: '',
-            lastName: '',
-            dateOfBirth: ''
-          })
-        ],
-        children: [
-          ...defaultTravelers.children,
-          ...Array(
-            packageDetails?.childrenTravelers +
-              packageDetails?.infantTravelers -
-              (defaultTravelers.children.length || 0)
-          ).fill({
-            firstName: '',
-            lastName: '',
-            dateOfBirth: ''
-          })
-        ]
-      }
-
-      setTravelers(filledTravelers)
+      setTravelers(defaultTravelers)
     } else if (user?.firstName) {
       setTravelers((prevState: any) => ({
         adults: [

@@ -3,6 +3,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
@@ -53,6 +54,8 @@ export const PackagesSearchProvider: React.FC<{
   const [searchParams] = useSearchParams();
   const [isCityChanged, setIsCityChanged] = useState(false);
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false);
+
+  const hasInitializedData = useRef(false);
 
   const isAllowedSearchRoute = useMemo(() => {
     const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
@@ -134,8 +137,8 @@ export const PackagesSearchProvider: React.FC<{
 
   // set default search data
   useEffect(() => {
-    // if search data is already set, do nothing
-    if (searchData.fromDate && searchData.toDate) {
+    // if search data is already set or already initialized, do nothing
+    if (hasInitializedData.current || (searchData.fromDate && searchData.toDate)) {
       return;
     }
 
@@ -180,7 +183,8 @@ export const PackagesSearchProvider: React.FC<{
     }
 
     setSearchData(updatedSearchData, true);
-  }, [JSON.stringify(packageList), cities]);
+    hasInitializedData.current = true;
+  }, [packageList, cities]);
 
   const { data: departureFlights } = useAvailableFlights(
     {
@@ -238,7 +242,7 @@ export const PackagesSearchProvider: React.FC<{
         setIsCityChanged(false);
       }
     }
-  }, [JSON.stringify(returnFlights)]);
+  }, [returnFlights, isCityChanged, departureFlights, packageList, searchData.selectedCity]);
 
   useEffect(() => {
     const selectedFlight = returnFlights?.find((flight) =>
@@ -338,6 +342,7 @@ export const PackagesSearchProvider: React.FC<{
     searchData.fromDate,
     searchData.toDate,
     filteredPackages.length,
+    isDefaultSearchDone,
   ]);
 
   useEffect(() => {
