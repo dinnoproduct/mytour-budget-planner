@@ -5,7 +5,8 @@ export const tabsComponentTheme = {
         tab: {
           fontWeight: 'medium',
           rounded: 'full',
-          color: 'white',
+          color: 'blue.500',
+          bgColor: 'blue.50',
           px: 4,
           mr: 3,
           _selected: {
