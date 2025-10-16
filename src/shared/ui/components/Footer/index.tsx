@@ -4,26 +4,32 @@ import {
   HStack,
   ListItem,
   UnorderedList,
-  Link, Image
-} from '@chakra-ui/react'
-import { type ReactNode } from 'react'
-import { SOCIALS } from './data'
-import { Text } from '@ui'
-import { useTranslation } from 'react-i18next'
+  Link,
+  Image,
+} from "@chakra-ui/react";
+import { type ReactNode } from "react";
+import { SOCIALS } from "./data";
+import { Text } from "@ui";
+import { useTranslation } from "react-i18next";
 
-export const Footer = () => (
-  <Layout >
-    <Flex direction={{ base: 'column', md: 'row' }} width='full' justify={{ lg: 'space-between' }} gap='6'>
+export const Footer = ({ mt }: { mt?: any }) => (
+  <Layout mt={mt}>
+    <Flex
+      direction={{ base: "column", md: "row" }}
+      width="full"
+      justify={{ lg: "space-between" }}
+      gap="6"
+    >
       <Contact />
       <FollowUs />
       {/*<Support />*/}
       <AppSection />
     </Flex>
   </Layout>
-)
+);
 
 const Contact = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Flex direction="column" maxWidth="400px" width="full">
@@ -53,14 +59,14 @@ const Contact = () => {
         </ListItem>
       </UnorderedList>
     </Flex>
-  )
-}
+  );
+};
 
 const FollowUs = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
-    <Flex direction="column" maxWidth="400px" width="full" >
+    <Flex direction="column" maxWidth="400px" width="full">
       <Text size="md" color="gray.700" fontWeight={700} mb={3}>
         {t`followUs`}
       </Text>
@@ -68,11 +74,7 @@ const FollowUs = () => {
         {SOCIALS.map((social) => (
           <ListItem key={social.link}>
             <Link key={social.icon} href={social.link} isExternal>
-              <Text
-                size="md"
-                color="gray.600"
-                textTransform="capitalize"
-              >
+              <Text size="md" color="gray.600" textTransform="capitalize">
                 {social.icon}
               </Text>
             </Link>
@@ -80,23 +82,20 @@ const FollowUs = () => {
         ))}
       </UnorderedList>
     </Flex>
-  )
-}
+  );
+};
 
 const Support = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
-    <Flex direction="column" maxWidth="400px" width="full" >
+    <Flex direction="column" maxWidth="400px" width="full">
       <Text size="md" color="gray.700" fontWeight={700} mb={3}>
         {t`support`}
       </Text>
       <UnorderedList listStyleType="none" spacing="2" mx="0">
         <ListItem>
-          <Text
-            size="md"
-            color="gray.600"
-          >
+          <Text size="md" color="gray.600">
             FAQ
           </Text>
         </ListItem>
@@ -112,20 +111,25 @@ const Support = () => {
         </ListItem>
       </UnorderedList>
     </Flex>
-  )
-}
+  );
+};
 const AppSection = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Flex
-      width={{ base: 'full', sm: '578px' }}
-      mt={{ base: '5', md: '0' }}
+      width={{ base: "full", sm: "578px" }}
+      mt={{ base: "5", md: "0" }}
       direction="column"
       height="full"
-      justify={{ md: 'center' }}
+      justify={{ md: "center" }}
     >
-      <Text size="md" color="gray.700" fontWeight={700} mb={3}>{t`myTourApp`}</Text>
+      <Text
+        size="md"
+        color="gray.700"
+        fontWeight={700}
+        mb={3}
+      >{t`myTourApp`}</Text>
 
       <HStack spacing="4" mt="5">
         <Link
@@ -145,18 +149,18 @@ const AppSection = () => {
 
       <CopyRight />
     </Flex>
-  )
-}
+  );
+};
 
 const CopyRight = () => (
-  <Box mt='5'>
+  <Box mt="5">
     <ItemsList items={[`© ${new Date().getFullYear()} MyTour`]} />
   </Box>
-)
+);
 
 const ItemsList = ({ items }: { items: string[] }) => (
   <UnorderedList listStyleType="none" spacing="2" mx="0">
-    {items.map(item => (
+    {items.map((item) => (
       <ListItem key={item}>
         <Text size="md" color="gray.600">
           {item}
@@ -164,17 +168,34 @@ const ItemsList = ({ items }: { items: string[] }) => (
       </ListItem>
     ))}
   </UnorderedList>
-)
+);
 
-const Layout = ({ children }: { children: ReactNode | ReactNode[] }) => (
-  <Box as="footer" bgColor="white" borderTop="1px solid" borderColor="gray.100" mt={{ base: '100px', md: '120px' }}>
-    <Flex
-      px={{ base: 4, md: 10 }}
-      py="10"
-      direction={{ base: 'column', lg: 'row' }}
-      width="full"
+const Layout = ({
+  children,
+  mt,
+}: {
+  children: ReactNode | ReactNode[];
+  mt?: any;
+}) => {
+  const defaultMt = { base: "100px", md: "120px" };
+  const finalMt = mt !== undefined ? mt : defaultMt;
+
+  return (
+    <Box
+      as="footer"
+      bgColor="white"
+      borderTop="1px solid"
+      borderColor="gray.100"
+      mt={finalMt}
     >
-      {children}
-    </Flex>
-  </Box>
-)
+      <Flex
+        px={{ base: 4, md: 10 }}
+        py="10"
+        direction={{ base: "column", lg: "row" }}
+        width="full"
+      >
+        {children}
+      </Flex>
+    </Box>
+  );
+};

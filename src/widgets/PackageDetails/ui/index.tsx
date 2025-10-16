@@ -1,48 +1,50 @@
-import { type PackageDetailsProps } from './types.ts'
-import { Flex, Grid } from '@chakra-ui/react'
-import { SectionLayout } from '@widgets/PackageDetails/ui/SectionLayout.tsx'
-import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
-import { formatDate } from '@widgets/PackageDetails/utils'
-import { useTranslation } from 'react-i18next'
-import { PackageDescription } from '@widgets/PackageDetails/ui/PackageDescription.tsx'
-import { type DictionaryTypes, useDictionary } from '@entities/package'
-import { useMemo } from 'react'
-import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
+import { type PackageDetailsProps } from "./types.ts";
+import { Flex, Grid } from "@chakra-ui/react";
+import { SectionLayout } from "@widgets/PackageDetails/ui/SectionLayout.tsx";
+import { SummaryCard } from "@widgets/PackageDetails/ui/SummaryCard.tsx";
+import { formatDate } from "@widgets/PackageDetails/utils";
+import { useTranslation } from "react-i18next";
+import { PackageDescription } from "@widgets/PackageDetails/ui/PackageDescription.tsx";
+import { type DictionaryTypes, useDictionary } from "@entities/package";
+import { useMemo } from "react";
+import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 
 export const PackageDetails = ({
   tourPackage,
-  isLateCheckout
+  isLateCheckout,
 }: PackageDetailsProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const { data: ticketClasses = [] } = useDictionary(
-    'TicketClassDictionary' as DictionaryTypes.TicketClassDictionary
-  )
+    "TicketClassDictionary" as DictionaryTypes.TicketClassDictionary,
+  );
   const { data: foodTypes = [] } = useDictionary(
-    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
-  )
+    "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
+  );
 
   const foodType = useMemo<string>(
     () =>
-      foodTypes.find(({ key }) => key === tourPackage.foodType)?.value || '',
-    [JSON.stringify(foodTypes)]
-  )
+      foodTypes.find(({ key }) => key === tourPackage.foodType)?.value || "",
+    [JSON.stringify(foodTypes)],
+  );
 
   const ticketClass = useMemo<string>(
     () =>
       ticketClasses.find(
-        ({ key }) => key === tourPackage.destinationFlight.ticketClass
-      )?.value || '',
-    [ticketClasses, tourPackage.destinationFlight.ticketClass]
-  )
+        ({ key }) => key === tourPackage.destinationFlight.ticketClass,
+      )?.value || "",
+    [ticketClasses, tourPackage.destinationFlight.ticketClass],
+  );
 
   return (
     <Flex direction="column" mt={{ base: 5, md: 0 }} gap="6">
       <CardSectionLayout>
         <SectionLayout title={t`included`}>
           <Grid
-            templateColumns="repeat(2, minmax(0, 206px))"
-            templateRows="repeat(2, 1fr)"
+            templateColumns={{
+              base: "repeat(2, minmax(0, 1fr))",
+              sm: "repeat(4, minmax(0, auto))",
+            }}
             columnGap="26px"
             rowGap="4"
           >
@@ -74,19 +76,19 @@ export const PackageDetails = ({
           listItems={[
             {
               key: t`airCompany`,
-              value: tourPackage.destinationFlight.airCompany.name
+              value: tourPackage.destinationFlight.airCompany.name,
             },
             { key: t`class`, value: ticketClass },
             {
               key: t`departure`,
-              value: formatDate(tourPackage.destinationFlight.departureDate)
+              value: formatDate(tourPackage.destinationFlight.departureDate),
             },
             {
               key: t`returning`,
-              value: formatDate(tourPackage.returnFlight.departureDate)
+              value: formatDate(tourPackage.returnFlight.departureDate),
             },
-            { key: t`carryOnBag`, value: '1 x 5' + t`kg` },
-            { key: t`checkedInBag`, value: '1 x 20' + t`kg` }
+            { key: t`carryOnBag`, value: "1 x 5" + t`kg` },
+            { key: t`checkedInBag`, value: "1 x 20" + t`kg` },
           ]}
         />
       </CardSectionLayout>
@@ -99,8 +101,8 @@ export const PackageDetails = ({
             { key: t`checkOut`, value: formatDate(tourPackage.checkout) },
             {
               key: t`lateCheckOut`,
-              value: isLateCheckout ? t`included` : t`notIncluded`
-            }
+              value: isLateCheckout ? t`included` : t`notIncluded`,
+            },
           ]}
         />
 
@@ -108,15 +110,18 @@ export const PackageDetails = ({
           mt="8"
           subtitle={t`reviewsAccordingToBooking`}
           listItems={[
-            { key: t`guestsReviews`, value: tourPackage.hotel?.travellersRating },
-            { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness }
+            {
+              key: t`guestsReviews`,
+              value: tourPackage.hotel?.travellersRating,
+            },
+            { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness },
           ]}
         />
 
         <PackageDescription tourPackage={tourPackage} />
       </CardSectionLayout>
     </Flex>
-  )
-}
+  );
+};
 
-export { PackageDetailsHeader } from './PackageDetailsHeader'
+export { PackageDetailsHeader } from "./PackageDetailsHeader";

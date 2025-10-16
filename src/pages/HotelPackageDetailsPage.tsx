@@ -45,7 +45,7 @@ export const HotelPackageDetailsPage = () => {
     isFetched,
     generatedMultivendorOffers,
     mealPlans,
-    loading
+    loading,
   } = useHotelPackage();
   const { clearBookingDrawerData, isOpen: isOpenBookingDrawer } =
     useBookingDrawer();
@@ -142,7 +142,7 @@ export const HotelPackageDetailsPage = () => {
         </Flex>
       </PackageDetailsLayout>
 
-      <Footer />
+      <Footer mt={{ base: "100px", md: "0px" }} />
 
       <PackageImagesSliderModal
         isOpen={isModalOpen}

@@ -12,19 +12,30 @@ export const Header: React.FC<{
   return (
     <HStack spacing={3} justify="space-between" align="center">
       {/* Agency Info */}
-      <Box>
-        <HStack>
-          <Avatar name={offer.agency?.name} size="sm" />
-          <Text fontSize="sm" color="gray.900" whiteSpace="nowrap">
+      <HStack spacing={2} minW={0} flex={1}>
+        <Avatar name={offer.agency?.name} size="sm" flexShrink={0} />
+        <Tooltip label={offer.agency?.name || "Unknown Agency"} placement="top">
+          <Text
+            fontSize="sm"
+            color="gray.900"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            minW={0}
+            maxW="120px"
+            cursor="pointer"
+            _hover={{
+              color: "gray.700",
+            }}
+          >
             {offer.agency?.name || "Unknown Agency"}
           </Text>
-        </HStack>
-      </Box>
+        </Tooltip>
+      </HStack>
 
       {/* Info Section */}
-
       {freeCancellationDate && (
-        <HStack spacing={1} align="center">
+        <HStack spacing={1} align="center" flexShrink={0}>
           <Text fontSize="xs" color="blue.500" whiteSpace="nowrap">
             {t`bookWithoutPayment`}
           </Text>
