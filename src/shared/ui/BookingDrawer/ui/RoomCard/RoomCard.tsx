@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Divider } from "@chakra-ui/react";
+import { Card, Divider, VStack } from "@chakra-ui/react";
 import { IGeneratedMultivendorOffer } from "@/modules/packages/data/packagesTypes";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
@@ -33,7 +33,8 @@ export const RoomCard: React.FC<RoomCardProps> = ({
       bg="gray.100"
       borderRadius="lg"
       cursor="pointer"
-      minW={fullWidth ? "100%" : "313px"}
+      width={fullWidth ? "100%" : "313px"}
+      flexShrink={0}
     >
       <Header offer={offer} freeCancellationDate={freeCancellationDate} />
 
@@ -41,21 +42,20 @@ export const RoomCard: React.FC<RoomCardProps> = ({
 
       {!isHotelPackage && (
         <>
-          <FlightInfoSection
-            airCompanyName={
-              offer?.departureFlight?.airCompany?.name || ""
-            }
-            departureDate={
-              offer?.departureFlight?.departureDate || ""
-            }
-            returnDate={offer?.returnFlight?.departureDate || ""}
-          />
-          {freeCancellationDate && (
-            <FreeCancellationInfo
-              offer={offer}
-              freeCancellationDate={freeCancellationDate}
+          {" "}
+          <VStack spacing={3} align="stretch">
+            <FlightInfoSection
+              airCompanyName={offer?.departureFlight?.airCompany?.name || ""}
+              departureDate={offer?.departureFlight?.departureDate || ""}
+              returnDate={offer?.returnFlight?.departureDate || ""}
             />
-          )}
+            {freeCancellationDate && (
+              <FreeCancellationInfo
+                offer={offer}
+                freeCancellationDate={freeCancellationDate}
+              />
+            )}
+          </VStack>
           <Divider my={3} color="white" borderWidth="1px" />
         </>
       )}

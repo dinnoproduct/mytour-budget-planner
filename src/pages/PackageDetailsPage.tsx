@@ -33,8 +33,14 @@ export const PackageDetailsPage = () => {
   const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
     isBookingFlowOpenAtom,
   );
-  const { packageDetails, isFetched, childrenAges, generatedMultivendorOffers, mealPlans, loading } =
-    usePackage();
+  const {
+    packageDetails,
+    isFetched,
+    childrenAges,
+    generatedMultivendorOffers,
+    mealPlans,
+    loading,
+  } = usePackage();
 
   const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -134,7 +140,7 @@ export const PackageDetailsPage = () => {
         </Flex>
       </PackageDetailsLayout>
 
-      <Footer />
+      <Footer mt={{ base: "100px", md: "0px" }} />
 
       <PackageImagesSliderModal
         isOpen={isModalOpen}
