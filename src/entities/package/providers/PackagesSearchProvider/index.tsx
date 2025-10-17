@@ -208,9 +208,9 @@ export const PackagesSearchProvider: React.FC<{
 
   useEffect(() => {
     if (Array.isArray(departureFlights)) {
-      const dates = departureFlights.map(
-        (flight) => new Date(flight.departureDate),
-      );
+      const dates = departureFlights
+        .map((flight) => new Date(flight.departureDate))
+        .sort((a, b) => a.getTime() - b.getTime());
       setAvailableDepartureDates(dates);
       setSelectedDepartureFlight(departureFlights[0]);
     }
