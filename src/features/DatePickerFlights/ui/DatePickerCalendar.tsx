@@ -58,18 +58,22 @@ export const DatePickerCalendar = ({
     if (availableDates.length > 0) {
       const lastAvailableDate = moment(
         availableDates[availableDates.length - 1]
-      ).startOf('month')
+      ).endOf('month')
 
       return lastAvailableDate
     }
 
     return moment(today)
       .add(MAX_MONTHS - 2, 'months')
-      .startOf('month')
+      .endOf('month')
   }, [availableDates, today])
 
   const handlePrevMonth = () => {
-    if (currentMonth > new Date(today.getFullYear(), today.getMonth(), 1)) {
+    const minDate = startDate && moment(startDate).isAfter(today)
+      ? moment(startDate).startOf('month')
+      : moment(today).startOf('month')
+    
+    if (moment(currentMonth).isAfter(minDate, 'month')) {
       const prevMonth = new Date(
         currentMonth.getFullYear(),
         currentMonth.getMonth() - 1,
@@ -80,7 +84,7 @@ export const DatePickerCalendar = ({
   }
 
   const handleNextMonth = () => {
-    if (moment(currentMonth).isBefore(maxDate)) {
+    if (moment(currentMonth).isBefore(maxDate, 'month')) {
       const nextMonth = moment(currentMonth).add(1, 'month').toDate()
       setCurrentMonth(nextMonth)
     }
@@ -92,11 +96,11 @@ export const DatePickerCalendar = ({
         ? moment(startDate).startOf('month')
         : moment(today).startOf('month')
 
-    return moment(currentMonth).isSameOrBefore(minDate)
+    return moment(currentMonth).isSameOrBefore(minDate, 'month')
   }, [currentMonth, today, startDate])
 
   const isNextDisabled = useMemo(
-    () => moment(currentMonth).isSameOrAfter(maxDate),
+    () => moment(currentMonth).isSameOrAfter(maxDate, 'month'),
     [currentMonth, maxDate]
   )
 
