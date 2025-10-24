@@ -56,16 +56,22 @@ export const PackageList = () => {
     };
 
     if (isPackagesSearchView) {
-      queryParams.from = moment(packagesSearchData.fromDate).format("YYYY-MM-DD");
+      queryParams.from = moment(packagesSearchData.fromDate).format(
+        "YYYY-MM-DD",
+      );
       queryParams.to = moment(packagesSearchData.toDate).format("YYYY-MM-DD");
       queryParams.childrenAges =
-        packagesSearchData.travelersData.childrenAges.join(",");
+        packagesSearchData.travelersData.childrenCount > 0
+          ? packagesSearchData.travelersData.childrenAges.join(",")
+          : "";
       pagePath = "package";
     } else {
       queryParams.from = moment(hotelSearchData.fromDate).format("YYYY-MM-DD");
       queryParams.to = moment(hotelSearchData.toDate).format("YYYY-MM-DD");
       queryParams.childrenAges =
-        hotelSearchData.travelersData.childrenAges.join(",");
+        hotelSearchData.travelersData.childrenCount > 0
+          ? hotelSearchData.travelersData.childrenAges.join(",")
+          : "";
     }
 
     const newSearchParams = new URLSearchParams(queryParams).toString();

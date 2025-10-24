@@ -274,7 +274,7 @@ export const PackagesSearchProvider: React.FC<{
       city: searchData.selectedCity + "",
       adultsCount: searchData.travelersData.adultsCount.toString(),
       childrenCount: searchData.travelersData.childrenCount.toString(),
-      childrenAges: searchData.travelersData.childrenAges.join(","),
+      childrenAges: searchData.travelersData.childrenCount === 0 ? "" : searchData.travelersData.childrenAges.join(","),
       tab: "packages",
     });
 
@@ -296,7 +296,7 @@ export const PackagesSearchProvider: React.FC<{
         dateTo: moment(toDate).format("YYYY-MM-DD"),
         cities: [selectedCity],
         adults: travelersData.adultsCount,
-        childs: travelersData.childrenAges,
+        childs: travelersData.childrenCount === 0 ? [] : travelersData.childrenAges,
         // nightsCorrectionLowerValue: 0,
         // nightsCorrectionUpperValue: 0,
         lateCheckout: false,
@@ -375,12 +375,13 @@ export const PackagesSearchProvider: React.FC<{
     }
 
     if (childrenCountParam || childrenAgesParam || adultsCountParam) {
+      const childrenCount = parseInt(childrenCountParam || "0", 10)
       currentData.travelersData = {
         adultsCount: parseInt(adultsCountParam || "0", 10),
-        childrenCount: parseInt(childrenCountParam || "0", 10),
-        childrenAges:
-          (childrenAgesParam || "").split(",").filter(Boolean).map(Number) ||
-          [],
+        childrenCount: childrenCount,
+        childrenAges: childrenCount === 0 
+          ? [] 
+          : ((childrenAgesParam || "").split(",").filter(Boolean).map(Number) || []),
       };
     }
 
