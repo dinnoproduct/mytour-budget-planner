@@ -23,10 +23,14 @@ export const useSearchHotelPackage = (options?: Options) => {
   const from = searchParams.get('from')
   const to = searchParams.get('to')
   const adultsCount = parseInt(searchParams.get('adultsCount') || '0', 10)
+  const childrenCountParam = searchParams.get('childrenCount')
+  const childrenCount = parseInt(childrenCountParam || '0', 10)
   const childrenAgesParam = searchParams.get('childrenAges')
-  const childrenAges = childrenAgesParam
-    ? childrenAgesParam?.split(',').filter(Boolean).map(Number) || []
-    : []
+  const childrenAges = childrenCount === 0 
+    ? [] 
+    : (childrenAgesParam
+        ? childrenAgesParam?.split(',').filter(Boolean).map(Number) || []
+        : [])
   const hotelId = parseInt(searchParams.get('hotelId') || '0', 10)
   const roomId = parseInt(searchParams.get('roomId') || '0', 10)
   const mealId = parseInt(searchParams.get('mealId') || '0', 10)

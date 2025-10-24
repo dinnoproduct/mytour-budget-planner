@@ -11,6 +11,7 @@ import {
 } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
 import { BookingFlow } from "@widgets/BookingFlow";
@@ -35,6 +36,8 @@ import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 export const HotelPackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
     isBookingFlowOpenAtom,
@@ -101,6 +104,23 @@ export const HotelPackageDetailsPage = () => {
       setModalOpen(false);
     }
   }, [isMd]);
+
+  // Clean URL if childrenCount is 0 but childrenAges is not empty
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const childrenCountParam = searchParams.get('childrenCount');
+    const childrenAgesParam = searchParams.get('childrenAges');
+    
+    const childrenCount = parseInt(childrenCountParam || '0', 10);
+    const hasChildrenAges = childrenAgesParam && childrenAgesParam.trim() !== '';
+    
+    // If childrenCount is 0 but childrenAges exists and is not empty, set it to empty string
+    if (childrenCount === 0 && hasChildrenAges) {
+      searchParams.set('childrenAges', '');
+      const newUrl = `${location.pathname}?${searchParams.toString()}`;
+      navigate(newUrl, { replace: true });
+    }
+  }, [location.search, navigate]);
 
   if (!packageDetails?.offerId) {
     return <Loader loading />;

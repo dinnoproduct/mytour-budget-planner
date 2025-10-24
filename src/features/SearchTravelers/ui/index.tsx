@@ -60,7 +60,10 @@ export const SearchTravelers = ({
 
     if (hasError) return
 
-    setChildrenAges(newChildrenAges.map(item => item.age as number))
+    // Ensure childrenAges is empty when childrenCount is 0
+    const finalChildrenAges = tempChildrenCount === 0 ? [] : newChildrenAges.map(item => item.age as number)
+    
+    setChildrenAges(finalChildrenAges)
     setAdultsCount(tempAdultsCount)
     setChildrenCount(tempChildrenCount)
     setDropdownOpen(false)
@@ -68,7 +71,7 @@ export const SearchTravelers = ({
     onChange && onChange({
       adultsCount: tempAdultsCount,
       childrenCount: tempChildrenCount,
-      childrenAges: newChildrenAges.map(item => item.age as number)
+      childrenAges: finalChildrenAges
     })
   }
 

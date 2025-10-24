@@ -13,10 +13,14 @@ export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const [searchInput, setSearchInput] = useState<any>({})
+  const childrenCountParam = searchParams.get('childrenCount')
+  const childrenCount = parseInt(childrenCountParam || '0', 10)
   const childrenAgesParam = searchParams.get('childrenAges')
-  const childrenAges = childrenAgesParam
-    ? childrenAgesParam?.split(',').filter(Boolean).map(Number) || []
-    : []
+  const childrenAges = childrenCount === 0 
+    ? [] 
+    : (childrenAgesParam
+        ? childrenAgesParam?.split(',').filter(Boolean).map(Number) || []
+        : [])
   const {
     data: packages = [],
     isLoading,
@@ -29,10 +33,14 @@ export const useSearchPackage = (options?: Options, isDataCached?: boolean) => {
 
   useEffect(() => {
     if (!isLoading) {
+      const childrenCountParam = searchParams.get('childrenCount')
+      const childrenCount = parseInt(childrenCountParam || '0', 10)
       const childrenAges = searchParams.get('childrenAges')
-      const children = childrenAges
-        ? childrenAges?.split(',').filter(Boolean).map(Number) || []
-        : []
+      const children = childrenCount === 0 
+        ? [] 
+        : (childrenAges
+            ? childrenAges?.split(',').filter(Boolean).map(Number) || []
+            : [])
 
       setSearchInput({
         cities: [parseInt(searchParams.get('city') || '0', 10)].filter(id => id > 0),
