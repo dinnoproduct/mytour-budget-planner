@@ -102,13 +102,13 @@ const Support = () => {
             </Text>
           </LanguageLink>
         </ListItem>
-        {/* <ListItem>
-          <LanguageLink to="#">
+        <ListItem>
+          <LanguageLink to="/terms">
             <Text size="md" color="gray.600">
               {t`termsAndConditions`}
             </Text>
           </LanguageLink>
-        </ListItem> */}
+        </ListItem>
       </UnorderedList>
     </Flex>
   );

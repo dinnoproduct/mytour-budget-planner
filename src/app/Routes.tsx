@@ -21,6 +21,7 @@ import { useEffect } from 'react'
 import { HotelPackageDetailsPage } from '@pages/HotelPackageDetailsPage.tsx'
 import { BlogsPage } from '@pages/BlogsPage.tsx'
 import { FAQPage } from '@pages/FAQPage/index.tsx'
+import { TermsPage } from '@pages/TermsPage.tsx'
 import { useLanguageRouting } from '../hooks/useLanguageRouting'
 import { LanguageRouteGuard } from '../components/LanguageRouteGuard/LanguageRouteGuard'
 
@@ -50,6 +51,7 @@ const Routes = () => {
 
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
+          <Route path="terms" element={<TermsPage />} />
 
           <Route
             path="my-packages"
@@ -82,6 +84,7 @@ const Routes = () => {
 
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
+          <Route path="terms" element={<TermsPage />} />
 
           <Route
             path="my-packages"
@@ -114,6 +117,7 @@ const Routes = () => {
 
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
+          <Route path="terms" element={<TermsPage />} />
 
           <Route
             path="my-packages"

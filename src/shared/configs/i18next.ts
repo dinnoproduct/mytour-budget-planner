@@ -8,24 +8,30 @@ import translationRU from '../locales/ru.json';
 import faqHY from '../locales/faq-hy.json';
 import faqEN from '../locales/faq-en.json';
 import faqRU from '../locales/faq-ru.json';
+import termsHY from '../locales/terms-hy.json';
+import termsEN from '../locales/terms-en.json';
+import termsRU from '../locales/terms-ru.json';
 
 const resources = {
   hy: {
     translation: {
       ...translationHY,
       ...faqHY,
+      ...termsHY,
     },
   },
   en: {
     translation: {
       ...translationEN,
       ...faqEN,
+      ...termsEN,
     },
   },
   ru: {
     translation: {
       ...translationRU,
       ...faqRU,
+      ...termsRU,
     },
   },
 };
