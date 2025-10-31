@@ -20,6 +20,7 @@ import { useUserContext } from '@entities/user'
 import { useEffect } from 'react'
 import { HotelPackageDetailsPage } from '@pages/HotelPackageDetailsPage.tsx'
 import { BlogsPage } from '@pages/BlogsPage.tsx'
+import { FAQPage } from '@pages/FAQPage/index.tsx'
 import { useLanguageRouting } from '../hooks/useLanguageRouting'
 import { LanguageRouteGuard } from '../components/LanguageRouteGuard/LanguageRouteGuard'
 
@@ -48,6 +49,7 @@ const Routes = () => {
           </Route>
 
           <Route path="blogs" element={<BlogsPage />} />
+          <Route path="faq" element={<FAQPage />} />
 
           <Route
             path="my-packages"
@@ -79,6 +81,7 @@ const Routes = () => {
           </Route>
 
           <Route path="blogs" element={<BlogsPage />} />
+          <Route path="faq" element={<FAQPage />} />
 
           <Route
             path="my-packages"
@@ -110,6 +113,7 @@ const Routes = () => {
           </Route>
 
           <Route path="blogs" element={<BlogsPage />} />
+          <Route path="faq" element={<FAQPage />} />
 
           <Route
             path="my-packages"

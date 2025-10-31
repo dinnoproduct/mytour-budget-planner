@@ -58,6 +58,7 @@
   "c": "Latest Articles",
   "call": "Call",
   "cancel": "Cancel",
+  "faq.back": "Back",
   "cancelRules": "Cancellation policy",
   "cancelUntil": "We remind you that you can cancel your booking for free before {{date}}.",
   "canceled": "Canceled",
@@ -379,5 +380,10 @@
   "writeSurnameLatinWords": "FIll in the field in Latin letters",
   "wrongFormat": "Wrong format",
   "years": "years",
-  "yerevanAddress": "Yerevan 0010, RA"
+  "yerevanAddress": "Yerevan 0010, RA",
+  "faq.title": "FAQ",
+  "faq.subtitle": "Answers to your questions — all in one place.",
+  "faq.cta.title": "Didn't find the answer to your question?",
+  "faq.cta.subtitle": "Contact us, and we'll answer the questions you are interested in.",
+  "faq.cta.orWriteUs": "or write to us"
 }

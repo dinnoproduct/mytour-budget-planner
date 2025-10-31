@@ -37,6 +37,7 @@ export type IconName =
   | 'mail'
   | 'mobile-friendly'
   | 'phone-in-talk'
+  | 'phone'
   | 'remove'
   | 'edit-note'
   | 'arrow-back'

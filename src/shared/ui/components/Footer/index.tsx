@@ -11,6 +11,7 @@ import { type ReactNode } from "react";
 import { SOCIALS } from "./data";
 import { Text } from "@ui";
 import { useTranslation } from "react-i18next";
+import { LanguageLink } from "@/components/LanguageLink/LanguageLink";
 
 export const Footer = ({ mt }: { mt?: any }) => (
   <Layout mt={mt}>
@@ -22,7 +23,7 @@ export const Footer = ({ mt }: { mt?: any }) => (
     >
       <Contact />
       <FollowUs />
-      {/*<Support />*/}
+      <Support />
       <AppSection />
     </Flex>
   </Layout>
@@ -95,20 +96,19 @@ const Support = () => {
       </Text>
       <UnorderedList listStyleType="none" spacing="2" mx="0">
         <ListItem>
-          <Text size="md" color="gray.600">
-            FAQ
-          </Text>
+          <LanguageLink to="/faq">
+            <Text size="md" color="gray.600">
+              {t`faq.title`}
+            </Text>
+          </LanguageLink>
         </ListItem>
-        <ListItem>
-          <Text size="md" color="gray.600">
-            {t`privacyPolicy`}
-          </Text>
-        </ListItem>
-        <ListItem>
-          <Text size="md" color="gray.600">
-            {t`termsAndConditions`}
-          </Text>
-        </ListItem>
+        {/* <ListItem>
+          <LanguageLink to="#">
+            <Text size="md" color="gray.600">
+              {t`termsAndConditions`}
+            </Text>
+          </LanguageLink>
+        </ListItem> */}
       </UnorderedList>
     </Flex>
   );

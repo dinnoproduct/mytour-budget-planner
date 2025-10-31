@@ -5,16 +5,28 @@ import i18n from 'i18next';
 import translationHY from '../locales/hy.json';
 import translationEN from '../locales/en.json';
 import translationRU from '../locales/ru.json';
+import faqHY from '../locales/faq-hy.json';
+import faqEN from '../locales/faq-en.json';
+import faqRU from '../locales/faq-ru.json';
 
 const resources = {
   hy: {
-    translation: translationHY,
+    translation: {
+      ...translationHY,
+      ...faqHY,
+    },
   },
   en: {
-    translation: translationEN,
+    translation: {
+      ...translationEN,
+      ...faqEN,
+    },
   },
   ru: {
-    translation: translationRU,
+    translation: {
+      ...translationRU,
+      ...faqRU,
+    },
   },
 };
 

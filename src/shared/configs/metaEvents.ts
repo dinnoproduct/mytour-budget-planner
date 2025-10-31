@@ -184,6 +184,27 @@ export const metaEvents = {
       });
     }
   },
+
+  // 4️⃣ FAQ Events
+  faqCategorySelected: (data: { category_id: string, category_name: string }) => {
+    if (window.fbq) {
+      window.fbq("trackCustom", "FAQCategorySelected", {
+        ...data,
+        event_id: generateEventId(),
+        timestamp: new Date().toISOString(),
+      })
+    }
+  },
+
+  faqItemOpened: (data: { category_id: string; item_id: string, category_name: string, item_name: string }) => {
+    if (window.fbq) {
+      window.fbq("trackCustom", "FAQItemOpened", {
+        ...data,
+        event_id: generateEventId(),
+        timestamp: new Date().toISOString(),
+      })
+    }
+  },
 };
 
 export const generateEventId = (): string => {
