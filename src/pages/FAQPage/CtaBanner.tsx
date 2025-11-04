@@ -58,6 +58,7 @@ export const CtaBanner = () => {
             mt={{ base: 8, sm: 6 }}
             py={{ base: 3, sm: 3.5 }}
             px={{ base: 6, sm: 8 }}
+            href="tel:+37433320050"
           >
             {t("call")}
           </Button>

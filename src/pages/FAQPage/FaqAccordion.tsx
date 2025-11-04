@@ -34,7 +34,7 @@ export const FaqAccordion = ({
       p={variant === "desktop" ? 6 : 0}
       borderRadius={variant === "desktop" ? "xl" : undefined}
     >
-      <Accordion allowMultiple={false} defaultIndex={0}>
+      <Accordion allowMultiple={false} allowToggle={true} defaultIndex={0}>
         {faqs.map((faq) => (
           <AccordionItem
             key={faq.id}
