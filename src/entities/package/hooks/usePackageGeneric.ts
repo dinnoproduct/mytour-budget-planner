@@ -112,6 +112,25 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
   );
 
+  // Determine dateFrom and dateTo for the request
+  // For hotels: use checkIn/checkOut from selectedPackage if available (from search endpoint)
+  // Otherwise: use URL params
+  const dateFrom = useMemo(() => {
+    if (packageType === "hotel" && selectedPackage?.checkin) {
+      // Use checkIn from selectedPackage for hotels (from search endpoint)
+      return moment(selectedPackage.checkin).format("YYYY-MM-DD");
+    }
+    return from || "";
+  }, [packageType, selectedPackage?.checkin, from]);
+
+  const dateTo = useMemo(() => {
+    if (packageType === "hotel" && selectedPackage?.checkout) {
+      // Use checkOut from selectedPackage for hotels (from search endpoint)
+      return moment(selectedPackage.checkout).format("YYYY-MM-DD");
+    }
+    return to || "";
+  }, [packageType, selectedPackage?.checkout, to]);
+
   useEffect(() => {
     () => {
       clearSelectedPackage();
@@ -123,8 +142,8 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
 
     const data = {
       [PackagesFields.hotelId]: hotelId,
-      [PackagesFields.dateFrom]: from || "",
-      [PackagesFields.dateTo]: to || "",
+      [PackagesFields.dateFrom]: dateFrom,
+      [PackagesFields.dateTo]: dateTo,
       [PackagesFields.adults]: adultsCount,
       [PackagesFields.childs]: childrenCount === 0 ? [] : childrenAges,
       [PackagesFields.lateCheckout]:
@@ -132,7 +151,7 @@ export const usePackageGeneric = (options: UsePackageOptions = {}) => {
       [PackagesFields.bookingType]: packageType === "hotel" ? 2 : 1,
     };
     fetchMultivendorOffers(data);
-  }, [autoFetch, packageType, isLateCheckout]);
+  }, [autoFetch, packageType, isLateCheckout, dateFrom, dateTo]);
 
   // Generate meal plans
   const mealPlans = useMemo(() => {
