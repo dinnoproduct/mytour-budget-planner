@@ -74,10 +74,11 @@ export const tabsComponentTheme = {
           width: {base : 'full', md: 'fit-content'},
           px: 6,
           py: 4,
+          transition: 'background-color 0.2s',
           _selected: {
             pointerEvents: 'none',
             bgColor: 'white',
-            color: 'gray.700 !important',
+            color: 'gray.700',
             borderRadius: '200px',
             svg: {
               color: 'gray.700'
@@ -87,13 +88,32 @@ export const tabsComponentTheme = {
             },
             '>': {
               color: 'gray.700'
+            },
+            _active: {
+              bgColor: 'white'
+            },
+            _hover: {
+              bgColor: 'white'
+            },
+            _focus: {
+              bgColor: 'white'
+            },
+            _focusVisible: {
+              bgColor: 'white',
+              boxShadow: 'none'
             }
           },
           _hover: {
+            _selected: {
+              bgColor: 'white'
+            },
             bgColor: 'whiteAlpha.600',
           },
           _active: {
-            bgColor: 'transparent'
+            _selected: {
+              bgColor: 'white'
+            },
+            bgColor: 'whiteAlpha.500'
           },
           p: {
             color: 'white'
