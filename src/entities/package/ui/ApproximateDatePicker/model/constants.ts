@@ -41,4 +41,4 @@ export const HOTEL_DAYS_OPTIONS = [
   { label: 'Other', subLabel: '', value: 'other', localizationKey: 'other' }
 ]
 
-export const MONTHS_COUNT_TO_DISPLAY = 7
+export const MONTHS_COUNT_TO_DISPLAY = 10

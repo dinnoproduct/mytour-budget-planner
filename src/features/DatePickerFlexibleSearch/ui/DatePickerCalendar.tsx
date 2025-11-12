@@ -5,8 +5,7 @@ import { DatePickerMonth } from './DatePickerMonth'
 import { Text, Button } from '@ui'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
-
-const MAX_MONTHS = 6
+import { MONTHS_COUNT_TO_DISPLAY } from '@/entities/package/ui/ApproximateDatePicker/model/constants'
 
 export const DatePickerCalendar = ({
   onDayClick,
@@ -16,21 +15,37 @@ export const DatePickerCalendar = ({
 }: DatePickerCalendarProps) => {
   const [currentMonthDate, setCurrentMonthDate] = useState(moment().toDate())
 
-  useEffect(() => {
-    if (selectedFromDate) {
-      setCurrentMonthDate(selectedFromDate)
-    }
-  }, [selectedFromDate])
-
   const isMobile = useMediaQuery('(max-width: 1280px)')[0]
 
   const maxMonthDate = useMemo(
-    () => moment().add(MAX_MONTHS, 'months').toDate(),
+    () => moment().add(MONTHS_COUNT_TO_DISPLAY, 'months').endOf('month').toDate(),
     []
   )
 
+  const today = useMemo(() => moment().startOf('day'), [])
+  const maxDate = useMemo(() => moment(maxMonthDate).startOf('day'), [maxMonthDate])
+
+  // Validate and set current month based on selectedFromDate
+  useEffect(() => {
+    if (selectedFromDate) {
+      const selectedDate = moment(selectedFromDate).startOf('day')
+      // Only use selectedFromDate if it's within valid range (today to maxDate)
+      if (selectedDate.isSameOrAfter(today, 'day') && selectedDate.isSameOrBefore(maxDate, 'day')) {
+        setCurrentMonthDate(selectedFromDate)
+      } else {
+        // If selectedFromDate is invalid, reset to current month
+        setCurrentMonthDate(moment().toDate())
+      }
+    } else {
+      // If no selectedFromDate, default to current month
+      setCurrentMonthDate(moment().toDate())
+    }
+  }, [selectedFromDate, today, maxDate])
+
   const handlePrevMonth = () => {
-    if (moment(currentMonthDate) > moment()) {
+    const currentMonth = moment(currentMonthDate).startOf('month')
+    const todayMonth = moment().startOf('month')
+    if (currentMonth.isAfter(todayMonth, 'month')) {
       const prevMonthDate = moment(currentMonthDate)
         .subtract(1, 'month')
         .toDate()
@@ -39,20 +54,22 @@ export const DatePickerCalendar = ({
   }
 
   const handleNextMonth = () => {
-    if (moment(currentMonthDate) < moment(maxMonthDate)) {
+    const currentMonth = moment(currentMonthDate).startOf('month')
+    const maxMonth = moment(maxMonthDate).startOf('month')
+    if (currentMonth.isBefore(maxMonth, 'month')) {
       const nextMonth = moment(currentMonthDate).add(1, 'month').toDate()
       setCurrentMonthDate(nextMonth)
     }
   }
 
   const isPrevDisabled = useMemo(
-    () => moment(currentMonthDate) <= moment(),
+    () => moment(currentMonthDate).startOf('month') <= moment().startOf('month'),
     [currentMonthDate]
   )
 
   const isNextDisabled = useMemo(
-    () => moment(currentMonthDate) >= moment(maxMonthDate),
-    [currentMonthDate]
+    () => moment(currentMonthDate).startOf('month') >= moment(maxMonthDate).startOf('month'),
+    [currentMonthDate, maxMonthDate]
   )
 
   return (
@@ -73,8 +90,8 @@ export const DatePickerCalendar = ({
         pt="0"
       >
         {isMobile ? (
-          // Render MAX_MONTHS count of months stacked vertically on mobile
-          Array.from({ length: MAX_MONTHS }).map((_, index) => {
+          // Render MONTHS_COUNT_TO_DISPLAY count of months stacked vertically on mobile
+          Array.from({ length: MONTHS_COUNT_TO_DISPLAY }).map((_, index) => {
             const monthDate = moment(moment().toDate())
               .add(index, 'months')
               .toDate()
@@ -89,6 +106,7 @@ export const DatePickerCalendar = ({
                   onDayClick={onDayClick}
                   selectedFromDate={selectedFromDate}
                   selectedToDate={selectedToDate}
+                  maxDate={maxMonthDate}
                 />
               </Box>
             )
@@ -109,6 +127,7 @@ export const DatePickerCalendar = ({
               onDayClick={onDayClick}
               selectedFromDate={selectedFromDate}
               selectedToDate={selectedToDate}
+              maxDate={maxMonthDate}
             />
           </Box>
         )}

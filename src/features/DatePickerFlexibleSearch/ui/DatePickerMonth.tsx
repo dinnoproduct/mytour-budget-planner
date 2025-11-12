@@ -4,12 +4,14 @@ import { type DateButtonProps, type DatePickerMonthProps } from './types'
 import { Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
+import { MONTHS_COUNT_TO_DISPLAY } from '@/entities/package/ui/ApproximateDatePicker/model/constants'
 
 export const DatePickerMonth = ({
   currentMonth,
   onDayClick,
   selectedFromDate,
-  selectedToDate
+  selectedToDate,
+  maxDate
 }: DatePickerMonthProps) => {
   const { t } = useTranslation()
   const startOfMonth = useMemo(
@@ -19,6 +21,11 @@ export const DatePickerMonth = ({
   const endOfMonth = useMemo(
     () => moment(currentMonth).endOf('month').toDate(),
     [currentMonth]
+  )
+
+  const maxDateValue = useMemo(
+    () => maxDate || moment().add(MONTHS_COUNT_TO_DISPLAY, 'months').endOf('month').toDate(),
+    [maxDate]
   )
 
   const daysInMonth = []
@@ -66,6 +73,11 @@ export const DatePickerMonth = ({
               '()'
             )
 
+          const today = moment().startOf('day')
+          const isPastDate = moment(date) < today
+          const isFutureDate = moment(date) > moment(maxDateValue)
+          const isAvailable = !isPastDate && !isFutureDate
+
           return (
             <DateButton
               key={index}
@@ -73,7 +85,7 @@ export const DatePickerMonth = ({
               isSelected={!!isSelected}
               isInRange={!!isInRange}
               onClick={onDayClick}
-              isAvailable={moment(date) >= moment().startOf('day')}
+              isAvailable={isAvailable}
             />
           )
         })}
