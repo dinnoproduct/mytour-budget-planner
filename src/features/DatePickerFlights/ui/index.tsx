@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Box, Flex, Menu, MenuButton, MenuList, Portal } from '@chakra-ui/react'
 import { type DatePickerProps, type DateSelectState } from './types'
 import { DatePickerInput } from './DatePickerInput'
@@ -27,7 +27,6 @@ export const DatePickerFlights = ({
   const [isCalendarOpen, setCalendarOpen] = useState(false)
   const [inputFromDate, setInputFromDate] = useState<Date | null>(null)
   const [inputToDate, setInputToDate] = useState<Date | null>(null)
-  const [availableDates, setAvailableDates] = useState<Date[]>([])
   const [dateSelectState, setDateSelectState] =
     useState<DateSelectState>('from') // New state for tracking focused input
 
@@ -58,18 +57,19 @@ export const DatePickerFlights = ({
     }
   }, [isCalendarOpen, inputFromDate, inputToDate, isMd])
 
-  useEffect(() => {
+  // Memoize availableDates to avoid recreating on every render
+  // Only update when dateSelectState changes or when the actual date arrays change
+  const availableDates = useMemo(() => {
     if (dateSelectState === 'from') {
-      setAvailableDates(availableDepartureDates)
+      return availableDepartureDates
     } else if (
       dateSelectState === 'to' &&
       !isLoadingReturnDates &&
       availableReturnDates?.length
     ) {
-      setAvailableDates(availableReturnDates || [])
-    } else {
-      setAvailableDates([])
+      return availableReturnDates || []
     }
+    return []
   }, [
     dateSelectState,
     availableDepartureDates,

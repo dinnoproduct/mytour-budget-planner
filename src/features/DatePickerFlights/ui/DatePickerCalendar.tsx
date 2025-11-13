@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 import { type DatePickerCalendarProps } from './types'
 import { DatePickerMonth } from './DatePickerMonth'
@@ -19,38 +19,79 @@ export const DatePickerCalendar = ({
   dateSelectState
 }: DatePickerCalendarProps) => {
   const today = new Date()
-  const startDate = useMemo(() => availableDates[0] || today, [availableDates])
-  const [currentMonth, setCurrentMonth] = useState(today)
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    // Initialize with first available date or today
+    const initialDate = availableDates[0] || today
+    return new Date(initialDate.getFullYear(), initialDate.getMonth(), 1)
+  })
+  
+  // Create stable keys for dependency array
+  const availableDatesLength = availableDates.length
+  const firstAvailableDateKey = useMemo(() => {
+    if (availableDates.length === 0) return null
+    const firstDate = availableDates[0]
+    return firstDate ? firstDate.getTime() : null
+  }, [availableDatesLength, availableDates[0]?.getTime()])
+  
+  const selectedFromDateKey = selectedFromDate ? selectedFromDate.getTime() : null
+  
+  // Track previous values to avoid unnecessary updates
+  const prevAvailableDatesLengthRef = useRef<number>(availableDatesLength)
+  const prevFirstAvailableDateKeyRef = useRef<number | null>(firstAvailableDateKey)
+  const prevSelectedFromDateKeyRef = useRef<number | null>(selectedFromDateKey)
+  const prevDateSelectStateRef = useRef(dateSelectState)
+  
   useEffect(() => {
-    setCurrentMonth(startDate)
-  }, [startDate])
-
-  useEffect(() => {
-    if (selectedFromDate && dateSelectState === 'from') {
-      setCurrentMonth(
-        new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1)
-      )
-    } else if (availableDates.length > 0) {
-      const earliestAvailableDate = new Date(availableDates[0])
-      setCurrentMonth(
-        new Date(
-          earliestAvailableDate.getFullYear(),
-          earliestAvailableDate.getMonth(),
-          1
-        )
-      )
-    } else if (selectedFromDate) {
-      setCurrentMonth(
-        new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1)
-      )
-    } else if (startDate) {
-      setCurrentMonth(
-        new Date(startDate.getFullYear(), startDate.getMonth(), 1)
-      )
-    } else {
-      setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1))
+    // Check if availableDates actually changed (by length and first date key)
+    const availableDatesChanged = 
+      prevAvailableDatesLengthRef.current !== availableDatesLength ||
+      prevFirstAvailableDateKeyRef.current !== firstAvailableDateKey
+    
+    // Check if selectedFromDate actually changed (by key)
+    const selectedFromDateChanged = 
+      prevSelectedFromDateKeyRef.current !== selectedFromDateKey
+    
+    // Check if dateSelectState changed
+    const dateSelectStateChanged = prevDateSelectStateRef.current !== dateSelectState
+    
+    // Only proceed if something actually changed
+    if (!availableDatesChanged && !selectedFromDateChanged && !dateSelectStateChanged) {
+      return
     }
-  }, [JSON.stringify(availableDates), startDate, selectedFromDate])
+    
+    // Update refs
+    prevAvailableDatesLengthRef.current = availableDatesLength
+    prevFirstAvailableDateKeyRef.current = firstAvailableDateKey
+    prevSelectedFromDateKeyRef.current = selectedFromDateKey
+    prevDateSelectStateRef.current = dateSelectState
+    
+    // Compute startDate inside effect
+    const startDate = availableDates.length > 0 ? availableDates[0] : today
+    
+    // Determine which month to show
+    let newMonth: Date
+    
+    if (selectedFromDate && dateSelectState === 'from') {
+      newMonth = new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1)
+    } else if (availableDates.length > 0) {
+      newMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1)
+    } else if (selectedFromDate) {
+      newMonth = new Date(selectedFromDate.getFullYear(), selectedFromDate.getMonth(), 1)
+    } else {
+      newMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+    }
+    
+    // Only update if the month actually changed (compare with current state)
+    setCurrentMonth(prevMonth => {
+      const prevMonthMoment = moment(prevMonth).startOf('month')
+      const newMonthMoment = moment(newMonth).startOf('month')
+      // Only update if the month actually changed
+      if (!prevMonthMoment.isSame(newMonthMoment, 'month')) {
+        return newMonth
+      }
+      return prevMonth
+    })
+  }, [selectedFromDateKey, dateSelectState, today, availableDatesLength, firstAvailableDateKey])
 
   const { isMd } = useBreakpoint()
 
@@ -69,6 +110,7 @@ export const DatePickerCalendar = ({
   }, [availableDates, today])
 
   const handlePrevMonth = () => {
+    const startDate = availableDates[0] || today
     const minDate = startDate && moment(startDate).isAfter(today)
       ? moment(startDate).startOf('month')
       : moment(today).startOf('month')
@@ -91,13 +133,14 @@ export const DatePickerCalendar = ({
   }
 
   const isPrevDisabled = useMemo(() => {
+    const startDate = availableDates[0] || today
     const minDate =
       startDate && moment(startDate).isAfter(today)
         ? moment(startDate).startOf('month')
         : moment(today).startOf('month')
 
     return moment(currentMonth).isSameOrBefore(minDate, 'month')
-  }, [currentMonth, today, startDate])
+  }, [currentMonth, today, availableDates])
 
   const isNextDisabled = useMemo(
     () => moment(currentMonth).isSameOrAfter(maxDate, 'month'),
@@ -120,6 +163,7 @@ export const DatePickerCalendar = ({
           <LoadingView />
         ) : !isMd ? (
           Array.from({ length: MAX_MONTHS }).map((_, index) => {
+            const startDate = availableDates[0] || today
             const monthDate = new Date(
               startDate ? startDate.getFullYear() : currentMonth.getFullYear(),
               startDate

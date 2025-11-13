@@ -38,6 +38,7 @@ export type DatePickerMonthProps = {
   selectedFromDate?: Date | null
   selectedToDate?: Date | null
   isLoading?: boolean
+  maxDate?: Date
 }
 
 export type DateButtonProps = {

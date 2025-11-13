@@ -1,60 +1,58 @@
-import React from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { useCallback } from 'react'
 import { useHotelPackagesSearchContext } from '@entities/package'
-import { Button } from '@ui'
-import { SearchMultiCities } from '@features/SearchMultiCities'
-import { SearchTravelers } from '@features/SearchTravelers'
-import { DatePickerFlexibleSearch } from '@features/DatePickerFlexibleSearch'
 import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
+import { HotelSearchFormField } from './HotelSearchFormField'
+import { SearchButton } from './SearchButton'
 
-export const HotelSearchForm = ({ onSearch }: { onSearch?: () => void }) => {
-  const { t } = useTranslation()
+interface HotelSearchFormProps {
+  onSearch?: () => void
+}
+
+export const HotelSearchForm: React.FC<HotelSearchFormProps> = ({
+  onSearch
+}) => {
   const { searchData, handleSearch, setSearchData, cities } =
     useHotelPackagesSearchContext()
 
-  const handleAccept = (
-    fromDate: Date | null,
-    toDate?: Date | null,
-    days?: number
-  ) => {
-    setSearchData({ fromDate, toDate, days })
-  }
+  const handleDateAccept = useCallback(
+    (fromDate: Date | null, toDate?: Date | null, days?: number) => {
+      setSearchData({ fromDate, toDate, days })
+    },
+    [setSearchData]
+  )
 
-  const handleSearchClick = () => {
+  const handleCityChange = useCallback(
+    (selectedCityIds: number[]) => {
+      setSearchData({ selectedCity: selectedCityIds })
+    },
+    [setSearchData]
+  )
+
+  const handleTravelersChange = useCallback(
+    (travelersData: typeof searchData.travelersData) => {
+      setSearchData({ travelersData })
+    },
+    [setSearchData]
+  )
+
+  const handleSearchClick = useCallback(() => {
     handleSearch(searchData)
-    onSearch && onSearch()
-  }
+    onSearch?.()
+  }, [handleSearch, searchData, onSearch])
 
   return (
     <Layouts>
-      <SearchMultiCities
-        defaultSelectedCity={searchData.selectedCity}
-        onChange={selectedCity => {
-          setSearchData({ selectedCity })
-        }}
+      <HotelSearchFormField
+        selectedCity={searchData.selectedCity}
         cities={cities}
-        placeholder="City"
-      />
-
-      <DatePickerFlexibleSearch
+        onCityChange={handleCityChange}
         fromDate={searchData.fromDate}
         toDate={searchData.toDate}
-        onAccept={handleAccept}
+        onDateAccept={handleDateAccept}
+        travelersData={searchData.travelersData}
+        onTravelersChange={handleTravelersChange}
       />
-
-      <SearchTravelers
-        defaultData={searchData.travelersData}
-        onChange={travelersData => setSearchData({ travelersData })}
-      />
-
-      <Button
-        borderRadius='12px'
-        size="lg"
-        width={{ base: 'full', md: 'auto' }}
-        onClick={handleSearchClick}
-      >
-        {t`search`}
-      </Button>
+      <SearchButton onClick={handleSearchClick} />
     </Layouts>
   )
 }
