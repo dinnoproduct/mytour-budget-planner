@@ -50,11 +50,8 @@ void i18n
   .use(languageDetector)
   .init({
     detection: {
-      order: ['localStorage', 'querystring', 'cookie', 'defaultDetector', 'navigator'],
-      lookupLocalStorage: 'lng',
-      lookupQuerystring: 'lng',
-      lookupCookie: 'lng',
-      caches: ['localStorage', 'cookie'],
+      order: ['defaultDetector'],
+      caches: [],
     },
     supportedLngs: languages,
     fallbackLng: languages,
