@@ -9,6 +9,7 @@ import {useTranslation} from 'react-i18next'
 import React from "react";
 import {useFlightDates} from "@entities/package/hooks/useFlightDates.ts";
 import {fmt} from "@/utils/methods.ts";
+import { useLanguageRouting } from '@/hooks/useLanguageRouting';
 
 interface PackageBannerProps extends LinkBoxProps {
     isHotel: number;
@@ -20,14 +21,17 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
     const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1);
     const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
     const { data: data = {flightStartDate: '', flightReturnDate: '', returnFlightId: '', startFlightId: ''}} = useFlightDates()
+    const { getPathWithLanguage } = useLanguageRouting()
 
     const dateFrom = fmt(!isHotel ? firstOfTarget : new Date(data?.flightStartDate));
     const dateTo = fmt(!isHotel ? lastOfTarget : new Date(data?.flightReturnDate));
     return (
         <LinkBox
             as="a"
-            href={!isHotel ? `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel` :
-              `https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}&days=6&tab=packages`}
+            href={!isHotel
+              ? getPathWithLanguage(`/packages?from=${dateFrom}&to=${dateTo}&city=16%2C18%2C19&adultsCount=2&childrenCount=0&childrenAges=&days=7&dateMode=approximate&tab=hotel`)
+              : getPathWithLanguage(`/packages?from=${dateFrom}&to=${dateTo}&city=1&adultsCount=2&childrenCount=0&childrenAges=&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}&days=6&tab=packages`)
+            }
             textDecoration='none'
             _hover={{ textDecoration: 'none' }}
             height={{

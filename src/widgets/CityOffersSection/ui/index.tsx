@@ -23,6 +23,7 @@ import {
 } from '@/constants/constants.ts'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import {fmt} from "@/utils/methods.ts";
+import { useLanguageRouting } from '@/hooks/useLanguageRouting.ts';
 
 export interface PackageCountry {
   id: number
@@ -47,6 +48,7 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
   const { cities } = useHotelPackagesSearchContext()
   const { data: packageCities = [] } = useCities()
   const { data: data = {flightStartDate: '', flightReturnDate: '', returnFlightId: '', startFlightId: ''}} = useFlightDates()
+  const { getPathWithLanguage } = useLanguageRouting()
 
   const nameKey = useMemo(
     () =>
@@ -158,9 +160,9 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
               overflow="hidden"
               role="group"
               minH={{ base: '196px', sm: '362px' }}
-              href={`https://www.mytour.am/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
+              href={getPathWithLanguage(`/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
               ${isHotel ? '' : `&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}`}
-              &days=${isHotel ? '7' : '6'}${isHotel ? '&dateMode=approximate' : ''}&tab=${isHotel ? 'hotel' : 'packages'}`}
+              &days=${isHotel ? '7' : '6'}${isHotel ? '&dateMode=approximate' : ''}&tab=${isHotel ? 'hotel' : 'packages'}`)}
               _before={{
                 content: '""',
                 position: 'absolute',

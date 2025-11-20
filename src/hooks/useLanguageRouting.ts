@@ -24,26 +24,16 @@ export const useLanguageRouting = () => {
     navigate(newUrl, { replace: true });
   }, [i18n, location.pathname, location.search, navigate]);
 
-  // Sync language with localStorage and URL
+  // Sync language with URL only
   useEffect(() => {
-    const storedLanguage = localStorage.getItem('lng') as LanguageName;
-    
-    if (storedLanguage !== currentLanguage) {
-      // If stored language differs from URL, update URL
-      if (storedLanguage && (storedLanguage === 'en' || storedLanguage === 'ru' || storedLanguage === 'hy')) {
-        // Get new URL with language prefix and preserved query parameters
-        const newUrl = getUrlWithLanguage(location.pathname, location.search, storedLanguage);
-        navigate(newUrl, { replace: true });
-      } else {
-        // If no stored language, set current URL language to localStorage
-        localStorage.setItem('lng', currentLanguage);
-        i18n.changeLanguage(currentLanguage);
+    const syncLanguage = async () => {
+      if (i18n.language !== currentLanguage) {
+        await i18n.changeLanguage(currentLanguage);
       }
-    } else {
-      // Sync i18n with current language
-      i18n.changeLanguage(currentLanguage);
-    }
-  }, [currentLanguage, i18n, location.pathname, location.search, navigate]);
+    };
+
+    void syncLanguage();
+  }, [currentLanguage, i18n]);
 
   return {
     currentLanguage,
