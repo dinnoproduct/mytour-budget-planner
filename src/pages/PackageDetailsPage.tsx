@@ -1,5 +1,4 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { Footer } from "@ui";
 import {
   PackageImagesGallery,
   PackageImagesSliderModal,
@@ -26,6 +25,7 @@ import { usePackageImages } from "@/hooks/usePackageImages";
 import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { usePackage } from "@/entities/package/hooks/usePackage";
+import { PageLayout } from "@/shared/ui/layout/PageLayout";
 
 export const PackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -122,12 +122,15 @@ export const PackageDetailsPage = () => {
   }
 
   return (
-    <Box overflowX="hidden" mb={{ base: "117px", md: "0" }}>
+    <PageLayout 
+      mb={{ base: "117px", md: "0" }}
+      footerProps={{ mt: { base: "100px", md: "0px" } }}
+    >
       <SharedHeader onBackClick={handleBackClick} packageType="package" />
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
-        mt={{ md: 10 }}
+        mt={{ base: "160px", md: 10 }}
         onImageClick={handleImageClick}
       />
 
@@ -160,8 +163,6 @@ export const PackageDetailsPage = () => {
         </Flex>
       </PackageDetailsLayout>
 
-      <Footer mt={{ base: "100px", md: "0px" }} />
-
       <PackageImagesSliderModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -184,6 +185,6 @@ export const PackageDetailsPage = () => {
         isOpen={isBookingFlowOpen}
         onClose={() => setBookingFlowOpen(false)}
       />
-    </Box>
+    </PageLayout>
   );
 };

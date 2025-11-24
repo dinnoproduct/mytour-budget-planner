@@ -1,6 +1,3 @@
-import { Header } from '@widgets/Header'
-import { Box } from '@chakra-ui/react'
-import { Footer } from '@ui'
 import { PackageSearch } from '@widgets/PackageSearch'
 import { HotOffersSection } from '@widgets/HotOffersSection'
 import {useEffect, useState} from 'react'
@@ -11,6 +8,7 @@ import { AppSection } from './AppSection.tsx'
 import { AboutUsBanner } from './AboutUsBanner.tsx'
 import { BlogsSection } from '@widgets/BlogsSection'
 import {CityOffersSection} from "@widgets/CityOffersSection/ui";
+import { PageLayout } from '@/shared/ui/layout/PageLayout'
 
 export const HomePage = () => {
   const { dispatchModal } = useModalContext()
@@ -52,8 +50,7 @@ export const HomePage = () => {
 
 
   return (
-    <Box overflowX="hidden" background='white'>
-      <Header />
+    <PageLayout background='white'>
       <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
       <PackageBanner mx={{base: 4, md: "auto"}} mt={{ base: 4, md: 20 }} isHotel={isHotel} maxWidth='1376px'/>
       <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={isHotel}/>
@@ -66,8 +63,6 @@ export const HomePage = () => {
       {/*  className="embedsocial-hashtag"*/}
       {/*  data-ref="f348cf39b90fa99e65cfce589513e45493bd6815"*/}
       {/*></div>*/}
-
-      <Footer />
-    </Box>
+    </PageLayout>
   )
 }
