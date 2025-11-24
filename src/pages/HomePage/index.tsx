@@ -1,6 +1,6 @@
 import { PackageSearch } from '@widgets/PackageSearch'
 import { HotOffersSection } from '@widgets/HotOffersSection'
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import { useModalContext } from '@app/providers'
 import { useLocation } from 'react-router-dom'
 import { PackageBanner } from './PackageBanner'
@@ -9,6 +9,7 @@ import { AboutUsBanner } from './AboutUsBanner.tsx'
 import { BlogsSection } from '@widgets/BlogsSection'
 import {CityOffersSection} from "@widgets/CityOffersSection/ui";
 import { PageLayout } from '@/shared/ui/layout/PageLayout'
+import { StoriesSection } from '@widgets/StoriesSection'
 
 export const HomePage = () => {
   const { dispatchModal } = useModalContext()
@@ -52,7 +53,8 @@ export const HomePage = () => {
   return (
     <PageLayout background='white'>
       <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
-      <PackageBanner mx={{base: 4, md: "auto"}} mt={{ base: 4, md: 20 }} isHotel={isHotel} maxWidth='1376px'/>
+      <StoriesSection isHotel={isHotel} />
+      <PackageBanner mx={{base: 4, md: "auto"}} mt={10} isHotel={isHotel} maxWidth='1376px'/>
       <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={isHotel}/>
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}

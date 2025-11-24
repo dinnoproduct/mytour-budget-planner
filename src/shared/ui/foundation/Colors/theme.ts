@@ -63,5 +63,7 @@ export const colorsTheme = {
       50: "#FFF4E9",
       500: "#FF8F27",
     },
+    gr_Packages: "linear-gradient(178deg, #017BFE 1.7%, #00CFFF 98.21%)",
+    gr_Hotel: "linear-gradient(178deg, #8408FF 1.7%, #93C5FF 98.21%)",
   },
 };
