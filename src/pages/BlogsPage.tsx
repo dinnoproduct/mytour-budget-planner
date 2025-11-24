@@ -1,14 +1,10 @@
-import { Box } from '@chakra-ui/react'
-import { Footer } from '@ui'
 import { BlogsList } from '@widgets/BlogsList'
-import { Header } from '@widgets/Header'
 import { BlogsSlider } from '@widgets/BlogsSlider'
+import { PageLayout } from '@/shared/ui/layout/PageLayout'
 
 export const BlogsPage = () => (
-  <Box overflowX="hidden">
-    <Header />
+  <PageLayout>
     <BlogsSlider />
     <BlogsList mt={{ sm: '-138px' }} />
-    <Footer />
-  </Box>
+  </PageLayout>
 )

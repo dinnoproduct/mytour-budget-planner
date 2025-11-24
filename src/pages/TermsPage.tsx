@@ -1,8 +1,7 @@
 import React from "react";
 import { Box, Text, Divider, UnorderedList, OrderedList, ListItem } from "@chakra-ui/react";
-import { Footer } from "@ui";
-import { Header } from "@widgets/Header";
 import { useTranslation } from "react-i18next";
+import { PageLayout } from "@/shared/ui/layout/PageLayout";
 
 interface TextItem {
   key: string;
@@ -384,8 +383,7 @@ export const TermsPage = () => {
   };
 
   return (
-    <Box overflowX="hidden" bg="white">
-      <Header />
+    <PageLayout bg="white">
       <Box>
         {sectionsConfig.map((section, sectionIndex) => (
           <React.Fragment key={section.titleKey}>
@@ -402,7 +400,6 @@ export const TermsPage = () => {
           </React.Fragment>
         ))}
       </Box>
-      <Footer />
-    </Box>
+    </PageLayout>
   );
 };
