@@ -92,7 +92,7 @@ export const PackageCardHorizontalDetail = ({
           to={link}
           width="full"
           px={3}
-        >{t`book`}</Button>
+        >{t`learnMore`}</Button>
       </VStack>
     </Box>
   )
