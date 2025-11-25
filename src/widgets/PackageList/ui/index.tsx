@@ -66,8 +66,8 @@ export const PackageList = () => {
           : "";
       pagePath = "package";
     } else {
-      queryParams.from = moment(hotelSearchData.fromDate).format("YYYY-MM-DD");
-      queryParams.to = moment(hotelSearchData.toDate).format("YYYY-MM-DD");
+      queryParams.from = moment(tourPackage.checkin).format("YYYY-MM-DD");
+      queryParams.to = moment(tourPackage.checkout).format("YYYY-MM-DD");
       queryParams.childrenAges =
         hotelSearchData.travelersData.childrenCount > 0
           ? hotelSearchData.travelersData.childrenAges.join(",")
