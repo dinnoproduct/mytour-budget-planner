@@ -135,7 +135,7 @@ export const HotelPackageDetailsPage = () => {
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
-        mt={{ base: "160px", md: 10 }}
+        mt={{ md: 10 }}
         onImageClick={handleImageClick}
       />
 
