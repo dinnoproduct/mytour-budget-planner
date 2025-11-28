@@ -78,7 +78,7 @@ export const StoriesList: React.FC<StoriesListProps> = ({
 
   return (
     <Flex gap={{ base: 2, xs: 3, md: 4 }} align="flex-start">
-      {isMdUp && (
+      {isMdUp && hasOverflow && (
         <Box
           display="flex"
           alignItems="center"
@@ -88,7 +88,6 @@ export const StoriesList: React.FC<StoriesListProps> = ({
           <StoryScrollArrow
             direction="left"
             onClick={() => swiperRef.current?.slidePrev()}
-            isDisabled={!hasOverflow}
           />
         </Box>
       )}
@@ -100,37 +99,62 @@ export const StoriesList: React.FC<StoriesListProps> = ({
         py={2}
         overflow="hidden"
       >
-        <Swiper
-          modules={[Navigation]}
-          loop={hasOverflow}
-          speed={400}
-          allowTouchMove
-          breakpoints={SWIPER_BREAKPOINTS}
-          onSwiper={(instance) => {
-            swiperRef.current = instance;
-          }}
-        >
-          {storyGroups.map((group) => (
-            <SwiperSlide
-              key={group.storySet.id}
-              style={{
-                width: `${slideWidth}px`,
-                maxWidth: `${slideWidth}px`,
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <StoryItem
-                group={group}
-                onOpen={onOpenStorySet}
-                isHotel={isHotel}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        {hasOverflow ? (
+          <Swiper
+            modules={[Navigation]}
+            loop={hasOverflow}
+            speed={400}
+            allowTouchMove
+            breakpoints={SWIPER_BREAKPOINTS}
+            onSwiper={(instance) => {
+              swiperRef.current = instance;
+            }}
+          >
+            {storyGroups.map((group) => (
+              <SwiperSlide
+                key={group.storySet.id}
+                style={{
+                  width: `${slideWidth}px`,
+                  maxWidth: `${slideWidth}px`,
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <StoryItem
+                  group={group}
+                  onOpen={onOpenStorySet}
+                  isHotel={isHotel}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <Flex
+            justifyContent="space-between"
+            alignItems="flex-start"
+            width="100%"
+          >
+            {storyGroups.map((group) => (
+              <Box
+                key={group.storySet.id}
+                width={`${slideWidth}px`}
+                maxWidth={`${slideWidth}px`}
+                display="flex"
+                justifyContent="center"
+                flexShrink={0}
+              >
+                <StoryItem
+                  group={group}
+                  onOpen={onOpenStorySet}
+                  isHotel={isHotel}
+                />
+              </Box>
+            ))}
+          </Flex>
+        )}
       </Box>
 
-      {isMdUp && (
+      {isMdUp && hasOverflow && (
         <Box
           display="flex"
           alignItems="center"
@@ -140,7 +164,6 @@ export const StoriesList: React.FC<StoriesListProps> = ({
           <StoryScrollArrow
             direction="right"
             onClick={() => swiperRef.current?.slideNext()}
-            isDisabled={!hasOverflow}
           />
         </Box>
       )}
