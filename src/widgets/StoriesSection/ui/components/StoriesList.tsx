@@ -1,11 +1,12 @@
 import { Box, Flex, useMediaQuery } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, FreeMode } from "swiper/modules";
 import { type Swiper as SwiperType } from "swiper";
 import { type SwiperOptions } from "swiper/types";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/free-mode";
 import { type StoryGroup } from "../types";
 import { StoryItem } from "./StoryItem";
 import { StoryScrollArrow } from "./StoryScrollArrow";
@@ -101,10 +102,26 @@ export const StoriesList: React.FC<StoriesListProps> = ({
       >
         {hasOverflow ? (
           <Swiper
-            modules={[Navigation]}
+            modules={[Navigation, FreeMode]}
             loop={hasOverflow}
-            speed={400}
+            speed={250}
             allowTouchMove
+            freeMode={{
+              enabled: true,
+              sticky: false,
+              momentum: true,
+              momentumBounce: false,
+              momentumRatio: 0.5,
+              momentumVelocityRatio: 0.5,
+            }}
+            grabCursor={true}
+            resistance={true}
+            resistanceRatio={0.5}
+            touchRatio={1.5}
+            touchAngle={45}
+            threshold={5}
+            longSwipesRatio={0.5}
+            longSwipesMs={300}
             breakpoints={SWIPER_BREAKPOINTS}
             onSwiper={(instance) => {
               swiperRef.current = instance;
