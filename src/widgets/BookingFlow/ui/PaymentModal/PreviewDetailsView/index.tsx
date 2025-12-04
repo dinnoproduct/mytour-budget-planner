@@ -57,6 +57,8 @@ export const PreviewDetailsView = ({
   const [promoCodeValue, setPromoCodeValue] = useState("");
   const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
+  const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] = useState(false);
+  const [policyModalType, setPolicyModalType] = useState<"booking" | "cancellation">("booking");
   const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
 
   const handleUsePromocode = () => {
@@ -397,7 +399,14 @@ export const PreviewDetailsView = ({
           />
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection
-            openBookingRulesModal={() => setIsBookingRulesModalOpen(true)}
+            openBookingRulesModal={() => {
+              setPolicyModalType("booking");
+              setIsBookingRulesModalOpen(true);
+            }}
+            openCancellationPolicyModal={() => {
+              setPolicyModalType("cancellation");
+              setIsCancellationPolicyModalOpen(true);
+            }}
           />
         </Box>
 
@@ -503,8 +512,12 @@ export const PreviewDetailsView = ({
       </Portal>
       <Portal>
         <BookingRulesModal
-          isOpen={isBookingRulesModalOpen}
-          handleClose={() => setIsBookingRulesModalOpen(false)}
+          isOpen={isBookingRulesModalOpen || isCancellationPolicyModalOpen}
+          handleClose={() => {
+            setIsBookingRulesModalOpen(false);
+            setIsCancellationPolicyModalOpen(false);
+          }}
+          policyType={policyModalType}
         />
       </Portal>
     </>

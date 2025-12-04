@@ -1,13 +1,12 @@
-import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../store/store.ts';
 import { langKeyAdapter } from '../../../utils/normalizers.ts';
 import type { PackagesFields } from '../data/packagesEnums.ts';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelectedPackage } from './useSelectedPackage.ts';
 
 const usePolicy = () => {
   const { i18n } = useTranslation();
-  const packageDetails = useRecoilValue(packageDetailsAtom);
+  const { selectedPackage } = useSelectedPackage();
 
   const correctedTypeLanguage = i18n.language as keyof typeof langKeyAdapter;
   const bookingPolicy = `bookingPolicy${langKeyAdapter[correctedTypeLanguage]}` as PackagesFields.bookingPolicyArm;
@@ -15,24 +14,42 @@ const usePolicy = () => {
     `cancelationPolicy${langKeyAdapter[correctedTypeLanguage]}` as PackagesFields.cancelationPolicyArm;
 
   const parsedPolicy = useMemo(() => {
-    const parsedBookingPolicy = JSON.parse(packageDetails[bookingPolicy] ? packageDetails[bookingPolicy] : '{}');
-
-    if (!parsedBookingPolicy?.policy) {
-      return { before: '', after: '', urlText: '' };
+    if (!selectedPackage?.[bookingPolicy]) {
+      return { before: '', after: '', urlText: '', url: '' };
     }
 
-    const { policy } = parsedBookingPolicy;
-    const pattern = /%@(.*?)%@/;
-    const match = pattern.exec(policy as string)!;
+    try {
+      const parsedBookingPolicy = JSON.parse(selectedPackage[bookingPolicy]);
 
-    const [before, urlText, after] = [
-      policy.substring(0, match?.index),
-      match?.[1], // The URL
-      policy.substring(match?.index + match?.[0].length),
-    ];
+      if (!parsedBookingPolicy?.policy) {
+        return { before: '', after: '', urlText: '', url: '' };
+      }
 
-    return { before, urlText, after, url: parsedBookingPolicy.url };
-  }, [packageDetails[bookingPolicy]]);
+      const { policy } = parsedBookingPolicy;
+      const pattern = /%@(.*?)%@/;
+      const match = pattern.exec(policy as string);
+
+      if (!match) {
+        return { before: policy, after: '', urlText: '', url: parsedBookingPolicy.url || '' };
+      }
+
+      const [before, urlText, after] = [
+        policy.substring(0, match.index),
+        match[1], // The URL text (what user sees)
+        policy.substring(match.index + match[0].length),
+      ];
+
+      return { 
+        before, 
+        urlText, 
+        after, 
+        url: parsedBookingPolicy.url || urlText || '' // Use url from JSON, fallback to urlText, or empty
+      };
+    } catch (error) {
+      console.error('Error parsing booking policy:', error);
+      return { before: '', after: '', urlText: '', url: '' };
+    }
+  }, [selectedPackage?.[bookingPolicy], bookingPolicy]);
 
   return { parsedPolicy, cancelationPolicy };
 };
