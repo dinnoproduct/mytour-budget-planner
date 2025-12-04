@@ -30,6 +30,9 @@ export const langKeyAdapter = {
   arm: 'Arm',
   eng: 'Eng',
   rus: 'Rus',
+  hy: 'Arm',
+  en: 'Eng',
+  ru: 'Rus',
 };
 
 export const dateFormatter = (date: Date | string) => {

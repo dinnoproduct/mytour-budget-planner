@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 
 export const TermsAndConditionsSection = ({
   openBookingRulesModal,
+  openCancellationPolicyModal,
 }: {
   openBookingRulesModal: () => void;
+  openCancellationPolicyModal: () => void;
 }) => {
   const { t } = useTranslation();
 
@@ -33,10 +35,7 @@ export const TermsAndConditionsSection = ({
           color="blue.500"
           cursor="pointer"
           textDecoration="underline"
-          onClick={() => {
-            // TODO: Open privacy policy modal/page
-            console.log("Open privacy policy");
-          }}
+          onClick={openCancellationPolicyModal}
         >
           {t`cancelRules`}
         </Text>
