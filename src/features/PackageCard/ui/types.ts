@@ -16,7 +16,6 @@ export type PackageCardHorizontalDetailProps = {
   tourPackage: PackageEntity | EmptyObject
   childrenTravelers: string
   isHotelPackage: boolean
-  link: string
   nights: number
 }
 

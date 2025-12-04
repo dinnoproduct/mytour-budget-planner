@@ -8,7 +8,6 @@ import { Box, VStack, Flex, Tag, TagRightIcon, Show } from '@chakra-ui/react'
 import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
 import { CURRENCY_MAP } from '@shared/model'
 import { Button, Icon, Text, Tooltip } from '@ui'
-import { Link as ReactLink } from 'react-router-dom'
 import { getPluralForm } from '@shared/helpers'
 import { formatNumber } from '@shared/utils'
 import moment, { type Moment } from 'moment'
@@ -16,7 +15,6 @@ import moment, { type Moment } from 'moment'
 export const PackageCardHorizontalDetail = ({
   tourPackage,
   nights,
-  link,
   isHotelPackage,
   childrenTravelers
 }: PackageCardHorizontalDetailProps) => {
@@ -88,8 +86,6 @@ export const PackageCardHorizontalDetail = ({
 
         <Button
           hidden={!isMd}
-          as={ReactLink}
-          to={link}
           width="full"
           px={3}
         >{t`learnMore`}</Button>
