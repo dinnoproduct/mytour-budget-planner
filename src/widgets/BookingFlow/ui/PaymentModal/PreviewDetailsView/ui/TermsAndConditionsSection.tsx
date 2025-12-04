@@ -24,7 +24,7 @@ export const TermsAndConditionsSection = ({
           textDecoration="underline"
           onClick={openBookingRulesModal}
         >
-          {t`bookingRules`}
+          {t`bookingAndPaymentTerms`}
         </Text>{" "}
         {t`and`}{" "}
         <Text
@@ -38,7 +38,7 @@ export const TermsAndConditionsSection = ({
             console.log("Open privacy policy");
           }}
         >
-          {t`privacyPolicy`}
+          {t`cancelRules`}
         </Text>
         .
       </Text>
