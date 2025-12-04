@@ -136,7 +136,6 @@ export const PackageCardHorizontal = ({
         <PackageCardHorizontalDetail
           tourPackage={tourPackage}
           nights={nights}
-          link={link}
           isHotelPackage={isHotelPackage}
           childrenTravelers={childrenTravelers}
         />
