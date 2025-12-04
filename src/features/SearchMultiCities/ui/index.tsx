@@ -59,11 +59,16 @@ export const SearchMultiCities = ({
       id => cities.find(c => c.id === id)?.countryId === countryId
     )
 
+    const otherCountryCities = selectedCities.filter(
+      id => cities.find(c => c.id === id)?.countryId !== countryId
+    )
+
     let newSelection: number[]
     if (currentCountryCities.includes(city.id)) {
-      newSelection = currentCountryCities.filter(id => id !== city.id)
+      const updatedCountryCities = currentCountryCities.filter(id => id !== city.id)
+      newSelection = [...otherCountryCities, ...updatedCountryCities]
     } else {
-      newSelection = [...currentCountryCities, city.id]
+      newSelection = [...otherCountryCities, ...currentCountryCities, city.id]
     }
 
     setSelectedCities(newSelection)
@@ -71,9 +76,31 @@ export const SearchMultiCities = ({
   }
 
   const handleCountrySelect = (countryCities: PackageCity[]) => {
+    const countryId = countryCities[0]?.countryId
+    if (!countryId) return
+
     const countryCityIds = countryCities.map(c => c.id)
-    setSelectedCities(countryCityIds)
-    onChange(countryCityIds)
+    
+    const currentCountryCities = selectedCities.filter(
+      id => cities.find(c => c.id === id)?.countryId === countryId
+    )
+    
+    const allCountryCitiesSelected = countryCityIds.every(id => 
+      currentCountryCities.includes(id)
+    )
+    
+    let newSelection: number[]
+    if (allCountryCitiesSelected) {
+      newSelection = selectedCities.filter(id => !countryCityIds.includes(id))
+    } else {
+      const otherCountryCities = selectedCities.filter(
+        id => cities.find(c => c.id === id)?.countryId !== countryId
+      )
+      newSelection = [...otherCountryCities, ...countryCityIds]
+    }
+    
+    setSelectedCities(newSelection)
+    onChange(newSelection)
   }
 
   const activeCityNames = useMemo(() => {
