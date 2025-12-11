@@ -63,6 +63,16 @@ export enum PackagesFields {
   partnerPrice = 'partnerPrice',
   currency = 'currency',
   cancellationDate = 'cancellationDate',
+  prepaymentType = 'prepaymentType',
+  prepaymentInfo = 'prepaymentInfo',
+  minimumAcceptableDaysCount = 'minimumAcceptableDaysCount',
+  firstPaymentDate = 'firstPaymentDate',
+  secondPaymentDate = 'secondPaymentDate',
+  paymentType = 'paymentType',
+  minimumAcceptablePayment = 'minimumAcceptablePayment',
+  minimumAcceptablePaymentPercentage = 'minimumAcceptablePaymentPercentage',
+  fullPrice = 'fullPrice',
+  travelAgencyId = 'travelAgencyId',
 }
 
 export enum PackagesNestedFields {

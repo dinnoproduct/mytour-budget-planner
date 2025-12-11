@@ -1,4 +1,8 @@
-import { type CustomFields, type PackagesFields, type PackagesNestedFields } from './packagesEnums.ts';
+import {
+  type CustomFields,
+  type PackagesFields,
+  type PackagesNestedFields,
+} from "./packagesEnums.ts";
 
 export interface IPackage {
   [PackagesFields.nameArm]: string;
@@ -183,6 +187,24 @@ export interface IGeneratedMultivendorOffer {
       [PackagesFields.id]: number;
     };
     [PackagesFields.departureDate]: string;
+  };
+  [PackagesFields.prepaymentType]:
+    | "NoDownPayment"
+    | "PartialPricePayment"
+    | "FullPricePayment";
+  [PackagesFields.prepaymentInfo]: {
+    [PackagesFields.bookingType]: number;
+    [PackagesFields.firstPaymentDate]: string;
+    [PackagesFields.fullPrice]: number;
+    [PackagesFields.minimumAcceptableDaysCount]: number;
+    [PackagesFields.minimumAcceptablePayment]: number;
+    [PackagesFields.minimumAcceptablePaymentPercentage]: number;
+    [PackagesFields.paymentType]:
+      | "NoDownPayment"
+      | "PartialPricePayment"
+      | "FullPricePayment";
+    [PackagesFields.secondPaymentDate]: string;
+    [PackagesFields.travelAgencyId]: number;
   };
 }
 

@@ -34,12 +34,12 @@ export const Header: React.FC<{
       </HStack>
 
       {/* Info Section */}
-      {freeCancellationDate && (
+      {offer?.prepaymentInfo?.paymentType === 'NoDownPayment' && (
         <HStack spacing={1} align="center" flexShrink={0}>
           <Text fontSize="xs" color="blue.500" whiteSpace="nowrap">
             {t`bookWithoutPayment`}
           </Text>
-          <Tooltip label={t('noPrepaymentText', {days: 40})}>
+          <Tooltip label={t('noPrepaymentText', {days: offer?.prepaymentInfo?.minimumAcceptableDaysCount})}>
             <Flex justify="center" align="center">
               <Icon name="info-outline" size="16" color="blue.500" />
             </Flex>
