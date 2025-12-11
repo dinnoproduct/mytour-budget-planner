@@ -5,7 +5,7 @@ import { Icon, Tooltip } from "@/shared/ui";
 
 export const Header: React.FC<{
   offer: IGeneratedMultivendorOffer;
-  freeCancellationDate: string | null;
+  freeCancellationDate?: string;
 }> = ({ offer, freeCancellationDate }) => {
   const { t } = useTranslation();
 
@@ -39,7 +39,7 @@ export const Header: React.FC<{
           <Text fontSize="xs" color="blue.500" whiteSpace="nowrap">
             {t`bookWithoutPayment`}
           </Text>
-          <Tooltip label={t`noPrepaymentText`}>
+          <Tooltip label={t('noPrepaymentText', {days: 40})}>
             <Flex justify="center" align="center">
               <Icon name="info-outline" size="16" color="blue.500" />
             </Flex>

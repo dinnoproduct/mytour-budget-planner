@@ -22,10 +22,6 @@ export const RoomCard: React.FC<RoomCardProps> = ({
   updateSelectedRoomPackage,
 }) => {
   const { isHotelPackage, selectedPackage } = useBookingDrawer();
-  const { freeCancellationDate } = useFreeCancellation(
-    new Date(offer.checkin),
-    new Date(offer.checkout),
-  );
 
   return (
     <Card
@@ -36,25 +32,18 @@ export const RoomCard: React.FC<RoomCardProps> = ({
       width={fullWidth ? "100%" : "313px"}
       flexShrink={0}
     >
-      <Header offer={offer} freeCancellationDate={freeCancellationDate} />
+      <Header offer={offer} />
 
       <Divider my={3} color="white" borderWidth="1px" />
 
       {!isHotelPackage && (
         <>
-          {" "}
           <VStack spacing={3} align="stretch">
             <FlightInfoSection
               airCompanyName={offer?.departureFlight?.airCompany?.name || ""}
               departureDate={offer?.departureFlight?.departureDate || ""}
               returnDate={offer?.returnFlight?.departureDate || ""}
             />
-            {freeCancellationDate && (
-              <FreeCancellationInfo
-                offer={offer}
-                freeCancellationDate={freeCancellationDate}
-              />
-            )}
           </VStack>
           <Divider my={3} color="white" borderWidth="1px" />
         </>
