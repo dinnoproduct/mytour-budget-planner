@@ -1,3 +1,4 @@
+import { Currency } from "@/entities/package/index.ts";
 import {
   type CustomFields,
   type PackagesFields,
@@ -172,7 +173,7 @@ export interface IGeneratedMultivendorOffer {
   [PackagesFields.priceInCurrency]: number;
   [PackagesFields.rate]: number;
   [PackagesFields.partnerPrice]: number;
-  [PackagesFields.currency]: string;
+  [PackagesFields.currency]: Currency;
   [PackagesFields.cancellationDate]: string;
   [PackagesFields.departureFlight]: {
     [PackagesFields.id]: number;
@@ -205,6 +206,11 @@ export interface IGeneratedMultivendorOffer {
       | "FullPricePayment";
     [PackagesFields.secondPaymentDate]: string;
     [PackagesFields.travelAgencyId]: number;
+  };
+  [PackagesFields.cancelationMessage]: {
+    [PackagesFields.messageArm]: string;
+    [PackagesFields.messageEng]: string;
+    [PackagesFields.messageRus]: string;
   };
 }
 

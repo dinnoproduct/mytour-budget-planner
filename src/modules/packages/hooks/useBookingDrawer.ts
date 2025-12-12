@@ -54,10 +54,32 @@ export const useBookingDrawer = () => {
         offerId: offer.offerId,
         foodType: offer.foodType,
         roomType: offer.roomType,
+        travelAgency: offer.agency,
+        currency: offer.currency,
+        nights: offer.nights,
         price: offer.price,
         priceInCurrency: offer.priceInCurrency.toString(),
         rate: offer.rate,
-        travelAgency: offer.agency,
+        prepaymentType: offer.prepaymentType,
+        prepaymentInfo: offer.prepaymentInfo,
+        destinationFlight: {
+          ...selectedPackage.destinationFlight,
+          id: offer.departureFlight.id,
+          departureDate: offer.departureFlight.departureDate,
+          airCompany: offer.departureFlight.airCompany,
+        },
+        returnFlight: {
+          ...selectedPackage.returnFlight,
+          departureDate: offer.returnFlight.departureDate,
+          airCompany: {
+            ...selectedPackage.returnFlight.airCompany,
+            id:
+              offer.returnFlight.airCompany?.id ||
+              selectedPackage.returnFlight.airCompany.id,
+          },
+        },
+        checkout: offer.checkout,
+        checkin: offer.checkin,
       };
 
       storeSelectedPackage(updatedPackage);

@@ -73,6 +73,10 @@ export enum PackagesFields {
   minimumAcceptablePaymentPercentage = 'minimumAcceptablePaymentPercentage',
   fullPrice = 'fullPrice',
   travelAgencyId = 'travelAgencyId',
+  cancelationMessage = 'cancelationMessage',
+  messageArm = 'messageArm',
+  messageEng = 'messageEng',
+  messageRus = 'messageRus',
 }
 
 export enum PackagesNestedFields {
