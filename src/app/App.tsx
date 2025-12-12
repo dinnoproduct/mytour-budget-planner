@@ -9,11 +9,14 @@ import { UserProvider } from "@entities/user";
 import { RouteTracker } from "./RouteTracker";
 import { useEffect } from "react";
 import { getTabSessionId } from "@/utils/session.ts";
+import { initializeUTMTracking } from "@/utils/utmParams";
 
 function App() {
   useEffect(() => {
     // Make sure the session ID exists before first event
     getTabSessionId();
+    // Initialize UTM parameter tracking
+    initializeUTMTracking();
   }, []);
 
   return (
