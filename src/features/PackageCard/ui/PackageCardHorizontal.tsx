@@ -1,23 +1,21 @@
-import { Box, type LinkProps, Flex, VStack, Link } from '@chakra-ui/react'
-import { useTranslation } from 'react-i18next'
-import ImageSlider from './ImageSlider.tsx'
-import { type ReactNode, useMemo } from 'react'
-import { LANGUAGE_PREFIX } from '@shared/model'
-import { type Language } from '@widgets/Header/model'
-import { Icon, StatusOnImageBadge, Text } from '@ui'
-import { LanguageLink } from '../../../components/LanguageLink/LanguageLink'
+import { Box, type LinkProps, Flex, VStack } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+import ImageSlider from "./ImageSlider.tsx";
+import { type ReactNode, useMemo } from "react";
+import { LANGUAGE_PREFIX } from "@shared/model";
+import { type Language } from "@widgets/Header/model";
+import { Icon, StatusOnImageBadge, Text } from "@ui";
+import { LanguageLink } from "../../../components/LanguageLink/LanguageLink";
 import {
   type DictionaryTypes,
   type PackageCity,
   type PackageCountry,
   type PackageEntity,
-  useDictionary
-} from '@entities/package'
-import { getPluralForm } from '@shared/helpers'
-import { type PackageCardHorizontalProps } from './types.ts'
-import { PackageCardHorizontalDetail } from './PackageCardHorizontalDetail.tsx'
-import { useSelectedPackage } from '@/modules/packages/hooks/useSelectedPackage.ts'
-import { type EmptyObject } from 'global'
+  useDictionary,
+} from "@entities/package";
+import { getPluralForm } from "@shared/helpers";
+import { type PackageCardHorizontalProps } from "./types.ts";
+import { PackageCardHorizontalDetail } from "./PackageCardHorizontalDetail.tsx";
 
 export const PackageCardHorizontal = ({
   tourPackage = {},
@@ -25,69 +23,69 @@ export const PackageCardHorizontal = ({
   nights,
   ...props
 }: PackageCardHorizontalProps) => {
-  const { i18n, t } = useTranslation()
+  const { i18n, t } = useTranslation();
 
   const { data: foodTypes = [] } = useDictionary(
-    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
-  )
+    "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
+  );
 
   const languageSuffix = useMemo(
-    () => LANGUAGE_PREFIX[i18n.language as Language['name']],
-    [i18n.language]
-  )
+    () => LANGUAGE_PREFIX[i18n.language as Language["name"]],
+    [i18n.language],
+  );
 
   const cityLabel = useMemo(
     () =>
       tourPackage.city[
-        ('name' + languageSuffix) as keyof PackageCity
+        ("name" + languageSuffix) as keyof PackageCity
       ] as string,
-    [tourPackage.city, languageSuffix]
-  )
+    [tourPackage.city, languageSuffix],
+  );
 
   const countryLabel = useMemo(
     () =>
       tourPackage.city.country[
-        ('name' + languageSuffix) as keyof PackageCountry
+        ("name" + languageSuffix) as keyof PackageCountry
       ] as string,
-    [tourPackage.city.country, languageSuffix]
-  )
+    [tourPackage.city.country, languageSuffix],
+  );
 
   const packageName = useMemo(
     () =>
-      tourPackage[('name' + languageSuffix) as keyof PackageEntity] as string,
-    [tourPackage, languageSuffix]
-  )
+      tourPackage[("name" + languageSuffix) as keyof PackageEntity] as string,
+    [tourPackage, languageSuffix],
+  );
 
   const childrenTravelers = useMemo(() => {
     const childrenCount =
-      tourPackage?.childrenTravelers + tourPackage?.infantTravelers
+      tourPackage?.childrenTravelers + tourPackage?.infantTravelers;
 
-    if (childrenCount === 0) return ''
+    if (childrenCount === 0) return "";
 
-    return `, ${childrenCount} ${t(getPluralForm(childrenCount, 'children'))}`
+    return `, ${childrenCount} ${t(getPluralForm(childrenCount, "children"))}`;
   }, [
     tourPackage?.childrenTravelers,
     tourPackage?.infantTravelers,
-    languageSuffix
-  ])
+    languageSuffix,
+  ]);
 
   const isHotelPackage = useMemo(
     () => !tourPackage.destinationFlight?.departureDate,
-    [tourPackage.destinationFlight?.departureDate]
-  )
+    [tourPackage.destinationFlight?.departureDate],
+  );
 
-  const foodType = foodTypes[tourPackage?.foodType]?.value
+  const foodType = foodTypes[tourPackage?.foodType]?.value;
 
   return (
-    <Layout link={link} tourPackage={tourPackage} {...props}>
-      <Flex flexDirection={{ base: 'column', md: 'row' }}>
+    <Layout link={link} {...props}>
+      <Flex flexDirection={{ base: "column", md: "row" }}>
         {/* hotel details layout */}
         <Flex
           gap={4}
           bgColor="gray.50"
           p={3}
           grow={1}
-          flexDirection={{ base: 'column', md: 'row' }}
+          flexDirection={{ base: "column", md: "row" }}
         >
           <Box width="326px">
             <ImageSlider
@@ -122,7 +120,7 @@ export const PackageCardHorizontal = ({
                   backgroundColor="transparent"
                   p={0}
                   textProps={{
-                    color: 'gray.600'
+                    color: "gray.600",
                   }}
                   rounded="24px"
                 >
@@ -141,38 +139,29 @@ export const PackageCardHorizontal = ({
         />
       </Flex>
     </Layout>
-  )
-}
+  );
+};
 
 const Layout = ({
   children,
   link,
-  tourPackage,
   ...props
-}: { 
-  children: ReactNode | ReactNode[]; 
-  link: string; 
-  tourPackage: PackageEntity | EmptyObject;
+}: {
+  children: ReactNode | ReactNode[];
+  link: string;
 } & LinkProps) => {
-  const { storeSelectedPackage } = useSelectedPackage()
-
-  const handleClick = () => {
-    if (tourPackage && 'offerId' in tourPackage && tourPackage.offerId) {
-      storeSelectedPackage(tourPackage as PackageEntity);
-    }
-  };
 
   return (
     <LanguageLink
       to={link}
-      onClick={handleClick}
-      _hover={{ textTransform: 'none' }}
-      maxWidth={{ base: '362px', md: 'full' }}
-      width={{ base: 'auto', md: 'full' }}
+      _hover={{ textTransform: "none" }}
+      maxWidth={{ base: "362px", md: "full" }}
+      width={{ base: "auto", md: "full" }}
+      target="_blank"
       {...props}
     >
       <Box
-        width={{ base: 'auto', md: 'full' }}
+        width={{ base: "auto", md: "full" }}
         rounded="lg"
         overflow="hidden"
         border="1px solid"
@@ -182,5 +171,5 @@ const Layout = ({
         {children}
       </Box>
     </LanguageLink>
-  )
-}
+  );
+};
