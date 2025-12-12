@@ -49,8 +49,10 @@ export const useBookingDrawer = () => {
     }));
 
     if (selectedPackage) {
+      const { destinationFlight, returnFlight, ...restOfSelectedPackage } = selectedPackage;
+      
       const updatedPackage = {
-        ...selectedPackage,
+        ...restOfSelectedPackage,
         offerId: offer.offerId,
         foodType: offer.foodType,
         roomType: offer.roomType,
@@ -62,22 +64,30 @@ export const useBookingDrawer = () => {
         rate: offer.rate,
         prepaymentType: offer.prepaymentType,
         prepaymentInfo: offer.prepaymentInfo,
-        destinationFlight: {
-          ...selectedPackage.destinationFlight,
-          id: offer.departureFlight.id,
-          departureDate: offer.departureFlight.departureDate,
-          airCompany: offer.departureFlight.airCompany,
-        },
-        returnFlight: {
-          ...selectedPackage.returnFlight,
-          departureDate: offer.returnFlight.departureDate,
-          airCompany: {
-            ...selectedPackage.returnFlight.airCompany,
-            id:
-              offer.returnFlight.airCompany?.id ||
-              selectedPackage.returnFlight.airCompany.id,
+        ...(destinationFlight && {
+          destinationFlight: {
+            ...destinationFlight,
+            ...(offer.departureFlight && {
+              id: offer.departureFlight.id,
+              departureDate: offer.departureFlight.departureDate,
+              airCompany: offer.departureFlight.airCompany,
+            }),
           },
-        },
+        }),
+        ...(returnFlight && {
+          returnFlight: {
+            ...returnFlight,
+            ...(offer.returnFlight && {
+              departureDate: offer.returnFlight.departureDate,
+              airCompany: {
+                ...returnFlight.airCompany,
+                ...(offer.returnFlight.airCompany && {
+                  id: offer.returnFlight.airCompany.id,
+                }),
+              },
+            }),
+          },
+        }),
         checkout: offer.checkout,
         checkin: offer.checkin,
       };
