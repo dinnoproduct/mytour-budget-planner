@@ -104,19 +104,37 @@ export const HotelPackagesSearchProvider: React.FC<{
       fromDate &&
       fromDate.isSameOrAfter(today)
     ) {
+      // Validate and filter selectedCity IDs to only include cities that exist in the current cities list
+      const savedCityIds = savedSearchData.selectedCity != null
+        ? (Array.isArray(savedSearchData.selectedCity)
+            ? savedSearchData.selectedCity
+            : [savedSearchData.selectedCity])
+        : []
+      
+      const validCityIds = savedCityIds.filter(cityId => 
+        cities.some(city => city.id === cityId)
+      )
+      
+      // If no valid cities found, fall back to defaultSelectedHotelCity filtered by available cities
+      const selectedCity = validCityIds.length > 0
+        ? validCityIds
+        : defaultSelectedHotelCity.filter(cityId =>
+            cities.some(city => city.id === cityId)
+          )
+
       setSearchData({
         ...savedSearchData,
         fromDate: new Date(savedSearchData.fromDate),
         toDate: new Date(savedSearchData.toDate),
-        selectedCity: Array.isArray(savedSearchData.selectedCity)
-          ? savedSearchData.selectedCity
-          : [savedSearchData.selectedCity]
+        selectedCity
       })
     } else {
       setSearchData({
         fromDate: moment().toDate(),
         toDate: moment().add(1, 'day').toDate(),
-        selectedCity: cities[0] ? [...defaultSelectedHotelCity] : []
+        selectedCity: cities[0] ? defaultSelectedHotelCity.filter(cityId =>
+          cities.some(city => city.id === cityId)
+        ) : []
       })
     }
     
@@ -251,6 +269,13 @@ export const HotelPackagesSearchProvider: React.FC<{
   }, [isAllowedSearchRoute, searchData.fromDate, searchData.toDate, filteredHotelPackages.length])
 
   useEffect(() => {
+    // Only sync URL params when we're on the hotel tab to prevent
+    // packages search params from polluting hotel search data
+    const tabParam = searchParams.get('tab')
+    if (tabParam !== 'hotel') {
+      return
+    }
+
     const getDateFromParam = (param: string | null) =>
       param ? new Date(param) : null
 
