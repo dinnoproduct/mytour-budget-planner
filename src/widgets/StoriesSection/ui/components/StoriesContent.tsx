@@ -27,13 +27,7 @@ export const StoriesContent: React.FC<StoriesContentProps> = ({
   }
 
   if (error) {
-    return (
-      <Flex justify="center" py={8}>
-        <Text color="red.500" fontWeight="medium">
-          {error}
-        </Text>
-      </Flex>
-    )
+    return <></>
   }
 
   if (storyGroups.length === 0) {
