@@ -31,16 +31,19 @@ declare global {
 
 import { PaymentMethod } from "@/widgets/BookingFlow/ui/PaymentModal/types";
 import { getTabSessionId } from "@/utils/session";
+import { getUTMParams } from "@/utils/utmParams";
 
 // Facebook Pixel Events
 export const metaEvents = {
   // Page View Event
   pageView: (pageName?: string) => {
     if (window.fbq) {
+      const utmParams = getUTMParams();
       window.fbq("track", "PageView", {
         event_id: generateEventId(),
         page_name: pageName || window.location.pathname,
         timestamp: new Date().toISOString(),
+        ...utmParams,
       });
     }
   },
@@ -66,10 +69,12 @@ export const metaEvents = {
     room_type?: string | number;
   }) => {
     if (window.fbq) {
+      const utmParams = getUTMParams();
       window.fbq("track", "InitiateCheckout", {
         ...data,
         event_id: generateEventId(),
         timestamp: new Date().toISOString(),
+        ...utmParams,
       });
     }
   },
@@ -87,10 +92,12 @@ export const metaEvents = {
     room_type?: string;
   }) => {
     if (window.fbq) {
+      const utmParams = getUTMParams();
       window.fbq("track", "AddPaymentInfo", {
         ...data,
         event_id: generateEventId(),
         timestamp: new Date().toISOString(),
+        ...utmParams,
       });
     }
   },
@@ -111,10 +118,12 @@ export const metaEvents = {
     room_type?: string;
   }) => {
     if (window.fbq) {
+      const utmParams = getUTMParams();
       window.fbq("track", "Purchase", {
         ...data,
         event_id: generateEventId(),
         timestamp: new Date().toISOString(),
+        ...utmParams,
       });
     }
   },
