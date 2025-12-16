@@ -329,6 +329,7 @@ export const HotelPackagesSearchProvider: React.FC<{
     if (hasUrlData) {
       setSearchData(currentData)
     }
+    
   }, [searchParams])
 
   return (

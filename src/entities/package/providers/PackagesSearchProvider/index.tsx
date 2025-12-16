@@ -56,6 +56,10 @@ export const PackagesSearchProvider: React.FC<{
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false);
 
   const hasInitializedData = useRef(false);
+  const lastProcessedPackageListLength = useRef(0);
+  const lastProcessedCitiesLength = useRef(0);
+  const lastDepartureFlightsLength = useRef(0);
+  const lastReturnFlightsLength = useRef(0);
 
   const isAllowedSearchRoute = useMemo(() => {
     const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
@@ -142,6 +146,23 @@ export const PackagesSearchProvider: React.FC<{
       return;
     }
 
+    // Only proceed if we have cities or packageList data
+    if (cities.length === 0 && (!packageList || packageList.length === 0)) {
+      return;
+    }
+
+    // Check if we've already processed this data
+    const currentPackageListLength = packageList?.length || 0;
+    const currentCitiesLength = cities?.length || 0;
+    
+    if (
+      hasInitializedData.current &&
+      lastProcessedPackageListLength.current === currentPackageListLength &&
+      lastProcessedCitiesLength.current === currentCitiesLength
+    ) {
+      return;
+    }
+
     const savedSearchData = loadSearchDataFromLocalStorage();
     const fromDate = savedSearchData?.fromDate
       ? moment(savedSearchData?.fromDate)
@@ -184,7 +205,9 @@ export const PackagesSearchProvider: React.FC<{
 
     setSearchData(updatedSearchData, true);
     hasInitializedData.current = true;
-  }, [packageList, cities]);
+    lastProcessedPackageListLength.current = currentPackageListLength;
+    lastProcessedCitiesLength.current = currentCitiesLength;
+  }, [packageList?.length, cities?.length]);
 
   const { data: departureFlights } = useAvailableFlights(
     {
@@ -207,42 +230,68 @@ export const PackagesSearchProvider: React.FC<{
     );
 
   useEffect(() => {
-    if (Array.isArray(departureFlights)) {
-      const dates = departureFlights
-        .map((flight) => new Date(flight.departureDate))
-        .sort((a, b) => a.getTime() - b.getTime());
-      setAvailableDepartureDates(dates);
-      setSelectedDepartureFlight(departureFlights[0]);
+    const flightsLength = departureFlights?.length || 0;
+    
+    // Skip if we've already processed flights of this length
+    if (!Array.isArray(departureFlights) || flightsLength === 0) {
+      return;
     }
-  }, [departureFlights]);
+    
+    // Skip if we've already processed this exact set of flights
+    if (lastDepartureFlightsLength.current === flightsLength && flightsLength > 0) {
+      return;
+    }
+    
+    const dates = departureFlights
+      .map((flight) => new Date(flight.departureDate))
+      .sort((a, b) => a.getTime() - b.getTime());
+    setAvailableDepartureDates(dates);
+    setSelectedDepartureFlight(departureFlights[0]);
+    lastDepartureFlightsLength.current = flightsLength;
+  }, [departureFlights?.length]);
 
   useEffect(() => {
-    if (returnFlights) {
-      const dates = returnFlights.map((flight) => new Date(flight.arrivalDate));
-      setAvailableReturnDates(dates);
-
-      if (isCityChanged && departureFlights) {
-        const packageItem = packageList?.[0];
-
-        if (returnFlights[0]) {
-          setSearchData({
-            toDate: dates[0],
-            fromDate: new Date(departureFlights[0].departureDate),
-          });
-        } else if (
-          packageItem &&
-          searchData.selectedCity === packageItem.city.id
-        ) {
-          setSearchData({
-            toDate: new Date(packageItem.returnFlight.arrivalDate),
-            fromDate: new Date(packageItem.destinationFlight.departureDate),
-          });
-        }
-
-        setIsCityChanged(false);
-      }
+    const returnFlightsLength = returnFlights?.length || 0;
+    
+    // Skip if no return flights
+    if (!returnFlights || returnFlightsLength === 0) {
+      return;
     }
-  }, [returnFlights, isCityChanged, departureFlights, packageList, searchData.selectedCity]);
+    
+    // Skip if we've already processed this exact set of return flights (unless city changed)
+    if (
+      !isCityChanged &&
+      lastReturnFlightsLength.current === returnFlightsLength &&
+      returnFlightsLength > 0
+    ) {
+      return;
+    }
+    
+    const dates = returnFlights.map((flight) => new Date(flight.arrivalDate));
+    setAvailableReturnDates(dates);
+    lastReturnFlightsLength.current = returnFlightsLength;
+
+    if (isCityChanged && departureFlights) {
+      const packageItem = packageList?.[0];
+
+      if (returnFlights[0]) {
+        setSearchData({
+          toDate: dates[0],
+          fromDate: new Date(departureFlights[0].departureDate),
+        });
+      } else if (
+        packageItem &&
+        searchData.selectedCity === packageItem.city.id
+      ) {
+        setSearchData({
+          toDate: new Date(packageItem.returnFlight.arrivalDate),
+          fromDate: new Date(packageItem.destinationFlight.departureDate),
+        });
+      }
+
+      setIsCityChanged(false);
+    }
+  }, [returnFlights?.length, isCityChanged, departureFlights?.length, packageList?.[0]?.offerId, searchData.selectedCity]);
 
   useEffect(() => {
     const selectedFlight = returnFlights?.find((flight) =>
@@ -329,7 +378,10 @@ export const PackagesSearchProvider: React.FC<{
       setIsCityChanged(true);
     }
 
-    setSearchDataState((prevData) => ({ ...prevData, ...data }));
+    setSearchDataState((prevData) => {
+      const newData = { ...prevData, ...data };
+      return newData;
+    });
   };
 
   const navigateToDefaultSearch = () => {
@@ -375,7 +427,7 @@ export const PackagesSearchProvider: React.FC<{
     const getDateParam = (param: string | null) =>
       param ? new Date(param) : null;
 
-    const currentData = {} as SearchData;
+    const currentData = {} as Partial<SearchData>;
 
     const fromParam = searchParams.get("from");
     const toParam = searchParams.get("to");
