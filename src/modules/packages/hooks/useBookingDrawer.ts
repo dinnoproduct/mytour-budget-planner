@@ -3,6 +3,7 @@ import { bookingDrawerAtom } from "../store/store";
 import { IGeneratedMultivendorOffer } from "../data/packagesTypes";
 import { useMemo } from "react";
 import { useSelectedPackage } from "./useSelectedPackage";
+import { packageUseCases } from "@entities/package";
 
 export const useBookingDrawer = () => {
   const [bookingDrawer, setBookingDrawer] = useRecoilState(bookingDrawerAtom);
@@ -42,67 +43,39 @@ export const useBookingDrawer = () => {
     }));
   };
 
-  const updateSelectedRoomPackage = (offer: IGeneratedMultivendorOffer) => {
+  const isHotelPackage = useMemo(
+    () => !selectedPackage?.destinationFlight?.departureDate,
+    [selectedPackage?.destinationFlight?.departureDate],
+  );
+
+  const updateSelectedRoomPackage = async (offer: IGeneratedMultivendorOffer) => {
     setBookingDrawer((prev) => ({
       ...prev,
       selectedRoomOffer: offer,
     }));
 
-    if (selectedPackage) {
-      const { destinationFlight, returnFlight, ...restOfSelectedPackage } = selectedPackage;
-      
-      const updatedPackage = {
-        ...restOfSelectedPackage,
-        offerId: offer.offerId,
-        foodType: offer.foodType,
-        roomType: offer.roomType,
-        travelAgency: offer.agency,
-        currency: offer.currency,
-        nights: offer.nights,
-        price: offer.price,
-        priceInCurrency: offer.priceInCurrency.toString(),
-        rate: offer.rate,
-        prepaymentType: offer.prepaymentType,
-        prepaymentInfo: offer.prepaymentInfo,
-        ...(destinationFlight && {
-          destinationFlight: {
-            ...destinationFlight,
-            ...(offer.departureFlight && {
-              id: offer.departureFlight.id,
-              departureDate: offer.departureFlight.departureDate,
-              airCompany: offer.departureFlight.airCompany,
-            }),
-          },
-        }),
-        ...(returnFlight && {
-          returnFlight: {
-            ...returnFlight,
-            ...(offer.returnFlight && {
-              departureDate: offer.returnFlight.departureDate,
-              airCompany: {
-                ...returnFlight.airCompany,
-                ...(offer.returnFlight.airCompany && {
-                  id: offer.returnFlight.airCompany.id,
-                }),
-              },
-            }),
-          },
-        }),
-        checkout: offer.checkout,
-        checkin: offer.checkin,
-        cancelationPolicyArm: offer.cancelationMessage.messageArm,
-        cancelationPolicyEng: offer.cancelationMessage.messageEng,
-        cancelationPolicyRus: offer.cancelationMessage.messageRus,
-      };
+    try {
+      const travelAgencyId = offer.agency?.id;
+      const offerId = offer.offerId;
 
-      storeSelectedPackage(updatedPackage);
+      if (!travelAgencyId || !offerId) {
+        console.error("Missing travel agency ID or offer ID");
+        return;
+      }
+
+      // Fetch package details from API based on package type
+      const packageData = isHotelPackage
+        ? await packageUseCases.getHotelPackage(offerId, travelAgencyId)
+        : await packageUseCases.getPackage(offerId, travelAgencyId);
+
+      // Store the fetched package
+      if (packageData) {
+        storeSelectedPackage(packageData);
+      }
+    } catch (error) {
+      console.error("Error fetching package details:", error);
     }
   };
-
-  const isHotelPackage = useMemo(
-    () => !selectedPackage?.destinationFlight?.departureDate,
-    [selectedPackage?.destinationFlight?.departureDate],
-  );
 
   return {
     isOpen: bookingDrawer.isOpen,
