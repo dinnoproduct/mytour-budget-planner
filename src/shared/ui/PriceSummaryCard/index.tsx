@@ -117,7 +117,7 @@ export const PriceSummaryCard = ({
         </Flex>
 
         <Button mt="4" width="full" onClick={handleBookClick} size="lg">
-          {t`bookingDetails`}
+          {t`selectRoomAndMealType`}
         </Button>
       </CardSectionLayout>
     </Layout>
