@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react'
-import { useHotelPackagesSearchContext } from '@entities/package'
+import React from 'react'
 import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
 import { HotelSearchFormField } from './HotelSearchFormField'
 import { SearchButton } from './SearchButton'
+import { useHotelSearchLogic } from '../hooks/useHotelSearchLogic'
 
 interface HotelSearchFormProps {
   onSearch?: () => void
@@ -11,34 +11,19 @@ interface HotelSearchFormProps {
 export const HotelSearchForm: React.FC<HotelSearchFormProps> = ({
   onSearch
 }) => {
-  const { searchData, handleSearch, setSearchData, cities } =
-    useHotelPackagesSearchContext()
+  const {
+    searchData,
+    cities,
+    handleDateAccept,
+    handleCityChange,
+    handleTravelersChange,
+    handleSearchClick
+  } = useHotelSearchLogic()
 
-  const handleDateAccept = useCallback(
-    (fromDate: Date | null, toDate?: Date | null, days?: number) => {
-      setSearchData({ fromDate, toDate, days })
-    },
-    [setSearchData]
-  )
-
-  const handleCityChange = useCallback(
-    (selectedCityIds: number[]) => {
-      setSearchData({ selectedCity: selectedCityIds })
-    },
-    [setSearchData]
-  )
-
-  const handleTravelersChange = useCallback(
-    (travelersData: typeof searchData.travelersData) => {
-      setSearchData({ travelersData })
-    },
-    [setSearchData]
-  )
-
-  const handleSearchClick = useCallback(() => {
-    handleSearch(searchData)
+  const handleSearchClickWithCallback = () => {
+    handleSearchClick()
     onSearch?.()
-  }, [handleSearch, searchData, onSearch])
+  }
 
   return (
     <Layouts>
@@ -52,7 +37,7 @@ export const HotelSearchForm: React.FC<HotelSearchFormProps> = ({
         travelersData={searchData.travelersData}
         onTravelersChange={handleTravelersChange}
       />
-      <SearchButton onClick={handleSearchClick} />
+      <SearchButton onClick={handleSearchClickWithCallback} />
     </Layouts>
   )
 }
