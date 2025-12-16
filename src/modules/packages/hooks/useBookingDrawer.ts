@@ -90,6 +90,9 @@ export const useBookingDrawer = () => {
         }),
         checkout: offer.checkout,
         checkin: offer.checkin,
+        cancelationPolicyArm: offer.cancelationMessage.messageArm,
+        cancelationPolicyEng: offer.cancelationMessage.messageEng,
+        cancelationPolicyRus: offer.cancelationMessage.messageRus,
       };
 
       storeSelectedPackage(updatedPackage);
