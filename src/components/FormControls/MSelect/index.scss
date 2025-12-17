@@ -1,0 +1,46 @@
+.select-wrapper {
+    .select-label {
+        color: var(--semanticTokens-surfaceInverse, #1C1C1C);
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    .disabled {
+        color: var(--semanticTokens-onSurfaceLighter, #8B96A5);
+    }
+
+    .modal-select-container {
+        margin-bottom: 8px;
+    }
+
+    .modal-value-container {
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+
+    .modal-select-container {
+        height: 40px;
+
+        .modal-select-indicator-separator {
+            display: none;
+        }
+
+        .modal-select-control {
+            border-radius: 12px;
+            border: 1px solid var(--semanticTokens-outline, #DEE2E7);
+            background: var(--semanticTokens-surface, #FFF);
+
+            img {
+                margin: 4px 12px 0 0px;
+            }
+        }
+    }
+    .select-error {
+        border: 1px solid var(--semanticTokens-outlineError, #FA3434) !important;
+
+        &::placeholder {
+            color: var(--semanticTokens-outlineError, #FA3434) !important;
+        }
+    }
+}

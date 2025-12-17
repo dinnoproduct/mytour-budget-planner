@@ -1,0 +1,31 @@
+.inner-header {
+    box-shadow: 0px 4px 10px 0px rgba(96, 96, 96, 0.20);
+    padding: 18px 0;
+
+    .container {
+        align-items: center;
+
+        a {
+            color: var(--semanticTokens-surfacePrimary, #0D6EFD);
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+    }
+}
+
+@media (max-width: 1170px) {
+	.logo-black {
+        width: 144px;
+    }
+}
+
+@media (max-width: 993px) {
+	.logo-black {
+        width: 100px;
+    }
+
+    .inner-header {
+        padding: 15px 0; 
+    }
+}

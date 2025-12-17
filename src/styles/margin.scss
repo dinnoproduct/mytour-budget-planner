@@ -1,0 +1,37 @@
+@import './variables';
+
+@each $size in $size-list {
+    .m-#{$size} {
+        margin: #{$size}px;
+    }
+
+    .m-x-#{$size} {
+        margin-inline-end: #{$size}px;
+        margin-inline-start: #{$size}px;
+    }
+
+    .m-y-#{$size} {
+        margin-block-end: #{$size}px;
+        margin-block-start: #{$size}px;
+    }
+
+    .m-b-#{$size} {
+        margin-block-end: #{$size}px;
+    }
+
+    .m-r-#{$size} {
+        margin-inline-end: #{$size}px;
+    }
+
+    .m-l-#{$size} {
+        margin-inline-start: #{$size}px;
+    }
+
+    .m-t-#{$size} {
+        margin-block-start: #{$size}px;
+    }
+}
+
+.margin-auto {
+    margin: auto;
+}

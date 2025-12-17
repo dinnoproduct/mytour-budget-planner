@@ -1,0 +1,39 @@
+.loader {
+  background-color: white;
+  display: flex;
+  height: 100dvh;
+  flex-direction: column;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100vw;
+  position: fixed;
+  align-items: center;
+  .icon {
+    -webkit-animation:spin 1s linear infinite;
+    -moz-animation:spin 1s linear infinite;
+    animation:spin 1s linear infinite;
+    display: flex;
+    justify-content: center;
+  }
+  .text {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19.04px;
+    color: #8B96A5;
+    margin-top: 12px
+  }
+  @-moz-keyframes spin {
+    100% { -moz-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform:rotate(360deg);
+    }
+  }
+}

@@ -1,0 +1,359 @@
+import { useUserContext } from '@entities/user'
+import {
+  type PackageEntity,
+  type PaymentSystem,
+  useBookPackage,
+  useCreateRequest,
+  useReservePackage,
+  useUpdateRequest,
+  type NormalizedRequestEntity,
+  useCalculatePrepayment,
+  RequestStatus,
+  useValidatePromoCode
+} from '@entities/package'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
+import { isMobile } from 'react-device-detect'
+
+import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
+import { useTranslation } from 'react-i18next'
+import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
+
+export const useBookingFlow = ({
+  packageDetails,
+  initialView,
+  onClose,
+  isOpen,
+  request: initialRequest,
+  childrenAges,
+  defaultTravelers,
+  isLateCheckout
+}: useBookingFlowProps) => {
+  const { user } = useUserContext()
+  const { i18n } = useTranslation()
+  const { mutateAsync: createRequestAsync } = useCreateRequest()
+  const { mutateAsync: updateRequestAsync } = useUpdateRequest()
+  const { mutateAsync: bookPackageAsync } = useBookPackage()
+  const { mutateAsync: reservePackageAsync } = useReservePackage()
+  const validatePromoCode = useValidatePromoCode()
+  const isRequestInProgressRef = useRef(false)
+  const [isLoadingBooking, setIsLoadingBooking] = useState(false)
+  const [isLoadingTravelersModal, setIsLoadingTravelersModal] = useState(false)
+  const [request, setRequest] = useState<NormalizedRequestEntity | null>(
+    initialRequest || null
+  )
+  const requestIdRef = useRef(initialRequest?.id ? initialRequest.id : null)
+  const [modalView, setModalView] = useState('')
+  const [paymentModalView, setPaymentModalView] =
+    useState<PaymentModalView>('paymentForm')
+  const [travelers, setTravelers] = useState<Travelers>({
+    adults: [],
+    children: []
+  })
+  const notesJson = useRef<any>('')
+
+  useEffect(() => {
+    setRequest(initialRequest || null)
+    requestIdRef.current = initialRequest?.id || null
+  }, [initialRequest])
+
+  useEffect(() => {
+    setModalView(initialView)
+  }, [initialView, isOpen])
+
+  const openTravelersModal = () => {
+    setModalView('travelers')
+  }
+
+  const closeModal = () => {
+    setModalView('')
+    onClose && onClose()
+    setTravelers({ adults: [], children: [] })
+    setRequest(null)
+    requestIdRef.current = null
+    setPaymentModalView('paymentForm')
+  }
+
+  const openPaymentModal = () => {
+    setModalView('payment')
+  }
+
+  const onPaymentModalSuccess = useCallback(
+    async (paymentAmount: number, paymentSystem: PaymentSystem) => {
+      if (!packageDetails || !request?.id) {
+        return
+      }
+
+      setIsLoadingBooking(true)
+
+      try {
+        const bookInput: any = {
+          requestId: request.id,
+          cityId: packageDetails.city.id,
+          price: packageDetails.price,
+          hotelId: packageDetails.hotel.id,
+          travelAgencyId: packageDetails.travelAgency.id,
+          offerId: packageDetails.offerId,
+          roomType: packageDetails.roomType,
+          email: user?.email || '',
+          notes: notesJson.current
+            ? notesJson.current
+            : JSON.stringify(request.notes),
+          phoneNumber: user?.phoneNumber || '',
+          amountToBePaid: +paymentAmount,
+          usdRate: packageDetails.usdRate,
+          currency: packageDetails.currency,
+          rate: packageDetails.rate,
+          travelers: [...travelers.adults, ...travelers.children],
+          paymentSystem
+        }
+
+        if (packageDetails.destinationFlight?.departureDate) {
+          bookInput.startDate = packageDetails.destinationFlight.departureDate
+          bookInput.endDate = packageDetails.returnFlight.departureDate
+          bookInput.destinationFlightId = packageDetails.destinationFlight.id
+          bookInput.returnFlightId = packageDetails.returnFlight.id
+          bookInput.bookingType = 1
+        } else {
+          bookInput.startDate = packageDetails.checkin
+          bookInput.endDate = packageDetails.checkout
+          bookInput.bookingType = 2
+          bookInput.foodType = packageDetails.foodType || 0
+        }
+
+        if (paymentAmount === 0) {
+          const reserveResponse = await reservePackageAsync(bookInput)
+          setIsLoadingBooking(false)
+          setModalView('success')
+
+          return
+        }
+
+        const bookResponse = await bookPackageAsync(bookInput)
+        setIsLoadingBooking(false)
+
+        if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
+          window.location.href =
+            bookResponse.bookingPaymentUrl +
+            `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`
+
+          return
+        } else if (
+          paymentSystem === ('MyAmeriaPay' as PaymentSystem.MyAmeriaPay)
+        ) {
+          if (isMobile) {
+            window.location.href = bookResponse.bookingPaymentUrl
+
+            return
+          }
+
+          return bookResponse.bookingPaymentUrl
+        }
+      } catch (e) {
+        setPaymentModalView('paymentError')
+      }
+    },
+    [request, packageDetails?.offerId, travelers]
+  )
+
+  useEffect(() => {
+    if (!packageDetails?.offerId) {
+      return
+    }
+
+    if (defaultTravelers) {
+      setTravelers(defaultTravelers)
+    } else if (user?.firstName) {
+      setTravelers((prevState: any) => ({
+        adults: [
+          {
+            firstName: user.firstName,
+            lastName: user.lastName
+          },
+          ...Array(packageDetails.adultTravelers - 1).fill({
+            firstName: '',
+            lastName: '',
+            dateOfBirth: ''
+          })
+        ],
+        children: Array(
+          packageDetails.childrenTravelers + packageDetails.infantTravelers
+        ).fill({
+          firstName: '',
+          lastName: '',
+          dateOfBirth: ''
+        })
+      }))
+    }
+  }, [
+    user?.id,
+    packageDetails?.adultTravelers,
+    packageDetails?.childrenTravelers,
+    packageDetails?.infantTravelers,
+    isOpen,
+    defaultTravelers
+  ])
+
+  const onTravelersModalSuccess = (travelers: Travelers) => {
+    setTravelers(travelers)
+    setIsLoadingTravelersModal(true)
+  }
+
+  useEffect(() => {
+    const handleTravelersModalTransition = () => {
+      if (
+        isLoadingTravelersModal &&
+        !isRequestInProgressRef.current &&
+        requestIdRef.current
+      ) {
+        setModalView('payment')
+        setIsLoadingTravelersModal(false)
+      }
+    }
+
+    handleTravelersModalTransition()
+  }, [
+    isLoadingTravelersModal,
+    isRequestInProgressRef.current,
+    requestIdRef.current
+  ])
+
+  // draft request sync
+  const handleTravelersChange = useCallback(
+    async (data: Travelers) => {
+      if (!packageDetails?.offerId) {
+        return
+      }
+
+      const notes = {
+        childrenAges: childrenAges || [],
+        totalTravelersCount:
+          packageDetails.adultTravelers +
+          packageDetails.childrenTravelers +
+          packageDetails.infantTravelers,
+        adultTravelersCount: packageDetails.adultTravelers,
+        travelers: data,
+        isSoldOut: false
+      } as any
+
+      if (typeof isLateCheckout === 'boolean') {
+        notes.isLateCheckout = isLateCheckout
+      }
+
+      const newNotesJson = JSON.stringify(notes)
+      notesJson.current = newNotesJson
+
+      if (isRequestInProgressRef.current) {
+        return
+      }
+
+      const requestInput: any = {
+        offerId: packageDetails.offerId,
+        travelers: [...data.adults, ...data.children],
+        cityId: packageDetails.city.id,
+        hotelId: packageDetails.hotel.id,
+        price: packageDetails.price,
+        roomType: packageDetails.roomType,
+        travelAgencyId: packageDetails.travelAgency.id,
+        foodType: packageDetails.foodType,
+        notes: newNotesJson,
+        currency: packageDetails.currency,
+        rate: packageDetails.rate
+      }
+
+      if (packageDetails.destinationFlight?.departureDate) {
+        requestInput.startDate = packageDetails.destinationFlight.departureDate
+        requestInput.endDate = packageDetails.returnFlight.departureDate
+        requestInput.destinationFlightId = packageDetails.destinationFlight.id
+        requestInput.returnFlightId = packageDetails.returnFlight.id
+      } else {
+        requestInput.startDate = packageDetails.checkin
+        requestInput.endDate = packageDetails.checkout
+      }
+
+      isRequestInProgressRef.current = true
+
+      try {
+        if (!requestIdRef.current) {
+          const newRequestId = await createRequestAsync({
+            ...requestInput
+          })
+          setRequest({
+            id: newRequestId,
+            ...requestInput
+          } as NormalizedRequestEntity)
+
+          requestIdRef.current = newRequestId
+        } else {
+          const success = await updateRequestAsync({
+            id: requestIdRef.current,
+            ...requestInput
+          })
+
+          if (success) {
+            setRequest({
+              ...request,
+              ...requestInput
+            } as NormalizedRequestEntity)
+          }
+        }
+      } finally {
+        isRequestInProgressRef.current = false
+      }
+    },
+    [request?.id, requestIdRef.current, packageDetails?.offerId, childrenAges]
+  )
+
+  // calculate prepayment
+  const isHotelPackage = useMemo(
+    () => !!(packageDetails && !packageDetails.destinationFlight?.id),
+    [packageDetails]
+  )
+  const isDraftRequest = useMemo(
+    () =>
+      !initialRequest ||
+      [RequestStatus.Draft, RequestStatus.NotPaid, 10].includes(
+        initialRequest?.status || 0
+      ),
+    [initialRequest]
+  )
+
+  const { data: prepaymentInfo = null } = useCalculatePrepayment(
+    {
+      travelAgencyId: packageDetails?.travelAgency.id || 0,
+      bookingType: initialRequest?.bookingType ? initialRequest.bookingType : isHotelPackage ? 2 : 1,
+      destinationId: packageDetails?.city.id || 0,
+      startDate: packageDetails?.checkin || '',
+      fullPrice: packageDetails?.price || 0,
+      calculationSource: isDraftRequest ? 'search' : 'myBookings'
+    },
+    { enabled: !!packageDetails?.checkin && isOpen }
+  )
+
+  return {
+    openTravelersModal,
+    onTravelersModalSuccess,
+    openPaymentModal,
+    onPaymentModalSuccess,
+    paymentModalView,
+    isLoadingBooking,
+    isLoadingTravelersModal,
+    travelers,
+    modalView,
+    closeModal,
+    handleTravelersChange,
+    prepaymentInfo,
+    validatePromoCode
+  }
+}
+
+type useBookingFlowProps = {
+  packageDetails?: PackageEntity | null
+  initialView: 'travelers' | 'payment'
+  onClose?: () => void
+  isOpen?: boolean
+  request?: NormalizedRequestEntity | null
+  childrenAges?: number[]
+  defaultTravelers?: Travelers
+  isLateCheckout?: boolean
+}

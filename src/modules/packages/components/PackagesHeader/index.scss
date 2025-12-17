@@ -1,0 +1,45 @@
+.header {
+    background-image: url('/public/images/header-bg.png');
+    color: #fff;
+    padding: 48px 0 104px;
+}
+
+.top-title {
+    font-size: 48px;
+    line-height: 65px;
+    margin: 32px 0 24px;
+}
+
+.sub-title {
+    max-width: 70%;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+@media (max-width: 1170px) {
+    .header {
+        padding: 48px 0 98px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .packages-logo {
+        width: 78px;
+    }
+
+    .header {
+        padding: 31px 0 51px;
+    }
+
+    .top-title {
+        font-size: 16px;
+        line-height: 22px;
+        margin: 8px 0 2px;
+    }
+
+    .sub-title {
+        max-width: 90%;
+        font-size: 14px;
+        line-height: 19px;
+    }
+}

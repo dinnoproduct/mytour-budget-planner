@@ -1,0 +1,1 @@
+export { BlogsSlider } from './ui'

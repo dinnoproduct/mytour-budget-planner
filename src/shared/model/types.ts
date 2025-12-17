@@ -1,0 +1,1 @@
+export type LanguageName = 'hy' | 'en' | 'ru'

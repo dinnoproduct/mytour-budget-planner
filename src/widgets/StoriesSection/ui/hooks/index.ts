@@ -1,0 +1,2 @@
+export { useStoriesData } from './useStoriesData'
+

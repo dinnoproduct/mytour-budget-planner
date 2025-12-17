@@ -1,0 +1,23 @@
+@import './variables';
+
+@each $size in $size-list {
+    .br-#{$size} {
+        border-radius: #{$size}px;
+    }
+    
+    .br-tl-#{$size} {
+        border-start-start-radius: #{$size}px;
+    }
+
+    .br-tr-#{$size} {
+        border-start-end-radius: #{$size}px;
+    }
+    
+    .br-bl-#{$size} {
+        border-end-start-radius: #{$size}px;
+    }
+    
+    .br-br-#{$size} {
+        border-end-end-radius: #{$size}px;
+    }
+}

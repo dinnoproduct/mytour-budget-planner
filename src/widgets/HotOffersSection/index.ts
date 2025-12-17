@@ -1,0 +1,1 @@
+export { HotOffersSection } from './ui'

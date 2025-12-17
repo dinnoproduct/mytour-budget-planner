@@ -1,0 +1,252 @@
+import { Layout } from "./Layout.tsx";
+import {
+  PaymentMethod,
+  type PaymentModalProps,
+  type PaymentModalView,
+  type PaymentOption,
+  VIEW_CONTENT_MAP,
+} from "./types.ts";
+import { useTranslation } from "react-i18next";
+import { useEffect, useMemo, useState } from "react";
+import { PaymentFormView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentFormView.tsx";
+import { PaymentErrorView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentErrorView.tsx";
+import { PaymentMethodView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentMethodView.tsx";
+import { AmeriaPayView } from "@widgets/BookingFlow/ui/PaymentModal/AmeriaPayView.tsx";
+import {
+  DictionaryTypes,
+  useDictionary,
+  type PaymentSystem,
+} from "@entities/package";
+import { PreviewDetailsView } from "@/widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView/index.tsx";
+import { BookingStep, metaEvents } from "@/shared/configs/metaEvents.ts";
+
+export const PaymentModal = ({
+  closeModal,
+  onSuccess,
+  onBackClick,
+  packageDetails,
+  isOpen = false,
+  isLoadingBooking,
+  view,
+  isBooked,
+  prepaymentInfo,
+  travelers,
+  validatePromoCode,
+  handleLogEvent,
+  skipPreviewStep = false,
+}: PaymentModalProps) => {
+  const { t } = useTranslation();
+  const isFullPricePayment = useMemo(
+    () => prepaymentInfo?.paymentType === "FullPricePayment",
+    [prepaymentInfo?.paymentType],
+  );
+  const [activeView, setActiveView] = useState<PaymentModalView>(
+    view || "paymentForm",
+  );
+  const [ameriaPayUrl, setAmeriaPayUrl] = useState<string>("");
+  const [paymentAmount, setPaymentAmount] = useState<number>(0);
+  const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<PaymentMethod | null>(null);
+  const [promoCodeStatus, setPromoCodeStatus] = useState<{
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }>({
+    isApplied: false,
+    code: "",
+    discount: 0,
+    finalAmount: 0,
+  });
+
+  const ViewComponent = useMemo(() => {
+    const ViewComponentMap = {
+      paymentMethod: () => (
+        <PaymentMethodView
+          onSubmit={handlePaymentMethodSelect}
+          isLoadingBooking={isLoadingBooking}
+          packageDetails={packageDetails}
+        />
+      ),
+      ameriaPay: () => <AmeriaPayView paymentUrl={ameriaPayUrl} />,
+      paymentForm: () => (
+        <PaymentFormView
+          onSubmit={handleContinue}
+          packageDetails={packageDetails}
+          isLoadingBooking={isLoadingBooking}
+          initialPaymentOption={paymentOption}
+          isBooked={isBooked}
+          prepaymentInfo={prepaymentInfo}
+        />
+      ),
+      paymentError: () => <PaymentErrorView />,
+      previewDetails: () => (
+        <PreviewDetailsView
+          onPay={() => handlePay(selectedPaymentMethod || PaymentMethod.bankCard)}
+          onUsePromocode={() => {
+            // TODO: implement promocode logic
+          }}
+          isLoadingBooking={isLoadingBooking}
+          packageDetails={packageDetails}
+          travelers={travelers || { adults: [], children: [] }}
+          paymentAmount={
+            isFullPricePayment ? packageDetails.price : paymentAmount
+          }
+          isFullPricePayment={isFullPricePayment}
+          prepaymentInfo={prepaymentInfo}
+          validatePromoCode={validatePromoCode}
+          promoCodeStatus={promoCodeStatus}
+          setPromoCodeStatus={setPromoCodeStatus}
+        />
+      ),
+    };
+
+    return ViewComponentMap[activeView];
+  }, [
+    activeView,
+    ameriaPayUrl,
+    packageDetails,
+    isLoadingBooking,
+    isBooked,
+    paymentOption,
+    prepaymentInfo,
+    promoCodeStatus,
+  ]);
+
+  useEffect(() => {
+    // if (isFullPricePayment && view === "paymentForm") {
+    //   setActiveView("paymentMethod");
+    // } else 
+    if (view) {
+      setActiveView(view);
+    }
+  }, [view, isFullPricePayment]);
+
+  const isHotelPackage = useMemo(
+    () =>
+      !(
+        packageDetails?.destinationFlight?.id && packageDetails?.returnFlight.id
+      ),
+    [packageDetails?.destinationFlight?.id, packageDetails?.returnFlight?.id],
+  );
+
+  const { data: roomTypes = [] } = useDictionary(
+    "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
+    {
+      enabled: !isHotelPackage,
+    },
+  );
+
+  const handleLogPurchaseEvent = (amount: number) => {
+    metaEvents.purchase({
+      content_type: isHotelPackage ? "hotel" : "package",
+      value: amount,
+      currency: packageDetails.currency,
+      offer_id: packageDetails.offerId,
+      hotel_id: packageDetails.hotel.id,
+      destination: packageDetails.city.nameEng,
+      checkin_date: packageDetails.checkin,
+      checkout_date: packageDetails.checkout,
+      num_nights: packageDetails.nights,
+      num_adults: travelers?.adults.length || 0,
+      num_children: travelers?.children.length || 0,
+      room_type: roomTypes.find(
+        ({ key }: any) => key === packageDetails.roomType,
+      )?.value,
+    });
+  }
+
+  const handlePay = async (paymentMethod: PaymentMethod) => {
+    // Calculate the final amount after promo code discount
+    const baseAmount = isFullPricePayment ? packageDetails.price : paymentAmount;
+    const amount = promoCodeStatus.isApplied ? promoCodeStatus.finalAmount : baseAmount;
+    try {
+      handleLogPurchaseEvent(amount);
+      handleLogEvent({ name: BookingStep.TermsConfirmed, number: 4 });
+      if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {
+        const url = await onSuccess(
+          amount,
+          "MyAmeriaPay" as PaymentSystem.MyAmeriaPay,
+        );
+
+        if (url) {
+          setAmeriaPayUrl(url);
+          setActiveView("ameriaPay");
+        }
+      } else if (paymentMethod === PaymentMethod.bankCard) {
+        await onSuccess(amount, "VPos" as PaymentSystem.VPos);
+      }
+    } catch (error) {
+      setActiveView("paymentError");
+    }
+  };
+
+  const handleLogPaymentInfoEvent = () => {
+    const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
+
+    metaEvents.addPaymentInfo({
+      content_type: isHotelPackage ? "hotel" : "package",
+      value: amount,
+      currency: packageDetails.currency,
+      payment_type: selectedPaymentMethod,
+      hotel_id: packageDetails.hotel.id,
+      destination: packageDetails.city.nameEng,
+      checkin_date: packageDetails.checkin,
+      checkout_date: packageDetails.checkout,
+      room_type: roomTypes.find(
+        ({ key }: any) => key === packageDetails.roomType,
+      )?.value,
+    });
+  };
+
+  const handlePaymentMethodSelect = (paymentMethod: PaymentMethod = selectedPaymentMethod || PaymentMethod.bankCard) => {
+    setSelectedPaymentMethod(paymentMethod);
+    handleLogPaymentInfoEvent();
+    // Skip preview step if requested
+    if (skipPreviewStep) {
+      // Go directly to payment processing
+      handlePay(paymentMethod);
+      return;
+    }
+
+    setActiveView("previewDetails");
+  };
+
+  const handleContinue = (amount: number, paymentOption: PaymentOption) => {
+    setPaymentOption(paymentOption);
+
+    if (paymentOption === "pay") {
+      setPaymentAmount(amount);
+      // setActiveView("paymentMethod");
+      setActiveView("previewDetails");
+    } else if (paymentOption === "noPrepayment") {
+      setPaymentAmount(0);
+      handlePaymentMethodSelect(PaymentMethod.bankCard);
+    }
+  };
+
+  const handleBackClick = useMemo(() => {
+    if (activeView === "paymentMethod") {
+      return () => setActiveView("paymentForm");
+    } else if (activeView === "previewDetails") {
+      // return () => setActiveView("paymentMethod");
+      return () => setActiveView("paymentForm");
+    } else if (activeView === "paymentForm" && onBackClick) {
+      return () => onBackClick();
+    }
+
+    return undefined;
+  }, [activeView, onBackClick]);
+
+  return (
+    <Layout
+      title={t(VIEW_CONTENT_MAP[activeView].title)}
+      isOpen={isOpen}
+      closeModal={closeModal}
+      onBackClick={handleBackClick}
+    >
+      <ViewComponent />
+    </Layout>
+  );
+};

@@ -1,0 +1,31 @@
+.checkbox-wrapper {
+  color: var(--semanticTokens-onSurface, #1C1C1C);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  align-items: center;
+
+  input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    margin: 0 13px 0 0;
+    border: 1px solid var(--semanticTokens-onSurfaceLighter, #8B96A5);
+    border-radius: 4px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: 0;
+    cursor: pointer;
+    background-position: center;
+    transition: background 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+  }
+
+  input[type=checkbox]:checked {
+    border-color: gray;
+    background-image: url("/public/images/check-disabled.svg");
+  }
+
+  input[type=checkbox]:disabled {
+    color: #505050
+  }
+}

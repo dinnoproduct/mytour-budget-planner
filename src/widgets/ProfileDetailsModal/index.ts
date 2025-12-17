@@ -1,0 +1,1 @@
+export { ProfileDetailsModal } from './ui'

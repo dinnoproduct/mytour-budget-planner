@@ -1,0 +1,54 @@
+import { useNavigate } from 'react-router-dom';
+import { useLanguageRouting } from './useLanguageRouting';
+
+export const useLanguageNavigate = () => {
+  const navigate = useNavigate();
+  const { getPathWithLanguage } = useLanguageRouting();
+
+  const navigateTo = (path: string, options?: { replace?: boolean }) => {
+    const languageAwarePath = getPathWithLanguage(path);
+    navigate(languageAwarePath, options);
+  };
+
+  const navigateBack = (steps: number = 1) => {
+    navigate(-steps);
+  };
+
+  const navigateToHome = (options?: { replace?: boolean }) => {
+    navigateTo('/', options);
+  };
+
+  const navigateToPackages = (queryParams?: string, options?: { replace?: boolean }) => {
+    const path = queryParams ? `/packages?${queryParams}` : '/packages';
+    navigateTo(path, options);
+  };
+
+  const navigateToPackage = (packageId: string, options?: { replace?: boolean }) => {
+    navigateTo(`/package/${packageId}`, options);
+  };
+
+  const navigateToHotel = (hotelId: string, options?: { replace?: boolean }) => {
+    navigateTo(`/hotel/${hotelId}`, options);
+  };
+
+  const navigateToBlogs = (options?: { replace?: boolean }) => {
+    navigateTo('/blogs', options);
+  };
+
+  const navigateToMyPackages = (options?: { replace?: boolean }) => {
+    navigateTo('/my-packages', options);
+  };
+
+  return {
+    navigateTo,
+    navigateBack,
+    navigateToHome,
+    navigateToPackages,
+    navigateToPackage,
+    navigateToHotel,
+    navigateToBlogs,
+    navigateToMyPackages,
+    // Keep original navigate for special cases
+    navigate,
+  };
+};
