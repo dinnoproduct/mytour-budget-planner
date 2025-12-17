@@ -115,9 +115,10 @@ export const PaymentModal = ({
   ]);
 
   useEffect(() => {
-    if (isFullPricePayment && view === "paymentForm") {
-      setActiveView("paymentMethod");
-    } else if (view) {
+    // if (isFullPricePayment && view === "paymentForm") {
+    //   setActiveView("paymentMethod");
+    // } else 
+    if (view) {
       setActiveView(view);
     }
   }, [view, isFullPricePayment]);
@@ -217,7 +218,8 @@ export const PaymentModal = ({
 
     if (paymentOption === "pay") {
       setPaymentAmount(amount);
-      setActiveView("paymentMethod");
+      // setActiveView("paymentMethod");
+      setActiveView("previewDetails");
     } else if (paymentOption === "noPrepayment") {
       setPaymentAmount(0);
       handlePaymentMethodSelect(PaymentMethod.bankCard);
@@ -228,7 +230,8 @@ export const PaymentModal = ({
     if (activeView === "paymentMethod") {
       return () => setActiveView("paymentForm");
     } else if (activeView === "previewDetails") {
-      return () => setActiveView("paymentMethod");
+      // return () => setActiveView("paymentMethod");
+      return () => setActiveView("paymentForm");
     } else if (activeView === "paymentForm" && onBackClick) {
       return () => onBackClick();
     }
