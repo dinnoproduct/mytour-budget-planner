@@ -128,6 +128,7 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
   <Box width={{ base: "full", md: "442px" }} {...props}>
     <Grid
       width={{ base: "full", md: "442px" }}
+      height="auto"
       borderY="1px solid"
       borderX={{
         base: "none",
@@ -139,7 +140,6 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
       borderRightColor={{ base: "transparent", md: "gray.100" }}
       borderBottomColor="gray.100"
       rounded={{ base: "none", md: "md" }}
-      height="fit-content"
       templateAreas={{
         base: `
         "availability"
