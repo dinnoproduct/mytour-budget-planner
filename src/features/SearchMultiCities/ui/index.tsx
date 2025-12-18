@@ -182,62 +182,78 @@ export const SearchMultiCities = ({
 
       <MenuList
         minWidth="fit-content"
+        maxHeight="480px"
         width={{ base: '328px', md: '350px', lg: '320px' }}
         height="auto"
-        overflowY="auto"
+        display="flex"
+        flexDirection="column"
+        p={0}
         zIndex={2}
       >
-        <VStack width="full" spacing="1" align="stretch">
-          {Object.entries(groupedCities).map(([countryName, countryCities]) => (
-            <Box key={countryName}>
-              <Flex
-                px='4'
-                py="2"
-                bgColor="gray.50"
-                cursor="pointer"
-                _hover={{ bgColor: 'gray.100' }}
-                onClick={() => handleCountrySelect(countryCities)}
-              >
-                <Text fontWeight="bold">{countryName}</Text>
-              </Flex>
-
-              {countryCities.map(city => (
+        <Box
+          flex="1"
+          overflowY="auto"
+          maxHeight="400px"
+          width="full"
+        >
+          <VStack width="full" spacing="1" align="stretch">
+            {Object.entries(groupedCities).map(([countryName, countryCities]) => (
+              <Box key={countryName}>
                 <Flex
                   px='4'
-                  key={city.id}
                   py="2"
-                  align="center"
-                  justify="space-between"
+                  bgColor="gray.50"
                   cursor="pointer"
-                  _hover={{ bgColor: 'gray.50' }}
-                  onClick={() => handleCityToggle(city)}
+                  _hover={{ bgColor: 'gray.100' }}
+                  onClick={() => handleCountrySelect(countryCities)}
                 >
-                  {/* @ts-ignore*/}
-                  <Text>{city[cityNameField]}</Text>
-                  {selectedCities.includes(city.id) ?
-                    <Icon name="check" size="20" color="white"
-                          borderRadius='2px'
-                          border="1px solid"
-                          borderColor="blue.500"
-                          bgColor='blue.500'/>
-                  : <Box width="20px"
-                         height='20px'
-                         borderRadius='2px'
-                         border="1px solid"
-                         borderColor="gray.300"/>}
+                  <Text fontWeight="bold">{countryName}</Text>
                 </Flex>
-              ))}
-            </Box>
-          ))}
-        </VStack>
-        <Button
-          mt='16px'
-          size="lg"
-          width='calc(100% - 32px)'
-          onClick={() => setDropdownOpen(!isDropdownOpen)}
+
+                {countryCities.map(city => (
+                  <Flex
+                    px='4'
+                    key={city.id}
+                    py="2"
+                    align="center"
+                    justify="space-between"
+                    cursor="pointer"
+                    _hover={{ bgColor: 'gray.50' }}
+                    onClick={() => handleCityToggle(city)}
+                  >
+                    {/* @ts-ignore*/}
+                    <Text>{city[cityNameField]}</Text>
+                    {selectedCities.includes(city.id) ?
+                      <Icon name="check" size="20" color="white"
+                            borderRadius='2px'
+                            border="1px solid"
+                            borderColor="blue.500"
+                            bgColor='blue.500'/>
+                    : <Box width="20px"
+                           height='20px'
+                           borderRadius='2px'
+                           border="1px solid"
+                           borderColor="gray.300"/>}
+                  </Flex>
+                ))}
+              </Box>
+            ))}
+          </VStack>
+        </Box>
+        <Box
+          px={4}
+          py={4}
+          borderTop="1px solid"
+          borderColor="gray.200"
         >
-          {t`apply`}
-        </Button>
+          <Button
+            size="lg"
+            width="full"
+            onClick={() => setDropdownOpen(!isDropdownOpen)}
+          >
+            {t`apply`}
+          </Button>
+        </Box>
       </MenuList>
     </Menu>
   )
