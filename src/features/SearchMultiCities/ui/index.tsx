@@ -5,10 +5,10 @@ import {
   MenuButton,
   MenuList,
   VStack,
-  Text, IconButton
+  Text
 } from '@chakra-ui/react'
 import { Icon, Input, Button } from '@ui'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
@@ -55,20 +55,37 @@ export const SearchMultiCities = ({
   const handleCityToggle = (city: PackageCity) => {
     const countryId = city.countryId
 
+    // Get currently selected cities from the same country as the clicked city
     const currentCountryCities = selectedCities.filter(
       id => cities.find(c => c.id === id)?.countryId === countryId
     )
 
-    const otherCountryCities = selectedCities.filter(
+    // Check if there are any selected cities from a different country
+    const hasCitiesFromOtherCountry = selectedCities.some(
       id => cities.find(c => c.id === id)?.countryId !== countryId
     )
 
     let newSelection: number[]
-    if (currentCountryCities.includes(city.id)) {
-      const updatedCountryCities = currentCountryCities.filter(id => id !== city.id)
-      newSelection = [...otherCountryCities, ...updatedCountryCities]
+    
+    // If the clicked city is from a different country, deselect all and start fresh
+    if (hasCitiesFromOtherCountry) {
+      // Clear all selections and only select the clicked city (or cities from its country)
+      if (currentCountryCities.includes(city.id)) {
+        // City is already selected, just remove it
+        newSelection = currentCountryCities.filter(id => id !== city.id)
+      } else {
+        // Select only this city (or add to existing cities from same country if any)
+        newSelection = [...currentCountryCities, city.id]
+      }
     } else {
-      newSelection = [...otherCountryCities, ...currentCountryCities, city.id]
+      // Same country logic: toggle the city normally
+      if (currentCountryCities.includes(city.id)) {
+        // Deselect the city
+        newSelection = currentCountryCities.filter(id => id !== city.id)
+      } else {
+        // Select the city
+        newSelection = [...currentCountryCities, city.id]
+      }
     }
 
     setSelectedCities(newSelection)
@@ -91,12 +108,11 @@ export const SearchMultiCities = ({
     
     let newSelection: number[]
     if (allCountryCitiesSelected) {
+      // Deselect all cities from this country
       newSelection = selectedCities.filter(id => !countryCityIds.includes(id))
     } else {
-      const otherCountryCities = selectedCities.filter(
-        id => cities.find(c => c.id === id)?.countryId !== countryId
-      )
-      newSelection = [...otherCountryCities, ...countryCityIds]
+      // Select all cities from this country, deselect all from other countries
+      newSelection = countryCityIds
     }
     
     setSelectedCities(newSelection)
