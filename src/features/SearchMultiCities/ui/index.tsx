@@ -5,10 +5,10 @@ import {
   MenuButton,
   MenuList,
   VStack,
-  Text, IconButton
+  Text
 } from '@chakra-ui/react'
 import { Icon, Input, Button } from '@ui'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
@@ -55,20 +55,37 @@ export const SearchMultiCities = ({
   const handleCityToggle = (city: PackageCity) => {
     const countryId = city.countryId
 
+    // Get currently selected cities from the same country as the clicked city
     const currentCountryCities = selectedCities.filter(
       id => cities.find(c => c.id === id)?.countryId === countryId
     )
 
-    const otherCountryCities = selectedCities.filter(
+    // Check if there are any selected cities from a different country
+    const hasCitiesFromOtherCountry = selectedCities.some(
       id => cities.find(c => c.id === id)?.countryId !== countryId
     )
 
     let newSelection: number[]
-    if (currentCountryCities.includes(city.id)) {
-      const updatedCountryCities = currentCountryCities.filter(id => id !== city.id)
-      newSelection = [...otherCountryCities, ...updatedCountryCities]
+    
+    // If the clicked city is from a different country, deselect all and start fresh
+    if (hasCitiesFromOtherCountry) {
+      // Clear all selections and only select the clicked city (or cities from its country)
+      if (currentCountryCities.includes(city.id)) {
+        // City is already selected, just remove it
+        newSelection = currentCountryCities.filter(id => id !== city.id)
+      } else {
+        // Select only this city (or add to existing cities from same country if any)
+        newSelection = [...currentCountryCities, city.id]
+      }
     } else {
-      newSelection = [...otherCountryCities, ...currentCountryCities, city.id]
+      // Same country logic: toggle the city normally
+      if (currentCountryCities.includes(city.id)) {
+        // Deselect the city
+        newSelection = currentCountryCities.filter(id => id !== city.id)
+      } else {
+        // Select the city
+        newSelection = [...currentCountryCities, city.id]
+      }
     }
 
     setSelectedCities(newSelection)
@@ -91,12 +108,11 @@ export const SearchMultiCities = ({
     
     let newSelection: number[]
     if (allCountryCitiesSelected) {
+      // Deselect all cities from this country
       newSelection = selectedCities.filter(id => !countryCityIds.includes(id))
     } else {
-      const otherCountryCities = selectedCities.filter(
-        id => cities.find(c => c.id === id)?.countryId !== countryId
-      )
-      newSelection = [...otherCountryCities, ...countryCityIds]
+      // Select all cities from this country, deselect all from other countries
+      newSelection = countryCityIds
     }
     
     setSelectedCities(newSelection)
@@ -166,62 +182,78 @@ export const SearchMultiCities = ({
 
       <MenuList
         minWidth="fit-content"
+        maxHeight="480px"
         width={{ base: '328px', md: '350px', lg: '320px' }}
         height="auto"
-        overflowY="auto"
+        display="flex"
+        flexDirection="column"
+        p={0}
         zIndex={2}
       >
-        <VStack width="full" spacing="1" align="stretch">
-          {Object.entries(groupedCities).map(([countryName, countryCities]) => (
-            <Box key={countryName}>
-              <Flex
-                px='4'
-                py="2"
-                bgColor="gray.50"
-                cursor="pointer"
-                _hover={{ bgColor: 'gray.100' }}
-                onClick={() => handleCountrySelect(countryCities)}
-              >
-                <Text fontWeight="bold">{countryName}</Text>
-              </Flex>
-
-              {countryCities.map(city => (
+        <Box
+          flex="1"
+          overflowY="auto"
+          maxHeight="400px"
+          width="full"
+        >
+          <VStack width="full" spacing="1" align="stretch">
+            {Object.entries(groupedCities).map(([countryName, countryCities]) => (
+              <Box key={countryName}>
                 <Flex
                   px='4'
-                  key={city.id}
                   py="2"
-                  align="center"
-                  justify="space-between"
+                  bgColor="gray.50"
                   cursor="pointer"
-                  _hover={{ bgColor: 'gray.50' }}
-                  onClick={() => handleCityToggle(city)}
+                  _hover={{ bgColor: 'gray.100' }}
+                  onClick={() => handleCountrySelect(countryCities)}
                 >
-                  {/* @ts-ignore*/}
-                  <Text>{city[cityNameField]}</Text>
-                  {selectedCities.includes(city.id) ?
-                    <Icon name="check" size="20" color="white"
-                          borderRadius='2px'
-                          border="1px solid"
-                          borderColor="blue.500"
-                          bgColor='blue.500'/>
-                  : <Box width="20px"
-                         height='20px'
-                         borderRadius='2px'
-                         border="1px solid"
-                         borderColor="gray.300"/>}
+                  <Text fontWeight="bold">{countryName}</Text>
                 </Flex>
-              ))}
-            </Box>
-          ))}
-        </VStack>
-        <Button
-          mt='16px'
-          size="lg"
-          width='calc(100% - 32px)'
-          onClick={() => setDropdownOpen(!isDropdownOpen)}
+
+                {countryCities.map(city => (
+                  <Flex
+                    px='4'
+                    key={city.id}
+                    py="2"
+                    align="center"
+                    justify="space-between"
+                    cursor="pointer"
+                    _hover={{ bgColor: 'gray.50' }}
+                    onClick={() => handleCityToggle(city)}
+                  >
+                    {/* @ts-ignore*/}
+                    <Text>{city[cityNameField]}</Text>
+                    {selectedCities.includes(city.id) ?
+                      <Icon name="check" size="20" color="white"
+                            borderRadius='2px'
+                            border="1px solid"
+                            borderColor="blue.500"
+                            bgColor='blue.500'/>
+                    : <Box width="20px"
+                           height='20px'
+                           borderRadius='2px'
+                           border="1px solid"
+                           borderColor="gray.300"/>}
+                  </Flex>
+                ))}
+              </Box>
+            ))}
+          </VStack>
+        </Box>
+        <Box
+          px={4}
+          py={4}
+          borderTop="1px solid"
+          borderColor="gray.200"
         >
-          {t`apply`}
-        </Button>
+          <Button
+            size="lg"
+            width="full"
+            onClick={() => setDropdownOpen(!isDropdownOpen)}
+          >
+            {t`apply`}
+          </Button>
+        </Box>
       </MenuList>
     </Menu>
   )
