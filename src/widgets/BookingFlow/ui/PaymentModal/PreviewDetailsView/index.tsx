@@ -57,8 +57,11 @@ export const PreviewDetailsView = ({
   const [promoCodeValue, setPromoCodeValue] = useState("");
   const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
-  const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] = useState(false);
-  const [policyModalType, setPolicyModalType] = useState<"booking" | "cancellation">("booking");
+  const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] =
+    useState(false);
+  const [policyModalType, setPolicyModalType] = useState<
+    "booking" | "cancellation"
+  >("booking");
   const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
 
   const handleUsePromocode = () => {
@@ -423,7 +426,7 @@ export const PreviewDetailsView = ({
               {t("total")}
             </Text>
             <Flex align="center" gap="2">
-              {/* {promoCodeStatus.isApplied && (
+              {promoCodeStatus.isApplied && (
                 <Text
                   size="xs"
                   fontWeight="medium"
@@ -432,11 +435,11 @@ export const PreviewDetailsView = ({
                 >
                   {formatNumber(packageDetails.price)}֏
                 </Text>
-              )} */}
+              )}
               <Text size="md" fontWeight="bold" color="black">
-                {/* {promoCodeStatus.isApplied
-                  ? formatNumber(promoCodeStatus.finalAmount) + "֏" */}
-                {formatNumber(paymentAmount || 0) + "֏"}
+                {promoCodeStatus.isApplied
+                  ? formatNumber(promoCodeStatus.finalAmount) + "֏"
+                  : formatNumber(paymentAmount || 0) + "֏"}
               </Text>
             </Flex>
           </Flex>
@@ -452,7 +455,7 @@ export const PreviewDetailsView = ({
             {t("pay")}
           </Button>
 
-          {/* {prepaymentInfo?.paymentType !== "NoDownPayment" &&
+          {prepaymentInfo?.paymentType !== "NoDownPayment" &&
             !promoCodeStatus.isApplied && (
               <Button
                 variant="solid-gray"
@@ -463,7 +466,7 @@ export const PreviewDetailsView = ({
               >
                 {t("usePromoCode")}
               </Button>
-            )} */}
+            )}
         </Box>
       </Flex>
 
