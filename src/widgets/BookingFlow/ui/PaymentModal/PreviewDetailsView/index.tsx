@@ -19,7 +19,7 @@ import { useRecoilValue } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import { formatNumber } from "@shared/utils";
 import { LANGUAGE_PREFIX, type LanguageName } from "@shared/model";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   type DictionaryTypes,
   type PackageEntity,
@@ -51,6 +51,7 @@ export const PreviewDetailsView = ({
   validatePromoCode,
   promoCodeStatus,
   setPromoCodeStatus,
+  paymentOption = "pay",
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false);
@@ -63,6 +64,19 @@ export const PreviewDetailsView = ({
     "booking" | "cancellation"
   >("booking");
   const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
+
+  // Reset promo code status when payment option changes to "noPrepayment"
+  useEffect(() => {
+    if (paymentOption === "noPrepayment" && promoCodeStatus.isApplied) {
+      setPromoCodeStatus({
+        isApplied: false,
+        code: "",
+        discount: 0,
+        finalAmount: 0,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentOption]);
 
   const handleUsePromocode = () => {
     setIsPromoCodeModalOpen(true);
@@ -142,11 +156,73 @@ export const PreviewDetailsView = ({
     return errorMessages[errorCode] || t`promoCodeInvalid`;
   };
 
+  /**
+   * Calculates promo code discount distribution based on user input and total price
+   * 
+   * Rules:
+   * 1. If userInput == totalPrice: Discount applied to whole price (single payment)
+   * 2. If userInput != totalPrice:
+   *    - Case 1: Remainder <= discount / 2: Full discount to first payment (single payment)
+   *    - Case 2: Remainder > discount / 2: Half discount to first, half to second payment
+   */
+  const calculatePromoCodePayments = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return {
+        firstPayment: paymentAmount || 0,
+        secondPayment: isFullPricePayment ? 0 : (packageDetails.price - (paymentAmount || 0)),
+        isSinglePayment: isFullPricePayment,
+      };
+    }
+
+    const totalPrice = packageDetails.price;
+    const userInput = paymentAmount || 0;
+    const discount = promoCodeStatus.discount;
+    const finalAmount = promoCodeStatus.finalAmount;
+
+    // Case 1: User input equals total price (full payment)
+    if (userInput === totalPrice) {
+      return {
+        firstPayment: finalAmount,
+        secondPayment: 0,
+        isSinglePayment: true,
+      };
+    }
+
+    // Case 2: User input is different from total price (partial payment)
+    const remainder = totalPrice - userInput;
+
+    // Case 2a: Remainder <= discount / 2
+    // Apply full discount to first payment (single payment)
+    if (remainder <= discount / 2) {
+      return {
+        firstPayment: finalAmount,
+        secondPayment: 0,
+        isSinglePayment: true,
+      };
+    }
+
+    // Case 2b: Remainder > discount / 2
+    // Apply half discount to first payment, half to second payment
+    const halfDiscount = discount / 2;
+    const firstPayment = userInput - halfDiscount;
+    const secondPayment = remainder - halfDiscount;
+
+    return {
+      firstPayment,
+      secondPayment,
+      isSinglePayment: false,
+    };
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.discount,
+    promoCodeStatus.finalAmount,
+    paymentAmount,
+    packageDetails.price,
+    isFullPricePayment,
+  ]);
+
   const paymentDetailsItems = useMemo((): ListItemType[] => {
-    const currentPaymentAmount = promoCodeStatus.isApplied
-      ? promoCodeStatus.finalAmount -
-        (packageDetails.price - (paymentAmount || 0))
-      : paymentAmount || 0;
+    const currentPaymentAmount = calculatePromoCodePayments.firstPayment;
 
     const items: ListItemType[] = [
       {
@@ -177,10 +253,9 @@ export const PreviewDetailsView = ({
       isStrikethrough: false,
     });
 
-    if (!isFullPricePayment) {
-      const remainingAmount = promoCodeStatus.isApplied
-        ? promoCodeStatus.finalAmount - currentPaymentAmount
-        : packageDetails.price - currentPaymentAmount;
+    // Show balance only if it's not a single payment (split payment scenario)
+    if (!isFullPricePayment && !calculatePromoCodePayments.isSinglePayment) {
+      const remainingAmount = calculatePromoCodePayments.secondPayment;
 
       items.push({
         key: t`balance`,
@@ -200,6 +275,8 @@ export const PreviewDetailsView = ({
     packageDetails.price,
     paymentAmount,
     promoCodeStatus,
+    calculatePromoCodePayments,
+    prepaymentInfo?.firstPaymentDate,
     t,
   ]);
 
@@ -438,7 +515,7 @@ export const PreviewDetailsView = ({
               )}
               <Text size="md" fontWeight="bold" color="black">
                 {promoCodeStatus.isApplied
-                  ? formatNumber(promoCodeStatus.finalAmount) + "֏"
+                  ? formatNumber(calculatePromoCodePayments.firstPayment) + "֏"
                   : formatNumber(paymentAmount || 0) + "֏"}
               </Text>
             </Flex>
@@ -455,7 +532,7 @@ export const PreviewDetailsView = ({
             {t("pay")}
           </Button>
 
-          {prepaymentInfo?.paymentType !== "NoDownPayment" &&
+          {paymentOption === "pay" &&
             !promoCodeStatus.isApplied && (
               <Button
                 variant="solid-gray"

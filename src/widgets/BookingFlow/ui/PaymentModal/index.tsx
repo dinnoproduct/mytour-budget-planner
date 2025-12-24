@@ -98,6 +98,7 @@ export const PaymentModal = ({
           validatePromoCode={validatePromoCode}
           promoCodeStatus={promoCodeStatus}
           setPromoCodeStatus={setPromoCodeStatus}
+          paymentOption={paymentOption}
         />
       ),
     };
@@ -157,17 +158,64 @@ export const PaymentModal = ({
     });
   }
 
+  const calculatePromoCodePaymentAmount = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return isFullPricePayment ? packageDetails.price : paymentAmount;
+    }
+
+    const totalPrice = packageDetails.price;
+    const userInput = isFullPricePayment ? totalPrice : paymentAmount;
+    const discount = promoCodeStatus.discount;
+    const finalAmount = promoCodeStatus.finalAmount;
+
+    // Case 1: User input equals total price (full payment)
+    if (userInput === totalPrice) {
+      return finalAmount;
+    }
+
+    // Case 2: User input is different from total price (partial payment)
+    const remainder = totalPrice - userInput;
+
+    // Case 2a: Remainder <= discount / 2
+    // Apply full discount to first payment (single payment)
+    if (remainder <= discount / 2) {
+      return finalAmount;
+    }
+
+    // Case 2b: Remainder > discount / 2
+    // Apply half discount to first payment, half to second payment
+    const halfDiscount = discount / 2;
+    return userInput - halfDiscount;
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.discount,
+    promoCodeStatus.finalAmount,
+    paymentAmount,
+    packageDetails.price,
+    isFullPricePayment,
+  ]);
+
   const handlePay = async (paymentMethod: PaymentMethod) => {
-    // Calculate the final amount after promo code discount
-    const baseAmount = isFullPricePayment ? packageDetails.price : paymentAmount;
-    const amount = promoCodeStatus.isApplied ? promoCodeStatus.finalAmount : baseAmount;
+    // Calculate the final amount after promo code discount using the promo code logic
+    const amount = calculatePromoCodePaymentAmount;
     try {
       handleLogPurchaseEvent(amount);
       handleLogEvent({ name: BookingStep.TermsConfirmed, number: 4 });
+      
+      // Prepare promo code info to send to backend
+      const promoCodeInfo = promoCodeStatus.isApplied
+        ? {
+            promoCode: promoCodeStatus.code,
+            initialPrice: packageDetails.price,
+            firstPaymentSum: amount,
+          }
+        : undefined;
+
       if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {
         const url = await onSuccess(
           amount,
           "MyAmeriaPay" as PaymentSystem.MyAmeriaPay,
+          promoCodeInfo,
         );
 
         if (url) {
@@ -175,7 +223,7 @@ export const PaymentModal = ({
           setActiveView("ameriaPay");
         }
       } else if (paymentMethod === PaymentMethod.bankCard) {
-        await onSuccess(amount, "VPos" as PaymentSystem.VPos);
+        await onSuccess(amount, "VPos" as PaymentSystem.VPos, promoCodeInfo);
       }
     } catch (error) {
       setActiveView("paymentError");
@@ -215,6 +263,16 @@ export const PaymentModal = ({
 
   const handleContinue = (amount: number, paymentOption: PaymentOption) => {
     setPaymentOption(paymentOption);
+
+    // Reset promo code status if user switches to "noPrepayment"
+    if (paymentOption === "noPrepayment" && promoCodeStatus.isApplied) {
+      setPromoCodeStatus({
+        isApplied: false,
+        code: "",
+        discount: 0,
+        finalAmount: 0,
+      });
+    }
 
     if (paymentOption === "pay") {
       setPaymentAmount(amount);

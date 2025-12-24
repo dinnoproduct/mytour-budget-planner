@@ -79,7 +79,15 @@ export const useBookingFlow = ({
   }
 
   const onPaymentModalSuccess = useCallback(
-    async (paymentAmount: number, paymentSystem: PaymentSystem) => {
+    async (
+      paymentAmount: number,
+      paymentSystem: PaymentSystem,
+      promoCodeInfo?: {
+        promoCode: string
+        initialPrice: number
+        firstPaymentSum: number
+      }
+    ) => {
       if (!packageDetails || !request?.id) {
         return
       }
@@ -90,7 +98,7 @@ export const useBookingFlow = ({
         const bookInput: any = {
           requestId: request.id,
           cityId: packageDetails.city.id,
-          price: packageDetails.price,
+          price: promoCodeInfo?.initialPrice ?? packageDetails.price, // Use initial price from promo code info if available
           hotelId: packageDetails.hotel.id,
           travelAgencyId: packageDetails.travelAgency.id,
           offerId: packageDetails.offerId,
@@ -100,12 +108,17 @@ export const useBookingFlow = ({
             ? notesJson.current
             : JSON.stringify(request.notes),
           phoneNumber: user?.phoneNumber || '',
-          amountToBePaid: +paymentAmount,
+          amountToBePaid: +paymentAmount, // This is the first payment sum (already calculated with promo code logic)
           usdRate: packageDetails.usdRate,
           currency: packageDetails.currency,
           rate: packageDetails.rate,
           travelers: [...travelers.adults, ...travelers.children],
           paymentSystem
+        }
+
+        // Add promo code if provided
+        if (promoCodeInfo?.promoCode) {
+          bookInput.promoCode = promoCodeInfo.promoCode
         }
 
         if (packageDetails.destinationFlight?.departureDate) {

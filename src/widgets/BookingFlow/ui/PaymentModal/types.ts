@@ -15,7 +15,12 @@ export type PaymentModalProps = {
   closeModal: () => void
   onSuccess: (
     paymentAmount: number,
-    paymentSystem: PaymentSystem
+    paymentSystem: PaymentSystem,
+    promoCodeInfo?: {
+      promoCode: string
+      initialPrice: number
+      firstPaymentSum: number
+    }
   ) => Promise<string | undefined>
   onBackClick?: () => void
   packageDetails: PackageEntity
@@ -72,6 +77,7 @@ export type PreviewDetailsViewProps = {
     discount: number;
     finalAmount: number;
   }) => void
+  paymentOption?: PaymentOption
 }
 
 export type LayoutProps = {
