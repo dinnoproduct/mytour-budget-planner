@@ -56,10 +56,6 @@ export const PackagesSearchProvider: React.FC<{
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false);
 
   const hasInitializedData = useRef(false);
-  const lastProcessedPackageListLength = useRef(0);
-  const lastProcessedCitiesLength = useRef(0);
-  const lastDepartureFlightsLength = useRef(0);
-  const lastReturnFlightsLength = useRef(0);
 
   const isAllowedSearchRoute = useMemo(() => {
     const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
@@ -110,6 +106,29 @@ export const PackagesSearchProvider: React.FC<{
   const { data: packageList = [] } = usePackageList({
     enabled: isAllowedSearchRoute,
   });
+  
+  // Memoize package list dependency to prevent unnecessary re-renders
+  const packageListKey = useMemo(() => {
+    if (!Array.isArray(packageList) || packageList.length === 0) {
+      return "";
+    }
+    return packageList
+      .map((pkg) => `${pkg.offerId || pkg.id}`)
+      .sort()
+      .join(",");
+  }, [packageList]);
+
+  // Memoize cities dependency to prevent unnecessary re-renders
+  const citiesKey = useMemo(() => {
+    if (!Array.isArray(cities) || cities.length === 0) {
+      return "";
+    }
+    return cities
+      .map((city) => `${city.id}`)
+      .sort()
+      .join(",");
+  }, [cities]);
+
   const [filteredPackages, setFilteredPackages] = useState<PackageEntity[]>([]);
   const [isLoadingFilteredPackages, setIsLoadingFilteredPackages] =
     useState(false);
@@ -148,18 +167,6 @@ export const PackagesSearchProvider: React.FC<{
 
     // Only proceed if we have cities or packageList data
     if (cities.length === 0 && (!packageList || packageList.length === 0)) {
-      return;
-    }
-
-    // Check if we've already processed this data
-    const currentPackageListLength = packageList?.length || 0;
-    const currentCitiesLength = cities?.length || 0;
-    
-    if (
-      hasInitializedData.current &&
-      lastProcessedPackageListLength.current === currentPackageListLength &&
-      lastProcessedCitiesLength.current === currentCitiesLength
-    ) {
       return;
     }
 
@@ -205,9 +212,8 @@ export const PackagesSearchProvider: React.FC<{
 
     setSearchData(updatedSearchData, true);
     hasInitializedData.current = true;
-    lastProcessedPackageListLength.current = currentPackageListLength;
-    lastProcessedCitiesLength.current = currentCitiesLength;
-  }, [packageList?.length, cities?.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [packageListKey, citiesKey]);
 
   const { data: departureFlights } = useAvailableFlights(
     {
@@ -229,16 +235,31 @@ export const PackagesSearchProvider: React.FC<{
       },
     );
 
-  useEffect(() => {
-    const flightsLength = departureFlights?.length || 0;
-    
-    // Skip if we've already processed flights of this length
-    if (!Array.isArray(departureFlights) || flightsLength === 0) {
-      return;
+  // Memoize departure flights dependency to prevent unnecessary re-renders
+  const departureFlightsKey = useMemo(() => {
+    if (!Array.isArray(departureFlights) || departureFlights.length === 0) {
+      return "";
     }
-    
-    // Skip if we've already processed this exact set of flights
-    if (lastDepartureFlightsLength.current === flightsLength && flightsLength > 0) {
+    return departureFlights
+      .map((flight) => `${flight.id}-${flight.departureDate}`)
+      .sort()
+      .join(",");
+  }, [departureFlights]);
+
+  // Memoize return flights dependency to prevent unnecessary re-renders
+  const returnFlightsKey = useMemo(() => {
+    if (!Array.isArray(returnFlights) || returnFlights.length === 0) {
+      return "";
+    }
+    return returnFlights
+      .map((flight) => `${flight.id}-${flight.arrivalDate}`)
+      .sort()
+      .join(",");
+  }, [returnFlights]);
+
+  useEffect(() => {
+    // Skip if no departure flights
+    if (!Array.isArray(departureFlights) || departureFlights.length === 0) {
       return;
     }
     
@@ -247,29 +268,17 @@ export const PackagesSearchProvider: React.FC<{
       .sort((a, b) => a.getTime() - b.getTime());
     setAvailableDepartureDates(dates);
     setSelectedDepartureFlight(departureFlights[0]);
-    lastDepartureFlightsLength.current = flightsLength;
-  }, [departureFlights?.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [departureFlightsKey]);
 
   useEffect(() => {
-    const returnFlightsLength = returnFlights?.length || 0;
-    
     // Skip if no return flights
-    if (!returnFlights || returnFlightsLength === 0) {
-      return;
-    }
-    
-    // Skip if we've already processed this exact set of return flights (unless city changed)
-    if (
-      !isCityChanged &&
-      lastReturnFlightsLength.current === returnFlightsLength &&
-      returnFlightsLength > 0
-    ) {
+    if (!returnFlights || returnFlights.length === 0) {
       return;
     }
     
     const dates = returnFlights.map((flight) => new Date(flight.arrivalDate));
     setAvailableReturnDates(dates);
-    lastReturnFlightsLength.current = returnFlightsLength;
 
     if (isCityChanged && departureFlights) {
       const packageItem = packageList?.[0];
@@ -291,7 +300,8 @@ export const PackagesSearchProvider: React.FC<{
 
       setIsCityChanged(false);
     }
-  }, [returnFlights?.length, isCityChanged, departureFlights?.length, packageList?.[0]?.offerId, searchData.selectedCity]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [returnFlightsKey, isCityChanged, departureFlightsKey, packageList?.[0]?.offerId, searchData.selectedCity]);
 
   useEffect(() => {
     const selectedFlight = returnFlights?.find((flight) =>
