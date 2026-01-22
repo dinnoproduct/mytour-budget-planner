@@ -51,6 +51,6 @@ stages:
           docker pull dinnomytour.azurecr.io/mytourweb
           docker stop mytour-web || true
           docker rm mytour-web || true
-          docker run -d -p 3004:5173 --name mytour-web dinnomytour.azurecr.io/mytourweb
+          docker run -d -p 3004:3000 --name mytour-web dinnomytour.azurecr.io/mytourweb
           docker system prune -f
         failOnStderr: true
