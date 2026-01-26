@@ -3,7 +3,7 @@ import { packageUseCases, type FlightDates } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
 const DEFAULT_PARAMS = {
-  travelAgencyId: 1,
+  travelAgencyId: 4,
   destinationId: 1,
   daysCountFromNow: 50,
   duration: 6,
