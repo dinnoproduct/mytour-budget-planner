@@ -143,10 +143,26 @@ export type SectionListProps = {
   listItems: ListItem[]
 } & ListProps
 
-export type ListItem = { 
-  key: ReactNode; 
+export type ListItem = {
+  key: ReactNode;
   value: ReactNode;
   isStrikethrough?: boolean;
   isDiscount?: boolean;
   isHighlighted?: boolean;
+}
+
+export type PromoCodeProps = {
+  isApplyButtonDisabled?: boolean,
+  handleApplyPromoCode?: () => void,
+  handlePromoCodeInputChange?: (value: string) => void,
+  promoCodeError?: string | null,
+  promoCodeValue?: string,
+  hasPromoCode?: boolean,
+  setHasPromoCode?: (status: boolean) => void,
+  promoCodeStatus: {
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }
 }

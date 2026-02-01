@@ -184,6 +184,9 @@ export type PromoCodeValidationParams = {
   agencyId: number
   destinationId: number
   hotelId: number
+  prePaymentAmount: number
+  bookingType: number
+  startDate: string
 }
 
 export type PromoCodeValidationResponse = {
@@ -191,6 +194,9 @@ export type PromoCodeValidationResponse = {
   isValid: boolean
   discount: number
   finalAmount: number
+  firstPayment: number
+  secondPayment: number
+  skipPayment: boolean
   errorCode: string
   message: string
 }
