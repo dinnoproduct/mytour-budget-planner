@@ -154,10 +154,10 @@ export type ListItem = {
 export type PromoCodeProps = {
   isApplyButtonDisabled?: boolean,
   handleApplyPromoCode?: () => void,
-  handlePromoCodeInputChange?: (value: string) => void,
+  handlePromoCodeInputChange: (value: string) => void,
   promoCodeError?: string | null,
   promoCodeValue?: string,
-  hasPromoCode?: boolean,
+  hasPromoCode: boolean,
   setHasPromoCode?: (status: boolean) => void,
   promoCodeStatus: {
     isApplied: boolean;
