@@ -27,9 +27,9 @@ import {
 } from "@entities/package";
 import { Icon, type IconName } from "@foundation/Iconography";
 import moment from "moment";
-import { Layout } from "../Layout.tsx";
 import { TermsAndConditionsSection } from "./ui/TermsAndConditionsSection.tsx";
 import { BookingRulesModal } from "./ui/BookingRulesModal.tsx";
+import { PromoCode } from "./ui/PromoCode.tsx";
 
 const formatDate = (date: string, includeTime = false) => {
   if (!date) {
@@ -54,8 +54,8 @@ export const PreviewDetailsView = ({
   paymentOption = "pay",
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
-  const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false);
   const [promoCodeValue, setPromoCodeValue] = useState("");
+  const [hasPromoCode, setHasPromoCode] = useState(promoCodeStatus.isApplied);
   const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
   const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] =
@@ -79,14 +79,7 @@ export const PreviewDetailsView = ({
   }, [paymentOption]);
 
   const handleUsePromocode = () => {
-    setIsPromoCodeModalOpen(true);
     onUsePromocode();
-  };
-
-  const handleClosePromoCodeModal = () => {
-    setIsPromoCodeModalOpen(false);
-    setPromoCodeValue(""); // Reset promo code when closing modal
-    setPromoCodeError(null); // Clear error when closing modal
   };
 
   const handlePromoCodeInputChange = (value: string) => {
@@ -107,6 +100,9 @@ export const PreviewDetailsView = ({
         agencyId: packageDetails.travelAgency.id,
         destinationId: packageDetails.city.id,
         hotelId: packageDetails.hotel.id,
+        startDate: packageDetails.checkin,
+        bookingType: prepaymentInfo?.bookingType,
+        prePaymentAmount: paymentAmount
       },
       {
         onSuccess: (data: any) => {
@@ -122,7 +118,6 @@ export const PreviewDetailsView = ({
               discount: data.discount,
               finalAmount: data.finalAmount,
             });
-            handleClosePromoCodeModal();
           } else {
             console.log(`Promo code error: ${data.message}`);
 
@@ -158,7 +153,7 @@ export const PreviewDetailsView = ({
 
   /**
    * Calculates promo code discount distribution based on user input and total price
-   * 
+   *
    * Rules:
    * 1. If userInput == totalPrice: Discount applied to whole price (single payment)
    * 2. If userInput != totalPrice:
@@ -477,6 +472,18 @@ export const PreviewDetailsView = ({
               },
             ]}
           />
+          {/* PromoCode Section */}
+          <PromoCode
+            isApplyButtonDisabled={isApplyButtonDisabled}
+            handleApplyPromoCode={handleApplyPromoCode}
+            handlePromoCodeInputChange={handlePromoCodeInputChange}
+            promoCodeValue={promoCodeValue}
+            promoCodeError={promoCodeError}
+            hasPromoCode={hasPromoCode}
+            setHasPromoCode={setHasPromoCode}
+            promoCodeStatus={promoCodeStatus}
+          />
+
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection
             openBookingRulesModal={() => {
@@ -520,7 +527,6 @@ export const PreviewDetailsView = ({
               </Text>
             </Flex>
           </Flex>
-
           <Button
             variant="solid-blue"
             width="full"
@@ -529,67 +535,13 @@ export const PreviewDetailsView = ({
             isLoading={isLoadingBooking}
             size="lg"
           >
-            {t("pay")}
+            {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay"): t("reserve")}
           </Button>
-
-          {paymentOption === "pay" &&
-            !promoCodeStatus.isApplied && (
-              <Button
-                variant="solid-gray"
-                width="full"
-                mt="2"
-                onClick={handleUsePromocode}
-                size="lg"
-              >
-                {t("usePromoCode")}
-              </Button>
-            )}
         </Box>
       </Flex>
 
-      <Portal>
-        <Layout
-          title={t("usePromoCode")}
-          isOpen={isPromoCodeModalOpen}
-          closeModal={handleClosePromoCodeModal}
-        >
-          <Box
-            px="4"
-            py="6"
-            width="full"
-            maxW="420px"
-            height={{ base: "calc(100dvh - 164px)", md: "auto" }}
-            minH="136px"
-          >
-            <VStack spacing={2} align="stretch">
-              <Input
-                width="full"
-                value={promoCodeValue}
-                onChange={(e) => handlePromoCodeInputChange(e.target.value)}
-                state={promoCodeError ? "invalid" : "default"}
-                placeholder={t`promoCodePlaceholder`}
-              />
-              {promoCodeError && (
-                <Text color="red.500" fontSize="sm">
-                  {promoCodeError}
-                </Text>
-              )}
-            </VStack>
-          </Box>
-
-          <Box p="4" borderTop="1px solid" borderColor="gray.100" width="full">
-            <Button
-              variant="solid-blue"
-              width="full"
-              size="lg"
-              isDisabled={isApplyButtonDisabled}
-              onClick={handleApplyPromoCode}
-            >
-              {t("apply")}
-            </Button>
-          </Box>
-        </Layout>
-      </Portal>
+      {/*<Portal>*/}
+      {/*</Portal>*/}
       <Portal>
         <BookingRulesModal
           isOpen={isBookingRulesModalOpen || isCancellationPolicyModalOpen}
