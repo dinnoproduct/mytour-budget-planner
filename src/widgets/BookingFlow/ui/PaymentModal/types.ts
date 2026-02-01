@@ -158,7 +158,7 @@ export type PromoCodeProps = {
   promoCodeError?: string | null,
   promoCodeValue?: string,
   hasPromoCode: boolean,
-  setHasPromoCode?: (status: boolean) => void,
+  setHasPromoCode: (status: boolean) => void,
   promoCodeStatus: {
     isApplied: boolean;
     code: string;
