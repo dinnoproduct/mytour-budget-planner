@@ -8,6 +8,7 @@ import { SearchService } from './SearchService.ts'
 import { PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { PromoCodeService } from './PromoCodeService.ts'
 import { FlightDatesService } from './FlightDatesService.ts';
+import { GroupTourService } from './GroupTourService.ts'
 
 export const packageUseCases = new PackageUseCases({
   packageService: new PackageService(),
@@ -18,7 +19,8 @@ export const packageUseCases = new PackageUseCases({
   flightDatesService: new FlightDatesService(),
   searchService: new SearchService(),
   prepaymentInfoCalculationService: new PrepaymentInfoCalculationService(),
-  promoCodeService: new PromoCodeService()
+  promoCodeService: new PromoCodeService(),
+  groupTourService: new GroupTourService(),
 })
 
 export type * from './types'

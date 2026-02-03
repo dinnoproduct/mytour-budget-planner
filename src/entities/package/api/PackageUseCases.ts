@@ -26,6 +26,7 @@ import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
 import { type FlightEntity } from '../model/entities.ts'
+import { type GroupTourService } from './GroupTourService.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
@@ -37,6 +38,7 @@ export class PackageUseCases {
   private readonly searchService: SearchService
   private readonly prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   private readonly promoCodeService: PromoCodeService
+  private readonly groupTourService: GroupTourService
 
   constructor({
     packageService,
@@ -47,7 +49,8 @@ export class PackageUseCases {
     flightDatesService,
     searchService,
     prepaymentInfoCalculationService,
-    promoCodeService
+    promoCodeService, 
+    groupTourService,
   }: PackageUseCasesParams) {
     this.packageService = packageService
     this.flightService = flightService
@@ -58,6 +61,7 @@ export class PackageUseCases {
     this.searchService = searchService
     this.prepaymentInfoCalculationService = prepaymentInfoCalculationService
     this.promoCodeService = promoCodeService
+    this.groupTourService = groupTourService
   }
 
   // package
@@ -170,5 +174,10 @@ export class PackageUseCases {
   // promo code
   async validatePromoCode(params: PromoCodeValidationParams, token: string) {
     return this.promoCodeService.validate(params, token)
+  }
+
+  // group tour
+  async getGroupTours() {
+    return this.groupTourService.getGroupTours()
   }
 }

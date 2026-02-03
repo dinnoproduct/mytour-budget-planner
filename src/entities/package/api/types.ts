@@ -8,6 +8,7 @@ import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
 import { type Currency } from '../index.ts'
+import { GroupTourService } from './GroupTourService.ts'
 
 export type PackageUseCasesParams = {
   packageService: PackageService
@@ -19,6 +20,7 @@ export type PackageUseCasesParams = {
   searchService: SearchService
   prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   promoCodeService: PromoCodeService
+  groupTourService: GroupTourService
 }
 
 export type GetAvailableFlightsParams = {
