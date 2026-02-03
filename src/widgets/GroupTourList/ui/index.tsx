@@ -3,8 +3,8 @@ import { Box, Flex, VStack } from "@chakra-ui/react";
 import {
   PackageCardSkeleton,
   type PackageEntity,
+  useGroupToursList,
   useHotelPackagesSearchContext,
-  useGroupTourSearchContext,
 } from "@entities/package";
 import { PackageCardHorizontal } from "@features/PackageCard";
 import { useMemo } from "react";
@@ -17,30 +17,24 @@ import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
 
 export const GroupTourList = () => {
-  const { searchParams } = useQueryParams();
-
-  const activeTab = useMemo(() => {
-    if (searchParams?.tab) {
-      return searchParams.tab;
-    }
-
-    return "packages";
-  }, [searchParams]);
-
-  const {
-    filteredPackages,
-    isLoadingFilteredPackages,
-    searchData: packagesSearchData,
-    isSearchError,
-    isAllowedSearchRoute: isPackagesSearchView,
-  } = useGroupTourSearchContext();
-
   const {
     filteredHotelPackages,
     isLoadingFilteredHotelPackages,
-    isAllowedSearchRoute: isHotelSearchView,
-    searchData: hotelSearchData,
   } = useHotelPackagesSearchContext();
+  const {
+    data: groupTours = [],
+    isLoading: isLoadingGroupTours,
+  } = useGroupToursList();
+
+  const tours = useMemo(
+    () => (groupTours?.length ? groupTours : filteredHotelPackages),
+    [groupTours, filteredHotelPackages],
+  );
+
+  const isLoading = useMemo(
+    () => isLoadingGroupTours || (!groupTours.length && isLoadingFilteredHotelPackages),
+    [isLoadingGroupTours, groupTours.length, isLoadingFilteredHotelPackages],
+  );
 
   const generateLink = (tourPackage: PackageEntity) => {
     const childrenTravelers =
@@ -55,25 +49,6 @@ export const GroupTourList = () => {
       roomId: tourPackage.roomType.toString(),
     };
 
-    if (isPackagesSearchView) {
-      queryParams.from = moment(packagesSearchData.fromDate).format(
-        "YYYY-MM-DD",
-      );
-      queryParams.to = moment(packagesSearchData.toDate).format("YYYY-MM-DD");
-      queryParams.childrenAges =
-        packagesSearchData.travelersData.childrenCount > 0
-          ? packagesSearchData.travelersData.childrenAges.join(",")
-          : "";
-      pagePath = "package";
-    } else {
-      queryParams.from = moment(tourPackage.checkin).format("YYYY-MM-DD");
-      queryParams.to = moment(tourPackage.checkout).format("YYYY-MM-DD");
-      queryParams.childrenAges =
-        hotelSearchData.travelersData.childrenCount > 0
-          ? hotelSearchData.travelersData.childrenAges.join(",")
-          : "";
-    }
-
     const newSearchParams = new URLSearchParams(queryParams).toString();
 
     const url = `/${pagePath}?${newSearchParams}`;
@@ -81,87 +56,39 @@ export const GroupTourList = () => {
     return url;
   };
 
-  const activePackages = useMemo(
-    () => (isHotelSearchView ? filteredHotelPackages : filteredPackages),
-    [isHotelSearchView, filteredPackages, filteredHotelPackages],
-  );
-  const {
-    filterOptions,
-    filteredPackages: filteredActivePackages,
-    isFilterActive,
-    onFilter,
-  } = useFilterPackage(activePackages);
-
-  const isLoadingPackages = useMemo(
-    () =>
-      isHotelSearchView
-        ? isLoadingFilteredHotelPackages
-        : isLoadingFilteredPackages,
-    [
-      isHotelSearchView,
-      isLoadingFilteredPackages,
-      isLoadingFilteredHotelPackages,
-    ],
-  );
-
   // empty view
-  if (!isLoadingPackages && !activePackages?.length) {
+  if (!isLoading && !tours?.length) {
     return (
       <EmptyView />
     );
   }
 
-  const getNights = () => {
-    if (searchParams.from === null || searchParams.to === null) {
-      return 0;
-    }
-
-    if (searchParams.days) {
-      return Number(searchParams.days) - 1;
-    }
-
-    const fromDate = new Date(searchParams.from as string);
-    const toDate = new Date(searchParams.to as string);
-
-    return isHotelSearchView
-      ? getHotelNightsByDate(fromDate, toDate)
-      : getNightsByDate(fromDate, toDate);
-  };
-
   return (
     <Layout>
-      {!isLoadingPackages ? (
-        <Box ml={{ base: 0, md: !isLoadingPackages ? "326px" : undefined }}>
-          <PackageFilter
-            isActive={isFilterActive}
-            filterOptions={filterOptions}
-            onFilter={onFilter}
-          />
+      {!isLoading ? (
+        <Box ml={{ base: 0, md: !isLoading ? "326px" : undefined }}>
+          
         </Box>
       ) : (
         <Skeleton minW="326px" width="326px" rounded="lg" />
       )}
-      {!isLoadingPackages && filteredActivePackages.length === 0 && (
-        <EmptyView />
-      )}
 
-      {isLoadingPackages && (
+      {isLoading && (
         <VStack spacing={4} flexGrow={1} width="full">
-          {isLoadingPackages ? <SkeletonLoading /> : null}
+          <SkeletonLoading />
         </VStack>
       )}
 
-      {!isLoadingPackages && filteredActivePackages.length > 0 && (
+      {!isLoading && tours.length > 0 && (
         <VStack spacing={4} flexGrow={1} width="full">
-          {!isLoadingPackages &&
-            filteredActivePackages?.map((packageEntity) => (
+          {tours?.map((hotelPackage) => (
               <PackageCardHorizontal
-                tourPackage={packageEntity}
-                key={packageEntity.offerId + "---" + packageEntity.hotel.id}
-                link={generateLink(packageEntity)}
-                nights={getNights()} // todo: check nights
+                tourPackage={hotelPackage}
+                key={hotelPackage.offerId + "---" + hotelPackage.id}
+                link={generateLink(hotelPackage)}
+                nights={getNightsByDate(hotelPackage.checkin, hotelPackage.checkout)}
               />
-            ))}
+            ))}  
         </VStack>
       )}
     </Layout>

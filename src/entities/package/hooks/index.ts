@@ -1,4 +1,5 @@
 export * from './usePackageList.ts'
+export * from './useGroupToursList.ts'
 export * from './useAvailableFlights.ts'
 export * from './useReturnFlights.ts'
 export * from './useSearch.ts'

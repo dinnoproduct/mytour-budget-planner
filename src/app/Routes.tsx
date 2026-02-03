@@ -13,7 +13,6 @@ import { PackageDetailsPage } from "@pages/PackageDetailsPage";
 import { useScrollToTop } from "@shared/hooks";
 import { MyPackagesPage } from "@pages/MyPackagesPage.tsx";
 import {
-  GrouptTourSearchProvider,
   HotelPackagesSearchProvider,
   PackagesSearchProvider,
 } from "@entities/package";
@@ -125,9 +124,7 @@ const RouteOutlet = () => <Outlet />;
 const PackagesLayout = () => (
   <PackagesSearchProvider>
     <HotelPackagesSearchProvider>
-      <GrouptTourSearchProvider>
         <Outlet />
-      </GrouptTourSearchProvider>
     </HotelPackagesSearchProvider>
   </PackagesSearchProvider>
 );
