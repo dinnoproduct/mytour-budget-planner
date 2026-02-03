@@ -122,6 +122,7 @@
   "filterLocation": "Location",
   "filterHotelNotFound": "No hotels matching the specified criteria were found",
   "filterPackageNotFound": "No packages matching the specified criteria were found",
+  "filterGroupTourNotFound": "There are currently no group tours; you can look for hotels or packages.",
   "filtering": "Filter",
   "filters": "Filters",
   "find": "Find",

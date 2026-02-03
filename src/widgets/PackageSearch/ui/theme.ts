@@ -35,6 +35,25 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
       pb: { base: 4, md: '10' }
     }
   },
+  centeredGroupTours: {
+    container: {
+      background: 'linear-gradient(178deg, #FF5070 1.7%, #FFC793 98.21%)',
+      pt: { base: 4, md: '7' },
+      pb: { base: '60px', md: '7' }
+    },
+    contentWrapper: {
+      maxWidth: { base: 'full', md: '1140px' },
+      display: 'flex',
+      justifyContent: 'center',
+      width: 'full',
+      mx: 'auto',
+      align: 'center'
+    },
+    content: {
+      pt: { base: 4, md: '4' },
+      pb: { base: 4, md: '10' }
+    }
+  },
   fixed: {
     wrapper: {
       height: { base: '80px', md: '148px' },

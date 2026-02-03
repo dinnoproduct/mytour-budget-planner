@@ -27,6 +27,7 @@ export const Layout = ({
     className={className}
     position="relative"
     width="full"
+    display='flex'
     {...packageSearchVariants[variant].wrapper}
   >
     <Box

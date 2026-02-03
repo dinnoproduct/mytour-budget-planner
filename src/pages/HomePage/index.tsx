@@ -10,11 +10,12 @@ import { BlogsSection } from '@widgets/BlogsSection'
 import {CityOffersSection} from "@widgets/CityOffersSection/ui";
 import { PageLayout } from '@/shared/ui/layout/PageLayout'
 import { StoriesSection } from '@widgets/StoriesSection'
+import { GroupTourList } from '@widgets/GroupTourList'
 
 export const HomePage = () => {
   const { dispatchModal } = useModalContext()
   const location = useLocation()
-  const [isHotel, setHotel] = useState(0)
+  const [tabIndex, setTabIndex] = useState(0)
 
   useEffect(() => {
     const scriptId = 'EmbedSocialHashtagScript'
@@ -52,10 +53,15 @@ export const HomePage = () => {
 
   return (
     <PageLayout background='white'>
-      <PackageSearch variant={isHotel ? 'centeredPackage' : "centered"} isHotel={isHotel} setHotel={setHotel} />
-      <StoriesSection isHotel={isHotel} />
-      <PackageBanner mx={{base: 4, md: "auto"}} mt={10} isHotel={isHotel} maxWidth='1376px'/>
-      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={isHotel}/>
+      <PackageSearch variant={tabIndex === 1 ? 'centeredPackage' : tabIndex === 0 ? "centered" : "centeredGroupTours"} isHotel={tabIndex} setHotel={setTabIndex} />
+      {
+        tabIndex === 2 && <GroupTourList />
+      }
+      <StoriesSection isHotel={tabIndex} />
+      {
+        tabIndex !== 2 && <PackageBanner mx={{base: 4, md: "auto"}} mt={10} isHotel={tabIndex} maxWidth='1376px'/>
+      }
+      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex}/>
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}
       {/*<AppSection />*/}
