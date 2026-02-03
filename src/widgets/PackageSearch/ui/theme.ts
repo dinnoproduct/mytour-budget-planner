@@ -10,6 +10,8 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
     contentWrapper: {
       maxWidth: { base: 'full', md: '1140px' },
       width: 'full',
+      display: 'flex',
+      justifyContent: 'center',
       mx: 'auto',
       align: 'center'
     },
@@ -27,6 +29,8 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
     contentWrapper: {
       maxWidth: { base: 'full', md: '1140px' },
       width: 'full',
+      display: 'flex',
+      justifyContent: 'center',
       mx: 'auto',
       align: 'center'
     },
