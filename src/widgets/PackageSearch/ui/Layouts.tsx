@@ -4,6 +4,7 @@ import { packageSearchVariants } from '@widgets/PackageSearch/ui/theme.ts'
 import {Tabs, Text} from '@ui'
 import React from 'react'
 import {
+  GroupTabItem,
   HotelTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
@@ -50,7 +51,8 @@ export const Layout = ({
           <Tabs
             labels={[
               <HotelTabItem key="hotel-tab"/>,
-              <PackageTabItem key="package-tab"/>
+              <PackageTabItem key="package-tab"/>,
+              <GroupTabItem key="group-tab"/>
             ]}
             variant="line"
             align="center"

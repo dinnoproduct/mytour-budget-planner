@@ -32,3 +32,7 @@ export const HotelTabItem = () => (
 export const PackageTabItem = () => (
   <TabItem iconName="packages" label="package" />
 )
+
+export const GroupTabItem = () => (
+  <TabItem iconName="group-tours" label="groupTours" />
+)
