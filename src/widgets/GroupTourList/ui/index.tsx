@@ -24,6 +24,7 @@ export const GroupTourList = () => {
   const {
     data: groupTours = [],
     isLoading: isLoadingGroupTours,
+    isFetching: isFetchingGroupTours,
   } = useGroupToursList();
 
   const tours = useMemo(
@@ -32,8 +33,16 @@ export const GroupTourList = () => {
   );
 
   const isLoading = useMemo(
-    () => isLoadingGroupTours || (!groupTours.length && isLoadingFilteredHotelPackages),
-    [isLoadingGroupTours, groupTours.length, isLoadingFilteredHotelPackages],
+    () =>
+      isLoadingGroupTours ||
+      isFetchingGroupTours ||
+      (!groupTours.length && isLoadingFilteredHotelPackages),
+    [
+      isLoadingGroupTours,
+      isFetchingGroupTours,
+      groupTours.length,
+      isLoadingFilteredHotelPackages,
+    ],
   );
 
   const generateLink = (tourPackage: PackageEntity) => {
