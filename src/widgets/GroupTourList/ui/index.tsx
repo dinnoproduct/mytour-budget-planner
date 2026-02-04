@@ -1,5 +1,5 @@
 import { type LayoutProps } from "./types";
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, VStack } from "@chakra-ui/react";
 import {
   PackageCardSkeleton,
   type PackageEntity,
@@ -65,18 +65,14 @@ export const GroupTourList = () => {
 
   return (
     <Layout>
-      {!isLoading ? (
-        <Box ml={{ base: 0, md: !isLoading ? "326px" : undefined }}>
-          
-        </Box>
-      ) : (
-        <Skeleton minW="326px" width="326px" rounded="lg" />
-      )}
-
       {isLoading && (
-        <VStack spacing={4} flexGrow={1} width="full">
+        <Grid 
+          templateColumns={{base: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)'}} rowGap={'40px'} columnGap={'24px'}
+          justifyItems='center'
+          w="100%"
+        >
           <SkeletonLoading />
-        </VStack>
+        </Grid>
       )}
 
       {!isLoading && tours.length > 0 && (
@@ -99,7 +95,17 @@ const SkeletonLoading = ({ carsCount = 8 }) =>
   Array(carsCount)
     .fill(1)
     .map((_data, index) => (
-      <PackageCardSkeleton key={`package-card-skeleton-${index}`} />
+      <GridItem 
+        key={`package-card-skeleton-${index}`} 
+        width={{ base: '360px', md: '100%' }}
+        height='380px'
+      >
+        <Skeleton
+          width="100%"  
+          height="100%"
+          rounded="lg"
+        />
+      </GridItem>
     ));
 
 const Layout = ({ children }: LayoutProps) => (
