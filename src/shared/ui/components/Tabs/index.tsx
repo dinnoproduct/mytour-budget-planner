@@ -10,7 +10,18 @@ import { type TabsProps } from './types'
 export const Tabs = ({ labels, children, showTabs = true, ...props }: TabsProps) => (
   <ChakraTabs {...props}>
     {showTabs &&
-    <TabList gap={2}>
+    <TabList 
+      gap={2} 
+      sx={{
+        justifyContent: {base: 'flex-start', md: 'center'}, 
+        overflowX: {base: 'scroll', md: 'visible'},
+        margin: 0,
+        padding: {base: '2px 16px', md: '0'},
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        '&::-webkit-scrollbar': { display: 'none' },
+      }}
+    >
       {labels.map((label, index) => (
         <Tab key={`${label}-${index}`}>{label}</Tab>
       ))}

@@ -15,7 +15,7 @@ const TabItem = ({
     <Flex align="center">
       <Icon name={iconName} size="16" />
 
-      <Text ml="0.5" className="tab-label">
+      <Text ml="0.5" className="tab-label" whiteSpace="nowrap">
         {t(label)}
       </Text>
 

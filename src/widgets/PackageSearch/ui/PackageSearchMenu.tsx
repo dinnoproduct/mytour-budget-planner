@@ -99,12 +99,11 @@ export const PackageSearchMenu = ({
               <GroupTabItem key="group-tab" />
             ]}
             variant="line"
-            align="center"
             mt="2"
             defaultIndex={0}
             onChange={onTabChange}
+            align="center"
           >
-            <></>
             <></>
           </Tabs>
           )}
