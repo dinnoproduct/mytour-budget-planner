@@ -2,7 +2,11 @@ import { Button, Illustration, Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 
-export const PaymentErrorView = () => {
+type PaymentErrorViewProps = {
+  onGoToMyPackages?: () => void
+}
+
+export const PaymentErrorView = ({ onGoToMyPackages }: PaymentErrorViewProps) => {
   const { t } = useTranslation()
 
   return (
@@ -36,17 +40,29 @@ export const PaymentErrorView = () => {
         borderColor="gray.100"
         backgroundColor="white"
         mt="auto"
-        display={{ base: 'block', md: 'none' }}
       >
-        <Button
-          variant="solid-blue"
-          type="submit"
-          size="lg"
-          width="full"
-          href="tel:+37493240732"
-        >
-          {t`call`}
-        </Button>
+        {onGoToMyPackages ? (
+          <Button
+            variant="solid-blue"
+            size="lg"
+            width="full"
+            onClick={onGoToMyPackages}
+          >
+            {t`myPackages`}
+          </Button>
+        ) : (
+          <Box display={{ base: 'block', md: 'none' }}>
+            <Button
+              variant="solid-blue"
+              type="submit"
+              size="lg"
+              width="full"
+              href="tel:+37493240732"
+            >
+              {t`call`}
+            </Button>
+          </Box>
+        )}
       </Box>
     </Flex>
   )

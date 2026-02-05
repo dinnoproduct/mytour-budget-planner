@@ -34,6 +34,9 @@ export const PaymentModal = ({
   validatePromoCode,
   handleLogEvent,
   skipPreviewStep = false,
+  renderAsPage = false,
+  onViewChange,
+  onNavigateToMyPackages,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const isFullPricePayment = useMemo(
@@ -67,6 +70,8 @@ export const PaymentModal = ({
           onSubmit={handlePaymentMethodSelect}
           isLoadingBooking={isLoadingBooking}
           packageDetails={packageDetails}
+          onBackClick={renderAsPage ? () => setActiveView("paymentForm") : undefined}
+          renderAsPage={renderAsPage}
         />
       ),
       ameriaPay: () => <AmeriaPayView paymentUrl={ameriaPayUrl} />,
@@ -78,9 +83,15 @@ export const PaymentModal = ({
           initialPaymentOption={paymentOption}
           isBooked={isBooked}
           prepaymentInfo={prepaymentInfo}
+          onBackClick={renderAsPage ? onBackClick : undefined}
+          renderAsPage={renderAsPage}
         />
       ),
-      paymentError: () => <PaymentErrorView />,
+      paymentError: () => (
+        <PaymentErrorView
+          onGoToMyPackages={renderAsPage ? onNavigateToMyPackages : undefined}
+        />
+      ),
       previewDetails: () => (
         <PreviewDetailsView
           onPay={() => handlePay(selectedPaymentMethod || PaymentMethod.bankCard)}
@@ -99,6 +110,8 @@ export const PaymentModal = ({
           promoCodeStatus={promoCodeStatus}
           setPromoCodeStatus={setPromoCodeStatus}
           paymentOption={paymentOption}
+          onBackClick={renderAsPage ? () => setActiveView("paymentForm") : undefined}
+          renderAsPage={renderAsPage}
         />
       ),
     };
@@ -116,13 +129,14 @@ export const PaymentModal = ({
   ]);
 
   useEffect(() => {
-    // if (isFullPricePayment && view === "paymentForm") {
-    //   setActiveView("paymentMethod");
-    // } else 
     if (view) {
       setActiveView(view);
     }
   }, [view, isFullPricePayment]);
+
+  useEffect(() => {
+    onViewChange?.(activeView);
+  }, [activeView, onViewChange]);
 
   const isHotelPackage = useMemo(
     () =>
@@ -303,6 +317,7 @@ export const PaymentModal = ({
       isOpen={isOpen}
       closeModal={closeModal}
       onBackClick={handleBackClick}
+      renderAsPage={renderAsPage}
     >
       <ViewComponent />
     </Layout>

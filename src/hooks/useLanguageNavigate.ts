@@ -35,8 +35,17 @@ export const useLanguageNavigate = () => {
     navigateTo('/blogs', options);
   };
 
-  const navigateToMyPackages = (options?: { replace?: boolean }) => {
-    navigateTo('/my-packages', options);
+  const navigateToMyPackages = (
+    options?: { queryParams?: string; replace?: boolean },
+  ) => {
+    const path = options?.queryParams
+      ? `/my-packages?${options.queryParams}`
+      : '/my-packages';
+    navigateTo(path, { replace: options?.replace });
+  };
+
+  const navigateToBooking = (options?: { replace?: boolean }) => {
+    navigateTo('/booking', options);
   };
 
   return {
@@ -48,6 +57,7 @@ export const useLanguageNavigate = () => {
     navigateToHotel,
     navigateToBlogs,
     navigateToMyPackages,
+    navigateToBooking,
     // Keep original navigate for special cases
     navigate,
   };

@@ -11,7 +11,11 @@ import {
 import { type TDictionary } from '../data/dictionaryTypes.ts';
 import { type DictionaryTypes } from '../data/dictionaryEnum.ts';
 import { type CustomFields } from '../data/packagesEnums.ts';
-import { type PackageEntity } from '@entities/package';
+import {
+  type PackageEntity,
+  type NormalizedRequestEntity,
+} from '@entities/package';
+import { type Travelers } from '@widgets/TravelersModal/ui/types';
 
 export const packagesAtom = atom<TPackages>({
   key: 'packages',
@@ -101,6 +105,20 @@ export const isBookModalOpenAtom = atom<boolean>({
 export const isBookingFlowOpenAtom = atom<boolean>({
   key: 'isBookingFlowOpen',
   default: false,
+});
+
+export type BookingContext = {
+  packageDetails: PackageEntity | null;
+  childrenAges: number[];
+  initialView: 'travelers' | 'payment';
+  request?: NormalizedRequestEntity | null;
+  defaultTravelers?: Travelers;
+  isBooked?: boolean;
+};
+
+export const bookingContextAtom = atom<BookingContext | null>({
+  key: 'bookingContext',
+  default: null,
 });
 
 export const userInfoAtom = atom<Partial<{ [CustomFields.email]: string }>>({

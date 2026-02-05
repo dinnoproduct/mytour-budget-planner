@@ -1,6 +1,7 @@
 import { Box, Flex, RadioGroup, Radio } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { AlertCardMessage, Button, Checkbox, Input, Text } from '@ui'
+import { StepBottomActions } from '@widgets/BookingFlow/ui/StepBottomActions'
 import {
   type PaymentFormViewProps,
   type PaymentOption
@@ -17,7 +18,9 @@ export const PaymentFormView = ({
   isLoadingBooking,
   isBooked,
   initialPaymentOption = 'pay',
-  prepaymentInfo
+  prepaymentInfo,
+  onBackClick,
+  renderAsPage = false,
 }: PaymentFormViewProps) => {
   const { t } = useTranslation()
 
@@ -269,25 +272,44 @@ export const PaymentFormView = ({
         </Box>
       </Flex>
 
-      <Box
-        p="4"
-        width="full"
-        borderTop="1px solid"
-        borderColor="gray.100"
-        backgroundColor="white"
-        mt="auto"
-      >
-        <Button
-          variant="solid-blue"
-          type="submit"
-          size="lg"
+      {renderAsPage && onBackClick ? (
+        <StepBottomActions
+          onBack={onBackClick}
+          backLabel={t`back`}
+          primaryButton={
+            <Button
+              variant="solid-blue"
+              type="submit"
+              size="lg"
+              width="full"
+              isDisabled={isDisabled}
+              isLoading={isLoadingBooking}
+            >
+              {t`continue`}
+            </Button>
+          }
+        />
+      ) : (
+        <Box
+          p="4"
           width="full"
-          isDisabled={isDisabled}
-          isLoading={isLoadingBooking}
+          borderTop="1px solid"
+          borderColor="gray.100"
+          backgroundColor="white"
+          mt="auto"
         >
-          {t`continue`}
-        </Button>
-      </Box>
+          <Button
+            variant="solid-blue"
+            type="submit"
+            size="lg"
+            width="full"
+            isDisabled={isDisabled}
+            isLoading={isLoadingBooking}
+          >
+            {t`continue`}
+          </Button>
+        </Box>
+      )}
     </Flex>
   )
 }

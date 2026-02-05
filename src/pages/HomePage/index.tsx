@@ -16,6 +16,18 @@ export const HomePage = () => {
   const location = useLocation()
   const [isHotel, setHotel] = useState(0)
 
+  // useEffect(() => {
+  //   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  //     e.preventDefault()
+  //   }
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload)
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload)
+  //   }
+  // }, [])   // TODO: test for reloading on pages where we lose information
+
   useEffect(() => {
     const scriptId = 'EmbedSocialHashtagScript'
 

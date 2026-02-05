@@ -9,8 +9,9 @@ export type TravelersModalProps = {
   travelers: Travelers
   isOpen?: boolean
   onChange?: (data: Travelers) => void
-  isLoading?: boolean,
+  isLoading?: boolean
   handleLogEvent: (step: { name: BookingStep; number: number }) => void
+  renderAsPage?: boolean
 }
 
 export type Travelers = {
@@ -25,6 +26,7 @@ export type LayoutProps = {
   isOpen: boolean
   closeModal: () => void
   title: string
+  renderAsPage?: boolean
 }
 
 export type Traveler = {

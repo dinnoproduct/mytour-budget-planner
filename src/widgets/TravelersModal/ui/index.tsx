@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { capitalize, debounce } from '@shared/utils'
 import MDatePicker from '@/components/FormControls/MDatePicker/MDatePicker.tsx'
 import { Button, Input } from '@/shared/ui/index.ts'
+import { StepBottomActions } from '@widgets/BookingFlow/ui/StepBottomActions'
 import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
 import { validateTraveler } from '@widgets/TravelersModal/helpers'
 import moment from 'moment'
@@ -25,7 +26,8 @@ export const TravelersModal = ({
   isOpen = false,
   onChange,
   isLoading,
-  handleLogEvent
+  handleLogEvent,
+  renderAsPage = false,
 }: TravelersModalProps) => {
   const { t } = useTranslation()
   const [normalizedTravelers, setNormalizedTravelers] = useState<Traveler[]>([])
@@ -131,6 +133,7 @@ export const TravelersModal = ({
         title={capitalize(t`travelers`)}
         isOpen={isOpen}
         closeModal={closeModal}
+        renderAsPage={renderAsPage}
       >
         <Flex
           direction="column"
@@ -300,24 +303,42 @@ export const TravelersModal = ({
             ))}
           </VStack>
 
-          <Box
-            p="4"
-            width="full"
-            borderTop="1px solid"
-            borderColor="gray.100"
-            backgroundColor="white"
-            mt="auto"
-          >
-            <Button
-              variant="solid-blue"
-              type="submit"
-              size="lg"
+          {renderAsPage ? (
+            <StepBottomActions
+              onBack={closeModal}
+              backLabel={t`back`}
+              primaryButton={
+                <Button
+                  variant="solid-blue"
+                  type="submit"
+                  size="lg"
+                  width="full"
+                  isLoading={isLoading}
+                >
+                  {t`continue`}
+                </Button>
+              }
+            />
+          ) : (
+            <Box
+              p="4"
               width="full"
-              isLoading={isLoading}
+              borderTop="1px solid"
+              borderColor="gray.100"
+              backgroundColor="white"
+              mt="auto"
             >
-              {t`continue`}
-            </Button>
-          </Box>
+              <Button
+                variant="solid-blue"
+                type="submit"
+                size="lg"
+                width="full"
+                isLoading={isLoading}
+              >
+                {t`continue`}
+              </Button>
+            </Box>
+          )}
         </Flex>
       </Layout>
     </FormProvider>

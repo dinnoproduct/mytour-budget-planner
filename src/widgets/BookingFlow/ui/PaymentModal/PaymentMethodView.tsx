@@ -1,6 +1,7 @@
 import { Box, Flex, Img, RadioGroup, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, NewBadge, Radio, SoonBadge, Text } from "@ui";
+import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import {
   PaymentMethod,
   type PaymentMethodCardProps,
@@ -13,6 +14,8 @@ export const PaymentMethodView = ({
   onSubmit,
   isLoadingBooking,
   packageDetails,
+  onBackClick,
+  renderAsPage = false,
 }: PaymentMethodViewProps) => {
   const { t } = useTranslation();
 
@@ -97,25 +100,42 @@ export const PaymentMethodView = ({
         </RadioGroup>
       </Flex>
 
-      <Box
-        p="4"
-        width="full"
-        borderTop="1px solid"
-        borderColor="gray.100"
-        backgroundColor="white"
-        mt="auto"
-      >
-        <Button
-          variant="solid-blue"
-          type="submit"
-          size="lg"
+      {renderAsPage && onBackClick ? (
+        <StepBottomActions
+          onBack={onBackClick}
+          backLabel={t`back`}
+          primaryButton={
+            <Button
+              variant="solid-blue"
+              size="lg"
+              width="full"
+              onClick={handleContinue}
+              isLoading={isLoadingBooking}
+            >
+              {t`pay`}
+            </Button>
+          }
+        />
+      ) : (
+        <Box
+          p="4"
           width="full"
-          onClick={handleContinue}
-          isLoading={isLoadingBooking}
+          borderTop="1px solid"
+          borderColor="gray.100"
+          backgroundColor="white"
+          mt="auto"
         >
-          {t`pay`}
-        </Button>
-      </Box>
+          <Button
+            variant="solid-blue"
+            size="lg"
+            width="full"
+            onClick={handleContinue}
+            isLoading={isLoadingBooking}
+          >
+            {t`pay`}
+          </Button>
+        </Box>
+      )}
     </Flex>
   );
 };

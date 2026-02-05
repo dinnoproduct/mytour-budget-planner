@@ -1,12 +1,13 @@
 import { useRef } from 'react'
 import { type LayoutProps } from './types.ts'
 import {
+  Box,
   Flex,
   Modal as ChakraModal,
   ModalBody,
   ModalContent,
   ModalHeader,
-  ModalOverlay
+  ModalOverlay,
 } from '@chakra-ui/react'
 import { Button, Text } from '@ui'
 
@@ -15,9 +16,25 @@ export const Layout = ({
   isOpen,
   closeModal,
   title,
-  onBackClick
+  onBackClick,
+  renderAsPage = false,
 }: LayoutProps) => {
   const modalContentRef = useRef<HTMLDivElement>(null)
+
+  if (renderAsPage) {
+    return (
+      <Box width="full" maxW="container.lg" mx="auto" px={4}>
+        <Flex
+          width="full"
+          flexDirection="column"
+          alignItems="center"
+          height="full"
+        >
+          {children}
+        </Flex>
+      </Box>
+    )
+  }
 
   return (
     <ChakraModal
@@ -28,7 +45,6 @@ export const Layout = ({
       initialFocusRef={modalContentRef}
     >
       <ModalOverlay />
-
       <ModalContent ref={modalContentRef}>
         <ModalHeader p="4" borderBottom="1px solid" borderColor="gray.100">
           <Flex width="full" justify="space-between" align="center">
@@ -45,7 +61,6 @@ export const Layout = ({
                 {title}
               </Text>
             </Flex>
-
             <Button
               variant="text-blue"
               size="lg"
@@ -54,7 +69,6 @@ export const Layout = ({
             />
           </Flex>
         </ModalHeader>
-
         <ModalBody p="0">
           <Flex
             width="full"

@@ -8,6 +8,7 @@ import {
 import PackagesRoutes from "../modules/packages/routes/PackagesRoutes";
 import useBreakpoint from "../hooks/useBreakpoint";
 import { HomePage } from "@pages/HomePage";
+import { BookingPage } from "@pages/BookingPage";
 import { PackageListPage } from "@pages/PackageListPage";
 import { PackageDetailsPage } from "@pages/PackageDetailsPage";
 import { useScrollToTop } from "@shared/hooks";
@@ -40,7 +41,7 @@ const Routes = () => {
             <Route path="package" element={<PackageDetailsPage />} />
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
           </Route>
-
+          <Route path="booking" element={<BookingPage />} />
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="terms" element={<TermsPage />} />
@@ -65,6 +66,8 @@ const Routes = () => {
             <Route path="package" element={<PackageDetailsPage />} />
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
           </Route>
+          <Route path="booking" element={<BookingPage />} />
+
 
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
@@ -90,7 +93,7 @@ const Routes = () => {
             <Route path="package" element={<PackageDetailsPage />} />
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
           </Route>
-
+          <Route path="booking" element={<BookingPage />} />    
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="terms" element={<TermsPage />} />

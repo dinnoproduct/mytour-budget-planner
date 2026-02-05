@@ -8,6 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Button, Heading, HotelStarBadge, Input, Text } from "@ui";
+import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import { useTranslation } from "react-i18next";
 import {
   type PreviewDetailsViewProps,
@@ -52,6 +53,8 @@ export const PreviewDetailsView = ({
   promoCodeStatus,
   setPromoCodeStatus,
   paymentOption = "pay",
+  onBackClick,
+  renderAsPage = false,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [promoCodeValue, setPromoCodeValue] = useState("");
@@ -527,16 +530,35 @@ export const PreviewDetailsView = ({
               </Text>
             </Flex>
           </Flex>
-          <Button
-            variant="solid-blue"
-            width="full"
-            mt="3"
-            onClick={onPay}
-            isLoading={isLoadingBooking}
-            size="lg"
-          >
-            {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay"): t("reserve")}
-          </Button>
+          {renderAsPage && onBackClick ? (
+            <StepBottomActions
+              inline
+              onBack={onBackClick}
+              backLabel={t`back`}
+              primaryButton={
+                <Button
+                  variant="solid-blue"
+                  width="full"
+                  onClick={onPay}
+                  isLoading={isLoadingBooking}
+                  size="lg"
+                >
+                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay") : t("reserve")}
+                </Button>
+              }
+            />
+          ) : (
+            <Button
+              variant="solid-blue"
+              width="full"
+              mt="3"
+              onClick={onPay}
+              isLoading={isLoadingBooking}
+              size="lg"
+            >
+              {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay") : t("reserve")}
+            </Button>
+          )}
         </Box>
       </Flex>
 

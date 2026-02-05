@@ -4,24 +4,21 @@ import {
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import {
-  type PackageEntity,
   useHotelPackagesSearchContext,
-  useSearchHotelPackage,
 } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
-import { BookingFlow } from "@widgets/BookingFlow";
 import {
   HotelPackageDetails,
   HotelPackageDetailsHeader,
 } from "@widgets/HotelPackageDetails";
 import { BookingDrawer } from "@shared/ui";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  isBookingFlowOpenAtom,
+  bookingContextAtom,
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
@@ -39,9 +36,7 @@ export const HotelPackageDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
-    isBookingFlowOpenAtom,
-  );
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
   const {
     packageDetails,
     childrenAges,
@@ -65,11 +60,20 @@ export const HotelPackageDetailsPage = () => {
   useEffect(() => {
     return () => {
       clearBookingDrawerData();
-      setBookingFlowOpen(false);
       setModalOpen(false);
       setIsLateCheckout(false);
     };
   }, []);
+
+  useEffect(() => {
+    if (packageDetails?.offerId && childrenAges) {
+      setBookingContext({
+        packageDetails: packageDetails,
+        childrenAges,
+        initialView: 'travelers',
+      });
+    }
+  }, [packageDetails?.offerId, childrenAges, setBookingContext]);
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
@@ -180,14 +184,6 @@ export const HotelPackageDetailsPage = () => {
           loading={loading}
         />
       )}
-      <BookingFlow
-        packageDetails={packageDetails}
-        initialView="travelers"
-        childrenAges={childrenAges}
-        // onBookingSuccess={handleBackClick}
-        isOpen={isBookingFlowOpen}
-        onClose={() => setBookingFlowOpen(false)}
-      />
     </PageLayout>
   );
 };
