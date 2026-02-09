@@ -8,7 +8,7 @@ import {
 } from "./types.ts";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
-import { PaymentFormView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentFormView.tsx";
+import { PaymentFormView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentFormView";
 import { PaymentErrorView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentErrorView.tsx";
 import { PaymentMethodView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentMethodView.tsx";
 import { AmeriaPayView } from "@widgets/BookingFlow/ui/PaymentModal/AmeriaPayView.tsx";
@@ -39,16 +39,19 @@ export const PaymentModal = ({
   onNavigateToMyPackages,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
-  const isFullPricePayment = useMemo(
-    () => prepaymentInfo?.paymentType === "FullPricePayment",
-    [prepaymentInfo?.paymentType],
-  );
   const [activeView, setActiveView] = useState<PaymentModalView>(
     view || "paymentForm",
   );
   const [ameriaPayUrl, setAmeriaPayUrl] = useState<string>("");
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
+  const isFullPricePayment = useMemo(
+    () =>
+      paymentOption === "payFull" ||
+      paymentAmount === packageDetails.price ||
+      prepaymentInfo?.paymentType === "FullPricePayment",
+    [paymentOption, paymentAmount, packageDetails.price, prepaymentInfo?.paymentType],
+  );
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<PaymentMethod | null>(null);
   const [promoCodeStatus, setPromoCodeStatus] = useState<{
@@ -123,9 +126,13 @@ export const PaymentModal = ({
     packageDetails,
     isLoadingBooking,
     isBooked,
+    paymentAmount,
     paymentOption,
     prepaymentInfo,
     promoCodeStatus,
+    isFullPricePayment,
+    travelers,
+    selectedPaymentMethod,
   ]);
 
   useEffect(() => {
@@ -288,9 +295,8 @@ export const PaymentModal = ({
       });
     }
 
-    if (paymentOption === "pay") {
+    if (paymentOption === "pay" || paymentOption === "payFull") {
       setPaymentAmount(amount);
-      // setActiveView("paymentMethod");
       setActiveView("previewDetails");
     } else if (paymentOption === "noPrepayment") {
       setPaymentAmount(0);

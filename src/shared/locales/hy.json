@@ -178,6 +178,7 @@
   "minPrePayment": "Նվազագույն կանխավճար",
   "minPrePaymentAmount": "Դուք չեք կարող վճարել {{amount}} դրամից պակաս գումար",
   "minPrePaymentPercentage": "Կանխավճար՝ գնի {{percentage}}%-ի չափով",
+  "payPartialDescription": "Նշել գումարի չափը",
   "minPrePaymentText": "Նվազագույն կանխավճար՝ փաթեթի գնի {{amount}}-ի չափով",
   "mon": "Երկ",
   "more": "Ավելին",
@@ -248,6 +249,9 @@
   "past": "Անցած",
   "pastRequestsEmptyText": "Նախկինում պլանավորված ճանապարհորդություններ չկան",
   "pay": "Վճարել",
+  "payFull": "Վճարել ամբողջ գինը",
+  "payFullDescription": "Դուք կվճարեք ամբողջ գումարը {{amount}} դրամ",
+  "payPartial": "Վճարել մասնակի գումար",
   "payFullPrice": "Վճարել ամբողջը",
   "payInFull": "Վճարել ամբողջը",
   "payedAmount": "Վճարվող գումար",
@@ -387,5 +391,6 @@
   "faq.subtitle": "Ձեզ հետաքրքրող հարցերի պատասխանները մեկ տեղում",
   "faq.cta.title": "Չե՞ք գտել ձեր հարցի պատասխանը",
   "faq.cta.subtitle": "Կապ հաստատեք մեզ հետ, և մենք կպատասխանենք ձեզ հետաքրքրող հարցերին",
-  "faq.cta.orWriteUs": "կամ գրեք մեզ"
+  "faq.cta.orWriteUs": "կամ գրեք մեզ",
+  "booking.step": "Քայլ {{step}}/{{total}}"
 }

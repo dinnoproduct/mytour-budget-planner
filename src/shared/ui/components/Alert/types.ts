@@ -14,6 +14,7 @@ export type CardAlertMessageProps = {
   status: CardAlertMessageStatus
   iconPlacement?: 'center' | 'start'
   textSize?: 'xs' | 'sm' | 'md'
+  showIcon?: boolean
 } & FlexProps
 
 export type CardAlertMessageStatus = 'warning' | 'error' | 'info'

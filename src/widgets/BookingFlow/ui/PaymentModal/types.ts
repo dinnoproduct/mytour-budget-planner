@@ -110,7 +110,7 @@ export enum PaymentMethod {
   ameriaPay = 'ameriaPay'
 }
 
-export type PaymentOption = 'noPrepayment' | 'pay'
+export type PaymentOption = 'payFull' | 'pay' | 'noPrepayment'
 
 export type PaymentMethodCardProps = {
   label: string

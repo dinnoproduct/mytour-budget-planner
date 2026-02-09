@@ -22,16 +22,15 @@ export const Layout = ({
 
   if (renderAsPage) {
     return (
-      <Box width="full" maxW="container.lg" mx="auto" px={4}>
-        <Flex
-          width="full"
-          flexDirection="column"
-          alignItems="center"
-          height="full"
-        >
-          {children}
-        </Flex>
-      </Box>
+      <Flex
+        width="full"
+        flexDirection="column"
+        alignItems="center"
+        minH={0}
+        flex={1}
+      >
+        {children}
+      </Flex>
     )
   }
 

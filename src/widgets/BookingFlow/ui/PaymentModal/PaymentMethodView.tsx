@@ -53,8 +53,8 @@ export const PaymentMethodView = ({
         width="full"
         py="6"
         px="4"
-        overflowY="scroll"
-        maxHeight={{ base: "calc(100dvh - 160px)", md: "calc(464px - 160px)" }}
+        overflowY={{ base: "scroll", md: "visible" }}
+        maxHeight={{ base: "calc(100dvh - 160px)", md: "none" }}
         direction="column"
         maxWidth="402px"
         mx="auto"
@@ -102,8 +102,10 @@ export const PaymentMethodView = ({
 
       {renderAsPage && onBackClick ? (
         <StepBottomActions
+          stickyOnMobile
           onBack={onBackClick}
           backLabel={t`back`}
+          isLoadingBooking={isLoadingBooking}
           primaryButton={
             <Button
               variant="solid-blue"

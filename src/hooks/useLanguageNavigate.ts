@@ -44,8 +44,13 @@ export const useLanguageNavigate = () => {
     navigateTo(path, { replace: options?.replace });
   };
 
-  const navigateToBooking = (options?: { replace?: boolean }) => {
-    navigateTo('/booking', options);
+  const navigateToBooking = (
+    options?: { queryParams?: string; replace?: boolean },
+  ) => {
+    const path = options?.queryParams
+      ? `/booking?${options.queryParams}`
+      : '/booking';
+    navigateTo(path, { replace: options?.replace });
   };
 
   return {

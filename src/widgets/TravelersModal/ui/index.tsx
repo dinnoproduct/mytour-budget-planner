@@ -148,10 +148,10 @@ export const TravelersModal = ({
             width="full"
             py="6"
             px="4"
-            overflowY="auto"
+            overflowY={{ base: 'auto', md: 'visible' }}
             maxHeight={{
               base: 'calc(100dvh - 160px)',
-              md: 'calc(600px - 160px)'
+              md: 'none'
             }}
             sx={{
               '&::-webkit-scrollbar': {
@@ -305,6 +305,8 @@ export const TravelersModal = ({
 
           {renderAsPage ? (
             <StepBottomActions
+              isLoadingBooking={isLoading}
+              stickyOnMobile
               onBack={closeModal}
               backLabel={t`back`}
               primaryButton={

@@ -1,18 +1,35 @@
-import { Progress } from '@ui'
+import { Flex } from '@chakra-ui/react'
+import { Progress, Text } from '@ui'
+import { useTranslation } from 'react-i18next'
 
-const STEP_COUNT = 4
-const STEP_PERCENT = 25
+export type BookingProgressBarProps = {
+  step: number
+  totalSteps: number
+}
 
-export const BookingProgressBar = ({ step }: { step: number }) => {
-  const value = Math.min(Math.max(step, 1), STEP_COUNT) * STEP_PERCENT
+export const BookingProgressBar = ({ step, totalSteps }: BookingProgressBarProps) => {
+  const { t } = useTranslation()
+  const safeStep = Math.min(Math.max(step, 1), totalSteps)
+  const stepPercent = totalSteps > 0 ? 100 / totalSteps : 0
+  const value = Math.round(safeStep * stepPercent)
 
   return (
-    <Progress
-      value={value}
-      size="sm"
-      colorScheme="blue"
-      borderRadius="full"
-      max={100}
-    />
+    <Flex direction="column" gap={2} width="full">
+      <Flex justify="space-between" align="center" width="full">
+        <Text size="md" color="gray.700" fontSize={'14px'} fontWeight="500">
+          {t('booking.step', { step: safeStep, total: totalSteps })}
+        </Text>
+        <Text size="md" fontWeight="500" color="gray.700" fontSize={'14px'} >
+          {value}%
+        </Text>
+      </Flex>
+      <Progress
+        value={value}
+        size="sm"
+        colorScheme="blue"
+        borderRadius="full"
+        max={100}
+      />
+    </Flex>
   )
 }

@@ -1,14 +1,16 @@
-import { Box, Flex, RadioGroup, Radio } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { AlertCardMessage, Button, Checkbox, Input, Text } from '@ui'
+import { Button } from '@ui'
 import { StepBottomActions } from '@widgets/BookingFlow/ui/StepBottomActions'
 import {
   type PaymentFormViewProps,
-  type PaymentOption
-} from '@widgets/BookingFlow/ui/PaymentModal/types.ts'
-import { overDaysFromNow } from '@/utils/methods.ts'
-import { useMemo, useState } from 'react'
+  type PaymentOption,
+} from '@widgets/BookingFlow/ui/PaymentModal/types'
+import { overDaysFromNow } from '@/utils/methods'
+import { useMemo, useState, useEffect } from 'react'
 import moment from 'moment'
+import { PaymentOptionsWithRadio } from './PaymentOptionsWithRadio'
+import { SimplePaymentContent } from './SimplePaymentContent'
 
 const NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT = 40
 
@@ -34,6 +36,10 @@ export const PaymentFormView = ({
     () => !overDaysFromNow(departureDate, 21) && !isBooked,
     [departureDate, isBooked]
   )
+  const over40DaysFromNow = useMemo(
+    () => overDaysFromNow(departureDate, 40) && !isBooked,
+    [departureDate, isBooked]
+  )
 
   const paymentOptions = useMemo(() => {
     if (prepaymentInfo) {
@@ -42,66 +48,76 @@ export const PaymentFormView = ({
           prepaymentInfo.paymentType === 'PartialPricePayment' ||
           prepaymentInfo.paymentType === 'NoDownPayment',
         isNoDownPaymentAllowed: prepaymentInfo.paymentType === 'NoDownPayment',
-        isFullPaymentOnly: prepaymentInfo.paymentType === 'FullPricePayment'
+        isFullPaymentOnly: prepaymentInfo.paymentType === 'FullPricePayment',
       }
     }
-
-    // Fallback to old logic
     return {
       isPartialPaymentAllowed: !under21DaysFromNow,
-      isNoDownPaymentAllowed: overDaysFromNow(departureDate, 40) && !isBooked,
-      isFullPaymentOnly: under21DaysFromNow
+      isNoDownPaymentAllowed: over40DaysFromNow,
+      isFullPaymentOnly: under21DaysFromNow,
     }
-  }, [prepaymentInfo, under21DaysFromNow, departureDate, isBooked])
+  }, [prepaymentInfo, under21DaysFromNow, over40DaysFromNow, isBooked])
 
   const minPrePaymentAmount = useMemo(() => {
-    if (paymentOptions.isFullPaymentOnly) {
-      return packageDetails.price
-    }
-
+    if (paymentOptions.isFullPaymentOnly) return packageDetails.price
     if (prepaymentInfo && paymentOptions.isPartialPaymentAllowed) {
       return prepaymentInfo.minimumAcceptablePayment
     }
-
     if (paymentOptions.isPartialPaymentAllowed) {
       return Math.ceil(packageDetails.price / 2)
     }
-
     return packageDetails.price
   }, [
     prepaymentInfo,
     paymentOptions.isPartialPaymentAllowed,
     paymentOptions.isFullPaymentOnly,
-    packageDetails.price
+    packageDetails.price,
   ])
 
   const [isPaymentInFull, setIsPaymentInFull] = useState(
     paymentOptions.isFullPaymentOnly
   )
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
-  const [errorElements, setErrorElements] = useState<React.ReactNode | null>(
-    null
-  )
+  const [errorElements, setErrorElements] = useState<React.ReactNode | null>(null)
   const [isDisabled, setIsDisabled] = useState(false)
+
+  const getInitialOption = (): PaymentOption => {
+    if (paymentOptions.isNoDownPaymentAllowed)
+      return initialPaymentOption === 'noPrepayment' ? 'noPrepayment' : 'pay'
+    return paymentOptions.isFullPaymentOnly ? 'payFull' : 'pay'
+  }
   const [selectedOption, setSelectedOption] =
-    useState<PaymentOption>(initialPaymentOption)
+    useState<PaymentOption>(getInitialOption)
+
+  useEffect(() => {
+    if (paymentOptions.isNoDownPaymentAllowed) return
+    setSelectedOption(paymentOptions.isFullPaymentOnly ? 'payFull' : 'pay')
+    setPaymentAmount(
+      paymentOptions.isFullPaymentOnly ? packageDetails.price : minPrePaymentAmount
+    )
+  }, [
+    paymentOptions.isNoDownPaymentAllowed,
+    paymentOptions.isFullPaymentOnly,
+    packageDetails.price,
+    minPrePaymentAmount,
+  ])
+
+  const isSubmitDisabled = selectedOption === 'pay' ? isDisabled : false
 
   const handleAmountChange = (value: string | number) => {
     const number = Number(value)
-
-    if (isNaN(number)) {
-      return
-    }
+    if (isNaN(number)) return
 
     if (number < minPrePaymentAmount) {
       if (
         prepaymentInfo?.minimumAcceptablePaymentPercentage &&
         minPrePaymentAmount > 0
       ) {
-        const percentage = prepaymentInfo.minimumAcceptablePaymentPercentage
         setErrorElements(
           <>
-            {t('minPrePaymentPercentage', { percentage })}
+            {t('minPrePaymentPercentage', {
+              percentage: prepaymentInfo.minimumAcceptablePaymentPercentage,
+            })}
             <br />
             {t('minPrePaymentAmount', { amount: minPrePaymentAmount })}
           </>
@@ -109,11 +125,10 @@ export const PaymentFormView = ({
       } else {
         setErrorElements(
           <>
-            {t`minPrePayment`} {minPrePaymentAmount}
+            {t('minPrePayment')} {minPrePaymentAmount}
           </>
         )
       }
-
       setPaymentAmount(number)
       setIsDisabled(true)
     } else if (number >= packageDetails.price) {
@@ -139,32 +154,29 @@ export const PaymentFormView = ({
     }
   }
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLDivElement>) => {
-    if (errorElements) {
-      return
-    }
-
-    e.preventDefault()
-    onSubmit(+paymentAmount, selectedOption)
+  const getSubmitAmount = () => {
+    if (selectedOption === 'payFull') return packageDetails.price
+    if (selectedOption === 'noPrepayment') return 0
+    return +paymentAmount
   }
 
-  // 40 days no prepayment for package
+  const handleFormSubmit = (e: React.FormEvent<HTMLDivElement>) => {
+    if (errorElements) return
+    e.preventDefault()
+    onSubmit(getSubmitAmount(), selectedOption)
+  }
+
   const noPrepaymentData = useMemo(() => {
     const isEnabled = paymentOptions.isNoDownPaymentAllowed
     let paymentDueDate = ''
     let days: number | null = null
 
     if (isEnabled) {
-      if (prepaymentInfo?.firstPaymentDate) {
-        paymentDueDate = moment(prepaymentInfo.firstPaymentDate).format(
-          'DD/MM/YYYY'
-        )
-      } else {
-        paymentDueDate = moment(departureDate)
-          .subtract(NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT, 'days')
-          .format('DD/MM/YYYY')
-      }
-
+      paymentDueDate = prepaymentInfo?.firstPaymentDate
+        ? moment(prepaymentInfo.firstPaymentDate).format('DD/MM/YYYY')
+        : moment(departureDate)
+            .subtract(NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT, 'days')
+            .format('DD/MM/YYYY')
       days =
         prepaymentInfo?.minimumAcceptableDaysCount ??
         NO_DOWNPAYMENT_ACCEPTABLE_DAYS_COUNT
@@ -174,13 +186,13 @@ export const PaymentFormView = ({
       isEnabled,
       paymentDueDate,
       paymentAmount: minPrePaymentAmount,
-      days
+      days,
     }
   }, [
     paymentOptions.isNoDownPaymentAllowed,
     prepaymentInfo,
     departureDate,
-    minPrePaymentAmount
+    minPrePaymentAmount,
   ])
 
   return (
@@ -196,96 +208,58 @@ export const PaymentFormView = ({
         width="full"
         py="6"
         px="4"
-        overflowY="scroll"
-        height={{ base: 'calc(100dvh - 160px)', md: 'calc(464px - 160px)' }}
+        overflowY={{ base: 'scroll', md: 'visible' }}
+        height={{ base: 'calc(100dvh - 160px)', md: 'auto' }}
         direction="column"
-        maxWidth="402px"
         mx="auto"
-        sx={{
-          '&::-webkit-scrollbar': {
-            width: '0'
-          }
-        }}
+        sx={{ '&::-webkit-scrollbar': { width: '0' } }}
       >
         {paymentOptions.isNoDownPaymentAllowed ? (
-          <RadioGroup
-            onChange={(value: PaymentOption) => setSelectedOption(value)}
-            value={selectedOption}
-          >
-            <Radio value="pay">{t`pay`}</Radio>
-            <Radio value="noPrepayment" ml="4">{t`noPrepayment`}</Radio>
-          </RadioGroup>
+          <PaymentOptionsWithRadio
+            selectedOption={selectedOption}
+            onOptionChange={setSelectedOption}
+            paymentAmount={paymentAmount}
+            onAmountChange={handleAmountChange}
+            isPaymentInFull={isPaymentInFull}
+            errorElements={errorElements}
+            packageDetails={packageDetails}
+            prepaymentInfo={prepaymentInfo}
+            minPrePaymentAmount={minPrePaymentAmount}
+            noPrepaymentData={noPrepaymentData}
+            t={t}
+          />
         ) : (
-          <Text size="sm" fontWeight="semibold" align="center">
-            {t('minPrePaymentText', {
-              amount: minPrePaymentAmount
-            })}
-          </Text>
+          <SimplePaymentContent
+            isFullPaymentOnly={paymentOptions.isFullPaymentOnly}
+            paymentAmount={paymentAmount}
+            onAmountChange={handleAmountChange}
+            isPaymentInFull={isPaymentInFull}
+            onPayInFullChange={handlePayInFullChange}
+            errorElements={errorElements}
+            packageDetails={packageDetails}
+            minPrePaymentAmount={minPrePaymentAmount}
+            t={t}
+          />
         )}
-
-        <Box mt="6">
-          {selectedOption === 'pay' && (
-            <>
-              <Input
-                value={paymentAmount}
-                onChange={e => handleAmountChange(e.target.value)}
-                isDisabled={isPaymentInFull || paymentOptions.isFullPaymentOnly}
-                suffix
-                state={errorElements ? 'invalid' : 'default'}
-                rightIconName="dram"
-              />
-
-              {errorElements && (
-                <Text size="xs" color="red.500" mt="1">
-                  {errorElements}
-                </Text>
-              )}
-
-              <Checkbox
-                size="lg"
-                mt="4"
-                isDisabled={paymentOptions.isFullPaymentOnly}
-                onChange={handlePayInFullChange}
-                isChecked={isPaymentInFull}
-              >
-                {t`payInFull`}
-              </Checkbox>
-            </>
-          )}
-
-          {selectedOption === 'noPrepayment' && (
-            <AlertCardMessage
-              message={t('noPrepaymentTextWithDetails', {
-                amount: noPrepaymentData.paymentAmount,
-                dueDate: noPrepaymentData.paymentDueDate,
-                days: noPrepaymentData.days
-              })}
-              status="info"
-              textSize="md"
-              iconPlacement="start"
-            />
-          )}
-
-          <Text size="xs" color="gray.600" mt="6" letterSpacing="-0.31px">
-            {t`partialPaymentText`}
-          </Text>
-        </Box>
       </Flex>
 
       {renderAsPage && onBackClick ? (
         <StepBottomActions
+          isDisabled={isSubmitDisabled}
+          isLoadingBooking={isLoadingBooking}
+          stickyOnMobile
           onBack={onBackClick}
-          backLabel={t`back`}
+          backLabel={t('back')}
           primaryButton={
             <Button
               variant="solid-blue"
               type="submit"
               size="lg"
               width="full"
-              isDisabled={isDisabled}
+              isDisabled={isSubmitDisabled}
               isLoading={isLoadingBooking}
             >
-              {t`continue`}
+              {t('continue')}
             </Button>
           }
         />
@@ -303,10 +277,10 @@ export const PaymentFormView = ({
             type="submit"
             size="lg"
             width="full"
-            isDisabled={isDisabled}
+            isDisabled={isSubmitDisabled}
             isLoading={isLoadingBooking}
           >
-            {t`continue`}
+            {t('continue')}
           </Button>
         </Box>
       )}

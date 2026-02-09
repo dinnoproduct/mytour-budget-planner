@@ -363,14 +363,16 @@ export const PreviewDetailsView = ({
         justify="space-between"
         width="full"
         height="full"
-        maxH={{ base: "calc(100dvh - 82px)", md: "526px" }}
+        maxH={{ base: "calc(100dvh - 82px)", md: "none" }}
       >
         <Box
           flex="1"
           p="4"
-          overflowY="auto"
+          overflowY={{ base: "auto", md: "visible" }}
+          overflowX="hidden"
           bg="gray.50"
-          height="calc(100% - 174px)"
+          height={{ base: "calc(100% - 174px)", md: "auto" }}
+          minH={0}
         >
           <Flex direction="column">
             <Flex align="center" justify="space-between">
@@ -507,6 +509,11 @@ export const PreviewDetailsView = ({
           borderColor="gray.100"
           backgroundColor="white"
           mt="auto"
+          position={{ base: 'fixed', md: 'relative' }}
+          bottom={{ base: 0, md: 'auto' }}
+          left={{ base: 0, md: 'auto' }}
+          right={{ base: 0, md: 'auto' }}
+          zIndex={{ base: 10, md: undefined }}
         >
           <Flex justify="space-between" align="center">
             <Text size="md" fontWeight="medium" color="gray.600">
@@ -533,6 +540,8 @@ export const PreviewDetailsView = ({
           {renderAsPage && onBackClick ? (
             <StepBottomActions
               inline
+              isLoadingBooking={isLoadingBooking}
+              stickyOnMobile
               onBack={onBackClick}
               backLabel={t`back`}
               primaryButton={

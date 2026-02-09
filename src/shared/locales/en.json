@@ -178,6 +178,7 @@
   "minPrePayment": "Minimum down payment",
   "minPrePaymentAmount": "Minimum required payment is {{amount}} AMD",
   "minPrePaymentPercentage": "Prepayment of {{percentage}}% of the price",
+  "payPartialDescription": "Specify the amount of payment",
   "minPrePaymentText": "Minimum prepayment: {{amount}} of the package price",
   "mon": "Mon",
   "more": "More",
@@ -248,7 +249,10 @@
   "past": "Past",
   "pastRequestsEmptyText": "No previously planned trips",
   "pay": "Pay",
+  "payFull": "Pay full price",
+  "payFullDescription": "You will pay the full amount of {{amount}} AMD",
   "payFullPrice": "Pay full price",
+  "payPartial": "Pay partial amount",
   "payInFull": "Pay in full",
   "payedAmount": "Payment",
   "payment": "Payment",
@@ -387,5 +391,6 @@
   "faq.subtitle": "Answers to your questions — all in one place.",
   "faq.cta.title": "Didn't find the answer to your question?",
   "faq.cta.subtitle": "Contact us, and we'll answer the questions you are interested in.",
-  "faq.cta.orWriteUs": "or write to us"
+  "faq.cta.orWriteUs": "or write to us",
+  "booking.step": "Step {{step}}/{{total}}"
 }
