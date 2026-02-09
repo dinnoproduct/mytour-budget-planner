@@ -23,7 +23,7 @@ export const StepBottomActions = ({
   isLoadingBooking = false,
 }: StepBottomActionsProps) => {
   const content = (
-    <Flex gap={2} width="full" mt={inline ? 3 : 0} flexDirection={{ base: 'column-reverse', md: 'row' }}>
+    <Flex gap={2} width="full" mt={inline ? 5 : 0} flexDirection={{ base: 'column-reverse', md: 'row' }}>
       {onBack ? (
         <>
           <Flex flex="1" minW={0}>
@@ -61,7 +61,8 @@ export const StepBottomActions = ({
       borderTop="1px solid"
       borderColor="gray.100"
       backgroundColor="white"
-      mt="auto"
+      mt={5}
+      px={{base: 4, md:0}} 
       position={stickyOnMobile ? { base: 'fixed', md: 'relative' } : 'relative'}
       bottom={stickyOnMobile ? { base: 0, md: undefined } : undefined}
       left={stickyOnMobile ? { base: 0, md: undefined } : undefined}

@@ -23,7 +23,7 @@ export const SimplePaymentContent = ({
 }: SimplePaymentContentProps) => (
   <Box>
     <AlertCardMessage
-          message={t('minPrePaymentText', { amount: minPrePaymentAmount })}
+          message={t('minPrePaymentText', { amount: formatNumber(minPrePaymentAmount) })}
           status="info"
           textSize="sm"
           showIcon={false}

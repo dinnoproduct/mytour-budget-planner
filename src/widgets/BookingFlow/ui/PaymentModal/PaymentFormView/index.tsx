@@ -197,11 +197,11 @@ export const PaymentFormView = ({
       onSubmit={handleFormSubmit}
       width="full"
       height="full"
+      px={0}
+      py={0}
     >
       <Flex
         width="full"
-        py="6"
-        px="4"
         overflowY={{ base: 'scroll', md: 'visible' }}
         height={{ base: 'calc(100dvh - 160px)', md: 'auto' }}
         direction="column"
