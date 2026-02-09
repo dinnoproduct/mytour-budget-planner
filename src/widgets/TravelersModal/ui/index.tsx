@@ -266,6 +266,7 @@ export const TravelersModal = ({
                   type="text"
                   placeholder={t`writeSurnameLatinWords`}
                   label={t`surname`}
+                  autoCapitalize='off'
                   size="lg"
                   {...register(`children.${index}.lastName`, {
                     required: t`requiredField`,

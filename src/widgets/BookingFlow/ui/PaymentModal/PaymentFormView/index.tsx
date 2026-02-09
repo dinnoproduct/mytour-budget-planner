@@ -74,27 +74,21 @@ export const PaymentFormView = ({
     packageDetails.price,
   ])
 
-  const [isPaymentInFull, setIsPaymentInFull] = useState(
-    paymentOptions.isFullPaymentOnly
-  )
+  const [selectedOption, setSelectedOption] = useState<PaymentOption>(() => {
+    if (paymentOptions.isNoDownPaymentAllowed)
+      return initialPaymentOption === 'noPrepayment' ? 'noPrepayment' : initialPaymentOption === 'payFull' ? 'payFull' : 'pay'
+    return paymentOptions.isFullPaymentOnly ? 'payFull' : 'pay'
+  })
   const [paymentAmount, setPaymentAmount] = useState(minPrePaymentAmount)
+  const [isPaymentInFull, setIsPaymentInFull] = useState(paymentOptions.isFullPaymentOnly)
   const [errorElements, setErrorElements] = useState<React.ReactNode | null>(null)
   const [isDisabled, setIsDisabled] = useState(false)
 
-  const getInitialOption = (): PaymentOption => {
-    if (paymentOptions.isNoDownPaymentAllowed)
-      return initialPaymentOption === 'noPrepayment' ? 'noPrepayment' : 'pay'
-    return paymentOptions.isFullPaymentOnly ? 'payFull' : 'pay'
-  }
-  const [selectedOption, setSelectedOption] =
-    useState<PaymentOption>(getInitialOption)
-
   useEffect(() => {
-    if (paymentOptions.isNoDownPaymentAllowed) return
-    setSelectedOption(paymentOptions.isFullPaymentOnly ? 'payFull' : 'pay')
-    setPaymentAmount(
-      paymentOptions.isFullPaymentOnly ? packageDetails.price : minPrePaymentAmount
-    )
+    if (!paymentOptions.isNoDownPaymentAllowed) {
+      setSelectedOption(paymentOptions.isFullPaymentOnly ? 'payFull' : 'pay')
+      setPaymentAmount(paymentOptions.isFullPaymentOnly ? packageDetails.price : minPrePaymentAmount)
+    }
   }, [
     paymentOptions.isNoDownPaymentAllowed,
     paymentOptions.isFullPaymentOnly,
@@ -220,7 +214,6 @@ export const PaymentFormView = ({
             onOptionChange={setSelectedOption}
             paymentAmount={paymentAmount}
             onAmountChange={handleAmountChange}
-            isPaymentInFull={isPaymentInFull}
             errorElements={errorElements}
             packageDetails={packageDetails}
             prepaymentInfo={prepaymentInfo}

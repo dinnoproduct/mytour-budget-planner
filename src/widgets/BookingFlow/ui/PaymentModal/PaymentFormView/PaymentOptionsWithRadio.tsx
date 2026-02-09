@@ -9,7 +9,6 @@ type PaymentOptionsWithRadioProps = {
   onOptionChange: (value: PaymentOption) => void
   paymentAmount: number
   onAmountChange: (value: string | number) => void
-  isPaymentInFull: boolean
   errorElements: React.ReactNode | null
   packageDetails: { price: number }
   prepaymentInfo?: { minimumAcceptablePaymentPercentage?: number } | null
@@ -27,7 +26,6 @@ export const PaymentOptionsWithRadio = ({
   onOptionChange,
   paymentAmount,
   onAmountChange,
-  isPaymentInFull,
   errorElements,
   packageDetails,
   prepaymentInfo,
@@ -60,7 +58,6 @@ export const PaymentOptionsWithRadio = ({
         <Input
           value={paymentAmount}
           onChange={e => onAmountChange(e.target.value)}
-          isDisabled={isPaymentInFull}
           suffix
           state={errorElements ? 'invalid' : 'default'}
           rightIconName="dram"

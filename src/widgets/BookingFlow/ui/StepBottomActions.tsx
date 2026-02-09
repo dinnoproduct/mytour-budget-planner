@@ -66,7 +66,7 @@ export const StepBottomActions = ({
       bottom={stickyOnMobile ? { base: 0, md: undefined } : undefined}
       left={stickyOnMobile ? { base: 0, md: undefined } : undefined}
       right={stickyOnMobile ? { base: 0, md: undefined } : undefined}
-      zIndex={stickyOnMobile ? { base: 10, md: undefined } : undefined}
+      zIndex={stickyOnMobile ? { base: 10, md: 0 } : 0}
     >
       {content}
     </Box>

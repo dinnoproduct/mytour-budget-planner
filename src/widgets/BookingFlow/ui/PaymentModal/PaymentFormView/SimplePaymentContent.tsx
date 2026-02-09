@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import { Checkbox, Input, Text } from '@ui'
+import { AlertCardMessage, Checkbox, Input, Text } from '@ui'
 import { formatNumber } from '@shared/utils'
 
 type SimplePaymentContentProps = {
@@ -14,52 +14,26 @@ type SimplePaymentContentProps = {
   t: (key: string, params?: Record<string, unknown>) => string
 }
 
+const DAYS_COUNT_FOR_PARTIAL_PAYMENT = 40
+
 export const SimplePaymentContent = ({
-  isFullPaymentOnly,
-  paymentAmount,
-  onAmountChange,
-  isPaymentInFull,
-  onPayInFullChange,
-  errorElements,
   packageDetails,
   minPrePaymentAmount,
   t,
 }: SimplePaymentContentProps) => (
   <Box>
-    <Text size="sm" fontWeight="semibold" align="center">
-      {t('minPrePaymentText', { amount: minPrePaymentAmount })}
-    </Text>
+    <AlertCardMessage
+          message={t('minPrePaymentText', { amount: minPrePaymentAmount })}
+          status="info"
+          textSize="sm"
+          showIcon={false}
+        />
 
     <Box mt="6">
-      {isFullPaymentOnly ? (
-        <Text size="sm" color="gray.600">
-          {t('payFullDescription', { amount: formatNumber(packageDetails.price) })}
-        </Text>
-      ) : (
-        <>
-          <Input
-            value={paymentAmount}
-            onChange={e => onAmountChange(e.target.value)}
-            isDisabled={isPaymentInFull}
-            suffix
-            state={errorElements ? 'invalid' : 'default'}
-            rightIconName="dram"
-          />
-          {errorElements && (
-            <Text size="xs" color="red.500" mt="1">
-              {errorElements}
-            </Text>
-          )}
-          <Checkbox
-            size="lg"
-            mt={4}
-            onChange={onPayInFullChange}
-            isChecked={isPaymentInFull}
-          >
-            {t('payInFull')}
-          </Checkbox>
-        </>
-      )}
+      <Text size="sm" color="gray.600">
+        {t('minPrePaymentTextWithDetails', { amount: formatNumber(packageDetails.price), days: DAYS_COUNT_FOR_PARTIAL_PAYMENT })}
+      </Text>
+         
     </Box>
   </Box>
 )
