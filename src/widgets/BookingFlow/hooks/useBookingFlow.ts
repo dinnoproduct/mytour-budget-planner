@@ -27,7 +27,8 @@ export const useBookingFlow = ({
   request: initialRequest,
   childrenAges,
   defaultTravelers,
-  isLateCheckout
+  isLateCheckout,
+  renderAsPage = false
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
@@ -58,10 +59,19 @@ export const useBookingFlow = ({
   }, [initialRequest])
 
   useEffect(() => {
-    setModalView(initialView)
-  }, [initialView, isOpen])
+    if (!isOpen) return
+    if (renderAsPage && !user?.id) {
+      setModalView('auth')
+    } else {
+      setModalView(initialView)
+    }
+  }, [initialView, isOpen, renderAsPage, user?.id])
 
   const openTravelersModal = () => {
+    setModalView('travelers')
+  }
+
+  const onAuthSuccess = () => {
     setModalView('travelers')
   }
 
@@ -345,6 +355,7 @@ export const useBookingFlow = ({
 
   return {
     openTravelersModal,
+    onAuthSuccess,
     onTravelersModalSuccess,
     openPaymentModal,
     onPaymentModalSuccess,
@@ -369,4 +380,5 @@ type useBookingFlowProps = {
   childrenAges?: number[]
   defaultTravelers?: Travelers
   isLateCheckout?: boolean
+  renderAsPage?: boolean
 }

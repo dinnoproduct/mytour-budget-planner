@@ -3,12 +3,14 @@ import { Box } from "@chakra-ui/react";
 import { PaymentModal } from "./PaymentModal";
 import { TravelersModal } from "@widgets/TravelersModal";
 import { BookingProgressBar } from "./BookingProgressBar";
+import { AuthStepView } from "./AuthStepView";
 import type { BookingFlowProps } from "@widgets/BookingFlow/ui/types.ts";
 import { useBookingFlow } from "../hooks";
 import { PaymentSuccessModal } from "@entities/package";
 import { useRecoilValue } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
+import { useUserContext } from "@entities/user";
 
 export const BookingFlow = ({
   packageDetails,
@@ -23,10 +25,12 @@ export const BookingFlow = ({
   onNavigateToMyPackages,
 }: BookingFlowProps) => {
   const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
+  const { user } = useUserContext();
   const {
     paymentModalView,
     onTravelersModalSuccess,
     onPaymentModalSuccess,
+    onAuthSuccess,
     openTravelersModal,
     travelers,
     modalView,
@@ -45,6 +49,7 @@ export const BookingFlow = ({
     request,
     defaultTravelers,
     isLateCheckout,
+    renderAsPage,
   });
 
   if (!packageDetails?.offerId || !isOpen) {
@@ -61,19 +66,27 @@ export const BookingFlow = ({
     }
   }
 
-  const totalSteps = 4;
+  const totalSteps = renderAsPage && !user?.id ? 5 : 4;
   const [paymentView, setPaymentView] = useState(paymentModalView);
   const currentPaymentView = modalView === "payment" ? paymentView : "paymentForm";
   const progressStep =
     modalView === "success"
       ? totalSteps
-      : modalView === "travelers"
+      : modalView === "auth"
         ? 1
-        : currentPaymentView === "paymentForm"
-          ? 2
-          : currentPaymentView === "previewDetails"
-            ? 3
-            : totalSteps;
+        : modalView === "travelers"
+          ? user?.id
+            ? 1
+            : 2
+          : currentPaymentView === "paymentForm"
+            ? user?.id
+              ? 2
+              : 3
+            : currentPaymentView === "previewDetails"
+              ? user?.id
+                ? 3
+                : 4
+              : totalSteps;
 
   return (
     <Box
@@ -114,6 +127,14 @@ export const BookingFlow = ({
               </Box>
             </Box>
             <Box maxW="500px" mx="auto" width="full" py={4}>
+              {modalView === "auth" && (
+                <AuthStepView
+                  onSuccess={onAuthSuccess}
+                  onBackClick={closeModal}
+                  renderAsPage={renderAsPage}
+                />
+              )}
+
               {modalView === "travelers" && (
                 <TravelersModal
                   isOpen={true}
