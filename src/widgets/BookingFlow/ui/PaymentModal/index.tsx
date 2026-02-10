@@ -70,10 +70,14 @@ export const PaymentModal = ({
     const ViewComponentMap = {
       paymentMethod: () => (
         <PaymentMethodView
-          onSubmit={handlePaymentMethodSelect}
+          onSubmit={(method) => {
+            handleLogPaymentInfoEvent(method);
+            handlePay(method);
+            setSelectedPaymentMethod(method);
+          }}
           isLoadingBooking={isLoadingBooking}
           packageDetails={packageDetails}
-          onBackClick={renderAsPage ? () => setActiveView("paymentForm") : undefined}
+          onBackClick={() => setActiveView("previewDetails")}
           renderAsPage={renderAsPage}
         />
       ),
@@ -97,7 +101,7 @@ export const PaymentModal = ({
       ),
       previewDetails: () => (
         <PreviewDetailsView
-          onPay={() => handlePay(selectedPaymentMethod || PaymentMethod.bankCard)}
+          onPay={() => setActiveView("paymentMethod")}
           onUsePromocode={() => {
             // TODO: implement promocode logic
           }}
@@ -132,7 +136,6 @@ export const PaymentModal = ({
     promoCodeStatus,
     isFullPricePayment,
     travelers,
-    selectedPaymentMethod,
   ]);
 
   useEffect(() => {
@@ -251,14 +254,14 @@ export const PaymentModal = ({
     }
   };
 
-  const handleLogPaymentInfoEvent = () => {
+  const handleLogPaymentInfoEvent = (paymentMethod?: PaymentMethod) => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
 
     metaEvents.addPaymentInfo({
       content_type: isHotelPackage ? "hotel" : "package",
       value: amount,
       currency: packageDetails.currency,
-      payment_type: selectedPaymentMethod,
+      payment_type: paymentMethod ?? selectedPaymentMethod,
       hotel_id: packageDetails.hotel.id,
       destination: packageDetails.city.nameEng,
       checkin_date: packageDetails.checkin,
@@ -267,19 +270,6 @@ export const PaymentModal = ({
         ({ key }: any) => key === packageDetails.roomType,
       )?.value,
     });
-  };
-
-  const handlePaymentMethodSelect = (paymentMethod: PaymentMethod = selectedPaymentMethod || PaymentMethod.bankCard) => {
-    setSelectedPaymentMethod(paymentMethod);
-    handleLogPaymentInfoEvent();
-    // Skip preview step if requested
-    if (skipPreviewStep) {
-      // Go directly to payment processing
-      handlePay(paymentMethod);
-      return;
-    }
-
-    setActiveView("previewDetails");
   };
 
   const handleContinue = (amount: number, paymentOption: PaymentOption) => {
@@ -300,13 +290,13 @@ export const PaymentModal = ({
       setActiveView("previewDetails");
     } else if (paymentOption === "noPrepayment") {
       setPaymentAmount(0);
-      handlePaymentMethodSelect(PaymentMethod.bankCard);
+      setActiveView("previewDetails");
     }
   };
 
   const handleBackClick = useMemo(() => {
     if (activeView === "paymentMethod") {
-      return () => setActiveView("paymentForm");
+      return () => setActiveView("previewDetails");
     } else if (activeView === "previewDetails") {
       // return () => setActiveView("paymentMethod");
       return () => setActiveView("paymentForm");

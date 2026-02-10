@@ -107,7 +107,8 @@ export type PaymentModalView =
 
 export enum PaymentMethod {
   bankCard = 'bankCard',
-  ameriaPay = 'ameriaPay'
+  ameriaPay = 'ameriaPay',
+  idram = 'idram'
 }
 
 export type PaymentOption = 'payFull' | 'pay' | 'noPrepayment'

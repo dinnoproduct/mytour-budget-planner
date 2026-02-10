@@ -142,17 +142,11 @@ export const TravelersModal = ({
           onSubmit={handleSubmit(handleFormSubmit)}
           width="full"
           height="full"
+
         >
           <VStack
             spacing="6"
-            width="full"
-            py="6"
-            px="4"
-            overflowY={{ base: 'auto', md: 'visible' }}
-            maxHeight={{
-              base: 'calc(100dvh - 160px)',
-              md: 'none'
-            }}
+            width="full"            
             sx={{
               '&::-webkit-scrollbar': {
                 width: '4px'
@@ -308,8 +302,6 @@ export const TravelersModal = ({
             <StepBottomActions
               isLoadingBooking={isLoading}
               stickyOnMobile
-              onBack={closeModal}
-              backLabel={t`back`}
               primaryButton={
                 <Button
                   variant="solid-blue"

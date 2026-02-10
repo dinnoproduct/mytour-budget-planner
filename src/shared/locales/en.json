@@ -282,6 +282,7 @@
   "resend": "Resend",
   "resendIn": "Resend in {{seconds}} seconds",
   "reserve": "Reserve",
+  "selectPaymentMethod": "Select payment method",
   "reserved": "Reserved",
   "return": "Return",
   "returning": "Returning",

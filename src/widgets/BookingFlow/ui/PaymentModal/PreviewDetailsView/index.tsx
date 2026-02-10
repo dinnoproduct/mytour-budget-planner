@@ -552,7 +552,7 @@ export const PreviewDetailsView = ({
                   isLoading={isLoadingBooking}
                   size="lg"
                 >
-                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay") : t("reserve")}
+                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay") : t("selectPaymentMethod")}
                 </Button>
               }
             />

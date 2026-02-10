@@ -28,6 +28,7 @@ export const Layout = ({
         alignItems="center"
         minH={0}
         flex={1}
+        px={0} py={0}
       >
         {children}
       </Flex>
@@ -45,7 +46,7 @@ export const Layout = ({
       <ModalOverlay />
       <ModalContent ref={modalContentRef}>
         <ModalHeader p="4" borderBottom="1px solid" borderColor="gray.100">
-          <Flex width="full" justify="space-between" align="center">
+          <Flex width="full" justify="space-between" align="center" px={0} py={0}>
             <Text size="lg" fontWeight="medium">
               {title}
             </Text>

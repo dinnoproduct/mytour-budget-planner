@@ -7,7 +7,7 @@ import {
   type PaymentMethodCardProps,
   type PaymentMethodViewProps,
 } from "@widgets/BookingFlow/ui/PaymentModal/types.ts";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const PaymentMethodView = ({
@@ -22,6 +22,8 @@ export const PaymentMethodView = ({
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(
     PaymentMethod.bankCard,
   );
+  const selectedMethodRef = useRef(selectedMethod);
+  selectedMethodRef.current = selectedMethod;
 
   const handleMethodChange = (method: PaymentMethod) => {
     setSelectedMethod(method);
@@ -41,7 +43,8 @@ export const PaymentMethodView = ({
     try {
       // Track payment method selection step
       handleLogEvent();
-      onSubmit(selectedMethod);
+      // Use ref to avoid stale closure when user taps Pay quickly after selecting method
+      onSubmit(selectedMethodRef.current);
     } catch (error) {
       console.error("Error submitting payment method:", error);
     }
@@ -85,9 +88,21 @@ export const PaymentMethodView = ({
                 value: PaymentMethod.ameriaPay,
                 onChange: () => handleMethodChange(PaymentMethod.ameriaPay),
               }}
+              labelSuffix={<SoonBadge mt="1" />}
+              isDisabled
+            />
+
+            {/* <PaymentMethodCard
+              label="Idram"
+              imgSrc="/assets/images/idram.svg"
+              imgAlt="idram"
+              radioProps={{
+                value: PaymentMethod.idram,
+                onChange: () => handleMethodChange(PaymentMethod.idram),
+              }}
               labelSuffix={<NewBadge mt="1" />}
               isBorder
-            />
+            /> */}
 
             <PaymentMethodCard
               label="onlineLoan"
