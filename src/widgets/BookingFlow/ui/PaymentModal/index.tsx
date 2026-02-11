@@ -8,10 +8,10 @@ import {
 } from "./types.ts";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
-import { PaymentFormView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentFormView";
-import { PaymentErrorView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentErrorView.tsx";
-import { PaymentMethodView } from "@widgets/BookingFlow/ui/PaymentModal/PaymentMethodView.tsx";
-import { AmeriaPayView } from "@widgets/BookingFlow/ui/PaymentModal/AmeriaPayView.tsx";
+import { PaymentFormView } from "./PaymentFormView";
+import { PaymentErrorView } from "./PaymentErrorView.tsx";
+import { PaymentMethodView } from "./PaymentMethodView.tsx";
+import { AmeriaPayView } from "./AmeriaPayView.tsx";
 import {
   DictionaryTypes,
   useDictionary,
@@ -143,7 +143,7 @@ export const PaymentModal = ({
     if (view) {
       setActiveView(view);
     }
-  }, [view, isFullPricePayment]);
+  }, [view]);
 
   useEffect(() => {
     onViewChange?.(activeView);
