@@ -84,10 +84,10 @@ export const PaymentMethodView = ({
               label="AmeriaPay"
               imgSrc="/assets/images/ameria-pay.svg"
               imgAlt="ameriaPay"
-              radioProps={{
-                value: PaymentMethod.ameriaPay,
-                onChange: () => handleMethodChange(PaymentMethod.ameriaPay),
-              }}
+              // radioProps={{
+              //   value: PaymentMethod.ameriaPay,
+              //   onChange: () => handleMethodChange(PaymentMethod.ameriaPay),
+              // }}
               labelSuffix={<SoonBadge mt="1" />}
               isDisabled
             />
