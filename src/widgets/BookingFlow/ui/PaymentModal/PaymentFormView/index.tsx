@@ -196,14 +196,14 @@ export const PaymentFormView = ({
       as="form"
       onSubmit={handleFormSubmit}
       width="full"
-      height="full"
+      {...(renderAsPage ? {} : { height: 'full' })}
       px={0}
       py={0}
     >
       <Flex
         width="full"
-        overflowY={{ base: 'scroll', md: 'visible' }}
-        height={{ base: 'calc(100dvh - 160px)', md: 'auto' }}
+        overflowY={renderAsPage ? { base: 'visible', md: 'visible' } : { base: 'scroll', md: 'visible' }}
+        {...(renderAsPage ? {} : { height: { base: 'calc(100dvh - 160px)', md: 'auto' } })}
         direction="column"
         mx="auto"
         sx={{ '&::-webkit-scrollbar': { width: '0' } }}

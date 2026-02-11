@@ -49,12 +49,14 @@ export const AuthStepView = ({
   };
 
   const ViewComponent = useMemo(() => {
+    const layoutVariant = renderAsPage ? "page" : "modal";
     const ViewComponentMap = {
       signUp: () => (
         <SignUpView
           onSuccess={handleSignUpSuccess}
           onViewChange={handleViewChange}
           formData={payload?.formData || {}}
+          layoutVariant={layoutVariant}
         />
       ),
       verify: () => (
@@ -63,6 +65,7 @@ export const AuthStepView = ({
           payload={payload}
           onSuccess={handleVerifySuccess}
           onViewChange={handleViewChange}
+          layoutVariant={layoutVariant}
         />
       ),
       signIn: () => (
@@ -71,23 +74,25 @@ export const AuthStepView = ({
           onViewChange={handleViewChange}
           formData={payload?.formData || {}}
           isAlreadyRegistered={!!payload?.isAlreadyRegistered}
+          layoutVariant={layoutVariant}
         />
       ),
-      signInError: () => <SignInErrorView onViewChange={handleViewChange} />,
-      otpError: () => <OTPErrorView />,
+      signInError: () => (
+        <SignInErrorView
+          onViewChange={handleViewChange}
+          layoutVariant={layoutVariant}
+        />
+      ),
+      otpError: () => <OTPErrorView layoutVariant={layoutVariant} />,
     };
     return ViewComponentMap[activeView];
-  }, [activeView, verifyType, payload]);
-
-  const showBackButton = ["signUp", "signIn", "verify", "signInError", "otpError"].includes(activeView);
+  }, [activeView, verifyType, payload, renderAsPage]);
 
   return (
-    <Flex direction="column" justify="space-between" width="full" height="full">
+    <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
       <Flex
         width="full"
         direction="column"
-        maxWidth="500px"
-        mx="auto"
         sx={{
           "&::-webkit-scrollbar": {
             width: "0",

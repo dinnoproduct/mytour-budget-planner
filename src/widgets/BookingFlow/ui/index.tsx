@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { PaymentModal } from "./PaymentModal";
 import { TravelersModal } from "@widgets/TravelersModal";
@@ -66,7 +66,9 @@ export const BookingFlow = ({
     }
   }
 
-  const totalSteps = renderAsPage && !user?.id ? 5 : 4;
+  const startedSignedOutRef = useRef(!user?.id);
+  const startedSignedOut = startedSignedOutRef.current;
+  const totalSteps = renderAsPage && startedSignedOut ? 5 : 4;
   const [paymentView, setPaymentView] = useState(paymentModalView);
   const currentPaymentView = modalView === "payment" ? paymentView : "paymentForm";
   const progressStep =
@@ -75,17 +77,17 @@ export const BookingFlow = ({
       : modalView === "auth"
         ? 1
         : modalView === "travelers"
-          ? user?.id
-            ? 1
-            : 2
+          ? startedSignedOut
+            ? 2
+            : 1
           : currentPaymentView === "paymentForm"
-            ? user?.id
-              ? 2
-              : 3
+            ? startedSignedOut
+              ? 3
+              : 2
             : currentPaymentView === "previewDetails"
-              ? user?.id
-                ? 3
-                : 4
+              ? startedSignedOut
+                ? 4
+                : 3
               : totalSteps;
 
   return (
@@ -113,8 +115,10 @@ export const BookingFlow = ({
             width="full"
           >
             <Box
-              position={{ base: 'sticky', md: 'relative' }}
+              position={{ base: 'fixed', md: 'relative' }}
               top={{ base: '80px', md: 0 }}
+              left={{ base: 0, md: undefined }}
+              right={{ base: 0, md: undefined }}
               zIndex={1}
               bg="white"
               borderBottom="1px solid"
@@ -126,7 +130,7 @@ export const BookingFlow = ({
                 <BookingProgressBar step={progressStep} totalSteps={totalSteps} />
               </Box>
             </Box>
-            <Box maxW="500px" mx="auto" width="full" py={4}>
+            <Box maxW="500px" mx="auto" width="full" py={4} pt={{ base: '80px', md: 4 }}>
               {modalView === "auth" && (
                 <AuthStepView
                   onSuccess={onAuthSuccess}

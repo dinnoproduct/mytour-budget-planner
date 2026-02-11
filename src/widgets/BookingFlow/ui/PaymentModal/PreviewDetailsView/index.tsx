@@ -362,17 +362,22 @@ export const PreviewDetailsView = ({
         direction="column"
         justify="space-between"
         width="full"
-        height="full"
-        maxH={{ base: "calc(100dvh - 82px)", md: "none" }}
+        {...(renderAsPage ? {} : { height: "full", maxH: { base: "calc(100dvh - 82px)", md: "none" } })}
       >
         <Box
           flex="1"
           p="4"
-          overflowY={{ base: "auto", md: "visible" }}
+          overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "auto", md: "visible" }}
           overflowX="hidden"
           bg="gray.50"
-          height={{ base: "calc(100% - 174px)", md: "auto" }}
-          minH={0}
+          {...(renderAsPage
+            ? {}
+            : { height: { base: "calc(100% - 174px)", md: "auto" }, minH: 0 })}
+          pb={{
+            base: 4,
+            md: 4,
+          }}
+          mb={{base: renderAsPage ? "180px": '80px', md: 0}}
         >
           <Flex direction="column">
             <Flex align="center" justify="space-between">

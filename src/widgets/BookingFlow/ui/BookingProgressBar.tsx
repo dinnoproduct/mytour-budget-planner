@@ -14,7 +14,7 @@ export const BookingProgressBar = ({ step, totalSteps }: BookingProgressBarProps
   const value = Math.round(safeStep * stepPercent)
 
   return (
-    <Flex direction="column" gap={2} width="full">
+    <Flex direction="column" gap={2} width="full" paddingInline={{base: 4, md: 0}}>
       <Flex justify="space-between" align="center" width="full">
         <Text size="md" color="gray.700" fontSize={'14px'} fontWeight="500">
           {t('booking.step', { step: safeStep, total: totalSteps })}

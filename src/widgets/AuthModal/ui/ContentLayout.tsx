@@ -11,6 +11,8 @@ export const ContentLayout = ({
   children,
   isLoading,
 }: ContentLayoutProps) => {
+  const isPage = contentContainerProps?.overflowY === "visible" || contentContainerProps?.width === "full";
+
   return (
     <Flex
       direction="column"
@@ -18,17 +20,17 @@ export const ContentLayout = ({
       as="form"
       onSubmit={onSubmit}
       width="full"
-      height="full"
+      {...(isPage ? {} : { height: 'full' })}
     >
       <VStack
         spacing="6"
         py="6"
         px="4"
         mx="auto"
-        overflowY="scroll"
+        overflowY={isPage ? 'visible' : 'scroll'}
         width="full"
         maxWidth="402px"
-        height={{ base: 'calc(100dvh - 160px)', md: 'calc(480px - 160px)' }}
+        {...(isPage ? {} : { height: { base: 'calc(100dvh - 160px)', md: 'calc(480px - 160px)' } })}
         {...contentContainerProps}
         sx={{
           "&::-webkit-scrollbar": {
@@ -45,7 +47,16 @@ export const ContentLayout = ({
         borderTop="1px solid"
         borderColor="gray.100"
         backgroundColor="white"
-        mt="auto"
+        mt={isPage ? 5 : "auto"}
+        gap={isPage ? 2 : 0}
+        display={isPage ? { base: "flex" } : "block"}
+        flexDirection={isPage ? { base: "column", md: "row-reverse" } : "column"}
+        px={isPage ? { base: 4, md: 0 } : undefined}
+        position={isPage ? { base: "fixed", md: "relative" } : "relative"}
+        bottom={isPage ? { base: 0, md: undefined } : undefined}
+        left={isPage ? { base: 0, md: undefined } : undefined}
+        right={isPage ? { base: 0, md: undefined } : undefined}
+        zIndex={isPage ? { base: 10, md: 0 } : 0}
       >
         <Button
           variant="solid-blue"
@@ -63,7 +74,7 @@ export const ContentLayout = ({
             variant="solid-gray"
             size="lg"
             width="full"
-            mt="2"
+            mt={isPage ? 0 : 2}
           >
             {secondaryButtonLabel}
           </Button>

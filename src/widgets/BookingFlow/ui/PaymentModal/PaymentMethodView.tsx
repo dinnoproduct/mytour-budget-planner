@@ -51,13 +51,13 @@ export const PaymentMethodView = ({
   };
 
   return (
-    <Flex direction="column" justify="space-between" width="full" height="full">
+    <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
       <Flex
         width="full"
         py="6"
         px="4"
-        overflowY={{ base: "scroll", md: "visible" }}
-        maxHeight={{ base: "calc(100dvh - 160px)", md: "none" }}
+        overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "scroll", md: "visible" }}
+        {...(renderAsPage ? {} : { maxHeight: { base: "calc(100dvh - 160px)", md: "none" } })}
         direction="column"
         maxWidth="402px"
         mx="auto"

@@ -10,6 +10,7 @@ export type AuthModalProps = {
 
 export type ViewType = 'signIn' | 'signUp' | 'verify' | 'signInError' | 'otpError'
 export type VerifyType = ViewType
+export type LayoutVariant = 'modal' | 'page'
 
 export type LayoutProps = {
 	children: ReactNode
@@ -27,11 +28,13 @@ export type ContentLayoutProps = {
 	contentContainerProps?: StackProps
 	onSubmit?: (e: FormEvent<HTMLDivElement>) => void
 	isLoading?: boolean
+	layoutVariant?: LayoutVariant
 }
 
 export type SignUpViewProps = {
 	onSuccess: (payload?: any) => void
 	onViewChange?: (view: 'signIn' | 'verify', payload?: any) => void
+	layoutVariant?: LayoutVariant
 	formData?: {
 		firstname: string
 		lastname: string
@@ -43,6 +46,7 @@ export type SignUpViewProps = {
 export type SignInViewProps = {
 	onSuccess: (payload?: any) => void
 	onViewChange?: (view: 'signUp' | 'verify' | 'signInError', payload?: any) => void,
+	layoutVariant?: LayoutVariant
 	formData?: {
 		phoneNumber: string
 	},
@@ -51,6 +55,7 @@ export type SignInViewProps = {
 
 export type SignInErrorViewProps = {
 	onViewChange?: (view: 'signUp') => void,
+	layoutVariant?: LayoutVariant
 }
 
 export type VerifyViewProps = {
@@ -58,4 +63,5 @@ export type VerifyViewProps = {
 	onSuccess: () => void
 	payload: any
 	onViewChange?: (view: 'otpError') => void
+	layoutVariant?: LayoutVariant
 }

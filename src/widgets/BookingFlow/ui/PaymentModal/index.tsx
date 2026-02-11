@@ -97,6 +97,7 @@ export const PaymentModal = ({
       paymentError: () => (
         <PaymentErrorView
           onGoToMyPackages={renderAsPage ? onNavigateToMyPackages : undefined}
+          renderAsPage={renderAsPage}
         />
       ),
       previewDetails: () => (

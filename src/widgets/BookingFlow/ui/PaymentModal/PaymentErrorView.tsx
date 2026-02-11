@@ -4,21 +4,22 @@ import { Box, Flex, VStack } from '@chakra-ui/react'
 
 type PaymentErrorViewProps = {
   onGoToMyPackages?: () => void
+  renderAsPage?: boolean
 }
 
-export const PaymentErrorView = ({ onGoToMyPackages }: PaymentErrorViewProps) => {
+export const PaymentErrorView = ({ onGoToMyPackages, renderAsPage = false }: PaymentErrorViewProps) => {
   const { t } = useTranslation()
 
   return (
-    <Flex direction="column" justify="space-between" width="full" height="full">
+    <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
       <VStack
         spacing="4"
         py="10"
         px="4"
         mx="auto"
-        overflowY="scroll"
+        overflowY={renderAsPage ? 'visible' : 'scroll'}
         width="full"
-        height={{ base: 'calc(100dvh - 160px)', md: 'auto' }}
+        {...(renderAsPage ? {} : { height: { base: 'calc(100dvh - 160px)', md: 'auto' } })}
         maxWidth="402px"
         sx={{
           '&::-webkit-scrollbar': {

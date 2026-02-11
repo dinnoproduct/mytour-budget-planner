@@ -141,12 +141,12 @@ export const TravelersModal = ({
           as="form"
           onSubmit={handleSubmit(handleFormSubmit)}
           width="full"
-          height="full"
-
+          {...(renderAsPage ? {} : { height: 'full' })}
         >
           <VStack
             spacing="6"
-            width="full"            
+            width="full"
+            overflowY={renderAsPage ? 'visible' : 'auto'}
             sx={{
               '&::-webkit-scrollbar': {
                 width: '4px'
