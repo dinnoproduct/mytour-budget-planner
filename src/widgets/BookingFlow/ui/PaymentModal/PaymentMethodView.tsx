@@ -1,6 +1,6 @@
-import { Box, Flex, Img, RadioGroup, VStack } from "@chakra-ui/react";
+import { Box, Flex, Grid, Img, RadioGroup, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { Button, NewBadge, Radio, SoonBadge, Text } from "@ui";
+import { Button, Checkbox, Icon, NewBadge, Radio, SoonBadge, Text } from "@ui";
 import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import {
   PaymentMethod,
@@ -54,12 +54,12 @@ export const PaymentMethodView = ({
     <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
       <Flex
         width="full"
-        py="6"
-        px="4"
+        py={renderAsPage ? "0" : "6"}
+        px={renderAsPage ? "0" : "4"}
         overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "scroll", md: "visible" }}
         {...(renderAsPage ? {} : { maxHeight: { base: "calc(100dvh - 160px)", md: "none" } })}
         direction="column"
-        maxWidth="402px"
+        maxWidth={renderAsPage ? "full" : "402px"}
         mx="auto"
         sx={{
           "&::-webkit-scrollbar": {
@@ -67,30 +67,32 @@ export const PaymentMethodView = ({
           },
         }}
       >
-        <RadioGroup value={selectedMethod} onChange={handleMethodChange}>
-          <VStack align="stretch">
+          <Grid alignItems="stretch" gap={'0.75rem'} templateColumns={'repeat(2, 1fr)'}>
             <PaymentMethodCard
               label="bankCard"
               imgSrc="/assets/images/bank-card.svg"
               imgAlt="bank card"
+              onChange={() => handleMethodChange(PaymentMethod.bankCard)}
+              isBorder
               radioProps={{
                 value: PaymentMethod.bankCard,
-                onChange: () => handleMethodChange(PaymentMethod.bankCard),
               }}
-              isBorder
+              isActive={selectedMethod === PaymentMethod.bankCard}
             />
 
             <PaymentMethodCard
               label="AmeriaPay"
               imgSrc="/assets/images/ameria-pay.svg"
               imgAlt="ameriaPay"
-              // radioProps={{
-              //   value: PaymentMethod.ameriaPay,
-              //   onChange: () => handleMethodChange(PaymentMethod.ameriaPay),
-              // }}
+              radioProps={{
+                value: PaymentMethod.ameriaPay,
+              }}
+              isActive={selectedMethod === PaymentMethod.ameriaPay}
+              // onChange={() => handleMethodChange(PaymentMethod.ameriaPay)}
               labelSuffix={<SoonBadge mt="1" />}
               isDisabled
             />
+
 
             {/* <PaymentMethodCard
               label="Idram"
@@ -111,8 +113,7 @@ export const PaymentMethodView = ({
               labelSuffix={<SoonBadge mt="1" />}
               isDisabled
             />
-          </VStack>
-        </RadioGroup>
+          </Grid>
       </Flex>
 
       {renderAsPage && onBackClick ? (
@@ -165,40 +166,61 @@ const PaymentMethodCard = ({
   isBorder,
   isDisabled,
   labelSuffix,
+  isActive,
+  onChange,
 }: PaymentMethodCardProps) => {
   const { t } = useTranslation();
 
   const handleCardClick = () => {
-    if (!isDisabled && radioProps?.onChange) {
-      radioProps.onChange({ target: { value: radioProps.value } } as any);
+    if (!isDisabled && onChange && radioProps?.value !== undefined) {
+      onChange({ target: { value: radioProps.value } } as any);
     }
   };
 
   return (
     <Flex
       align="center"
-      justify="space-between"
-      py="3"
-      borderBottom={isBorder ? "1px solid" : "none"}
-      borderColor="gray.300"
+      justify="center"
+      py="5"
+      position={'relative'}
+      border={"1px solid"}
+      borderRadius={'12px'}
+      borderColor={isActive ? "blue.500" : "gray.200"}
       opacity={isDisabled ? "0.4" : "1"}
       cursor={isDisabled ? "not-allowed" : "pointer"}
       onClick={handleCardClick}
+      transition={'all 0.2s ease-in-out'}
     >
-      <Flex align="center">
+      <Box 
+        position={'absolute'}
+        top={'8px'}
+        right={'8px'}
+        transform={isActive ? 'scale(1)' : 'scale(0)'}
+        transition={'transform 0.2s ease-in-out'}
+      >
+        <Icon name="check" size={'20'} color={'blue.500'} />
+      </Box>
+      <Box 
+        position={'absolute'}
+        top={'8px'}
+        left={'8px'}
+      >
+        {labelSuffix}
+      </Box>
+
+      <Flex align="center" flexDirection={'column'} gap={2}>
         <Img src={imgSrc} alt={imgAlt} height="40px" width="40px" />
         <Text size="sm" ml="3" mr={labelSuffix ? "1" : "0"}>
           {t(label)}
         </Text>
 
-        {labelSuffix}
+        
       </Flex>
-
-      <Radio
+      {/* <Radio
         cursor={isDisabled ? "not-allowed !important" : "pointer"}
         size="lg"
         {...(radioProps || {})}
-      />
+      /> */}
     </Flex>
   );
 };

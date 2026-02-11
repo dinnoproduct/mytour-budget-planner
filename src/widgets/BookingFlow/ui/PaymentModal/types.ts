@@ -121,6 +121,8 @@ export type PaymentMethodCardProps = {
   isBorder?: boolean
   isDisabled?: boolean
   labelSuffix?: ReactNode
+  isActive?: boolean
+  onChange?: (isChecked: boolean) => void
 }
 
 export const VIEW_CONTENT_MAP: {
