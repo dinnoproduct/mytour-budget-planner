@@ -1,13 +1,13 @@
-import { Box, Flex, Grid, Img, RadioGroup, VStack } from "@chakra-ui/react";
+import type { ReactNode } from "react";
+import { Box, Flex, Grid, Img } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { Button, Checkbox, Icon, NewBadge, Radio, SoonBadge, Text } from "@ui";
+import { Button, Icon, SoonBadge, Text } from "@ui";
 import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import {
   PaymentMethod,
   type PaymentMethodCardProps,
   type PaymentMethodViewProps,
 } from "@widgets/BookingFlow/ui/PaymentModal/types.ts";
-import { useRef, useState } from "react";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const PaymentMethodView = ({
@@ -16,17 +16,13 @@ export const PaymentMethodView = ({
   packageDetails,
   onBackClick,
   renderAsPage = false,
+  selectedMethod,
+  onMethodChange,
 }: PaymentMethodViewProps) => {
   const { t } = useTranslation();
 
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(
-    PaymentMethod.bankCard,
-  );
-  const selectedMethodRef = useRef(selectedMethod);
-  selectedMethodRef.current = selectedMethod;
-
   const handleMethodChange = (method: PaymentMethod) => {
-    setSelectedMethod(method);
+    onMethodChange(method);
   };
 
   const handleLogEvent = () => {
@@ -41,14 +37,43 @@ export const PaymentMethodView = ({
 
   const handleContinue = async () => {
     try {
-      // Track payment method selection step
       handleLogEvent();
-      // Use ref to avoid stale closure when user taps Pay quickly after selecting method
-      onSubmit(selectedMethodRef.current);
+      onSubmit();
     } catch (error) {
       console.error("Error submitting payment method:", error);
     }
   };
+
+  const paymentMethodCards: Array<{
+    label: string;
+    imgSrc: string;
+    imgAlt: string;
+    value: PaymentMethod;
+    isDisabled: boolean;
+    labelSuffix?: ReactNode;
+  }> = [
+    {
+      label: "bankCard",
+      imgSrc: "https://dinno.blob.core.windows.net/icons/vpos.svg",
+      imgAlt: "bank card",
+      value: PaymentMethod.bankCard,
+      isDisabled: false,
+    },
+    {
+      label: "AmeriaPay",
+      imgSrc: "https://dinno.blob.core.windows.net/icons/myameriapay.svg",
+      imgAlt: "ameriaPay",
+      value: PaymentMethod.ameriaPay,
+      isDisabled: false,
+    },
+    {
+      label: "Idram",
+      imgSrc: "https://dinno.blob.core.windows.net/icons/idram.svg",
+      imgAlt: "idram",
+      value: PaymentMethod.idram,
+      isDisabled: false,
+    },
+  ];
 
   return (
     <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
@@ -67,53 +92,21 @@ export const PaymentMethodView = ({
           },
         }}
       >
-          <Grid alignItems="stretch" gap={'0.75rem'} templateColumns={'repeat(2, 1fr)'}>
+        <Grid alignItems="stretch" gap={'0.75rem'} templateColumns={'repeat(2, 1fr)'}>
+          {paymentMethodCards.map((card) => (
             <PaymentMethodCard
-              label="bankCard"
-              imgSrc="/assets/images/bank-card.svg"
-              imgAlt="bank card"
-              onChange={() => handleMethodChange(PaymentMethod.bankCard)}
-              isBorder
-              radioProps={{
-                value: PaymentMethod.bankCard,
-              }}
-              isActive={selectedMethod === PaymentMethod.bankCard}
+              key={card.value}
+              label={card.label}
+              imgSrc={card.imgSrc}
+              imgAlt={card.imgAlt}
+              onChange={() => handleMethodChange(card.value)}
+              radioProps={{ value: card.value }}
+              isActive={selectedMethod === card.value}
+              isDisabled={card.isDisabled}
+              labelSuffix={card?.labelSuffix}
             />
-
-            <PaymentMethodCard
-              label="AmeriaPay"
-              imgSrc="/assets/images/ameria-pay.svg"
-              imgAlt="ameriaPay"
-              radioProps={{
-                value: PaymentMethod.ameriaPay,
-              }}
-              isActive={selectedMethod === PaymentMethod.ameriaPay}
-              // onChange={() => handleMethodChange(PaymentMethod.ameriaPay)}
-              labelSuffix={<SoonBadge mt="1" />}
-              isDisabled
-            />
-
-
-            {/* <PaymentMethodCard
-              label="Idram"
-              imgSrc="/assets/images/idram.svg"
-              imgAlt="idram"
-              radioProps={{
-                value: PaymentMethod.idram,
-                onChange: () => handleMethodChange(PaymentMethod.idram),
-              }}
-              labelSuffix={<NewBadge mt="1" />}
-              isBorder
-            /> */}
-
-            <PaymentMethodCard
-              label="onlineLoan"
-              imgSrc="/assets/images/online-loan.svg"
-              imgAlt="online loan"
-              labelSuffix={<SoonBadge mt="1" />}
-              isDisabled
-            />
-          </Grid>
+          ))}
+        </Grid>
       </Flex>
 
       {renderAsPage && onBackClick ? (
@@ -163,7 +156,6 @@ const PaymentMethodCard = ({
   imgSrc,
   imgAlt,
   radioProps,
-  isBorder,
   isDisabled,
   labelSuffix,
   isActive,
@@ -210,17 +202,10 @@ const PaymentMethodCard = ({
 
       <Flex align="center" flexDirection={'column'} gap={2}>
         <Img src={imgSrc} alt={imgAlt} height="40px" width="40px" />
-        <Text size="sm" ml="3" mr={labelSuffix ? "1" : "0"}>
+        <Text size="sm" >
           {t(label)}
         </Text>
-
-        
       </Flex>
-      {/* <Radio
-        cursor={isDisabled ? "not-allowed !important" : "pointer"}
-        size="lg"
-        {...(radioProps || {})}
-      /> */}
     </Flex>
   );
 };

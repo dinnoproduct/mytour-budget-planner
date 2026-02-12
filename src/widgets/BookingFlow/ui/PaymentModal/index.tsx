@@ -7,7 +7,7 @@ import {
   VIEW_CONTENT_MAP,
 } from "./types.ts";
 import { useTranslation } from "react-i18next";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PaymentFormView } from "./PaymentFormView";
 import { PaymentErrorView } from "./PaymentErrorView.tsx";
 import { PaymentMethodView } from "./PaymentMethodView.tsx";
@@ -54,6 +54,7 @@ export const PaymentModal = ({
   );
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<PaymentMethod | null>(null);
+  const selectedPaymentMethodRef = useRef<PaymentMethod>(PaymentMethod.bankCard);
   const [promoCodeStatus, setPromoCodeStatus] = useState<{
     isApplied: boolean;
     code: string;
@@ -70,7 +71,13 @@ export const PaymentModal = ({
     const ViewComponentMap = {
       paymentMethod: () => (
         <PaymentMethodView
-          onSubmit={(method) => {
+          selectedMethod={selectedPaymentMethod ?? PaymentMethod.bankCard}
+          onMethodChange={(method) => {
+            selectedPaymentMethodRef.current = method;
+            setSelectedPaymentMethod(method);
+          }}
+          onSubmit={() => {
+            const method = selectedPaymentMethodRef.current;
             handleLogPaymentInfoEvent(method);
             handlePay(method);
             setSelectedPaymentMethod(method);
@@ -137,6 +144,7 @@ export const PaymentModal = ({
     promoCodeStatus,
     isFullPricePayment,
     travelers,
+    selectedPaymentMethod,
   ]);
 
   useEffect(() => {
@@ -237,18 +245,20 @@ export const PaymentModal = ({
         : undefined;
 
       if (paymentMethod === PaymentMethod.ameriaPay && onSuccess) {
-        const url = await onSuccess(
+        await onSuccess(
           amount,
           "MyAmeriaPay" as PaymentSystem.MyAmeriaPay,
           promoCodeInfo,
         );
 
-        if (url) {
-          setAmeriaPayUrl(url);
-          setActiveView("ameriaPay");
-        }
+        // if (url) {
+        //   setAmeriaPayUrl(url);
+        //   setActiveView("ameriaPay");
+        // }
       } else if (paymentMethod === PaymentMethod.bankCard) {
         await onSuccess(amount, "VPos" as PaymentSystem.VPos, promoCodeInfo);
+      } else if (paymentMethod === PaymentMethod.idram) {
+        await onSuccess(amount, "IDram" as PaymentSystem.IDram, promoCodeInfo);
       }
     } catch (error) {
       setActiveView("paymentError");

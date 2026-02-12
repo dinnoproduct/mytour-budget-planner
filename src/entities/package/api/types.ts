@@ -113,7 +113,8 @@ export interface ReservePackageInput extends BookPackageInput {}
 
 export enum PaymentSystem {
   'VPos' = 'VPos',
-  'MyAmeriaPay' = 'MyAmeriaPay'
+  'MyAmeriaPay' = 'MyAmeriaPay',
+  'IDram' = 'IDram'
 }
 
 interface BookPackageTraveler {

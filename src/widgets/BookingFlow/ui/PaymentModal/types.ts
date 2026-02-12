@@ -55,11 +55,13 @@ export type PaymentFormViewProps = {
 }
 
 export type PaymentMethodViewProps = {
-  onSubmit: (method: PaymentMethod) => void
+  onSubmit: () => void
   isLoadingBooking?: boolean
   packageDetails: PackageEntity
   onBackClick?: () => void
   renderAsPage?: boolean
+  selectedMethod: PaymentMethod
+  onMethodChange: (method: PaymentMethod) => void
 }
 
 export type PreviewDetailsViewProps = {
@@ -106,9 +108,9 @@ export type PaymentModalView =
   | 'previewDetails'
 
 export enum PaymentMethod {
-  bankCard = 'bankCard',
-  ameriaPay = 'ameriaPay',
-  idram = 'idram'
+  bankCard = 'VPos',
+  ameriaPay = 'MyAmeriaPay',
+  idram = 'IDram'
 }
 
 export type PaymentOption = 'payFull' | 'pay' | 'noPrepayment'

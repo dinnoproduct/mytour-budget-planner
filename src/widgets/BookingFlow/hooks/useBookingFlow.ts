@@ -97,9 +97,9 @@ export const useBookingFlow = ({
         initialPrice: number
         firstPaymentSum: number
       }
-    ) => {
+    ): Promise<string | undefined> => {
       if (!packageDetails || !request?.id) {
-        return
+        return undefined
       }
 
       setIsLoadingBooking(true)
@@ -164,13 +164,12 @@ export const useBookingFlow = ({
         } else if (
           paymentSystem === ('MyAmeriaPay' as PaymentSystem.MyAmeriaPay)
         ) {
-          if (isMobile) {
-            window.location.href = bookResponse.bookingPaymentUrl
-
-            return
-          }
-
-          return bookResponse.bookingPaymentUrl
+          window.location.href = bookResponse.bookingPaymentUrl 
+        }
+        else if (
+          paymentSystem === ('IDram' as PaymentSystem.IDram)
+        ) {
+          window.location.href = bookResponse.bookingPaymentUrl 
         }
       } catch (e) {
         setPaymentModalView('paymentError')
