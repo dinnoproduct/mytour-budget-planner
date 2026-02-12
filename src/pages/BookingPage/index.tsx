@@ -12,6 +12,19 @@ export const BookingPage = () => {
   const bookingContext = useRecoilValue(bookingContextAtom)
   const setBookingContext = useSetRecoilState(bookingContextAtom)
 
+   useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
+
+
   useEffect(() => {
     if (!bookingContext) {
       navigateToMyPackages({ queryParams: 'tab=1', replace: true })
