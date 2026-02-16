@@ -64,22 +64,31 @@ export const PaymentFormView = ({
   )
 
   const handleOptionChange = (option: PaymentOption) => {
-    setSelectedOption(option)
     setAmountError(null)
     if (option === 'payFull') {
+      setSelectedOption(option)
       setPaymentAmount(packageDetails.price)
     } else if (option === 'noPrepayment') {
+      setSelectedOption(option)
       setPaymentAmount(0)
     } else if (option === 'pay') {
-      setPaymentAmount(minPrePaymentAmount)
+      setSelectedOption(option)
+      // Only set to min when switching TO pay from another option, not when already selected (e.g. focus on input)
+      if (selectedOption !== 'pay') {
+        setPaymentAmount(minPrePaymentAmount)
+      }
     }
   }
 
   const handleAmountChange = (value: string | number) => {
     const num = typeof value === 'string' ? parseInt(value, 10) || 0 : value
-    setPaymentAmount(num)
+    // Cap to full price when user writes more than needed
+    const capped = Math.min(num, packageDetails.price)
+    setPaymentAmount(capped)
     setAmountError(null)
   }
+
+  const handleAmountBlur = () => setAmountError(null)
 
   const getSubmitAmount = (): number => {
     const opt = selectedOptionRef.current
@@ -88,9 +97,16 @@ export const PaymentFormView = ({
     return paymentAmountRef.current
   }
 
-  const errorElements = amountError ? <span>{amountError}</span> : null
-  const isAmountInvalid =
+  const isAmountBelowMin =
     selectedOption === 'pay' && paymentAmount < minPrePaymentAmount
+  const isAmountInvalid = isAmountBelowMin
+  const showAmountError = isAmountInvalid || amountError
+  const errorElements = showAmountError ? (
+    <span>
+      {amountError ??
+        t('minPrePaymentAmount', { amount: formatNumber(minPrePaymentAmount) })}
+    </span>
+  ) : null
   const isDisabled = selectedOption === 'pay' && isAmountInvalid
   const isSubmitDisabled = isFullPaymentOnly
     ? false
@@ -103,14 +119,16 @@ export const PaymentFormView = ({
     const amount = getSubmitAmount()
     if (opt === 'pay' && amount < minPrePaymentAmount) {
       setAmountError(
-        t('minPrePaymentAmount', { amount: formatNumber(minPrePaymentAmount) }),
+        t('minPrePaymentAmount', {
+          amount: formatNumber(minPrePaymentAmount),
+        }),
       )
       return
     }
     onSubmit(amount, opt)
   }
 
-  const content = (
+  return (
     <Flex
       direction="column"
       justify="space-between"
@@ -119,8 +137,8 @@ export const PaymentFormView = ({
     >
       <Flex
         width="full"
-        py={renderAsPage ? 0 : "6"}
-        px={renderAsPage ? 0 : "4"}
+        py={renderAsPage ? 0 : '6'}
+        px={renderAsPage ? 0 : '4'}
         overflowY={
           renderAsPage
             ? { base: 'visible', md: 'visible' }
@@ -130,7 +148,7 @@ export const PaymentFormView = ({
           ? {}
           : { maxHeight: { base: 'calc(100dvh - 160px)', md: 'none' } })}
         direction="column"
-        maxWidth={renderAsPage ? "full" : "402px"}
+        maxWidth={renderAsPage ? 'full' : '402px'}
         mx="auto"
         sx={{
           '&::-webkit-scrollbar': {
@@ -139,6 +157,7 @@ export const PaymentFormView = ({
         }}
       >
         {isFullPaymentOnly ? (
+          
             <SimplePaymentContent
               isFullPaymentOnly={true}
               paymentAmount={packageDetails.price}
@@ -151,12 +170,14 @@ export const PaymentFormView = ({
               minPrePaymentAmount={minPrePaymentAmount}
               t={t}
             />
+           
         ) : (
           <PaymentOptionsWithRadio
             selectedOption={selectedOption}
             onOptionChange={handleOptionChange}
             paymentAmount={paymentAmount}
             onAmountChange={handleAmountChange}
+            onAmountBlur={handleAmountBlur}
             errorElements={errorElements}
             packageDetails={packageDetails}
             prepaymentInfo={prepaymentInfo}
@@ -210,6 +231,4 @@ export const PaymentFormView = ({
       )}
     </Flex>
   )
-
-  return content
 }

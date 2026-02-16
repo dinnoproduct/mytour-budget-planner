@@ -9,6 +9,8 @@ type PaymentOptionsWithRadioProps = {
   onOptionChange: (value: PaymentOption) => void
   paymentAmount: number
   onAmountChange: (value: string | number) => void
+  onAmountFocus?: () => void
+  onAmountBlur?: () => void
   errorElements: React.ReactNode | null
   packageDetails: { price: number }
   prepaymentInfo?: { minimumAcceptablePaymentPercentage?: number } | null
@@ -26,6 +28,8 @@ export const PaymentOptionsWithRadio = ({
   onOptionChange,
   paymentAmount,
   onAmountChange,
+  onAmountFocus,
+  onAmountBlur,
   errorElements,
   packageDetails,
   prepaymentInfo,
@@ -62,6 +66,8 @@ export const PaymentOptionsWithRadio = ({
         <Input
           value={paymentAmount}
           onChange={e => onAmountChange(e.target.value)}
+          onFocus={onAmountFocus}
+          onBlur={onAmountBlur}
           suffix
           state={errorElements ? 'invalid' : 'default'}
           rightIconName="dram"

@@ -8,7 +8,7 @@ import {
 } from "./types.ts";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { PaymentFormView } from "./PaymentFormView";
+import { PaymentFormView } from "./PaymentFormView/index.tsx";
 import { PaymentErrorView } from "./PaymentErrorView.tsx";
 import { PaymentMethodView } from "./PaymentMethodView.tsx";
 import { AmeriaPayView } from "./AmeriaPayView.tsx";
