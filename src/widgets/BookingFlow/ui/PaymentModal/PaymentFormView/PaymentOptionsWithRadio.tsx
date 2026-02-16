@@ -1,5 +1,5 @@
 import { RadioGroup, VStack } from '@chakra-ui/react'
-import { AlertCardMessage, Input, Text } from '@ui'
+import { AlertCardMessage, AlertCardMultipleMessage, Input, Text } from '@ui'
 import { formatNumber } from '@shared/utils'
 import type { PaymentOption } from '../types'
 import { PaymentOptionCard } from './PaymentOptionCard'
@@ -44,10 +44,14 @@ export const PaymentOptionsWithRadio = ({
         isSelected={selectedOption === 'pay'}
         onSelect={() => onOptionChange('pay')}
       >
-        <AlertCardMessage
-          message={`${t('minPrePaymentPercentage', {
-            percentage: prepaymentInfo?.minimumAcceptablePaymentPercentage,
-          })} ${t('minPrePaymentAmount', { amount: formatNumber(minPrePaymentAmount) })}`}
+        <AlertCardMultipleMessage
+          messages={[
+            { message: t('partialPaymentText'), hasNewLine: true },
+            { message: t('minPrePaymentPercentage', {
+              percentage: prepaymentInfo?.minimumAcceptablePaymentPercentage,
+            }), hasNewLine: false },
+            { message: t('minPrePaymentAmount', { amount: formatNumber(minPrePaymentAmount) }), hasNewLine: false },
+          ]}
           status="info"
           textSize="sm"
           showIcon={false}
@@ -76,7 +80,6 @@ export const PaymentOptionsWithRadio = ({
         onSelect={() => onOptionChange('payFull')}
       >
         <Input
-          mt={5}
           value={packageDetails.price}
           isDisabled
           suffix
@@ -91,12 +94,15 @@ export const PaymentOptionsWithRadio = ({
         isSelected={selectedOption === 'noPrepayment'}
         onSelect={() => onOptionChange('noPrepayment')}
       >
-        <AlertCardMessage
-          message={t('noPrepaymentTextWithDetails', {
+        <Text size="sm" color="gray.600" mb={4}>
+          {t('noPrepaymentTextWithDetails', {
             amount: noPrepaymentData.paymentAmount,
             dueDate: noPrepaymentData.paymentDueDate,
             days: noPrepaymentData.days,
           })}
+        </Text>
+        <AlertCardMessage
+          message={t('partialPaymentText')}
           status="info"
           textSize="sm"
           showIcon={false}

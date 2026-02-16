@@ -17,15 +17,16 @@ export const PaymentOptionCard = ({
   children,
 }: PaymentOptionCardProps) => (
   <Box
-    p={4}
+    p={'16px'}
     borderWidth="1px"
     borderColor={isSelected ? 'blue.500' : 'gray.200'}
-    borderRadius="md"
+    borderRadius="16px"
     cursor="pointer"
     onClick={onSelect}
+    
   >
     <Flex align="center" gap={3}>
-      <Radio value={value} />
+      <Radio value={value} size="lg" />
       <Text size="sm" fontWeight="medium">
         {label}
       </Text>

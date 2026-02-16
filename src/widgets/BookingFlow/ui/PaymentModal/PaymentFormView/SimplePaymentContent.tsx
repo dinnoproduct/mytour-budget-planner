@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react'
 import { AlertCardMessage, Checkbox, Input, Text } from '@ui'
 import { formatNumber } from '@shared/utils'
+import { PrepaymentInfo } from '@entities/package/api/types'
 
 type SimplePaymentContentProps = {
   isFullPaymentOnly: boolean
@@ -10,13 +11,13 @@ type SimplePaymentContentProps = {
   onPayInFullChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   errorElements: React.ReactNode | null
   packageDetails: { price: number }
+  days: number
   minPrePaymentAmount: number
   t: (key: string, params?: Record<string, unknown>) => string
 }
 
-const DAYS_COUNT_FOR_PARTIAL_PAYMENT = 40
-
 export const SimplePaymentContent = ({
+  days,
   packageDetails,
   minPrePaymentAmount,
   t,
@@ -31,7 +32,7 @@ export const SimplePaymentContent = ({
 
     <Box mt="6">
       <Text size="sm" color="gray.600">
-        {t('minPrePaymentTextWithDetails', { amount: formatNumber(packageDetails.price), days: DAYS_COUNT_FOR_PARTIAL_PAYMENT })}
+        {t('minPrePaymentTextWithDetails', { amount: formatNumber(packageDetails.price), days })}
       </Text>
          
     </Box>

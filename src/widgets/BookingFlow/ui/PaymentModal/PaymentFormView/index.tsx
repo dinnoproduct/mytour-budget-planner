@@ -1,11 +1,13 @@
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useRef, useState, useEffect, useMemo } from 'react'
-import { Button } from '@ui'
+import { Button, Input } from '@ui'
 import { formatNumber } from '@shared/utils'
 import moment from 'moment'
 import { StepBottomActions } from '@widgets/BookingFlow/ui/StepBottomActions'
 import { PaymentOptionsWithRadio } from './PaymentOptionsWithRadio'
+import { SimplePaymentContent } from './SimplePaymentContent'
+import { PaymentOptionCard } from './PaymentOptionCard'
 import type { PaymentFormViewProps, PaymentOption } from '../types'
 
 const DAYS_COUNT_FOR_PARTIAL_PAYMENT = 40
@@ -33,12 +35,19 @@ export const PaymentFormView = ({
   selectedOptionRef.current = selectedOption
   paymentAmountRef.current = paymentAmount
 
-  useEffect(() => {
-    setSelectedOption(initialPaymentOption)
-  }, [initialPaymentOption])
-
+  const isFullPaymentOnly =
+    prepaymentInfo?.paymentType === 'FullPricePayment'
   const minPrePaymentAmount =
     prepaymentInfo?.minimumAcceptablePayment ?? Math.floor(packageDetails.price / 2)
+
+  useEffect(() => {
+    if (isFullPaymentOnly) {
+      setSelectedOption('payFull')
+    } else {
+      setSelectedOption(initialPaymentOption)
+    }
+  }, [initialPaymentOption, isFullPaymentOnly])
+
   const noPrepaymentData = useMemo(
     () => ({
       paymentAmount: packageDetails.price,
@@ -83,7 +92,11 @@ export const PaymentFormView = ({
   const isAmountInvalid =
     selectedOption === 'pay' && paymentAmount < minPrePaymentAmount
   const isDisabled = selectedOption === 'pay' && isAmountInvalid
-  const isSubmitDisabled = selectedOption === 'pay' ? isDisabled : false
+  const isSubmitDisabled = isFullPaymentOnly
+    ? false
+    : selectedOption === 'pay'
+      ? isDisabled
+      : false
 
   const handleFormSubmit = () => {
     const opt = selectedOptionRef.current
@@ -125,18 +138,33 @@ export const PaymentFormView = ({
           },
         }}
       >
-        <PaymentOptionsWithRadio
-          selectedOption={selectedOption}
-          onOptionChange={handleOptionChange}
-          paymentAmount={paymentAmount}
-          onAmountChange={handleAmountChange}
-          errorElements={errorElements}
-          packageDetails={packageDetails}
-          prepaymentInfo={prepaymentInfo}
-          minPrePaymentAmount={minPrePaymentAmount}
-          noPrepaymentData={noPrepaymentData}
-          t={t}
-        />
+        {isFullPaymentOnly ? (
+            <SimplePaymentContent
+              isFullPaymentOnly={true}
+              paymentAmount={packageDetails.price}
+              onAmountChange={() => {}}
+              isPaymentInFull={true}
+              onPayInFullChange={() => {}}
+              errorElements={null}
+              packageDetails={packageDetails}
+              days={prepaymentInfo?.minimumAcceptableDaysCount ?? DAYS_COUNT_FOR_PARTIAL_PAYMENT}
+              minPrePaymentAmount={minPrePaymentAmount}
+              t={t}
+            />
+        ) : (
+          <PaymentOptionsWithRadio
+            selectedOption={selectedOption}
+            onOptionChange={handleOptionChange}
+            paymentAmount={paymentAmount}
+            onAmountChange={handleAmountChange}
+            errorElements={errorElements}
+            packageDetails={packageDetails}
+            prepaymentInfo={prepaymentInfo}
+            minPrePaymentAmount={minPrePaymentAmount}
+            noPrepaymentData={noPrepaymentData}
+            t={t}
+          />
+        )}
       </Flex>
 
       {renderAsPage && onBackClick ? (
