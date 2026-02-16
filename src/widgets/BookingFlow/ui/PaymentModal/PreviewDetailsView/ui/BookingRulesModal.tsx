@@ -3,7 +3,7 @@ import { Text, VStack, Box, Link } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Layout } from "../../Layout";
 import usePolicy from "@/modules/packages/hooks/usePolicy";
-import { useSelectedPackage } from "@/modules/packages/hooks/useSelectedPackage";
+import type { PackageEntity } from "@entities/package";
 
 type PolicyType = "booking" | "cancellation";
 
@@ -11,19 +11,20 @@ interface PolicyModalProps {
   isOpen: boolean;
   handleClose: () => void;
   policyType?: PolicyType;
+  packageDetails?: PackageEntity | null;
 }
 
 export const PolicyModal: React.FC<PolicyModalProps> = ({
   isOpen,
   handleClose,
   policyType = "booking",
+  packageDetails,
 }) => {
   const { t } = useTranslation();
-  const { parsedPolicy, cancelationPolicy } = usePolicy();
-  const { selectedPackage } = useSelectedPackage();
+  const { parsedPolicy, cancelationPolicyContent } = usePolicy(packageDetails);
 
   const title = policyType === "booking" ? t`bookingRules` : t`cancelRules`;
-  const cancellationPolicyText = selectedPackage?.[cancelationPolicy] || "";
+  const cancellationPolicyText = cancelationPolicyContent;
 
   return (
     <Layout isOpen={isOpen} closeModal={handleClose} title={title}>

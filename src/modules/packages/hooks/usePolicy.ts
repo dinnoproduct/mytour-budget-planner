@@ -1,12 +1,14 @@
 import { langKeyAdapter } from '../../../utils/normalizers.ts';
 import type { PackagesFields } from '../data/packagesEnums.ts';
+import type { PackageEntity } from '@entities/package';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelectedPackage } from './useSelectedPackage.ts';
 
-const usePolicy = () => {
+const usePolicy = (packageOverride?: PackageEntity | null) => {
   const { i18n } = useTranslation();
   const { selectedPackage } = useSelectedPackage();
+  const packageData = packageOverride ?? selectedPackage;
 
   const correctedTypeLanguage = i18n.language as keyof typeof langKeyAdapter;
   const bookingPolicy = `bookingPolicy${langKeyAdapter[correctedTypeLanguage]}` as PackagesFields.bookingPolicyArm;
@@ -14,12 +16,12 @@ const usePolicy = () => {
     `cancelationPolicy${langKeyAdapter[correctedTypeLanguage]}` as PackagesFields.cancelationPolicyArm;
 
   const parsedPolicy = useMemo(() => {
-    if (!selectedPackage?.[bookingPolicy]) {
+    if (!packageData?.[bookingPolicy]) {
       return { before: '', after: '', urlText: '', url: '' };
     }
 
     try {
-      const parsedBookingPolicy = JSON.parse(selectedPackage[bookingPolicy]);
+      const parsedBookingPolicy = JSON.parse(packageData[bookingPolicy]);
 
       if (!parsedBookingPolicy?.policy) {
         return { before: '', after: '', urlText: '', url: '' };
@@ -49,9 +51,11 @@ const usePolicy = () => {
       console.error('Error parsing booking policy:', error);
       return { before: '', after: '', urlText: '', url: '' };
     }
-  }, [selectedPackage?.[bookingPolicy], bookingPolicy]);
+  }, [packageData?.[bookingPolicy], bookingPolicy]);
 
-  return { parsedPolicy, cancelationPolicy };
+  const cancelationPolicyContent = packageData?.[cancelationPolicy] ?? '';
+
+  return { parsedPolicy, cancelationPolicy, cancelationPolicyContent };
 };
 
 export default usePolicy;

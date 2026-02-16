@@ -586,6 +586,7 @@ export const PreviewDetailsView = ({
             setIsCancellationPolicyModalOpen(false);
           }}
           policyType={policyModalType}
+          packageDetails={packageDetails}
         />
       </Portal>
     </>
