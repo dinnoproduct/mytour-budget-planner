@@ -58,10 +58,10 @@ export const StepBottomActions = ({
     <Box
       p="4"
       width="full"
-      borderTop="1px solid"
-      borderColor="gray.100"
+      borderTop={{base: "1px solid", md: "none"}}
+      borderColor={{base: "gray.100", md: "transparent"}}
       backgroundColor="white"
-      mt={5}
+      mt={0}
       px={{ base: 4, md: 0 }}
       position={stickyOnMobile ? { base: 'fixed', md: 'relative' } : 'relative'}
       bottom={stickyOnMobile ? { base: 0, md: undefined } : undefined}

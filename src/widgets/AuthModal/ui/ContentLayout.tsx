@@ -10,6 +10,7 @@ export const ContentLayout = ({
   onSecondaryButtonClick,
   children,
   isLoading,
+  isDisabled,
 }: ContentLayoutProps) => {
   const isPage = contentContainerProps?.overflowY === "visible" || contentContainerProps?.width === "full";
 
@@ -44,10 +45,9 @@ export const ContentLayout = ({
       <Box
         p="4"
         width="full"
-        borderTop="1px solid"
-        borderColor="gray.100"
+        borderTop={{base: "1px solid", md: isPage ? "none" : "1px solid"}}
+        borderColor={{base: "gray.100", md: isPage ? "transparent" : "gray.100"}}
         backgroundColor="white"
-        mt={isPage ? 5 : "auto"}
         gap={isPage ? 2 : 0}
         display={isPage ? { base: "flex" } : "block"}
         flexDirection={isPage ? { base: "column", md: "row-reverse" } : "column"}
@@ -64,6 +64,7 @@ export const ContentLayout = ({
           size="lg"
           width="full"
           isLoading={isLoading}
+          isDisabled={isDisabled || false}
         >
           {primaryButtonLabel}
         </Button>

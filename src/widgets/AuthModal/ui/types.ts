@@ -29,6 +29,7 @@ export type ContentLayoutProps = {
 	onSubmit?: (e: FormEvent<HTMLDivElement>) => void
 	isLoading?: boolean
 	layoutVariant?: LayoutVariant
+	isDisabled?: boolean
 }
 
 export type SignUpViewProps = {

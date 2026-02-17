@@ -143,6 +143,9 @@ export const TravelersModal = ({
           width="full"
           {...(renderAsPage ? {} : { height: 'full' })}
         >
+          <Text fontSize={'18px'} mb={4} fontWeight="bold">
+            {t`travelers`}
+          </Text>
           <VStack
             spacing="6"
             width="full"

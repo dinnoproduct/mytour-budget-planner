@@ -12,8 +12,10 @@ export const BookingPage = () => {
   const bookingContext = useRecoilValue(bookingContextAtom)
   const setBookingContext = useSetRecoilState(bookingContextAtom)
 
-   useEffect(() => {
+  useEffect(() => {
+    sessionStorage.removeItem('isPaymentRedirect')
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (sessionStorage.getItem('isPaymentRedirect')) return
       e.preventDefault()
     }
 

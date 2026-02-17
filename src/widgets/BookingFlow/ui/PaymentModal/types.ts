@@ -106,6 +106,7 @@ export type PaymentModalView =
   | 'paymentMethod'
   | 'ameriaPay'
   | 'previewDetails'
+  | 'paymentSuccess'
 
 export enum PaymentMethod {
   bankCard = 'VPos',
@@ -144,6 +145,9 @@ export const VIEW_CONTENT_MAP: {
   },
   previewDetails: {
     title: 'dataCheck'
+  },
+  paymentSuccess: {
+    title: 'payment'
   }
 }
 

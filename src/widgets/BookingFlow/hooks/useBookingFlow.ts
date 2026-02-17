@@ -4,7 +4,6 @@ import {
   type PaymentSystem,
   useBookPackage,
   useCreateRequest,
-  useReservePackage,
   useUpdateRequest,
   type NormalizedRequestEntity,
   useCalculatePrepayment,
@@ -35,7 +34,6 @@ export const useBookingFlow = ({
   const { mutateAsync: createRequestAsync } = useCreateRequest()
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
-  const { mutateAsync: reservePackageAsync } = useReservePackage()
   const validatePromoCode = useValidatePromoCode()
   const isRequestInProgressRef = useRef(false)
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
@@ -105,10 +103,14 @@ export const useBookingFlow = ({
       setIsLoadingBooking(true)
 
       try {
+        const amountToBePaid = promoCodeInfo
+          ? promoCodeInfo.firstPaymentSum
+          : paymentAmount;
+
         const bookInput: any = {
           requestId: request.id,
           cityId: packageDetails.city.id,
-          price: promoCodeInfo?.initialPrice ?? packageDetails.price, // Use initial price from promo code info if available
+          price: promoCodeInfo?.initialPrice ?? packageDetails.price,
           hotelId: packageDetails.hotel.id,
           travelAgencyId: packageDetails.travelAgency.id,
           offerId: packageDetails.offerId,
@@ -118,7 +120,7 @@ export const useBookingFlow = ({
             ? notesJson.current
             : JSON.stringify(request.notes),
           phoneNumber: user?.phoneNumber || '',
-          amountToBePaid: +paymentAmount, // This is the first payment sum (already calculated with promo code logic)
+          amountToBePaid: +amountToBePaid,
           usdRate: packageDetails.usdRate,
           currency: packageDetails.currency,
           rate: packageDetails.rate,
@@ -126,7 +128,6 @@ export const useBookingFlow = ({
           paymentSystem
         }
 
-        // Add promo code if provided
         if (promoCodeInfo?.promoCode) {
           bookInput.promoCode = promoCodeInfo.promoCode
         }
@@ -144,16 +145,19 @@ export const useBookingFlow = ({
           bookInput.foodType = packageDetails.foodType || 0
         }
 
-        if (paymentAmount === 0) {
-          const reserveResponse = await reservePackageAsync(bookInput)
-          setIsLoadingBooking(false)
-          setModalView('success')
+        sessionStorage.setItem('isPaymentRedirect', '1')
+        const bookResponse = await bookPackageAsync(bookInput)
+        setIsLoadingBooking(false)
 
+        if (!bookResponse.success) {
+          setPaymentModalView('paymentError')
           return
         }
 
-        const bookResponse = await bookPackageAsync(bookInput)
-        setIsLoadingBooking(false)
+        if (bookResponse.success) {
+          setPaymentModalView('paymentSuccess')
+          return
+        }
 
         if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
           window.location.href =
@@ -164,12 +168,11 @@ export const useBookingFlow = ({
         } else if (
           paymentSystem === ('MyAmeriaPay' as PaymentSystem.MyAmeriaPay)
         ) {
-          window.location.href = bookResponse.bookingPaymentUrl 
-        }
-        else if (
+          window.location.href = bookResponse.bookingPaymentUrl
+        } else if (
           paymentSystem === ('IDram' as PaymentSystem.IDram)
         ) {
-          window.location.href = bookResponse.bookingPaymentUrl 
+          window.location.href = bookResponse.bookingPaymentUrl
         }
       } catch (e) {
         setPaymentModalView('paymentError')

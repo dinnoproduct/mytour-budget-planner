@@ -366,10 +366,9 @@ export const PreviewDetailsView = ({
       >
         <Box
           flex="1"
-          p="4"
+          py="4"
           overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "auto", md: "visible" }}
           overflowX="hidden"
-          bg="gray.50"
           {...(renderAsPage
             ? {}
             : { height: { base: "calc(100% - 174px)", md: "auto" }, minH: 0 })}
@@ -508,10 +507,11 @@ export const PreviewDetailsView = ({
         </Box>
 
         <Box
-          p="4"
+          px={{base: "4", md: "0"}}
+          py="4"
           width="full"
-          borderTop="1px solid"
-          borderColor="gray.100"
+          borderTop={{base: "1px solid", md: "none"}} 
+          borderColor={{base: "gray.100", md: "transparent"}}
           backgroundColor="white"
           mt="auto"
           position={{ base: 'fixed', md: 'relative' }}
@@ -557,7 +557,7 @@ export const PreviewDetailsView = ({
                   isLoading={isLoadingBooking}
                   size="lg"
                 >
-                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay") : t("selectPaymentMethod")}
+                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("reserve") : t("selectPaymentMethod")}
                 </Button>
               }
             />
@@ -570,7 +570,7 @@ export const PreviewDetailsView = ({
               isLoading={isLoadingBooking}
               size="lg"
             >
-              {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay") : t("reserve")}
+              {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("reserve") : t("reserve")}
             </Button>
           )}
         </Box>

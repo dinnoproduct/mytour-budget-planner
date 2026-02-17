@@ -121,9 +121,10 @@ export const BookingFlow = ({
               right={{ base: 0, md: undefined }}
               zIndex={1}
               bg="white"
-              borderBottom="1px solid"
-              borderColor="gray.100"
-              py={4}
+              borderBottom={{base: "1px solid", md: "none"}}
+              borderColor={{base: "gray.100", md: "transparent"}}
+              pt={4}
+              pb={{base: 4, md: 0}}
               flexShrink={0}
             >
               <Box maxW="500px" mx="auto" width="full">
@@ -177,7 +178,11 @@ export const BookingFlow = ({
               )}
 
               {modalView === "success" && (
-                <PaymentSuccessModal closeModal={() => closeModal()} />
+                <PaymentSuccessModal
+                  closeModal={
+                    onNavigateToMyPackages ?? (() => closeModal())
+                  }
+                />
               )}
             </Box>
           </Box>
@@ -222,7 +227,11 @@ export const BookingFlow = ({
           )}
 
           {modalView === "success" && (
-            <PaymentSuccessModal closeModal={() => closeModal()} />
+            <PaymentSuccessModal
+              closeModal={
+                onNavigateToMyPackages ?? (() => closeModal())
+              }
+            />
           )}
         </>
       )}

@@ -57,7 +57,7 @@ export const AlertCardMultipleMessage = ({
     py="2"
     px="2"
     bgColor={STATUS_MAP[status].bgColor}
-    rounded="md"
+    rounded="xl"
     align={iconPlacement === 'center' ? 'center' : 'start'}
     {...props}
   >

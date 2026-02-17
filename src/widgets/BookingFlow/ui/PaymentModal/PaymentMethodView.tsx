@@ -181,16 +181,16 @@ const PaymentMethodCard = ({
       opacity={isDisabled ? "0.4" : "1"}
       cursor={isDisabled ? "not-allowed" : "pointer"}
       onClick={handleCardClick}
-      transition={'all 0.2s ease-in-out'}
+      transition={'0.2s'}
     >
       <Box 
         position={'absolute'}
         top={'8px'}
         right={'8px'}
         transform={isActive ? 'scale(1)' : 'scale(0)'}
-        transition={'transform 0.2s ease-in-out'}
+        transition={'.2s'}
       >
-        <Icon name="check" size={'20'} color={'blue.500'} />
+        <Icon name="checkmark-circle" size={'20'} color={'blue.500'} />
       </Box>
       <Box 
         position={'absolute'}

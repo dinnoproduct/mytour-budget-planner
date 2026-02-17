@@ -101,6 +101,7 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVaria
 	return (
 		<ContentLayout
 			primaryButtonLabel={t`confirm`}
+			isDisabled={verificationCode.some(code => code === '')}
 			contentContainerProps={contentContainerProps}
 			onSubmit={(e) => handleVerify(e)}
 			isLoading={isLoadingConfirmRegistration || isLoadingConfirmLogin}
