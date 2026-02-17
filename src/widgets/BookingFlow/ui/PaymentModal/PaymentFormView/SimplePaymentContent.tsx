@@ -22,14 +22,13 @@ export const SimplePaymentContent = ({
   minPrePaymentAmount,
   t,
 }: SimplePaymentContentProps) => (
-  <Box>
+  <Box mt={5}>
     <AlertCardMessage
           message={t('minPrePaymentText', { amount: formatNumber(minPrePaymentAmount) })}
           status="info"
           textSize="sm"
           showIcon={false}
         />
-
     <Box mt="6">
       <Text size="sm" color="gray.600">
         {t('minPrePaymentTextWithDetails', { amount: formatNumber(packageDetails.price), days })}

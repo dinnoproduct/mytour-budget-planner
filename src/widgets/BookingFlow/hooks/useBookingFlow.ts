@@ -154,7 +154,7 @@ export const useBookingFlow = ({
           return
         }
 
-        if (bookResponse.success) {
+        if (!bookResponse.bookingPaymentUrl && bookResponse.success) {
           setPaymentModalView('paymentSuccess')
           return
         }

@@ -114,7 +114,7 @@ export const PaymentMethodView = ({
           stickyOnMobile
           onBack={onBackClick}
           backLabel={t`back`}
-          isLoadingBooking={isLoadingBooking}
+          isDisabled={isLoadingBooking}
           primaryButton={
             <Button
               variant="solid-blue"
