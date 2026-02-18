@@ -38,6 +38,9 @@ export type PaymentModalProps = {
   >
   handleLogEvent: (step: { name: BookingStep; number: number }) => void
   skipPreviewStep?: boolean
+  renderAsPage?: boolean
+  onViewChange?: (view: PaymentModalView) => void
+  onNavigateToMyPackages?: () => void
 }
 
 export type PaymentFormViewProps = {
@@ -47,12 +50,18 @@ export type PaymentFormViewProps = {
   isBooked?: boolean
   initialPaymentOption?: PaymentOption
   prepaymentInfo?: PrepaymentInfo | null
+  onBackClick?: () => void
+  renderAsPage?: boolean
 }
 
 export type PaymentMethodViewProps = {
-  onSubmit: (method: PaymentMethod) => void
+  onSubmit: () => void
   isLoadingBooking?: boolean
   packageDetails: PackageEntity
+  onBackClick?: () => void
+  renderAsPage?: boolean
+  selectedMethod: PaymentMethod
+  onMethodChange: (method: PaymentMethod) => void
 }
 
 export type PreviewDetailsViewProps = {
@@ -78,6 +87,8 @@ export type PreviewDetailsViewProps = {
     finalAmount: number;
   }) => void
   paymentOption?: PaymentOption
+  onBackClick?: () => void
+  renderAsPage?: boolean
 }
 
 export type LayoutProps = {
@@ -86,6 +97,7 @@ export type LayoutProps = {
   closeModal: () => void
   title: string
   onBackClick?: () => void
+  renderAsPage?: boolean
 }
 
 export type PaymentModalView =
@@ -94,13 +106,15 @@ export type PaymentModalView =
   | 'paymentMethod'
   | 'ameriaPay'
   | 'previewDetails'
+  | 'paymentSuccess'
 
 export enum PaymentMethod {
-  bankCard = 'bankCard',
-  ameriaPay = 'ameriaPay'
+  bankCard = 'VPos',
+  ameriaPay = 'MyAmeriaPay',
+  idram = 'IDram'
 }
 
-export type PaymentOption = 'noPrepayment' | 'pay'
+export type PaymentOption = 'payFull' | 'pay' | 'noPrepayment'
 
 export type PaymentMethodCardProps = {
   label: string
@@ -110,6 +124,8 @@ export type PaymentMethodCardProps = {
   isBorder?: boolean
   isDisabled?: boolean
   labelSuffix?: ReactNode
+  isActive?: boolean
+  onChange?: (isChecked: boolean) => void
 }
 
 export const VIEW_CONTENT_MAP: {
@@ -129,6 +145,9 @@ export const VIEW_CONTENT_MAP: {
   },
   previewDetails: {
     title: 'dataCheck'
+  },
+  paymentSuccess: {
+    title: 'payment'
   }
 }
 

@@ -76,6 +76,7 @@ const MDatePicker: FC<IMDatePicker> = ({
 			<DatePicker
 				{...restField}
 				{...rest}
+				autoComplete='off'
 				ref={datePickerRef}
 				onChange={(date: Date) => {
 					const formattedDate = date ? formatDateAndTime(date, { withTime: true }) : ''

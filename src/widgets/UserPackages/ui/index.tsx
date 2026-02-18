@@ -10,14 +10,17 @@ import {
   UpcomingTabEmptyState,
 } from "@widgets/UserPackages/ui/EmptyStates.tsx";
 import { useTranslation } from "react-i18next";
-import { BookingFlow } from "@widgets/BookingFlow";
 import { useSetRecoilState } from "recoil";
-import { isLateCheckoutAtom } from "@/modules/packages/store/store";
-import { useEffect } from "react";
+import { bookingContextAtom, isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { useEffect, useRef } from "react";
+import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
 
 export const UserPackages = () => {
   const { t } = useTranslation();
   const setIsLateCheckout = useSetRecoilState(isLateCheckoutAtom);
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
+  const { navigateToBooking } = useLanguageNavigate();
+  const hasNavigatedRef = useRef(false);
   const {
     activeRequests,
     pendingRequests,
@@ -45,6 +48,51 @@ export const UserPackages = () => {
       setIsLateCheckout(activeRequest.notes.isLateCheckout);
     }
   }, [activeRequest?.notes.isLateCheckout, setIsLateCheckout]);
+
+  useEffect(() => {
+    if (!activeRequest) {
+      hasNavigatedRef.current = false;
+    }
+  }, [activeRequest]);
+
+  useEffect(() => {
+    if (
+      activeRequest &&
+      activeRequestPackage?.offerId &&
+      !isLoadingActiveRequestPackage &&
+      !hasNavigatedRef.current
+    ) {
+      hasNavigatedRef.current = true;
+      setBookingContext({
+        packageDetails: activeRequestPackage,
+        childrenAges: activeRequest.notes?.childrenAges || [],
+        initialView: incompleteInitialView,
+        request: activeRequest,
+        defaultTravelers: activeRequest.travelers
+          ? {
+              adults: activeRequest.travelers.map((t) => ({
+                firstName: t.firstName,
+                lastName: t.lastName,
+                dateOfBirth: t.dateOfBirth,
+              })),
+              children: [],
+            }
+          : undefined,
+        isBooked: !isActiveRequestDraft,
+      });
+      navigateToBooking();
+      handleBookingFlowClose();
+    }
+  }, [
+    activeRequest,
+    activeRequestPackage?.offerId,
+    isLoadingActiveRequestPackage,
+    incompleteInitialView,
+    isActiveRequestDraft,
+    setBookingContext,
+    navigateToBooking,
+    handleBookingFlowClose,
+  ]);
 
   return (
     <Layout>
@@ -130,25 +178,6 @@ export const UserPackages = () => {
           </TabContentLayout>
         )}
       </Tabs>
-
-      <BookingFlow
-        key={activeRequest?.id} // Add this line
-        initialView={incompleteInitialView}
-        childrenAges={activeRequest?.notes.childrenAges || []}
-        isOpen={!!activeRequestPackage?.offerId}
-        onClose={handleBookingFlowClose}
-        packageDetails={activeRequestPackage}
-        request={activeRequest}
-        defaultTravelers={(activeRequest?.travelers ? {
-          adults: activeRequest.travelers.map(traveler => ({
-            firstName: traveler.firstName,
-            lastName: traveler.lastName,
-            dateOfBirth: traveler.dateOfBirth
-          })),
-          children: []
-        } : undefined)}
-        isBooked={!isActiveRequestDraft}
-      />
     </Layout>
   );
 };

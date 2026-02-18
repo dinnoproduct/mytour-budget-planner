@@ -4,19 +4,17 @@ import {
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
-import { PackageEntity, usePackagesSearchContext } from "@entities/package";
+import { usePackagesSearchContext } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
-import { BookingFlow } from "@widgets/BookingFlow";
-import { usePackageDetailsFromStore } from "@/modules/packages/hooks";
 import { BookingDrawer } from "@shared/ui";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  isBookingFlowOpenAtom,
+  bookingContextAtom,
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
@@ -33,9 +31,7 @@ export const PackageDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
-    isBookingFlowOpenAtom,
-  );
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
   const {
     packageDetails,
     isFetched,
@@ -58,11 +54,20 @@ export const PackageDetailsPage = () => {
   useEffect(() => {
     return () => {
       clearBookingDrawerData();
-      setBookingFlowOpen(false);
       setModalOpen(false);
       setIsLateCheckout(false);
     };
   }, []);
+
+  useEffect(() => {
+    if (packageDetails?.offerId && childrenAges) {
+      setBookingContext({
+        packageDetails,
+        childrenAges,
+        initialView: 'travelers',
+      });
+    }
+  }, [packageDetails?.offerId, childrenAges, setBookingContext]);
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
@@ -177,14 +182,6 @@ export const PackageDetailsPage = () => {
           loading={loading}
         />
       )}
-      <BookingFlow
-        packageDetails={packageDetails}
-        initialView="travelers"
-        childrenAges={childrenAges}
-        // onBookingSuccess={handleBackClick}
-        isOpen={isBookingFlowOpen}
-        onClose={() => setBookingFlowOpen(false)}
-      />
     </PageLayout>
   );
 };

@@ -178,7 +178,9 @@
   "minPrePayment": "Minimum down payment",
   "minPrePaymentAmount": "Minimum required payment is {{amount}} AMD",
   "minPrePaymentPercentage": "Prepayment of {{percentage}}% of the price",
+  "payPartialDescription": "Enter the amount",
   "minPrePaymentText": "Minimum prepayment: {{amount}} of the package price",
+  "minPrePaymentTextWithDetails": "Since there are fewer than {{days}} days remaining until your trip, installment payment for this package is not available. In this case, full payment in the amount of {{amount}} AMD is required.",
   "mon": "Mon",
   "more": "More",
   "myPackages": "My packages",
@@ -248,7 +250,10 @@
   "past": "Past",
   "pastRequestsEmptyText": "No previously planned trips",
   "pay": "Pay",
+  "payFull": "Pay the full amount",
+  "payFullDescription": "You will pay the full amount of {{amount}} AMD",
   "payFullPrice": "Pay full price",
+  "payPartial": "Pay partially",
   "payInFull": "Pay in full",
   "payedAmount": "Payment",
   "payment": "Payment",
@@ -277,6 +282,7 @@
   "resend": "Resend",
   "resendIn": "Resend in {{seconds}} seconds",
   "reserve": "Reserve",
+  "selectPaymentMethod": "Select the payment method",
   "reserved": "Reserved",
   "return": "Return",
   "returning": "Returning",
@@ -387,5 +393,6 @@
   "faq.subtitle": "Answers to your questions — all in one place.",
   "faq.cta.title": "Didn't find the answer to your question?",
   "faq.cta.subtitle": "Contact us, and we'll answer the questions you are interested in.",
-  "faq.cta.orWriteUs": "or write to us"
+  "faq.cta.orWriteUs": "or write to us",
+  "booking.step": "Step {{step}}/{{total}}"
 }

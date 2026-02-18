@@ -178,7 +178,9 @@
   "minPrePayment": "Նվազագույն կանխավճար",
   "minPrePaymentAmount": "Դուք չեք կարող վճարել {{amount}} դրամից պակաս գումար",
   "minPrePaymentPercentage": "Կանխավճար՝ գնի {{percentage}}%-ի չափով",
+  "payPartialDescription": "Նշել գումարի չափը",
   "minPrePaymentText": "Նվազագույն կանխավճար՝ փաթեթի գնի {{amount}}-ի չափով",
+  "minPrePaymentTextWithDetails": "Քանի որ Ձեր ճանապարհորդությանը մնացել է {{days}} օրից պակաս ժամանակ, փաթեթի փուլային վճարում նախատեսված չէ։ Տվյալ դեպքում անհրաժեշտ է կատարել ամբողջական վճարում`  {{amount}} դրամի չափով։",
   "mon": "Երկ",
   "more": "Ավելին",
   "myPackages": "Իմ ամրագրումները",
@@ -248,6 +250,9 @@
   "past": "Անցած",
   "pastRequestsEmptyText": "Նախկինում պլանավորված ճանապարհորդություններ չկան",
   "pay": "Վճարել",
+  "payFull": "Վճարել ամբողջ գումարը",
+  "payFullDescription": "Դուք կվճարեք ամբողջ գումարը {{amount}} դրամ",
+  "payPartial": "Վճարել մասնակի",
   "payFullPrice": "Վճարել ամբողջը",
   "payInFull": "Վճարել ամբողջը",
   "payedAmount": "Վճարվող գումար",
@@ -277,6 +282,7 @@
   "resend": "Կրկին ուղարկել",
   "resendIn": "Կրկին ուղարկել {{seconds}} վայրկյանից",
   "reserve": "Ամրագրել",
+  "selectPaymentMethod": "Ընտրել վճարման մեթոդը",
   "reserved": "Ամրագրված",
   "return": "Վերադարձ",
   "returning": "Վերադարձ",
@@ -387,5 +393,6 @@
   "faq.subtitle": "Ձեզ հետաքրքրող հարցերի պատասխանները մեկ տեղում",
   "faq.cta.title": "Չե՞ք գտել ձեր հարցի պատասխանը",
   "faq.cta.subtitle": "Կապ հաստատեք մեզ հետ, և մենք կպատասխանենք ձեզ հետաքրքրող հարցերին",
-  "faq.cta.orWriteUs": "կամ գրեք մեզ"
+  "faq.cta.orWriteUs": "կամ գրեք մեզ",
+  "booking.step": "Քայլ {{step}}/{{total}}"
 }

@@ -1,27 +1,28 @@
-import { Box, Flex, Img, RadioGroup, VStack } from "@chakra-ui/react";
+import type { ReactNode } from "react";
+import { Box, Flex, Grid, Img } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { Button, NewBadge, Radio, SoonBadge, Text } from "@ui";
+import { Button, Icon, SoonBadge, Text } from "@ui";
+import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import {
   PaymentMethod,
   type PaymentMethodCardProps,
   type PaymentMethodViewProps,
 } from "@widgets/BookingFlow/ui/PaymentModal/types.ts";
-import { useState } from "react";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const PaymentMethodView = ({
   onSubmit,
   isLoadingBooking,
   packageDetails,
+  onBackClick,
+  renderAsPage = false,
+  selectedMethod,
+  onMethodChange,
 }: PaymentMethodViewProps) => {
   const { t } = useTranslation();
 
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(
-    PaymentMethod.bankCard,
-  );
-
   const handleMethodChange = (method: PaymentMethod) => {
-    setSelectedMethod(method);
+    onMethodChange(method);
   };
 
   const handleLogEvent = () => {
@@ -36,24 +37,54 @@ export const PaymentMethodView = ({
 
   const handleContinue = async () => {
     try {
-      // Track payment method selection step
       handleLogEvent();
-      onSubmit(selectedMethod);
+      onSubmit();
     } catch (error) {
       console.error("Error submitting payment method:", error);
     }
   };
 
+  const paymentMethodCards: Array<{
+    label: string;
+    imgSrc: string;
+    imgAlt: string;
+    value: PaymentMethod;
+    isDisabled: boolean;
+    labelSuffix?: ReactNode;
+  }> = [
+    {
+      label: "bankCard",
+      imgSrc: "https://dinno.blob.core.windows.net/icons/vpos.svg",
+      imgAlt: "bank card",
+      value: PaymentMethod.bankCard,
+      isDisabled: false,
+    },
+    {
+      label: "AmeriaPay",
+      imgSrc: "https://dinno.blob.core.windows.net/icons/myameriapay.svg",
+      imgAlt: "ameriaPay",
+      value: PaymentMethod.ameriaPay,
+      isDisabled: false,
+    },
+    {
+      label: "Idram",
+      imgSrc: "https://dinno.blob.core.windows.net/icons/idram.svg",
+      imgAlt: "idram",
+      value: PaymentMethod.idram,
+      isDisabled: false,
+    },
+  ];
+
   return (
-    <Flex direction="column" justify="space-between" width="full" height="full">
+    <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
       <Flex
         width="full"
-        py="6"
-        px="4"
-        overflowY="scroll"
-        maxHeight={{ base: "calc(100dvh - 160px)", md: "calc(464px - 160px)" }}
+        py={renderAsPage ? "0" : "6"}
+        px={renderAsPage ? "0" : "4"}
+        overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "scroll", md: "visible" }}
+        {...(renderAsPage ? {} : { maxHeight: { base: "calc(100dvh - 160px)", md: "none" } })}
         direction="column"
-        maxWidth="402px"
+        maxWidth={renderAsPage ? "full" : "402px"}
         mx="auto"
         sx={{
           "&::-webkit-scrollbar": {
@@ -61,61 +92,61 @@ export const PaymentMethodView = ({
           },
         }}
       >
-        <RadioGroup value={selectedMethod} onChange={handleMethodChange}>
-          <VStack align="stretch">
+        <Grid alignItems="stretch" gap={'0.75rem'} templateColumns={'repeat(2, 1fr)'}>
+          {paymentMethodCards.map((card) => (
             <PaymentMethodCard
-              label="bankCard"
-              imgSrc="/assets/images/bank-card.svg"
-              imgAlt="bank card"
-              radioProps={{
-                value: PaymentMethod.bankCard,
-                onChange: () => handleMethodChange(PaymentMethod.bankCard),
-              }}
-              isBorder
+              key={card.value}
+              label={card.label}
+              imgSrc={card.imgSrc}
+              imgAlt={card.imgAlt}
+              onChange={() => handleMethodChange(card.value)}
+              radioProps={{ value: card.value }}
+              isActive={selectedMethod === card.value}
+              isDisabled={card.isDisabled}
+              labelSuffix={card?.labelSuffix}
             />
-
-            <PaymentMethodCard
-              label="AmeriaPay"
-              imgSrc="/assets/images/ameria-pay.svg"
-              imgAlt="ameriaPay"
-              radioProps={{
-                value: PaymentMethod.ameriaPay,
-                onChange: () => handleMethodChange(PaymentMethod.ameriaPay),
-              }}
-              labelSuffix={<NewBadge mt="1" />}
-              isBorder
-            />
-
-            <PaymentMethodCard
-              label="onlineLoan"
-              imgSrc="/assets/images/online-loan.svg"
-              imgAlt="online loan"
-              labelSuffix={<SoonBadge mt="1" />}
-              isDisabled
-            />
-          </VStack>
-        </RadioGroup>
+          ))}
+        </Grid>
       </Flex>
 
-      <Box
-        p="4"
-        width="full"
-        borderTop="1px solid"
-        borderColor="gray.100"
-        backgroundColor="white"
-        mt="auto"
-      >
-        <Button
-          variant="solid-blue"
-          type="submit"
-          size="lg"
+      {renderAsPage && onBackClick ? (
+        <StepBottomActions
+          stickyOnMobile
+          onBack={onBackClick}
+          backLabel={t`back`}
+          isDisabled={isLoadingBooking}
+          primaryButton={
+            <Button
+              variant="solid-blue"
+              size="lg"
+              width="full"
+              onClick={handleContinue}
+              isLoading={isLoadingBooking}
+            >
+              {t`pay`}
+            </Button>
+          }
+        />
+      ) : (
+        <Box
+          p="4"
           width="full"
-          onClick={handleContinue}
-          isLoading={isLoadingBooking}
+          borderTop="1px solid"
+          borderColor="gray.100"
+          backgroundColor="white"
+          mt="auto"
         >
-          {t`pay`}
-        </Button>
-      </Box>
+          <Button
+            variant="solid-blue"
+            size="lg"
+            width="full"
+            onClick={handleContinue}
+            isLoading={isLoadingBooking}
+          >
+            {t`pay`}
+          </Button>
+        </Box>
+      )}
     </Flex>
   );
 };
@@ -125,43 +156,56 @@ const PaymentMethodCard = ({
   imgSrc,
   imgAlt,
   radioProps,
-  isBorder,
   isDisabled,
   labelSuffix,
+  isActive,
+  onChange,
 }: PaymentMethodCardProps) => {
   const { t } = useTranslation();
 
   const handleCardClick = () => {
-    if (!isDisabled && radioProps?.onChange) {
-      radioProps.onChange({ target: { value: radioProps.value } } as any);
+    if (!isDisabled && onChange && radioProps?.value !== undefined) {
+      onChange({ target: { value: radioProps.value } } as any);
     }
   };
 
   return (
     <Flex
       align="center"
-      justify="space-between"
-      py="3"
-      borderBottom={isBorder ? "1px solid" : "none"}
-      borderColor="gray.300"
+      justify="center"
+      py="5"
+      position={'relative'}
+      border={"1px solid"}
+      borderRadius={'12px'}
+      borderColor={isActive ? "blue.500" : "gray.200"}
       opacity={isDisabled ? "0.4" : "1"}
       cursor={isDisabled ? "not-allowed" : "pointer"}
       onClick={handleCardClick}
+      transition={'0.2s'}
     >
-      <Flex align="center">
+      <Box 
+        position={'absolute'}
+        top={'8px'}
+        right={'8px'}
+        transform={isActive ? 'scale(1)' : 'scale(0)'}
+        transition={'.2s'}
+      >
+        <Icon name="checkmark-circle" size={'20'} color={'blue.500'} />
+      </Box>
+      <Box 
+        position={'absolute'}
+        top={'8px'}
+        left={'8px'}
+      >
+        {labelSuffix}
+      </Box>
+
+      <Flex align="center" flexDirection={'column'} gap={2}>
         <Img src={imgSrc} alt={imgAlt} height="40px" width="40px" />
-        <Text size="sm" ml="3" mr={labelSuffix ? "1" : "0"}>
+        <Text size="sm" >
           {t(label)}
         </Text>
-
-        {labelSuffix}
       </Flex>
-
-      <Radio
-        cursor={isDisabled ? "not-allowed !important" : "pointer"}
-        size="lg"
-        {...(radioProps || {})}
-      />
     </Flex>
   );
 };
