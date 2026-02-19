@@ -11,5 +11,5 @@ export type BookingFlowProps = {
   defaultTravelers?: Travelers
   isBooked?: boolean
   renderAsPage?: boolean
-  onNavigateToMyPackages?: () => void
+  onNavigateToMyPackages?: (queryParams?: string) => void
 }

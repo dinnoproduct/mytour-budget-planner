@@ -32,8 +32,7 @@ export const StepBottomActions = ({
               size="lg"
               width="full"
               onClick={onBack}
-              isDisabled={isDisabled}
-              isLoading={isLoadingBooking}
+              isDisabled={isDisabled || isLoadingBooking}
             >
               {backLabel}
             </Button>

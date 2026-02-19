@@ -90,13 +90,15 @@ export const BookingFlow = ({
               : 2
             : currentPaymentView === "previewDetails"
               ? startedSignedOut
-                ? (isNoPrepayment ? 3 : 4)
+                ? 4
                 : 3
               : currentPaymentView === "paymentMethod"
                 ? startedSignedOut
-                  ? 4
-                  : 3
-                : totalSteps-1;
+                  ? 5
+                  : 4
+                : currentPaymentView === "paymentSuccess"
+                  ? totalSteps
+                  : totalSteps - 1;
 
   return (
     <Box
@@ -183,13 +185,14 @@ export const BookingFlow = ({
                   skipPreviewStep={!!request}
                   renderAsPage={renderAsPage}
                   onNavigateToMyPackages={onNavigateToMyPackages}
+                  onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
                 />
               )}
 
               {modalView === "success" && (
                 <PaymentSuccessModal
                   closeModal={
-                    onNavigateToMyPackages ?? (() => closeModal())
+                    (onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined) ?? (() => closeModal())
                   }
                 />
               )}
@@ -233,6 +236,7 @@ export const BookingFlow = ({
               skipPreviewStep={!!request}
               renderAsPage={renderAsPage}
               onNavigateToMyPackages={onNavigateToMyPackages}
+              onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
             />
           )}
 
