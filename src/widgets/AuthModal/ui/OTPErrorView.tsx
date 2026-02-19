@@ -1,9 +1,9 @@
 import { Button, Illustration, Text } from '@ui'
-import { SignInErrorViewProps } from '@widgets/AuthModal/ui/types.ts'
+import { LayoutVariant } from '@widgets/AuthModal/ui/types.ts'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 
-export const OTPErrorView = () => {
+export const OTPErrorView = ({ layoutVariant = 'modal' }: { layoutVariant?: LayoutVariant }) => {
 	const { t } = useTranslation()
 
 	return (
@@ -16,12 +16,16 @@ export const OTPErrorView = () => {
 			<VStack
 				spacing="4"
 				py="10"
-				px="4"
-				mx="auto"
-				overflowY="scroll"
+				px={layoutVariant === 'page' ? 0 : 4}
+				mx={layoutVariant === 'page' ? 0 : 'auto'}
+				overflowY={layoutVariant === 'page' ? 'visible' : 'scroll'}
 				width="full"
-				height={{ base: 'calc(100dvh - 160px)', md: 'auto' }}
-				maxWidth="402px"
+				height={
+					layoutVariant === 'page'
+						? 'auto'
+						: { base: 'calc(100dvh - 160px)', md: 'auto' }
+				}
+				maxWidth={layoutVariant === 'page' ? 'none' : '402px'}
 				sx={{
 					'&::-webkit-scrollbar': {
 						width: '0'

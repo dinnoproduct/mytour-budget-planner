@@ -8,7 +8,7 @@ import { ContentLayout } from '@widgets/AuthModal/ui/ContentLayout.tsx'
 
 const FIELD_COUNT = 4
 
-export const VerifyView = ({ onSuccess, type, payload, onViewChange }: VerifyViewProps) => {
+export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVariant = 'modal' }: VerifyViewProps) => {
 	const { t } = useTranslation()
 	const [verificationCode, setVerificationCode] = useState(Array(FIELD_COUNT).fill(''))
 	const { setUserToken } = useUserContext()
@@ -86,12 +86,26 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange }: VerifyVie
 		await resendVerificationCode(payload.formData.phoneNumber)
 	}
 
+	const contentContainerProps =
+		layoutVariant === 'page'
+			? {
+					width: 'full',
+					maxWidth: '500px',
+					px: 0,
+					height: 'auto',
+					overflowY: 'visible' as const,
+					spacing: 4
+				}
+			: { spacing: 4 }
+
 	return (
 		<ContentLayout
 			primaryButtonLabel={t`confirm`}
-			contentContainerProps={{ spacing: 4 }}
+			isDisabled={verificationCode.some(code => code === '')}
+			contentContainerProps={contentContainerProps}
 			onSubmit={(e) => handleVerify(e)}
 			isLoading={isLoadingConfirmRegistration || isLoadingConfirmLogin}
+			layoutVariant={layoutVariant}
 		>
 			<Flex direction="column" align="center" width="full" textAlign="center">
 				<Illustration name="otp"/>

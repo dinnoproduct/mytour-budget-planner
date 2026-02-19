@@ -5,10 +5,10 @@ import { numberWithCommaNormalizer } from "@/utils/normalizers";
 import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@/shared/utils";
 import { Icon, Text } from "@/shared/ui";
-import { useModalContext } from "@/app/providers";
-import { useUserContext } from "@/entities/user";
-import { useRecoilState } from "recoil";
-import { isBookingFlowOpenAtom } from "@/modules/packages/store/store";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { bookingContextAtom } from "@/modules/packages/store/store";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
+import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
 
 export const Footer: React.FC<{
   offer: IGeneratedMultivendorOffer;
@@ -16,35 +16,29 @@ export const Footer: React.FC<{
   updateSelectedRoomPackage: (offer: IGeneratedMultivendorOffer) => void;
 }> = ({ offer, closeBookingDrawer, updateSelectedRoomPackage }) => {
   const { t } = useTranslation();
-  const { dispatchModal } = useModalContext();
-  const { user } = useUserContext();
-  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
-    isBookingFlowOpenAtom,
-  );
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
+  const bookingContext = useRecoilValue(bookingContextAtom);
+  const { selectedPackage, updateSelectedRoomPackage: fetchSelectedPackage } =
+    useBookingDrawer();
+  const { navigateToBooking } = useLanguageNavigate();
 
-  const openAuthModal = () => {
-    if (user?.id) {
-      setBookingFlowOpen(true);
-      closeBookingDrawer()
-      return;
-    }
-
-    dispatchModal({
-      type: "open",
-      modalType: "auth",
-      props: {
-        view: "signUp",
-        isCloseOnSuccess: true,
-        onSuccess: () => {
-          setBookingFlowOpen(true);
-        },
-      },
+  const openBookingPage = () => {
+    const context = bookingContext ?? {
+      packageDetails: null,
+      childrenAges: [] as number[],
+      initialView: 'travelers' as const,
+    };
+    setBookingContext({
+      ...context,
+      packageDetails: selectedPackage,
     });
+    closeBookingDrawer();
+    navigateToBooking();
   };
 
-  const handleBookClick = (offer: IGeneratedMultivendorOffer) => {
-    updateSelectedRoomPackage(offer);
-    openAuthModal();
+  const handleBookClick = async (offer: IGeneratedMultivendorOffer) => {
+    await fetchSelectedPackage(offer);
+    openBookingPage();
   };
 
   return (

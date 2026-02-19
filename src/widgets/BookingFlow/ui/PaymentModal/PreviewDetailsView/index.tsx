@@ -8,6 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Button, Heading, HotelStarBadge, Input, Text } from "@ui";
+import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import { useTranslation } from "react-i18next";
 import {
   type PreviewDetailsViewProps,
@@ -52,6 +53,8 @@ export const PreviewDetailsView = ({
   promoCodeStatus,
   setPromoCodeStatus,
   paymentOption = "pay",
+  onBackClick,
+  renderAsPage = false,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [promoCodeValue, setPromoCodeValue] = useState("");
@@ -359,15 +362,21 @@ export const PreviewDetailsView = ({
         direction="column"
         justify="space-between"
         width="full"
-        height="full"
-        maxH={{ base: "calc(100dvh - 82px)", md: "526px" }}
+        {...(renderAsPage ? {} : { height: "full", maxH: { base: "calc(100dvh - 82px)", md: "none" } })}
       >
         <Box
           flex="1"
-          p="4"
-          overflowY="auto"
-          bg="gray.50"
-          height="calc(100% - 174px)"
+          py="4"
+          overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "auto", md: "visible" }}
+          overflowX="hidden"
+          {...(renderAsPage
+            ? {}
+            : { height: { base: "calc(100% - 174px)", md: "auto" }, minH: 0 })}
+          pb={{
+            base: 4,
+            md: 4,
+          }}
+          mb={{base: renderAsPage ? "180px": '80px', md: 0}}
         >
           <Flex direction="column">
             <Flex align="center" justify="space-between">
@@ -498,12 +507,18 @@ export const PreviewDetailsView = ({
         </Box>
 
         <Box
-          p="4"
+          px={{base: "4", md: "0"}}
+          py="4"
           width="full"
-          borderTop="1px solid"
-          borderColor="gray.100"
+          borderTop={{base: "1px solid", md: "none"}} 
+          borderColor={{base: "gray.100", md: "transparent"}}
           backgroundColor="white"
           mt="auto"
+          position={{ base: 'fixed', md: 'relative' }}
+          bottom={{ base: 0, md: 'auto' }}
+          left={{ base: 0, md: 'auto' }}
+          right={{ base: 0, md: 'auto' }}
+          zIndex={{ base: 10, md: undefined }}
         >
           <Flex justify="space-between" align="center">
             <Text size="md" fontWeight="medium" color="gray.600">
@@ -527,16 +542,37 @@ export const PreviewDetailsView = ({
               </Text>
             </Flex>
           </Flex>
-          <Button
-            variant="solid-blue"
-            width="full"
-            mt="3"
-            onClick={onPay}
-            isLoading={isLoadingBooking}
-            size="lg"
-          >
-            {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("pay"): t("reserve")}
-          </Button>
+          {renderAsPage && onBackClick ? (
+            <StepBottomActions
+              inline
+              isLoadingBooking={isLoadingBooking}
+              stickyOnMobile
+              onBack={onBackClick}
+              backLabel={t`back`}
+              primaryButton={
+                <Button
+                  variant="solid-blue"
+                  width="full"
+                  onClick={onPay}
+                  isLoading={isLoadingBooking}
+                  size="lg"
+                >
+                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("reserve") : t("selectPaymentMethod")}
+                </Button>
+              }
+            />
+          ) : (
+            <Button
+              variant="solid-blue"
+              width="full"
+              mt="3"
+              onClick={onPay}
+              isLoading={isLoadingBooking}
+              size="lg"
+            >
+              {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("reserve") : t("reserve")}
+            </Button>
+          )}
         </Box>
       </Flex>
 
@@ -550,6 +586,7 @@ export const PreviewDetailsView = ({
             setIsCancellationPolicyModalOpen(false);
           }}
           policyType={policyModalType}
+          packageDetails={packageDetails}
         />
       </Portal>
     </>

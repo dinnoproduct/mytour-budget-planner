@@ -9,6 +9,7 @@ export const SignUpView = ({
   onSuccess,
   onViewChange,
   formData,
+  layoutVariant = "modal",
 }: SignUpViewProps) => {
   const { t } = useTranslation();
   const {
@@ -56,14 +57,26 @@ export const SignUpView = ({
     registerUser(data);
   };
 
+  const contentContainerProps =
+    layoutVariant === "page"
+      ? {
+          width: "full",
+          maxWidth: "500px",
+          px: 0,
+          height: "auto",
+          overflowY: "visible" as const,
+        }
+      : {
+          height: "auto",
+        };
+
   return (
     <ContentLayout
       primaryButtonLabel={t`sign-up`}
       secondaryButtonLabel={t`sign-in`}
       onSubmit={handleSubmit(handleSignUp)}
-      contentContainerProps={{ 
-        height: "auto"
-       }}
+      contentContainerProps={contentContainerProps}
+      layoutVariant={layoutVariant}
       onSecondaryButtonClick={() => onViewChange?.("signIn")}
       isLoading={isPending}
     >

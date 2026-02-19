@@ -29,7 +29,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
       {...props}
     >
       {showHeader && <Header />}
-      <Box flex="1 0 auto" width="full">
+      <Box flex="1 0 auto" width="full" display="flex" flexDirection="column" minH={0}>
         {children}
       </Box>
       {showFooter && <Footer {...footerProps} />}

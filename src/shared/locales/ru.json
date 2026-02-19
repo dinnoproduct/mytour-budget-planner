@@ -179,7 +179,9 @@
   "minPrePayment": "Минимальный первоначальный взнос",
   "minPrePaymentAmount": "Минимальная оплата- {{amount}} драмов РА",
   "minPrePaymentPercentage": "Предоплата {{percentage}}% от стоимости",
+  "payPartialDescription": "Указать сумму",
   "minPrePaymentText": "Минимальная предоплата {{amount}} от стоимости пакета",
+  "minPrePaymentTextWithDetails": "Поскольку до вашей поездки осталось менее {{days}} дней, по данному пакету поэтапная оплата недоступна. В этом случае необходимо произвести полную оплату в размере {{amount}} драмов.",
   "mon": "Пн",
   "more": "Больше",
   "myPackages": "Мои бронирования",
@@ -249,6 +251,10 @@
   "past": "Прошлые",
   "pastRequestsEmptyText": "Нет ранее запланированных поездок",
   "pay": "Оплатить",
+  "payFull": "Оплатить всю сумму",
+  "payFullDescription": "Вы оплатите полную сумму {{amount}} драм",
+  
+  "payPartial": "Оплатить частично",
   "payFullPrice": "Оплатить полную стоимость",
   "payInFull": "Оплатить полностью",
   "payedAmount": "Оплата",
@@ -278,6 +284,7 @@
   "resend": "Отправить повторно",
   "resendIn": "Отправить повторно через {{seconds}} секунд",
   "reserve": "Зарезервировать",
+  "selectPaymentMethod": "Выбрать способ оплаты",
   "reserved": "Забронированый",
   "return": "Возврат",
   "returning": "Возвращение",
@@ -389,5 +396,6 @@
   "faq.cta.title": "Не нашли ответ на свой вопрос?",
   "faq.cta.subtitle": "Свяжитесь с нами, и мы ответим на интересующие вас вопросы",
   "faq.cta.orWriteUs": "или напишите нам",
-  "groupTours": "Групповые туры"
+  "groupTours": "Групповые туры",
+  "booking.step": "Шаг {{step}}/{{total}}"
 }

@@ -14,6 +14,21 @@ export type CardAlertMessageProps = {
   status: CardAlertMessageStatus
   iconPlacement?: 'center' | 'start'
   textSize?: 'xs' | 'sm' | 'md'
+  showIcon?: boolean
 } & FlexProps
+
+export type CardAlertMultipleMessagesProps = {
+  show?: boolean
+  messages: MultipleMessage[]
+  status: CardAlertMessageStatus
+  iconPlacement?: 'center' | 'start'
+  textSize?: 'xs' | 'sm' | 'md'
+  showIcon?: boolean
+} & FlexProps
+
+export type MultipleMessage = {
+  message: string
+  hasNewLine?: boolean
+}
 
 export type CardAlertMessageStatus = 'warning' | 'error' | 'info'

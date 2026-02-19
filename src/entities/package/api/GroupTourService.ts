@@ -20,8 +20,8 @@ export class GroupTourService {
     )
 
     const url = version
-      ? `/${version}/package${restConfig.url}`
-      : `/package${restConfig.url}`
+      ? `/${version}/search${restConfig.url}`
+      : `/search${restConfig.url}`
 
     return api({
       ...restConfig,
@@ -32,7 +32,8 @@ export class GroupTourService {
   // package
   async getGroupTours(): Promise<any[]> {
     return this.request<any[]>({
-      url: '/getGroupTours'
+      url: '/getGroupTours',
+      version: 'V2'
     })
   }
 }

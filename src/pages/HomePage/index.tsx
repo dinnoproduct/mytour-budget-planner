@@ -1,20 +1,16 @@
 import { PackageSearch } from '@widgets/PackageSearch'
-import { HotOffersSection } from '@widgets/HotOffersSection'
+// import { HotOffersSection } from '@widgets/HotOffersSection'
 import { useEffect, useState } from 'react'
-import { useModalContext } from '@app/providers'
-import { useLocation } from 'react-router-dom'
 import { PackageBanner } from './PackageBanner'
-import { AppSection } from './AppSection.tsx'
-import { AboutUsBanner } from './AboutUsBanner.tsx'
-import { BlogsSection } from '@widgets/BlogsSection'
-import {CityOffersSection} from "@widgets/CityOffersSection/ui";
+// import { AppSection } from './AppSection.tsx'
+// import { AboutUsBanner } from './AboutUsBanner.tsx'
+// import { BlogsSection } from '@widgets/BlogsSection'
+import { CityOffersSection } from "@widgets/CityOffersSection/ui"
 import { PageLayout } from '@/shared/ui/layout/PageLayout'
 import { StoriesSection } from '@widgets/StoriesSection'
 import { GroupTourList } from '@widgets/GroupTourList'
 
 export const HomePage = () => {
-  const { dispatchModal } = useModalContext()
-  const location = useLocation()
   const [tabIndex, setTabIndex] = useState(0)
 
   useEffect(() => {
@@ -29,27 +25,6 @@ export const HomePage = () => {
     script.src = 'https://embedsocial.com/cdn/ht.js'
     document.head.appendChild(script)
   }, [])
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search)
-    const successState = queryParams.get('success')?.toLowerCase()
-    const paymentStatusModal =
-      successState === 'true'
-        ? 'paymentSuccess'
-        : successState === 'false'
-          ? 'paymentError'
-          : null
-
-    if (paymentStatusModal) {
-      setTimeout(() => {
-        dispatchModal({
-          type: 'open',
-          modalType: paymentStatusModal
-        })
-      }, 0)
-    }
-  }, [JSON.stringify(location.search), dispatchModal])
-
 
   return (
     <PageLayout background='white'>
