@@ -99,6 +99,7 @@ export const UserPackages = () => {
       <Heading size="sm-md">{t`myPackages`}</Heading>
 
       <Tabs
+        align="start"
         labels={[t`upcoming`, t`incomplete`, t`past`, t`canceled`]}
         mt="10"
         index={tab}
