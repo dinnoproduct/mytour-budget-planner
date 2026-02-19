@@ -18,6 +18,7 @@ import { isMobile } from 'react-device-detect'
 import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
+import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
 export const useBookingFlow = ({
   packageDetails,
@@ -32,6 +33,7 @@ export const useBookingFlow = ({
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
+  const { navigateToBookingResult } = useLanguageNavigate()
   const { mutateAsync: createRequestAsync } = useCreateRequest()
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
@@ -151,7 +153,11 @@ export const useBookingFlow = ({
         if (paymentOption === 'noPrepayment') {
           await reservePackageAsync(bookInput)
           setIsLoadingBooking(false)
-          setPaymentModalView('paymentSuccess')
+          if (renderAsPage) {
+            navigateToBookingResult({ success: true, replace: true })
+          } else {
+            setPaymentModalView('paymentSuccess')
+          }
           return
         }
 
@@ -160,12 +166,20 @@ export const useBookingFlow = ({
         setIsLoadingBooking(false)
 
         if (!bookResponse.success) {
-          setPaymentModalView('paymentError')
+          if (renderAsPage) {
+            navigateToBookingResult({ error: true, replace: true })
+          } else {
+            setPaymentModalView('paymentError')
+          }
           return
         }
 
         if (!bookResponse.bookingPaymentUrl) {
-          setPaymentModalView('paymentSuccess')
+          if (renderAsPage) {
+            navigateToBookingResult({ success: true, replace: true })
+          } else {
+            setPaymentModalView('paymentSuccess')
+          }
           return
         }
 
@@ -185,10 +199,14 @@ export const useBookingFlow = ({
           window.location.href = bookResponse.bookingPaymentUrl
         }
       } catch (e) {
-        setPaymentModalView('paymentError')
+        if (renderAsPage) {
+          navigateToBookingResult({ error: true, replace: true })
+        } else {
+          setPaymentModalView('paymentError')
+        }
       }
     },
-    [request, packageDetails?.offerId, travelers]
+    [request, packageDetails?.offerId, travelers, renderAsPage, navigateToBookingResult]
   )
 
   useEffect(() => {

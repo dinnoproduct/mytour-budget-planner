@@ -18,6 +18,7 @@ export const Layout = ({
   title,
   onBackClick,
   renderAsPage = false,
+  isLoadingBooking = false,
 }: LayoutProps) => {
   const modalContentRef = useRef<HTMLDivElement>(null)
 
@@ -54,6 +55,7 @@ export const Layout = ({
                   variant="text-blue"
                   size="lg"
                   onClick={onBackClick}
+                  isDisabled={isLoadingBooking}
                 />
               ) : null}
               <Text size="lg" fontWeight="medium">

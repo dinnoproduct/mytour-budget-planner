@@ -53,6 +53,21 @@ export const useLanguageNavigate = () => {
     navigateTo(path, { replace: options?.replace });
   };
 
+  const navigateToBookingResult = (
+    options?: { success?: boolean; error?: boolean; replace?: boolean }
+  ) => {
+    const params = new URLSearchParams()
+    if (options?.success) {
+      params.set('success', 'true')
+    }
+    if (options?.error) {
+      params.set('error', 'true')
+    }
+    const queryString = params.toString()
+    const path = queryString ? `/booking-result?${queryString}` : '/booking-result'
+    navigateTo(path, { replace: options?.replace })
+  };
+
   return {
     navigateTo,
     navigateBack,
@@ -63,6 +78,7 @@ export const useLanguageNavigate = () => {
     navigateToBlogs,
     navigateToMyPackages,
     navigateToBooking,
+    navigateToBookingResult,
     // Keep original navigate for special cases
     navigate,
   };

@@ -42,7 +42,8 @@ export type PaymentModalProps = {
   renderAsPage?: boolean
   onViewChange?: (view: PaymentModalView) => void
   onPaymentOptionChange?: (paymentOption: PaymentOption) => void
-  onNavigateToMyPackages?: () => void
+  onNavigateToMyPackages?: (queryParams?: string) => void
+  onSuccessClose?: () => void
 }
 
 export type PaymentFormViewProps = {
@@ -100,6 +101,7 @@ export type LayoutProps = {
   title: string
   onBackClick?: () => void
   renderAsPage?: boolean
+  isLoadingBooking?: boolean
 }
 
 export type PaymentModalView =

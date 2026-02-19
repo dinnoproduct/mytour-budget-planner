@@ -33,9 +33,9 @@ export const BookingPage = () => {
     }
   }, [bookingContext, navigateToMyPackages])
 
-  const handleGoToMyPackages = () => {
+  const handleGoToMyPackages = (queryParams?: string) => {
     setBookingContext(null)
-    navigateToMyPackages({ queryParams: 'tab=1' })
+    navigateToMyPackages({ queryParams: queryParams})
   }
 
   if (!bookingContext) {
@@ -58,7 +58,7 @@ export const BookingPage = () => {
         defaultTravelers={bookingContext.defaultTravelers}
         isBooked={bookingContext.isBooked}
         renderAsPage={true}
-        onNavigateToMyPackages={handleGoToMyPackages}
+        onNavigateToMyPackages={(queryParams?: string) => handleGoToMyPackages(queryParams)}
       />
       </Flex>
     </PageLayout>
