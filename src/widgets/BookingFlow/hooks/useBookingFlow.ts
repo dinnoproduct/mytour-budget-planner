@@ -4,6 +4,7 @@ import {
   type PaymentSystem,
   useBookPackage,
   useCreateRequest,
+  useReservePackage,
   useUpdateRequest,
   type NormalizedRequestEntity,
   useCalculatePrepayment,
@@ -11,12 +12,13 @@ import {
   useValidatePromoCode
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
+import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types.ts'
 import { isMobile } from 'react-device-detect'
 
 import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
+import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
 export const useBookingFlow = ({
   packageDetails,
@@ -31,9 +33,11 @@ export const useBookingFlow = ({
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
+  const { navigateToBookingResult } = useLanguageNavigate()
   const { mutateAsync: createRequestAsync } = useCreateRequest()
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
+  const { mutateAsync: reservePackageAsync } = useReservePackage()
   const validatePromoCode = useValidatePromoCode()
   const isRequestInProgressRef = useRef(false)
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
@@ -90,6 +94,7 @@ export const useBookingFlow = ({
     async (
       paymentAmount: number,
       paymentSystem: PaymentSystem,
+      paymentOption: PaymentOption,
       promoCodeInfo?: {
         promoCode: string
         initialPrice: number
@@ -145,17 +150,36 @@ export const useBookingFlow = ({
           bookInput.foodType = packageDetails.foodType || 0
         }
 
+        if (paymentOption === 'noPrepayment') {
+          await reservePackageAsync(bookInput)
+          setIsLoadingBooking(false)
+          if (renderAsPage) {
+            navigateToBookingResult({ success: true, replace: true })
+          } else {
+            setPaymentModalView('paymentSuccess')
+          }
+          return
+        }
+
         sessionStorage.setItem('isPaymentRedirect', '1')
         const bookResponse = await bookPackageAsync(bookInput)
         setIsLoadingBooking(false)
 
         if (!bookResponse.success) {
-          setPaymentModalView('paymentError')
+          if (renderAsPage) {
+            navigateToBookingResult({ error: true, replace: true })
+          } else {
+            setPaymentModalView('paymentError')
+          }
           return
         }
 
-        if (!bookResponse.bookingPaymentUrl && bookResponse.success) {
-          setPaymentModalView('paymentSuccess')
+        if (!bookResponse.bookingPaymentUrl) {
+          if (renderAsPage) {
+            navigateToBookingResult({ success: true, replace: true })
+          } else {
+            setPaymentModalView('paymentSuccess')
+          }
           return
         }
 
@@ -175,10 +199,14 @@ export const useBookingFlow = ({
           window.location.href = bookResponse.bookingPaymentUrl
         }
       } catch (e) {
-        setPaymentModalView('paymentError')
+        if (renderAsPage) {
+          navigateToBookingResult({ error: true, replace: true })
+        } else {
+          setPaymentModalView('paymentError')
+        }
       }
     },
-    [request, packageDetails?.offerId, travelers]
+    [request, packageDetails?.offerId, travelers, renderAsPage, navigateToBookingResult]
   )
 
   useEffect(() => {

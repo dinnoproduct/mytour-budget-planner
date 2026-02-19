@@ -68,9 +68,13 @@ export const BookingFlow = ({
 
   const startedSignedOutRef = useRef(!user?.id);
   const startedSignedOut = startedSignedOutRef.current;
-  const totalSteps = renderAsPage && startedSignedOut ? 5 : 4;
+  const [paymentOption, setPaymentOption] = useState<'payFull' | 'pay' | 'noPrepayment'>('pay');
   const [paymentView, setPaymentView] = useState(paymentModalView);
   const currentPaymentView = modalView === "payment" ? paymentView : "paymentForm";
+  const isNoPrepayment = paymentOption === 'noPrepayment';
+  const totalSteps = renderAsPage && startedSignedOut 
+    ? (isNoPrepayment ? 4 : 6)
+    : (isNoPrepayment ? 3 : 5);
   const progressStep =
     modalView === "success"
       ? totalSteps
@@ -88,7 +92,13 @@ export const BookingFlow = ({
               ? startedSignedOut
                 ? 4
                 : 3
-              : totalSteps;
+              : currentPaymentView === "paymentMethod"
+                ? startedSignedOut
+                  ? 5
+                  : 4
+                : currentPaymentView === "paymentSuccess"
+                  ? totalSteps
+                  : totalSteps - 1;
 
   return (
     <Box
@@ -165,6 +175,7 @@ export const BookingFlow = ({
                     initialView === "payment" ? undefined : openTravelersModal
                   }
                   onViewChange={setPaymentView}
+                  onPaymentOptionChange={setPaymentOption}
                   isLoadingBooking={isLoadingBooking}
                   isBooked={isBooked}
                   prepaymentInfo={prepaymentInfo}
@@ -174,13 +185,14 @@ export const BookingFlow = ({
                   skipPreviewStep={!!request}
                   renderAsPage={renderAsPage}
                   onNavigateToMyPackages={onNavigateToMyPackages}
+                  onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
                 />
               )}
 
               {modalView === "success" && (
                 <PaymentSuccessModal
                   closeModal={
-                    onNavigateToMyPackages ?? (() => closeModal())
+                    (onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined) ?? (() => closeModal())
                   }
                 />
               )}
@@ -214,6 +226,7 @@ export const BookingFlow = ({
                 initialView === "payment" ? undefined : openTravelersModal
               }
               onViewChange={setPaymentView}
+              onPaymentOptionChange={setPaymentOption}
               isLoadingBooking={isLoadingBooking}
               isBooked={isBooked}
               prepaymentInfo={prepaymentInfo}
@@ -223,6 +236,7 @@ export const BookingFlow = ({
               skipPreviewStep={!!request}
               renderAsPage={renderAsPage}
               onNavigateToMyPackages={onNavigateToMyPackages}
+              onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
             />
           )}
 

@@ -20,6 +20,8 @@ import {
 } from "@entities/package";
 import { PreviewDetailsView } from "@/widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView/index.tsx";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents.ts";
+import { Button, Illustration, Text } from "@ui";
+import { Flex } from "@chakra-ui/react";
 
 export const PaymentModal = ({
   closeModal,
@@ -37,7 +39,9 @@ export const PaymentModal = ({
   skipPreviewStep = false,
   renderAsPage = false,
   onViewChange,
+  onPaymentOptionChange,
   onNavigateToMyPackages,
+  onSuccessClose,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const [activeView, setActiveView] = useState<PaymentModalView>(
@@ -137,23 +141,54 @@ export const PaymentModal = ({
           prepaymentInfo={prepaymentInfo}
           onBackClick={renderAsPage ? onBackClick : undefined}
           renderAsPage={renderAsPage}
+          onPaymentOptionChange={onPaymentOptionChange}
         />
       ),
       paymentError: () => (
         <PaymentErrorView
-          onGoToMyPackages={renderAsPage ? onNavigateToMyPackages : undefined}
+          onGoToMyPackages={renderAsPage && onNavigateToMyPackages ? () => onNavigateToMyPackages('tab=1') : undefined}
           renderAsPage={renderAsPage}
         />
       ),
       paymentSuccess: () => (
-        <PaymentSuccessModal
-          closeModal={onNavigateToMyPackages ?? closeModal}
-        />
+        renderAsPage ? (
+          <Flex
+            direction="column"
+            align="center"
+            justify="center"
+            width="full"
+            py="10"
+            px="4"
+            maxW="402px"
+            mx="auto"
+            minH={{ base: 'calc(100dvh - 200px)', md: '400px' }}
+          >
+            <Illustration name="success" />
+            <Text size="sm" mt="4" align="center">
+              {t`paymentSuccessModalText`}
+            </Text>
+            <Button
+              mt="6"
+              variant="solid-blue"
+              size="lg"
+              width="full"
+              onClick={onSuccessClose ?? (onNavigateToMyPackages ? () => onNavigateToMyPackages() : closeModal)}
+            >
+              {t`myPackages`}
+            </Button>
+          </Flex>
+        ) : (
+          <PaymentSuccessModal
+            closeModal={onSuccessClose ?? closeModal}
+          />
+        )
       ),
       previewDetails: () => (
         <PreviewDetailsView
           onPay={() => {
-            if (promoCodeStatus.isApplied && calculatePromoCodePaymentAmount === 0) {
+            if (paymentOption === "noPrepayment") {
+              handlePay(PaymentMethod.bankCard);
+            } else if (promoCodeStatus.isApplied && calculatePromoCodePaymentAmount === 0) {
               handlePay(PaymentMethod.bankCard);
             } else {
               setActiveView("paymentMethod");
@@ -259,12 +294,13 @@ export const PaymentModal = ({
         await onSuccess(
           amount,
           "MyAmeriaPay" as PaymentSystem.MyAmeriaPay,
+          paymentOption,
           promoCodeInfo,
         );
       } else if (paymentMethod === PaymentMethod.bankCard) {
-        await onSuccess(amount, "VPos" as PaymentSystem.VPos, promoCodeInfo);
+        await onSuccess(amount, "VPos" as PaymentSystem.VPos, paymentOption, promoCodeInfo);
       } else if (paymentMethod === PaymentMethod.idram) {
-        await onSuccess(amount, "IDram" as PaymentSystem.IDram, promoCodeInfo);
+        await onSuccess(amount, "IDram" as PaymentSystem.IDram, paymentOption, promoCodeInfo);
       }
     } catch (error) {
       setActiveView("paymentError");
@@ -331,6 +367,7 @@ export const PaymentModal = ({
       closeModal={closeModal}
       onBackClick={handleBackClick}
       renderAsPage={renderAsPage}
+      isLoadingBooking={isLoadingBooking}
     >
       <ViewComponent />
     </Layout>

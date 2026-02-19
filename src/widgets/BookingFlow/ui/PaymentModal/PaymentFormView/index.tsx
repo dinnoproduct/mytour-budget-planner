@@ -20,7 +20,8 @@ export const PaymentFormView = ({
   prepaymentInfo,
   onBackClick,
   renderAsPage = false,
-}: PaymentFormViewProps) => {
+  onPaymentOptionChange,
+}: PaymentFormViewProps & { onPaymentOptionChange?: (option: PaymentOption) => void }) => {
   const { t } = useTranslation()
   const [selectedOption, setSelectedOption] =
     useState<PaymentOption>(initialPaymentOption)
@@ -50,7 +51,7 @@ export const PaymentFormView = ({
 
   const noPrepaymentData = useMemo(
     () => ({
-      paymentAmount: packageDetails.price,
+      paymentAmount: minPrePaymentAmount || packageDetails.price,
       paymentDueDate: prepaymentInfo?.firstPaymentDate
         ? moment(prepaymentInfo.firstPaymentDate).format('DD.MM.YYYY')
         : '',
@@ -65,6 +66,7 @@ export const PaymentFormView = ({
 
   const handleOptionChange = (option: PaymentOption) => {
     setAmountError(null)
+    onPaymentOptionChange?.(option)
     if (option === 'payFull') {
       setSelectedOption(option)
       setPaymentAmount(packageDetails.price)

@@ -16,6 +16,7 @@ export type PaymentModalProps = {
   onSuccess: (
     paymentAmount: number,
     paymentSystem: PaymentSystem,
+    paymentOption: PaymentOption,
     promoCodeInfo?: {
       promoCode: string
       initialPrice: number
@@ -40,7 +41,9 @@ export type PaymentModalProps = {
   skipPreviewStep?: boolean
   renderAsPage?: boolean
   onViewChange?: (view: PaymentModalView) => void
-  onNavigateToMyPackages?: () => void
+  onPaymentOptionChange?: (paymentOption: PaymentOption) => void
+  onNavigateToMyPackages?: (queryParams?: string) => void
+  onSuccessClose?: () => void
 }
 
 export type PaymentFormViewProps = {
@@ -98,6 +101,7 @@ export type LayoutProps = {
   title: string
   onBackClick?: () => void
   renderAsPage?: boolean
+  isLoadingBooking?: boolean
 }
 
 export type PaymentModalView =
