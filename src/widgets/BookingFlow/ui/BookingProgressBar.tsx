@@ -19,9 +19,6 @@ export const BookingProgressBar = ({ step, totalSteps }: BookingProgressBarProps
         <Text size="md" color="gray.700" fontSize={'14px'} fontWeight="500">
           {t('booking.step', { step: safeStep, total: totalSteps })}
         </Text>
-        <Text size="md" fontWeight="500" color="gray.700" fontSize={'14px'} >
-          {value}%
-        </Text>
       </Flex>
       <Progress
         value={value}

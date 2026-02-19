@@ -86,6 +86,7 @@ const MDatePicker: FC<IMDatePicker> = ({
 				}}
 				selected={value ? new Date(value) : null}
 				dateFormat="dd / MM / YYYY"
+				popperPlacement={breakpoint === 'large' ? 'bottom-end' : 'bottom'}
 				placeholderText={placeholderText}
 				yearDropdownItemNumber={70}
 				onFocus={(e) => {

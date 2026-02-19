@@ -68,9 +68,13 @@ export const BookingFlow = ({
 
   const startedSignedOutRef = useRef(!user?.id);
   const startedSignedOut = startedSignedOutRef.current;
-  const totalSteps = renderAsPage && startedSignedOut ? 5 : 4;
+  const [paymentOption, setPaymentOption] = useState<'payFull' | 'pay' | 'noPrepayment'>('pay');
   const [paymentView, setPaymentView] = useState(paymentModalView);
   const currentPaymentView = modalView === "payment" ? paymentView : "paymentForm";
+  const isNoPrepayment = paymentOption === 'noPrepayment';
+  const totalSteps = renderAsPage && startedSignedOut 
+    ? (isNoPrepayment ? 5 : 6)
+    : (isNoPrepayment ? 3 : 5);
   const progressStep =
     modalView === "success"
       ? totalSteps
@@ -86,9 +90,13 @@ export const BookingFlow = ({
               : 2
             : currentPaymentView === "previewDetails"
               ? startedSignedOut
-                ? 4
+                ? (isNoPrepayment ? 3 : 4)
                 : 3
-              : totalSteps;
+              : currentPaymentView === "paymentMethod"
+                ? startedSignedOut
+                  ? 4
+                  : 3
+                : totalSteps-1;
 
   return (
     <Box
@@ -165,6 +173,7 @@ export const BookingFlow = ({
                     initialView === "payment" ? undefined : openTravelersModal
                   }
                   onViewChange={setPaymentView}
+                  onPaymentOptionChange={setPaymentOption}
                   isLoadingBooking={isLoadingBooking}
                   isBooked={isBooked}
                   prepaymentInfo={prepaymentInfo}
@@ -214,6 +223,7 @@ export const BookingFlow = ({
                 initialView === "payment" ? undefined : openTravelersModal
               }
               onViewChange={setPaymentView}
+              onPaymentOptionChange={setPaymentOption}
               isLoadingBooking={isLoadingBooking}
               isBooked={isBooked}
               prepaymentInfo={prepaymentInfo}
