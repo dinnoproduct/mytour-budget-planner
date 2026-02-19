@@ -73,7 +73,7 @@ export const BookingFlow = ({
   const currentPaymentView = modalView === "payment" ? paymentView : "paymentForm";
   const isNoPrepayment = paymentOption === 'noPrepayment';
   const totalSteps = renderAsPage && startedSignedOut 
-    ? (isNoPrepayment ? 5 : 6)
+    ? (isNoPrepayment ? 4 : 6)
     : (isNoPrepayment ? 3 : 5);
   const progressStep =
     modalView === "success"
