@@ -51,7 +51,7 @@ export const PaymentFormView = ({
 
   const noPrepaymentData = useMemo(
     () => ({
-      paymentAmount: packageDetails.price,
+      paymentAmount: minPrePaymentAmount || packageDetails.price,
       paymentDueDate: prepaymentInfo?.firstPaymentDate
         ? moment(prepaymentInfo.firstPaymentDate).format('DD.MM.YYYY')
         : '',
