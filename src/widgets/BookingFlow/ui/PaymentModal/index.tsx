@@ -37,6 +37,7 @@ export const PaymentModal = ({
   skipPreviewStep = false,
   renderAsPage = false,
   onViewChange,
+  onPaymentOptionChange,
   onNavigateToMyPackages,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
@@ -137,6 +138,7 @@ export const PaymentModal = ({
           prepaymentInfo={prepaymentInfo}
           onBackClick={renderAsPage ? onBackClick : undefined}
           renderAsPage={renderAsPage}
+          onPaymentOptionChange={onPaymentOptionChange}
         />
       ),
       paymentError: () => (
@@ -153,7 +155,9 @@ export const PaymentModal = ({
       previewDetails: () => (
         <PreviewDetailsView
           onPay={() => {
-            if (promoCodeStatus.isApplied && calculatePromoCodePaymentAmount === 0) {
+            if (paymentOption === "noPrepayment") {
+              handlePay(PaymentMethod.bankCard);
+            } else if (promoCodeStatus.isApplied && calculatePromoCodePaymentAmount === 0) {
               handlePay(PaymentMethod.bankCard);
             } else {
               setActiveView("paymentMethod");
@@ -259,12 +263,13 @@ export const PaymentModal = ({
         await onSuccess(
           amount,
           "MyAmeriaPay" as PaymentSystem.MyAmeriaPay,
+          paymentOption,
           promoCodeInfo,
         );
       } else if (paymentMethod === PaymentMethod.bankCard) {
-        await onSuccess(amount, "VPos" as PaymentSystem.VPos, promoCodeInfo);
+        await onSuccess(amount, "VPos" as PaymentSystem.VPos, paymentOption, promoCodeInfo);
       } else if (paymentMethod === PaymentMethod.idram) {
-        await onSuccess(amount, "IDram" as PaymentSystem.IDram, promoCodeInfo);
+        await onSuccess(amount, "IDram" as PaymentSystem.IDram, paymentOption, promoCodeInfo);
       }
     } catch (error) {
       setActiveView("paymentError");

@@ -16,6 +16,7 @@ export type PaymentModalProps = {
   onSuccess: (
     paymentAmount: number,
     paymentSystem: PaymentSystem,
+    paymentOption: PaymentOption,
     promoCodeInfo?: {
       promoCode: string
       initialPrice: number
@@ -40,6 +41,7 @@ export type PaymentModalProps = {
   skipPreviewStep?: boolean
   renderAsPage?: boolean
   onViewChange?: (view: PaymentModalView) => void
+  onPaymentOptionChange?: (paymentOption: PaymentOption) => void
   onNavigateToMyPackages?: () => void
 }
 

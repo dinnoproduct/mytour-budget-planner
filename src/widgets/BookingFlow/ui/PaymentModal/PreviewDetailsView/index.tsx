@@ -482,16 +482,18 @@ export const PreviewDetailsView = ({
             ]}
           />
           {/* PromoCode Section */}
-          <PromoCode
-            isApplyButtonDisabled={isApplyButtonDisabled}
-            handleApplyPromoCode={handleApplyPromoCode}
-            handlePromoCodeInputChange={handlePromoCodeInputChange}
-            promoCodeValue={promoCodeValue}
-            promoCodeError={promoCodeError}
-            hasPromoCode={hasPromoCode}
-            setHasPromoCode={setHasPromoCode}
-            promoCodeStatus={promoCodeStatus}
-          />
+          {paymentOption !== "noPrepayment" && (
+            <PromoCode
+              isApplyButtonDisabled={isApplyButtonDisabled}
+              handleApplyPromoCode={handleApplyPromoCode}
+              handlePromoCodeInputChange={handlePromoCodeInputChange}
+              promoCodeValue={promoCodeValue}
+              promoCodeError={promoCodeError}
+              hasPromoCode={hasPromoCode}
+              setHasPromoCode={setHasPromoCode}
+              promoCodeStatus={promoCodeStatus}
+            />
+          )}
 
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection
@@ -557,7 +559,7 @@ export const PreviewDetailsView = ({
                   isLoading={isLoadingBooking}
                   size="lg"
                 >
-                  {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("reserve") : t("selectPaymentMethod")}
+                  {paymentOption === "noPrepayment" || (promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0) ? t("reserve") : t("selectPaymentMethod")}
                 </Button>
               }
             />
@@ -570,7 +572,7 @@ export const PreviewDetailsView = ({
               isLoading={isLoadingBooking}
               size="lg"
             >
-              {promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0 ? t("reserve") : t("reserve")}
+              {paymentOption === "noPrepayment" || (promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0) ? t("reserve") : t("reserve")}
             </Button>
           )}
         </Box>

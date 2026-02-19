@@ -4,6 +4,7 @@ import {
   type PaymentSystem,
   useBookPackage,
   useCreateRequest,
+  useReservePackage,
   useUpdateRequest,
   type NormalizedRequestEntity,
   useCalculatePrepayment,
@@ -11,7 +12,7 @@ import {
   useValidatePromoCode
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
+import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types.ts'
 import { isMobile } from 'react-device-detect'
 
 import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
@@ -34,6 +35,7 @@ export const useBookingFlow = ({
   const { mutateAsync: createRequestAsync } = useCreateRequest()
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
+  const { mutateAsync: reservePackageAsync } = useReservePackage()
   const validatePromoCode = useValidatePromoCode()
   const isRequestInProgressRef = useRef(false)
   const [isLoadingBooking, setIsLoadingBooking] = useState(false)
@@ -90,6 +92,7 @@ export const useBookingFlow = ({
     async (
       paymentAmount: number,
       paymentSystem: PaymentSystem,
+      paymentOption: PaymentOption,
       promoCodeInfo?: {
         promoCode: string
         initialPrice: number
@@ -145,6 +148,13 @@ export const useBookingFlow = ({
           bookInput.foodType = packageDetails.foodType || 0
         }
 
+        if (paymentOption === 'noPrepayment') {
+          await reservePackageAsync(bookInput)
+          setIsLoadingBooking(false)
+          setPaymentModalView('paymentSuccess')
+          return
+        }
+
         sessionStorage.setItem('isPaymentRedirect', '1')
         const bookResponse = await bookPackageAsync(bookInput)
         setIsLoadingBooking(false)
@@ -154,7 +164,7 @@ export const useBookingFlow = ({
           return
         }
 
-        if (!bookResponse.bookingPaymentUrl && bookResponse.success) {
+        if (!bookResponse.bookingPaymentUrl) {
           setPaymentModalView('paymentSuccess')
           return
         }
