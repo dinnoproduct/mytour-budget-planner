@@ -38,7 +38,7 @@ export const BookingSuccessPage = () => {
             {t`paymentSuccessModalText`}
           </Text>
           <Button
-            mt="16"
+            mt="6"
             variant="solid-blue"
             size="lg"
             width={{base: 'full', md: 'auto'}}
