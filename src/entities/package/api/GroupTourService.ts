@@ -1,6 +1,6 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import {
-  type PackageEntity, // TODO: add type for group tours
+  type GroupTourEntity,
 } from '@entities/package'
 
 export class GroupTourService {
@@ -30,8 +30,8 @@ export class GroupTourService {
   }
 
   // package
-  async getGroupTours(): Promise<any[]> {
-    return this.request<any[]>({
+  async getGroupTours(): Promise<GroupTourEntity[]> {
+    return this.request<GroupTourEntity[]>({
       url: '/getGroupTours',
       version: 'V2'
     })

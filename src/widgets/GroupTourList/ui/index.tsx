@@ -1,20 +1,13 @@
 import { type LayoutProps } from "./types";
 import { Box, Flex, Grid, GridItem, VStack } from "@chakra-ui/react";
 import {
-  PackageCardSkeleton,
-  type PackageEntity,
   useGroupToursList,
   useHotelPackagesSearchContext,
 } from "@entities/package";
-import { PackageCardHorizontal } from "@features/PackageCard";
 import { useMemo } from "react";
-import { useQueryParams } from "@/hooks/useQueryParams.ts";
 import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
-import moment from "moment/moment";
-import { getHotelNightsByDate, getNightsByDate } from "@/features/helper";
-import { PackageFilter } from "@/features/PackageFilter";
-import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
+import { GroupTourCard } from "./GroupTourCard";
 
 export const GroupTourList = () => {
   const {
@@ -26,11 +19,6 @@ export const GroupTourList = () => {
     isLoading: isLoadingGroupTours,
     isFetching: isFetchingGroupTours,
   } = useGroupToursList();
-
-  const tours = useMemo(
-    () => (groupTours?.length ? groupTours : filteredHotelPackages),
-    [groupTours, filteredHotelPackages],
-  );
 
   const isLoading = useMemo(
     () =>
@@ -45,28 +33,12 @@ export const GroupTourList = () => {
     ],
   );
 
-  const generateLink = (tourPackage: PackageEntity) => {
-    const childrenTravelers =
-      tourPackage.childrenTravelers + tourPackage.infantTravelers;
-    let pagePath = "hotel";
-
-    const queryParams: any = {
-      city: tourPackage.city.id.toString(),
-      adultsCount: tourPackage.adultTravelers.toString(),
-      childrenCount: childrenTravelers.toString(),
-      hotelId: tourPackage.hotel.id.toString(),
-      roomId: tourPackage.roomType.toString(),
-    };
-
-    const newSearchParams = new URLSearchParams(queryParams).toString();
-
-    const url = `/${pagePath}?${newSearchParams}`;
-
-    return url;
+  const generateLink = (groupTourId: string) => {
+    return `/group-tour/${groupTourId}`;
   };
 
   // empty view
-  if (!isLoading && !tours?.length) {
+  if (!isLoading && !groupTours?.length) {
     return (
       <EmptyView />
     );
@@ -84,17 +56,20 @@ export const GroupTourList = () => {
         </Grid>
       )}
 
-      {!isLoading && tours.length > 0 && (
-        <VStack spacing={4} flexGrow={1} width="full">
-          {tours?.map((hotelPackage) => (
-              <PackageCardHorizontal
-                tourPackage={hotelPackage}
-                key={hotelPackage.offerId + "---" + hotelPackage.id}
-                link={generateLink(hotelPackage)}
-                nights={getNightsByDate(hotelPackage.checkin, hotelPackage.checkout)}
-              />
-            ))}  
-        </VStack>
+      {!isLoading && groupTours.length > 0 && (
+         <Grid 
+         templateColumns={{base: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)'}} rowGap={'40px'} columnGap={'24px'}
+         justifyItems='center'
+         w="100%"
+       >
+          {groupTours.map((groupTour) => (
+            <GroupTourCard
+              key={groupTour.id}
+              groupTour={groupTour}
+              link={generateLink(groupTour.id)}
+            />
+          ))}  
+        </Grid>
       )}
     </Layout>
   );

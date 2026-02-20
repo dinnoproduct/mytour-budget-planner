@@ -216,3 +216,38 @@ export interface RequestTraveler {
   lastName: string
   dateOfBirth: string
 }
+
+// Group Tour
+export interface GroupTourGalleryItem {
+  url: string
+  type: string
+  order: number
+  attribute: string
+}
+
+export interface GroupTourDeparture {
+  startDate: string
+  endDate: string
+  duration: number
+  availableSeats: number
+  bookingDeadline: string
+}
+
+export interface GroupTourName {
+  arm: string
+  eng: string
+  rus: string
+}
+
+export interface GroupTourEntity {
+  id: string
+  name: GroupTourName
+  status: string
+  type: number
+  price: number
+  currency: string
+  rate: number
+  roomType: number
+  gallery: GroupTourGalleryItem[]
+  departures: GroupTourDeparture[]
+}

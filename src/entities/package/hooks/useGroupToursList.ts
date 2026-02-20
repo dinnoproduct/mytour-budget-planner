@@ -1,9 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { packageUseCases } from '@entities/package'
+import { packageUseCases, type GroupTourEntity } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
 export const useGroupToursList = (
-	options?: Omit<UseQueryOptions<any[]>, 'queryFn' | 'queryKey'>
+	options?: Omit<UseQueryOptions<GroupTourEntity[]>, 'queryFn' | 'queryKey'>
 ) => {
 	return useQuery({
 	  ...(options || {}),

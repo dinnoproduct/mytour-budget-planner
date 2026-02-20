@@ -14,6 +14,7 @@ import { type CustomFields } from '../data/packagesEnums.ts';
 import {
   type PackageEntity,
   type NormalizedRequestEntity,
+  type GroupTourEntity,
 } from '@entities/package';
 import { type Travelers } from '@widgets/TravelersModal/ui/types';
 
@@ -162,4 +163,9 @@ export const bookingDrawerAtom = atom<{
 export const isLateCheckoutAtom = atom<boolean>({
   key: 'isLateCheckout',
   default: false
+});
+
+export const groupsAtom = atom<GroupTourEntity[]>({
+  key: 'groups',
+  default: [],
 });
