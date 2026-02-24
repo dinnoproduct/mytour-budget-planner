@@ -481,10 +481,14 @@ export const PreviewDetailsView = ({
                 key: t`checkOut`,
                 value: formatDate(packageDetails.checkout, true),
               },
-              {
-                key: t`lateCheckOut`,
-                value: isLateCheckout ? t`included` : t`notIncluded`,
-              },
+              ...(!isHotelPackage
+                ? [
+                    {
+                      key: t`lateCheckOut`,
+                      value: isLateCheckout ? t`included` : t`notIncluded`,
+                    },
+                  ]
+                : []),
             ]}
           />
           {/* PromoCode Section */}
