@@ -94,6 +94,8 @@ export type PreviewDetailsViewProps = {
   paymentOption?: PaymentOption
   onBackClick?: () => void
   renderAsPage?: boolean
+  /** When provided (e.g. from booking flow), used for late checkout display; else falls back to packageDetails.lateCheckout then atom */
+  isLateCheckout?: boolean
 }
 
 export type LayoutProps = {

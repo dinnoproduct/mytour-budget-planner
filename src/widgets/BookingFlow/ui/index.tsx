@@ -186,6 +186,7 @@ export const BookingFlow = ({
                   renderAsPage={renderAsPage}
                   onNavigateToMyPackages={onNavigateToMyPackages}
                   onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
+                  isLateCheckout={isLateCheckout}
                 />
               )}
 
@@ -237,6 +238,7 @@ export const BookingFlow = ({
               renderAsPage={renderAsPage}
               onNavigateToMyPackages={onNavigateToMyPackages}
               onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
+              isLateCheckout={isLateCheckout}
             />
           )}
 

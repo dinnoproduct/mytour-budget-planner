@@ -55,6 +55,7 @@ export const PreviewDetailsView = ({
   paymentOption = "pay",
   onBackClick,
   renderAsPage = false,
+  isLateCheckout: isLateCheckoutProp,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [promoCodeValue, setPromoCodeValue] = useState("");
@@ -66,8 +67,13 @@ export const PreviewDetailsView = ({
   const [policyModalType, setPolicyModalType] = useState<
     "booking" | "cancellation"
   >("booking");
-  const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
-
+  const atomLateCheckout = useRecoilValue(isLateCheckoutAtom);
+  const isLateCheckout =
+    typeof isLateCheckoutProp === "boolean"
+      ? isLateCheckoutProp
+      : typeof packageDetails?.lateCheckout === "boolean"
+        ? packageDetails.lateCheckout
+        : atomLateCheckout;
   // Reset promo code status when payment option changes to "noPrepayment"
   useEffect(() => {
     if (paymentOption === "noPrepayment" && promoCodeStatus.isApplied) {

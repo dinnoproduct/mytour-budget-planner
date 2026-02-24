@@ -42,6 +42,7 @@ export const PaymentModal = ({
   onPaymentOptionChange,
   onNavigateToMyPackages,
   onSuccessClose,
+  isLateCheckout: isLateCheckoutProp,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const [activeView, setActiveView] = useState<PaymentModalView>(
@@ -211,6 +212,7 @@ export const PaymentModal = ({
           paymentOption={paymentOption}
           onBackClick={renderAsPage ? () => setActiveView("paymentForm") : undefined}
           renderAsPage={renderAsPage}
+          isLateCheckout={isLateCheckoutProp}
         />
       ),
     };
@@ -230,6 +232,7 @@ export const PaymentModal = ({
     travelers,
     selectedPaymentMethod,
     calculatePromoCodePaymentAmount,
+    isLateCheckoutProp,
   ]);
 
   useEffect(() => {
