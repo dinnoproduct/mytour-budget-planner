@@ -165,7 +165,7 @@ export const PaymentModal = ({
           >
             <Illustration name="success" />
             <Text size="sm" mt="4" align="center">
-              {t`paymentSuccessModalText`}
+              {t`bookingSuccessModalText`}
             </Text>
             <Button
               mt="6"

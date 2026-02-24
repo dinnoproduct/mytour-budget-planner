@@ -4,13 +4,20 @@ import { Button, Illustration, Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
-export const BookingSuccessPage = () => {
+type BookingSuccessPageProps = {
+  /** When true, show paymentSuccessModalText; when false, show bookingSuccessModalText */
+  fromPayment?: boolean
+}
+
+export const BookingSuccessPage = ({ fromPayment = false }: BookingSuccessPageProps) => {
   const { t } = useTranslation()
   const { navigateToMyPackages } = useLanguageNavigate()
 
   const handleGoToMyPackages = () => {
     navigateToMyPackages()
   }
+
+  const successMessage = fromPayment ? t('paymentSuccessModalText') : t('bookingSuccessModalText')
 
   return (
     <>
@@ -35,7 +42,7 @@ export const BookingSuccessPage = () => {
         >
           <Illustration name="success" />
           <Text size="sm" mt="4" align="center">
-            {t`paymentSuccessModalText`}
+            {successMessage}
           </Text>
           <Button
             mt="6"

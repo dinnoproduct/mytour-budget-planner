@@ -4,7 +4,7 @@ import { type RequestsGroupStatus } from '@widgets/UserPackages/ui/types.ts'
 
 export type RequestCardProps = {
   request: NormalizedRequestEntity
-  onRemainingPaymentClick?: (requestId: number) => void
+  onRemainingPaymentClick?: (request: NormalizedRequestEntity) => void
   isLoadingRemainingPayment?: boolean
   status: RequestsGroupStatus
   onCancelClick?: (requestId: number) => void

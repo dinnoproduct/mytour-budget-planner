@@ -4,15 +4,33 @@ import { useUserContext } from '@entities/user'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
 
+export type PayRemainingAmountParams = {
+  requestId: number
+  paymentSystem?: string
+}
+
 export const usePayRemainingAmount = (
-  options: UseMutationOptions<BookPackageResponse, unknown, number> = {}
+  options: UseMutationOptions<
+    BookPackageResponse,
+    unknown,
+    PayRemainingAmountParams | number
+  > = {}
 ) => {
   const { userToken } = useUserContext()
   const { i18n } = useTranslation()
 
   return useMutation({
-    mutationFn: (requestId: number) =>
-      packageUseCases.payRemainingAmount(requestId, userToken),
+    mutationFn: (params: PayRemainingAmountParams | number) => {
+      const requestId =
+        typeof params === 'number' ? params : params.requestId
+      const paymentSystem =
+        typeof params === 'number' ? undefined : params.paymentSystem
+      return packageUseCases.payRemainingAmount(
+        requestId,
+        userToken,
+        paymentSystem
+      )
+    },
     onSuccess: (data: BookPackageResponse) => {
       window.location.href =
         data.bookingPaymentUrl +

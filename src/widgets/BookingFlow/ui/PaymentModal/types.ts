@@ -55,6 +55,8 @@ export type PaymentFormViewProps = {
   prepaymentInfo?: PrepaymentInfo | null
   onBackClick?: () => void
   renderAsPage?: boolean
+  /** When true, disables/hides the "no prepayment" option. Used when user must pay (e.g. paying remaining amount). */
+  disableNoPrepayment?: boolean
 }
 
 export type PaymentMethodViewProps = {

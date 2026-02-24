@@ -30,7 +30,7 @@ export const PaymentSuccessModal = ({
         <Illustration name="success" />
 
         <Text size="sm" mt="4" align="center">
-          {t`paymentSuccessModalText`}
+          {t`bookingSuccessModalText`}
         </Text>
       </Flex>
     </Layout>

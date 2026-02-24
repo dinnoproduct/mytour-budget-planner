@@ -183,6 +183,11 @@ export const useBookingFlow = ({
           return
         }
 
+        try {
+          localStorage.setItem('bookingResultSource', 'booking')
+        } catch {
+          // ignore
+        }
         if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
           window.location.href =
             bookResponse.bookingPaymentUrl +

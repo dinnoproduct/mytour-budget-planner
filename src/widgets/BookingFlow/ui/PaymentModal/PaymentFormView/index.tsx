@@ -17,10 +17,11 @@ export const PaymentFormView = ({
   packageDetails,
   isLoadingBooking = false,
   initialPaymentOption = 'pay',
-  prepaymentInfo,
+  prepaymentInfo,   
   onBackClick,
   renderAsPage = false,
   onPaymentOptionChange,
+  disableNoPrepayment = false,
 }: PaymentFormViewProps & { onPaymentOptionChange?: (option: PaymentOption) => void }) => {
   const { t } = useTranslation()
   const [selectedOption, setSelectedOption] =
@@ -186,6 +187,7 @@ export const PaymentFormView = ({
             minPrePaymentAmount={minPrePaymentAmount}
             noPrepaymentData={noPrepaymentData}
             t={t}
+            disableNoPrepayment={disableNoPrepayment}
           />
         )}
       </Flex>

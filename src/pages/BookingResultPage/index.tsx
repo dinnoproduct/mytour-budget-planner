@@ -15,6 +15,18 @@ export const BookingResultPage = () => {
 
   const isSuccess = searchParams.success === 'true' || searchParams.success === 'True'
   const isError = searchParams.error === 'true' || searchParams.error === 'True'
+  // Same page, two messages: from localStorage (or URL) — booking flow → bookingSuccessModalText, payment flow → paymentSuccessModalText
+  const fromPaymentFromUrl = searchParams.fromPayment === 'true' || searchParams.fromPayment === 'True'
+  const fromPaymentFromStorage =
+    typeof window !== 'undefined' &&
+    localStorage.getItem('bookingResultSource') === 'payment'
+  const fromPayment = fromPaymentFromStorage || fromPaymentFromUrl
+
+  useEffect(() => {
+    if (isSuccess && typeof window !== 'undefined') {
+      localStorage.removeItem('bookingResultSource')
+    }
+  }, [isSuccess])
 
   useEffect(() => {
     // If neither success nor error params are present, redirect to home or my packages
@@ -39,7 +51,11 @@ export const BookingResultPage = () => {
   return (
     <PageLayout background='white' showFooter={false}>
       {
-        isSuccess ? (<BookingSuccessPage />) : (<BookingErrorPage />) 
+        isSuccess ? (
+          <BookingSuccessPage fromPayment={fromPayment} />
+        ) : (
+          <BookingErrorPage />
+        )
       }
      </PageLayout>
   )
