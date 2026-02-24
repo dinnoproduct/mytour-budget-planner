@@ -24,6 +24,7 @@ import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { usePackage } from "@/entities/package/hooks/usePackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 export const PackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -115,6 +116,7 @@ export const PackageDetailsPage = () => {
     // If childrenCount is 0 but childrenAges exists and is not empty, set it to empty string
     if (childrenCount === 0 && hasChildrenAges) {
       searchParams.set('childrenAges', '');
+      appendStoredUTMsToSearchParams(searchParams);
       const newUrl = `${location.pathname}?${searchParams.toString()}`;
       navigate(newUrl, { replace: true });
     }

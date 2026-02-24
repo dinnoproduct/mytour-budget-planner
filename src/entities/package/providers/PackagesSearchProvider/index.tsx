@@ -20,6 +20,7 @@ import {
   useReturnFlights,
   useSearchAsync,
 } from "@entities/package";
+import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 const LOCAL_STORAGE_KEY = "package_search_params";
 
@@ -345,17 +346,7 @@ export const PackagesSearchProvider: React.FC<{
       setIsSearchError(false);
       const { fromDate, toDate, selectedCity, travelersData } = searchData;
       const queryParams = generateSearchQueryParams(searchData);
-      
-      // Preserve UTM parameters from current URL if they exist
-      const currentSearchParams = new URLSearchParams(location.search);
-      const utmParams = ['utm_source', 'utm_medium', 'utm_campaign'];
-      utmParams.forEach((param) => {
-        const value = currentSearchParams.get(param);
-        if (value) {
-          queryParams.set(param, value);
-        }
-      });
-      
+      appendStoredUTMsToSearchParams(queryParams);
       navigateToPackages(queryParams.toString());
 
       setIsLoadingFilteredPackages(true);
@@ -396,17 +387,7 @@ export const PackagesSearchProvider: React.FC<{
 
   const navigateToDefaultSearch = () => {
     const queryParams = generateSearchQueryParams(searchData);
-    
-    // Preserve UTM parameters from current URL if they exist
-    const currentSearchParams = new URLSearchParams(location.search);
-    const utmParams = ['utm_source', 'utm_medium', 'utm_campaign'];
-    utmParams.forEach((param) => {
-      const value = currentSearchParams.get(param);
-      if (value) {
-        queryParams.set(param, value);
-      }
-    });
-    
+    appendStoredUTMsToSearchParams(queryParams);
     navigateToPackages(queryParams.toString());
   };
 

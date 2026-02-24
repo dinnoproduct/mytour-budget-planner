@@ -1,7 +1,7 @@
 import { Flex, Box, Grid } from '@chakra-ui/react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { LanguageLink } from '@/components/LanguageLink/LanguageLink'
 import { Text } from '@ui'
 
 export const BlogsSectionLayout: React.FC<BlogsSectionLayoutProps> = ({
@@ -31,7 +31,7 @@ export const BlogsSectionLayout: React.FC<BlogsSectionLayoutProps> = ({
               {t`blogsSectionTitle`}
             </Text>
 
-            <Link to="/blogs">
+            <LanguageLink to="/blogs">
               <Text
                 size="lg"
                 color="blue.500"
@@ -40,7 +40,7 @@ export const BlogsSectionLayout: React.FC<BlogsSectionLayoutProps> = ({
               >
                 {t`more`}
               </Text>
-            </Link>
+            </LanguageLink>
           </Flex>
 
           <Grid

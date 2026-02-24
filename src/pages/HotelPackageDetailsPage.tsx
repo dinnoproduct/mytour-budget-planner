@@ -29,6 +29,7 @@ import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 export const HotelPackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -121,6 +122,7 @@ export const HotelPackageDetailsPage = () => {
     // If childrenCount is 0 but childrenAges exists and is not empty, set it to empty string
     if (childrenCount === 0 && hasChildrenAges) {
       searchParams.set('childrenAges', '');
+      appendStoredUTMsToSearchParams(searchParams);
       const newUrl = `${location.pathname}?${searchParams.toString()}`;
       navigate(newUrl, { replace: true });
     }
