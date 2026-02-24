@@ -42,6 +42,8 @@ export type PaymentModalProps = {
   renderAsPage?: boolean
   onViewChange?: (view: PaymentModalView) => void
   onPaymentOptionChange?: (paymentOption: PaymentOption) => void
+  /** Parent’s selected option; used so stepper and form stay in sync when returning from travelers */
+  paymentOption?: PaymentOption
   onNavigateToMyPackages?: (queryParams?: string) => void
   onSuccessClose?: () => void
 }

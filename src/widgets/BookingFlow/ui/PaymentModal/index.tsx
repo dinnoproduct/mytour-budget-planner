@@ -40,6 +40,7 @@ export const PaymentModal = ({
   renderAsPage = false,
   onViewChange,
   onPaymentOptionChange,
+  paymentOption: paymentOptionFromParent,
   onNavigateToMyPackages,
   onSuccessClose,
   isLateCheckout: isLateCheckoutProp,
@@ -50,7 +51,9 @@ export const PaymentModal = ({
   );
   const [ameriaPayUrl, setAmeriaPayUrl] = useState<string>("");
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
-  const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
+  const [paymentOption, setPaymentOption] = useState<PaymentOption>(
+    paymentOptionFromParent ?? "pay",
+  );
   const isFullPricePayment = useMemo(
     () =>
       paymentOption === "payFull" ||
