@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useLanguageRouting } from './useLanguageRouting';
+import { appendStoredUTMsToPath } from '@/utils/utmParams';
 
 export const useLanguageNavigate = () => {
   const navigate = useNavigate();
@@ -7,7 +8,8 @@ export const useLanguageNavigate = () => {
 
   const navigateTo = (path: string, options?: { replace?: boolean }) => {
     const languageAwarePath = getPathWithLanguage(path);
-    navigate(languageAwarePath, options);
+    const pathWithUtm = appendStoredUTMsToPath(languageAwarePath);
+    navigate(pathWithUtm, options);
   };
 
   const navigateBack = (steps: number = 1) => {
@@ -54,7 +56,7 @@ export const useLanguageNavigate = () => {
   };
 
   const navigateToPayment = (options?: { state?: unknown; replace?: boolean }) => {
-    const path = getPathWithLanguage('/payment');
+    const path = appendStoredUTMsToPath(getPathWithLanguage('/payment'));
     navigate(path, { state: options?.state, replace: options?.replace });
   };
 
