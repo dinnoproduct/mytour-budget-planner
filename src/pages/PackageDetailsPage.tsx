@@ -55,7 +55,7 @@ export const PackageDetailsPage = () => {
     return () => {
       clearBookingDrawerData();
       setModalOpen(false);
-      setIsLateCheckout(false);
+      // Do not reset isLateCheckout here: when user navigates to booking it must persist for PreviewDetailsView
     };
   }, []);
 

@@ -40,8 +40,10 @@ export const PaymentModal = ({
   renderAsPage = false,
   onViewChange,
   onPaymentOptionChange,
+  paymentOption: paymentOptionFromParent,
   onNavigateToMyPackages,
   onSuccessClose,
+  isLateCheckout: isLateCheckoutProp,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const [activeView, setActiveView] = useState<PaymentModalView>(
@@ -49,7 +51,9 @@ export const PaymentModal = ({
   );
   const [ameriaPayUrl, setAmeriaPayUrl] = useState<string>("");
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
-  const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
+  const [paymentOption, setPaymentOption] = useState<PaymentOption>(
+    paymentOptionFromParent ?? "pay",
+  );
   const isFullPricePayment = useMemo(
     () =>
       paymentOption === "payFull" ||
@@ -165,7 +169,7 @@ export const PaymentModal = ({
           >
             <Illustration name="success" />
             <Text size="sm" mt="4" align="center">
-              {t`paymentSuccessModalText`}
+              {t`bookingSuccessModalText`}
             </Text>
             <Button
               mt="6"
@@ -211,6 +215,7 @@ export const PaymentModal = ({
           paymentOption={paymentOption}
           onBackClick={renderAsPage ? () => setActiveView("paymentForm") : undefined}
           renderAsPage={renderAsPage}
+          isLateCheckout={isLateCheckoutProp}
         />
       ),
     };
@@ -230,6 +235,7 @@ export const PaymentModal = ({
     travelers,
     selectedPaymentMethod,
     calculatePromoCodePaymentAmount,
+    isLateCheckoutProp,
   ]);
 
   useEffect(() => {

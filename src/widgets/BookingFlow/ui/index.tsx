@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { PaymentModal } from "./PaymentModal";
 import { TravelersModal } from "@widgets/TravelersModal";
@@ -72,11 +72,18 @@ export const BookingFlow = ({
   const [paymentView, setPaymentView] = useState(paymentModalView);
   const currentPaymentView = modalView === "payment" ? paymentView : "paymentForm";
   const isNoPrepayment = paymentOption === 'noPrepayment';
-  const totalSteps = renderAsPage && startedSignedOut 
-    ? (isNoPrepayment ? 4 : 6)
-    : (isNoPrepayment ? 3 : 5);
-  const progressStep =
-    modalView === "success"
+  const [totalSteps, setTotalSteps] = useState(0);
+
+  useEffect(() => {
+    setTotalSteps(renderAsPage && startedSignedOut 
+      ? (isNoPrepayment ? 4 : 6)
+      : (isNoPrepayment ? 3 : 5));
+  }, [renderAsPage, startedSignedOut, isNoPrepayment]);
+
+  const [progressStep, setProgressStep] = useState(0);
+
+  useEffect(() => {
+    setProgressStep(modalView === "success"
       ? totalSteps
       : modalView === "auth"
         ? 1
@@ -98,7 +105,8 @@ export const BookingFlow = ({
                   : 4
                 : currentPaymentView === "paymentSuccess"
                   ? totalSteps
-                  : totalSteps - 1;
+                  : totalSteps - 1);
+  }, [modalView, totalSteps, startedSignedOut, currentPaymentView]);
 
   return (
     <Box
@@ -172,10 +180,16 @@ export const BookingFlow = ({
                   onSuccess={onPaymentModalSuccess}
                   view={paymentModalView}
                   onBackClick={
-                    initialView === "payment" ? undefined : openTravelersModal
+                    initialView === "payment"
+                      ? undefined
+                      : () => {
+                          setPaymentView("paymentForm");
+                          openTravelersModal();
+                        }
                   }
                   onViewChange={setPaymentView}
                   onPaymentOptionChange={setPaymentOption}
+                  paymentOption={paymentOption}
                   isLoadingBooking={isLoadingBooking}
                   isBooked={isBooked}
                   prepaymentInfo={prepaymentInfo}
@@ -186,6 +200,7 @@ export const BookingFlow = ({
                   renderAsPage={renderAsPage}
                   onNavigateToMyPackages={onNavigateToMyPackages}
                   onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
+                  isLateCheckout={isLateCheckout}
                 />
               )}
 
@@ -223,10 +238,16 @@ export const BookingFlow = ({
               onSuccess={onPaymentModalSuccess}
               view={paymentModalView}
               onBackClick={
-                initialView === "payment" ? undefined : openTravelersModal
+                initialView === "payment"
+                  ? undefined
+                  : () => {
+                      setPaymentView("paymentForm");
+                      openTravelersModal();
+                    }
               }
               onViewChange={setPaymentView}
               onPaymentOptionChange={setPaymentOption}
+              paymentOption={paymentOption}
               isLoadingBooking={isLoadingBooking}
               isBooked={isBooked}
               prepaymentInfo={prepaymentInfo}
@@ -237,6 +258,7 @@ export const BookingFlow = ({
               renderAsPage={renderAsPage}
               onNavigateToMyPackages={onNavigateToMyPackages}
               onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
+              isLateCheckout={isLateCheckout}
             />
           )}
 

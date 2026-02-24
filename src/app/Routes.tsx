@@ -14,6 +14,7 @@ import { PackageListPage } from "@pages/PackageListPage";
 import { PackageDetailsPage } from "@pages/PackageDetailsPage";
 import { useScrollToTop } from "@shared/hooks";
 import { MyPackagesPage } from "@pages/MyPackagesPage.tsx";
+import { PaymentPage } from "@pages/PaymentPage";
 import {
   HotelPackagesSearchProvider,
   PackagesSearchProvider,
@@ -43,6 +44,7 @@ const Routes = () => {
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
           </Route>
           <Route path="booking" element={<BookingPage />} />
+          <Route path="payment" element={<AuthorizedRoute><PaymentPage /></AuthorizedRoute>} />
           <Route path="booking-result" element={<BookingResultPage />} />
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
@@ -69,6 +71,7 @@ const Routes = () => {
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
           </Route>
           <Route path="booking" element={<BookingPage />} />
+          <Route path="payment" element={<AuthorizedRoute><PaymentPage /></AuthorizedRoute>} />
           <Route path="booking-result" element={<BookingResultPage />} />
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />
@@ -95,6 +98,7 @@ const Routes = () => {
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
           </Route>
           <Route path="booking" element={<BookingPage />} />
+          <Route path="payment" element={<AuthorizedRoute><PaymentPage /></AuthorizedRoute>} />
           <Route path="booking-result" element={<BookingResultPage />} />
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="faq" element={<FAQPage />} />

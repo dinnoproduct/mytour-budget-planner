@@ -1,6 +1,7 @@
 import { RadioGroup, VStack } from '@chakra-ui/react'
 import { AlertCardMessage, AlertCardMultipleMessage, Input, Text } from '@ui'
 import { formatNumber } from '@shared/utils'
+import { useEffect } from 'react'
 import type { PaymentOption } from '../types'
 import { PaymentOptionCard } from './PaymentOptionCard'
 
@@ -21,6 +22,8 @@ type PaymentOptionsWithRadioProps = {
     days: number | null
   }
   t: (key: string, params?: Record<string, unknown>) => string
+  /** When true, hides the "no prepayment" option. */
+  disableNoPrepayment?: boolean
 }
 
 export const PaymentOptionsWithRadio = ({
@@ -36,7 +39,16 @@ export const PaymentOptionsWithRadio = ({
   minPrePaymentAmount,
   noPrepaymentData,
   t,
-}: PaymentOptionsWithRadioProps) => (
+  disableNoPrepayment = false,
+}: PaymentOptionsWithRadioProps) => {
+  // If no prepayment is disabled and currently selected, switch to 'pay'
+  useEffect(() => {
+    if (disableNoPrepayment && selectedOption === 'noPrepayment') {
+      onOptionChange('pay')
+    }
+  }, [disableNoPrepayment, selectedOption, onOptionChange])
+
+  return (
   <RadioGroup
     onChange={(value: PaymentOption) => onOptionChange(value)}
     value={selectedOption}
@@ -94,26 +106,29 @@ export const PaymentOptionsWithRadio = ({
         />
       </PaymentOptionCard>
 
-      <PaymentOptionCard
-        value="noPrepayment"
-        label={t('noPrepayment')}
-        isSelected={selectedOption === 'noPrepayment'}
-        onSelect={() => onOptionChange('noPrepayment')}
-      >
-        <Text size="sm" color="gray.600" mb={4}>
-          {t('noPrepaymentTextWithDetails', {
-            amount: noPrepaymentData.paymentAmount,
-            dueDate: noPrepaymentData.paymentDueDate,
-            days: noPrepaymentData.days,
-          })}
-        </Text>
-        <AlertCardMessage
-          message={t('partialPaymentText')}
-          status="info"
-          textSize="sm"
-          showIcon={false}
-        />
-      </PaymentOptionCard>
+      {!disableNoPrepayment && (
+        <PaymentOptionCard
+          value="noPrepayment"
+          label={t('noPrepayment')}
+          isSelected={selectedOption === 'noPrepayment'}
+          onSelect={() => onOptionChange('noPrepayment')}
+        >
+          <Text size="sm" color="gray.600" mb={4}>
+            {t('noPrepaymentTextWithDetails', {
+              amount: noPrepaymentData.paymentAmount,
+              dueDate: noPrepaymentData.paymentDueDate,
+              days: noPrepaymentData.days,
+            })}
+          </Text>
+          <AlertCardMessage
+            message={t('partialPaymentText')}
+            status="info"
+            textSize="sm"
+            showIcon={false}
+          />
+        </PaymentOptionCard>
+      )}
     </VStack>
   </RadioGroup>
-)
+  )
+}

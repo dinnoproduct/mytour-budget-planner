@@ -206,7 +206,7 @@ export const RequestCard = ({
             <Button
               width="full"
               onClick={() =>
-                onRemainingPaymentClick && onRemainingPaymentClick(request.id)
+                onRemainingPaymentClick && onRemainingPaymentClick(request)
               }
               isLoading={isLoadingRemainingPayment}
             >

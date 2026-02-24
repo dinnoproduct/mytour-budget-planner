@@ -53,15 +53,41 @@ export const useLanguageNavigate = () => {
     navigateTo(path, { replace: options?.replace });
   };
 
+  const navigateToPayment = (options?: { state?: unknown; replace?: boolean }) => {
+    const path = getPathWithLanguage('/payment');
+    navigate(path, { state: options?.state, replace: options?.replace });
+  };
+
+  const BOOKING_RESULT_SOURCE_KEY = 'bookingResultSource'
+
   const navigateToBookingResult = (
-    options?: { success?: boolean; error?: boolean; replace?: boolean }
+    options?: {
+      success?: boolean
+      error?: boolean
+      replace?: boolean
+      /** When true, user came from payment flow (already booked/reserved) → show paymentSuccessModalText; else booking flow → bookingSuccessModalText */
+      fromPayment?: boolean
+    }
   ) => {
+    if (options?.success) {
+      try {
+        localStorage.setItem(
+          BOOKING_RESULT_SOURCE_KEY,
+          options.fromPayment ? 'payment' : 'booking'
+        )
+      } catch {
+        // ignore
+      }
+    }
     const params = new URLSearchParams()
     if (options?.success) {
       params.set('success', 'true')
     }
     if (options?.error) {
       params.set('error', 'true')
+    }
+    if (options?.fromPayment) {
+      params.set('fromPayment', 'true')
     }
     const queryString = params.toString()
     const path = queryString ? `/booking-result?${queryString}` : '/booking-result'
@@ -78,6 +104,7 @@ export const useLanguageNavigate = () => {
     navigateToBlogs,
     navigateToMyPackages,
     navigateToBooking,
+    navigateToPayment,
     navigateToBookingResult,
     // Keep original navigate for special cases
     navigate,

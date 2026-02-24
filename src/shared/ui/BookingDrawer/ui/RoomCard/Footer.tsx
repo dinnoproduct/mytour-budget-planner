@@ -9,6 +9,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { bookingContextAtom } from "@/modules/packages/store/store";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
+import { useState } from "react";
 
 export const Footer: React.FC<{
   offer: IGeneratedMultivendorOffer;
@@ -21,6 +22,7 @@ export const Footer: React.FC<{
   const { selectedPackage, updateSelectedRoomPackage: fetchSelectedPackage } =
     useBookingDrawer();
   const { navigateToBooking } = useLanguageNavigate();
+  const [bookingInfoProgress, setBookingInfoProgress] = useState<boolean>(false);
 
   const openBookingPage = () => {
     const context = bookingContext ?? {
@@ -32,13 +34,16 @@ export const Footer: React.FC<{
       ...context,
       packageDetails: selectedPackage,
     });
+    setBookingInfoProgress(true);
     closeBookingDrawer();
     navigateToBooking();
   };
 
   const handleBookClick = async (offer: IGeneratedMultivendorOffer) => {
+    setBookingInfoProgress(true);
     await fetchSelectedPackage(offer);
     openBookingPage();
+
   };
 
   return (
@@ -76,6 +81,9 @@ export const Footer: React.FC<{
         colorScheme="blue"
         size="md"
         borderRadius="md"
+        isLoading={bookingInfoProgress}
+        isDisabled={bookingInfoProgress}
+        isActive={!bookingInfoProgress}
         onClick={(e) => {
           handleBookClick(offer);
         }}

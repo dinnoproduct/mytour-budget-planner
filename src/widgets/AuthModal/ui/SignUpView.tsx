@@ -18,6 +18,7 @@ export const SignUpView = ({
     formState: { errors },
     getValues,
   } = useForm({
+    mode: "onChange",
     defaultValues: {
       firstname: formData?.firstname || "",
       lastname: formData?.lastname || "",
@@ -97,10 +98,6 @@ export const SignUpView = ({
         })}
         helperText={errors.firstname?.message}
         state={errors.firstname?.message ? "invalid" : "default"}
-        onChange={(e) => {
-          const value = e.target.value.replace(/[^a-zA-Z]/g, "");
-          e.target.value = value;
-        }}
       />
 
       <Input
@@ -120,10 +117,6 @@ export const SignUpView = ({
         })}
         helperText={errors.lastname?.message}
         state={errors.lastname?.message ? "invalid" : "default"}
-        onChange={(e) => {
-          const value = e.target.value.replace(/[^a-zA-Z]/g, "");
-          e.target.value = value;
-        }}
       />
 
       <Input

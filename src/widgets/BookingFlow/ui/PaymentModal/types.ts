@@ -42,6 +42,8 @@ export type PaymentModalProps = {
   renderAsPage?: boolean
   onViewChange?: (view: PaymentModalView) => void
   onPaymentOptionChange?: (paymentOption: PaymentOption) => void
+  /** Parent’s selected option; used so stepper and form stay in sync when returning from travelers */
+  paymentOption?: PaymentOption
   onNavigateToMyPackages?: (queryParams?: string) => void
   onSuccessClose?: () => void
 }
@@ -55,6 +57,8 @@ export type PaymentFormViewProps = {
   prepaymentInfo?: PrepaymentInfo | null
   onBackClick?: () => void
   renderAsPage?: boolean
+  /** When true, disables/hides the "no prepayment" option. Used when user must pay (e.g. paying remaining amount). */
+  disableNoPrepayment?: boolean
 }
 
 export type PaymentMethodViewProps = {
@@ -92,6 +96,8 @@ export type PreviewDetailsViewProps = {
   paymentOption?: PaymentOption
   onBackClick?: () => void
   renderAsPage?: boolean
+  /** When provided (e.g. from booking flow), used for late checkout display; else falls back to packageDetails.lateCheckout then atom */
+  isLateCheckout?: boolean
 }
 
 export type LayoutProps = {

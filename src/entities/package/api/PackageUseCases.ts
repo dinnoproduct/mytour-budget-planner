@@ -107,8 +107,16 @@ export class PackageUseCases {
     return this.requestService.reservePackage(input, token)
   }
 
-  async payRemainingAmount(requestId: number, token: string) {
-    return this.requestService.payRemainingAmount(requestId, token)
+  async payRemainingAmount(
+    requestId: number,
+    token: string,
+    paymentSystem?: string
+  ) {
+    return this.requestService.payRemainingAmount(
+      requestId,
+      token,
+      paymentSystem
+    )
   }
 
   async cancelRequest(requestId: number, token: string) {
