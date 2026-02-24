@@ -159,9 +159,9 @@ export const RequestCard = ({
             <DetailsListItem
               label={t`price`}
               value={`${formatNumber(request.price)} ֏`}
-              tooltipText={t`priceChangeText`}
+              tooltipText={request.remainingPaymentAmount !== 0 ? t`priceChangeText` : undefined}
             />
-
+            
             {showNextPaymentFields && (
               <>
                 <DetailsListItem
