@@ -14,19 +14,19 @@ import { useSetRecoilState } from "recoil";
 import { bookingContextAtom, isLateCheckoutAtom } from "@/modules/packages/store/store";
 import { useEffect, useRef } from "react";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
+import { RequestStatus, transformRequestToPackage } from "@entities/package";
 
 export const UserPackages = () => {
   const { t } = useTranslation();
   const setIsLateCheckout = useSetRecoilState(isLateCheckoutAtom);
   const setBookingContext = useSetRecoilState(bookingContextAtom);
-  const { navigateToBooking } = useLanguageNavigate();
+  const { navigateToBooking, navigateToPayment } = useLanguageNavigate();
   const hasNavigatedRef = useRef(false);
   const {
     activeRequests,
     pendingRequests,
     cancelledRequests,
     passedRequests,
-    handleRemainingPaymentClick,
     isLoadingRemainingPayment,
     currentRequestId,
     handleCancelClick,
@@ -54,13 +54,42 @@ export const UserPackages = () => {
       hasNavigatedRef.current = false;
     }
   }, [activeRequest]);
-
+  // When user already booked/reserved (no down payment) → go to payment page from step 1
   useEffect(() => {
+    if (!activeRequest || hasNavigatedRef.current) return;
+
+    const isNoDownPaymentBooked =
+      activeRequest.status === RequestStatus.NotPaid ||
+      activeRequest.status === RequestStatus.Reserved;
+
+    if (isNoDownPaymentBooked) {
+      const packageDetails =
+        activeRequestPackage ?? transformRequestToPackage(activeRequest);
+      hasNavigatedRef.current = true;
+      navigateToPayment({
+        state: {
+          packageDetails,
+          request: activeRequest,
+          travelers: activeRequest.travelers
+            ? {
+                adults: activeRequest.travelers.map((t) => ({
+                  firstName: t.firstName,
+                  lastName: t.lastName,
+                  dateOfBirth: t.dateOfBirth ?? "",
+                })),
+                children: [],
+              }
+            : undefined,
+        },
+      });
+      handleBookingFlowClose();
+      return;
+    }
+
+    // Draft or other → go to booking page when package is ready
     if (
-      activeRequest &&
       activeRequestPackage?.offerId &&
-      !isLoadingActiveRequestPackage &&
-      !hasNavigatedRef.current
+      !isLoadingActiveRequestPackage
     ) {
       hasNavigatedRef.current = true;
       setBookingContext({
@@ -85,12 +114,14 @@ export const UserPackages = () => {
     }
   }, [
     activeRequest,
+    activeRequestPackage,
     activeRequestPackage?.offerId,
     isLoadingActiveRequestPackage,
     incompleteInitialView,
     isActiveRequestDraft,
     setBookingContext,
     navigateToBooking,
+    navigateToPayment,
     handleBookingFlowClose,
   ]);
 
@@ -113,7 +144,15 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                onRemainingPaymentClick={handleRemainingPaymentClick}
+                onRemainingPaymentClick={(request) =>
+                  navigateToPayment({
+                    state: {
+                      mode: "remainingOnly",
+                      request,
+                      packageDetails: transformRequestToPackage(request),
+                    },
+                  })
+                }
                 isLoadingRemainingPayment={
                   currentRequestId === request.id && isLoadingRemainingPayment
                 }

@@ -20,7 +20,8 @@ import {
   useCitiesOnlyHotel,
   useSearchAsync
 } from '@entities/package'
-import {defaultSelectedHotelCity} from "@/constants/constants.ts";
+import { defaultSelectedHotelCity } from "@/constants/constants.ts";
+import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 const LOCAL_STORAGE_KEY = 'hotel_packages_search_params'
 
@@ -169,17 +170,7 @@ export const HotelPackagesSearchProvider: React.FC<{
       setIsSearchError(false)
       const { fromDate, toDate, selectedCity, travelersData, days } = searchData
       const queryParams = generateSearchQueryParams(searchData)
-      
-      // Preserve UTM parameters from current URL if they exist
-      const currentSearchParams = new URLSearchParams(location.search)
-      const utmParams = ['utm_source', 'utm_medium', 'utm_campaign']
-      utmParams.forEach((param) => {
-        const value = currentSearchParams.get(param)
-        if (value) {
-          queryParams.set(param, value)
-        }
-      })
-      
+      appendStoredUTMsToSearchParams(queryParams)
       navigateToPackages(queryParams.toString())
 
       setIsLoadingFilteredHotelPackages(true)
@@ -241,17 +232,7 @@ export const HotelPackagesSearchProvider: React.FC<{
 
   const navigateToDefaultSearch = () => {
     const queryParams = generateSearchQueryParams(searchData)
-    
-    // Preserve UTM parameters from current URL if they exist
-    const currentSearchParams = new URLSearchParams(location.search)
-    const utmParams = ['utm_source', 'utm_medium', 'utm_campaign']
-    utmParams.forEach((param) => {
-      const value = currentSearchParams.get(param)
-      if (value) {
-        queryParams.set(param, value)
-      }
-    })
-    
+    appendStoredUTMsToSearchParams(queryParams)
     navigateToPackages(queryParams.toString())
   }
 

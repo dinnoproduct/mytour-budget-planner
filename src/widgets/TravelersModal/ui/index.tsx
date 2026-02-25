@@ -150,6 +150,7 @@ export const TravelersModal = ({
             spacing="6"
             width="full"
             overflowY={renderAsPage ? 'visible' : 'auto'}
+            mb={{base: renderAsPage ? '80px' : 0, md: 0}}
             sx={{
               '&::-webkit-scrollbar': {
                 width: '4px'

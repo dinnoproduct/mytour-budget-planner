@@ -34,7 +34,7 @@ export const PromoCode = ({
         </Text>
 
         <Switch
-          isChecked={promoCodeStatus?.isApplied}
+          isChecked={hasPromoCode}
           isDisabled={promoCodeStatus?.isApplied}
           onChange={() => setHasPromoCode(!hasPromoCode)}/>
       </Box>

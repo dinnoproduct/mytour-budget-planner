@@ -53,6 +53,7 @@ export const transformRequestToPackage = (
   };
 
   const notes = request.notes;
+  transformedPackage.lateCheckout = !!(notes && notes.isLateCheckout);
   if (notes && Object.keys(notes).length > 0) {
     if (notes.adultTravelersCount) {
       transformedPackage.adultTravelers = notes.adultTravelersCount;
@@ -60,10 +61,6 @@ export const transformRequestToPackage = (
 
     if (notes.totalTravelersCount) {
       transformedPackage.childrenTravelers = notes.childrenAges?.length || 0;
-    }
-
-    if (notes.isLateCheckout) {
-      transformedPackage.lateCheckout = notes.isLateCheckout;
     }
   } else if (request.travelers && request.travelers.length > 0) {
     transformedPackage.adultTravelers = request.travelers.length;

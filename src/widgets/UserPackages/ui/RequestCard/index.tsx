@@ -159,9 +159,9 @@ export const RequestCard = ({
             <DetailsListItem
               label={t`price`}
               value={`${formatNumber(request.price)} ֏`}
-              tooltipText={t`priceChangeText`}
+              tooltipText={request.remainingPaymentAmount !== 0 ? t`priceChangeText` : undefined}
             />
-
+            
             {showNextPaymentFields && (
               <>
                 <DetailsListItem
@@ -206,7 +206,7 @@ export const RequestCard = ({
             <Button
               width="full"
               onClick={() =>
-                onRemainingPaymentClick && onRemainingPaymentClick(request.id)
+                onRemainingPaymentClick && onRemainingPaymentClick(request)
               }
               isLoading={isLoadingRemainingPayment}
             >
