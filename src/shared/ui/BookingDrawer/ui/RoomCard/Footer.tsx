@@ -88,7 +88,7 @@ export const Footer: React.FC<{
           handleBookClick(offer);
         }}
       >
-        {t`reserve`}
+        {!bookingInfoProgress && t`reserve`}
       </Button>
     </Box>
   );

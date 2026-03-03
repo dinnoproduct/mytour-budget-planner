@@ -13,7 +13,7 @@ type PaymentOptionsWithRadioProps = {
   onAmountFocus?: () => void
   onAmountBlur?: () => void
   errorElements: React.ReactNode | null
-  packageDetails: { price: number }
+  packageDetails: { price: number; currency: string }
   prepaymentInfo?: { minimumAcceptablePaymentPercentage?: number } | null
   minPrePaymentAmount: number
   noPrepaymentData: {
@@ -62,7 +62,7 @@ export const PaymentOptionsWithRadio = ({
       >
         <AlertCardMultipleMessage
           messages={[
-            { message: t('partialPaymentText'), hasNewLine: true },
+            { message: t('partialPaymentTextWithCurrency', { currency: packageDetails.currency }), hasNewLine: true },
             { message: t('minPrePaymentPercentage', {
               percentage: prepaymentInfo?.minimumAcceptablePaymentPercentage,
             }), hasNewLine: false },
@@ -121,7 +121,7 @@ export const PaymentOptionsWithRadio = ({
             })}
           </Text>
           <AlertCardMessage
-            message={t('partialPaymentText')}
+            message={t('partialPaymentTextWithCurrency', { currency: packageDetails.currency })}
             status="info"
             textSize="sm"
             showIcon={false}
