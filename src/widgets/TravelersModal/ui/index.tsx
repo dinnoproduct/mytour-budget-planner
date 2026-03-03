@@ -1,7 +1,7 @@
 import { Layout } from './Layout.tsx'
 import { Box, Flex, VStack, Text } from '@chakra-ui/react'
 import { FormProvider, useForm, useFieldArray } from 'react-hook-form'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, ChangeEvent } from 'react'
 import {
   type TravelersModalProps,
   type FormData,
@@ -183,17 +183,17 @@ export const TravelersModal = ({
                     pattern: {
                       value: /^[A-Za-z]{2,}$/,
                       message: t`invalidFormatErrorMessage`
+                    },
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                      const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+                      e.target.value = value
+                      setValue(`adults.${index}.firstName`, value)
                     }
                   })}
                   helperText={errors.adults?.[index]?.firstName?.message}
                   state={
                     errors.adults?.[index]?.firstName ? 'invalid' : 'default'
                   }
-                  onChange={e => {
-                    const value = e.target.value.replace(/[^a-zA-Z]/g, '')
-                    e.target.value = value
-                    setValue(`adults.${index}.firstName`, value)
-                  }}
                 />
 
                 <Input
@@ -206,17 +206,17 @@ export const TravelersModal = ({
                     pattern: {
                       value: /^[A-Za-z]{2,}$/,
                       message: t`invalidFormatErrorMessage`
+                    },
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                      const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+                      e.target.value = value
+                      setValue(`adults.${index}.lastName`, value)
                     }
                   })}
                   helperText={errors.adults?.[index]?.lastName?.message}
                   state={
                     errors.adults?.[index]?.lastName ? 'invalid' : 'default'
                   }
-                  onChange={e => {
-                    const value = e.target.value.replace(/[^a-zA-Z]/g, '')
-                    e.target.value = value
-                    setValue(`adults.${index}.lastName`, value)
-                  }}
                 />
 
                 <MDatePicker

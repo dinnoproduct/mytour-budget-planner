@@ -249,6 +249,7 @@
   "packagesNotFoundText": "We didn't find any packages matching your selected criteria. Please try searching with different criteria.",
   "paidAmount": "Paid amount",
   "partialPaymentText": "In case of partial payment, the remaining part of the amount may change at the time of payment due to fluctuations in the exchange rate of the US dollar. The calculation is based on the US dollar exchange rate set by the travel agency at the time of payment.",
+  "partialPaymentTextWithCurrency": "In case of partial payment, the remaining part of the amount may change at the time of payment due to fluctuations in the exchange rate of the {{currency}}. The calculation is based on the {{currency}} exchange rate set by the travel agency at the time of payment.",
   "partiallyPaid": "Partially paid",
   "past": "Past",
   "pastRequestsEmptyText": "No previously planned trips",

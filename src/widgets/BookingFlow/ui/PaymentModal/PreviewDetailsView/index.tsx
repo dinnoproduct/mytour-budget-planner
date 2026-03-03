@@ -312,12 +312,21 @@ export const PreviewDetailsView = ({
     },
   );
 
+  // Load room-type dictionary (independent of isHotelPackage) and
+  // derive the label reactively based on current language.
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
+
+  const [roomTypeLabel, setRoomTypeLabel] = useState<string>("");
+
+  useEffect(() => {
+    const value =
+      roomTypes.find(
+        ({ key }: any) => key === packageDetails.roomType,
+      )?.value || "";
+    setRoomTypeLabel(value);
+  }, [roomTypes, packageDetails.roomType, i18n.language]);
 
   const foodType = useMemo<string>(
     () =>
@@ -468,10 +477,7 @@ export const PreviewDetailsView = ({
             listItems={[
               {
                 key: t`room`,
-                value:
-                  roomTypes.find(
-                    ({ key }: any) => key === packageDetails.roomType,
-                  )?.value || "",
+                value: roomTypeLabel,
               },
               {
                 key: t`checkIn`,
