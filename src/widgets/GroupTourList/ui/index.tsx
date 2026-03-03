@@ -1,5 +1,5 @@
 import { type LayoutProps } from "./types";
-import { Box, Flex, Grid, GridItem, VStack } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem } from "@chakra-ui/react";
 import {
   useGroupToursList,
   useHotelPackagesSearchContext,
@@ -10,10 +10,7 @@ import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
 
 export const GroupTourList = () => {
-  const {
-    filteredHotelPackages,
-    isLoadingFilteredHotelPackages,
-  } = useHotelPackagesSearchContext();
+  const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
   const {
     data: groupTours = [],
     isLoading: isLoadingGroupTours,
@@ -37,19 +34,22 @@ export const GroupTourList = () => {
     return `/group-tour/${groupTourId}`;
   };
 
-  // empty view
   if (!isLoading && !groupTours?.length) {
-    return (
-      <EmptyView />
-    );
+    return <EmptyView />;
   }
 
   return (
     <Layout>
       {isLoading && (
-        <Grid 
-          templateColumns={{base: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)'}} rowGap={'40px'} columnGap={'24px'}
-          justifyItems='center'
+        <Grid
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
+          rowGap={{base: 6, md: 10}}
+          columnGap={6}
+          justifyItems="center"
           w="100%"
         >
           <SkeletonLoading />
@@ -57,18 +57,24 @@ export const GroupTourList = () => {
       )}
 
       {!isLoading && groupTours.length > 0 && (
-         <Grid 
-         templateColumns={{base: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)'}} rowGap={'40px'} columnGap={'24px'}
-         justifyItems='center'
-         w="100%"
-       >
+        <Grid
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
+          rowGap={{base: 6, md: 10}}
+          columnGap={6}
+          justifyItems="center"
+          w="100%"
+        >
           {groupTours.map((groupTour) => (
             <GroupTourCard
               key={groupTour.id}
               groupTour={groupTour}
               link={generateLink(groupTour.id)}
             />
-          ))}  
+          ))}
         </Grid>
       )}
     </Layout>
@@ -79,22 +85,18 @@ const SkeletonLoading = ({ carsCount = 8 }) =>
   Array(carsCount)
     .fill(1)
     .map((_data, index) => (
-      <GridItem 
-        key={`package-card-skeleton-${index}`} 
-        width={{ base: '360px', md: '100%' }}
-        height='380px'
+      <GridItem
+        key={`group-tour-card-skeleton-${index}`}
+        width="100%"
+        height="380px"
       >
-        <Skeleton
-          width="100%"  
-          height="100%"
-          rounded="lg"
-        />
+        <Skeleton width="100%" height="100%" rounded="2xl" />
       </GridItem>
     ));
 
 const Layout = ({ children }: LayoutProps) => (
-  <Box py={{ base: 6, md: 10 }} width="100%">
-    <Box px={{ base: 4, md: 6, lg: 8 }}>
+  <Box pt={{ base: 0, md: 5 }} pb={{ base: 16, md: 24}} width="100%">
+    <Box px={{ base: 4, md: 10 }}>
       <Flex
         gap={6}
         direction={{ base: "column", md: "row" }}

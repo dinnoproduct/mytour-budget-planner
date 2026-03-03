@@ -90,6 +90,7 @@
   "confirmNights.one": "Подтвердить ({{count}} ночь)",
   "confirmNights.other": "Подтвердить ({{count}} ночей)",
   "contact": "Связь",
+  "day": "День",
   "continue": "Продолжить",
   "continueEditing": "Продолжить редактирование",
   "dataCheck": "Проверка данных",
@@ -147,6 +148,7 @@
   "hotels": "Отели",
   "hotelDetails": "Детали отеля",
   "hotelOffers": "Отели в других направлениях",
+  "otherOffers":"Другие направления",
   "hotelPackagesNotFoundText": "По выбранным критериям не найдено доступных отелей. Пожалуйста, измените поиск и повторите попытку",
   "howManyDaysAreYouPlanning": "На сколько дней планируете?",
   "inProgress": "Разрабатывается",
@@ -253,7 +255,6 @@
   "pay": "Оплатить",
   "payFull": "Оплатить всю сумму",
   "payFullDescription": "Вы оплатите полную сумму {{amount}} драм",
-  
   "payPartial": "Оплатить частично",
   "payFullPrice": "Оплатить полную стоимость",
   "payInFull": "Оплатить полностью",
@@ -397,6 +398,17 @@
   "faq.cta.title": "Не нашли ответ на свой вопрос?",
   "faq.cta.subtitle": "Свяжитесь с нами, и мы ответим на интересующие вас вопросы",
   "faq.cta.orWriteUs": "или напишите нам",
+  "groupTourDetails": "Детали группового тура",
   "groupTours": "Групповые туры",
-  "booking.step": "Шаг {{step}}/{{total}}"
+  "groupTourDescriptionTitle": "Важно знать перед бронированием",
+  "booking.step": "Шаг {{step}}/{{total}}",
+  "noAvailableDepartures": "Нет доступных выездов",
+  "selectDeparture": "Выберите выезд",
+  "groupTour.selectRoomType": "Выберите тип комнаты",
+  "groupTour.validation.selectDeparture": "Выберите выезд",
+  "groupTour.validation.invalidTravelers": "Проверьте количество путешественников для выбранного типа комнаты",
+  "groupTour.book": "Забронировать",
+  "groupTour.whatsIncludedWhatsNot": "Что включено и что не включено",
+  "groupTour.dates": "Даты",
+  "acceptAndContinue": "Подтвердить и продолжить"
 }

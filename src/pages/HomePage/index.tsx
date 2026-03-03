@@ -34,7 +34,7 @@ export const HomePage = () => {
       }
       <StoriesSection isHotel={tabIndex} />
       {
-        tabIndex !== 2 && <PackageBanner mx={{base: 4, md: "auto"}} mt={10} isHotel={tabIndex} maxWidth='1376px'/>
+        tabIndex !== 2 && <PackageBanner mx={{base: 4, md: 10 }} mt={10} isHotel={tabIndex}/>
       }
       <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex}/>
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}

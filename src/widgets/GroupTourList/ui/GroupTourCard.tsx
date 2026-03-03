@@ -1,170 +1,213 @@
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex, Tag, type LinkProps } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import ImageSlider from "@features/PackageCard/ui/ImageSlider.tsx";
-import { type ReactNode } from "react";
-import { LANGUAGE_PREFIX } from "@shared/model";
+import { type ReactNode, useMemo } from "react";
+import { CURRENCY_MAP, LANGUAGE_PREFIX } from "@shared/model";
 import { type Language } from "@widgets/Header/model";
 import { Icon, Text } from "@ui";
 import { LanguageLink } from "@/components/LanguageLink/LanguageLink";
-import { type GroupTourEntity } from "@entities/package";
+import {
+  type DictionaryTypes,
+  type GroupTourEntity,
+  useDictionary,
+} from "@entities/package";
 import { formatNumber } from "@shared/utils";
 import moment from "moment";
-import { useMemo } from "react";
+import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 
 type GroupTourCardProps = {
   groupTour: GroupTourEntity;
   link?: string;
-};
+} & LinkProps;
 
-export const GroupTourCard = ({ groupTour, link = "#" }: GroupTourCardProps) => {
+export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCardProps) => {
   const { i18n, t } = useTranslation();
+  const { data: roomTypes = [] } = useDictionary(
+    "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
+  );
 
   const languageSuffix = useMemo(
-    () => LANGUAGE_PREFIX[i18n.language as Language["name"]],
+    () =>
+      (LANGUAGE_PREFIX[i18n.language as Language["name"]] ?? "Eng").toLowerCase(),
     [i18n.language],
   );
 
   const groupName = useMemo(
-    () => groupTour.name[languageSuffix as keyof typeof groupTour.name] || groupTour.name.eng,
+    () =>
+      groupTour.name[languageSuffix as keyof typeof groupTour.name] ||
+      groupTour.name.eng,
     [groupTour.name, languageSuffix],
   );
 
-  // Convert gallery to image format expected by ImageSlider
   const images = useMemo(
     () =>
       groupTour.gallery
         .sort((a, b) => a.order - b.order)
         .map((item) => ({
           url: item.url,
-          size: 3, // Default size for horizontal cards
+          size: 3,
         })),
     [groupTour.gallery],
   );
 
-  // Get the first available departure for display
   const firstDeparture = useMemo(
     () =>
       groupTour.departures
         .filter((dep) => dep.availableSeats > 0)
-        .sort((a, b) => moment(a.startDate).valueOf() - moment(b.startDate).valueOf())[0] ||
-      groupTour.departures[0],
+        .sort(
+          (a, b) =>
+            moment(a.startDate).valueOf() - moment(b.startDate).valueOf(),
+        )[0] || groupTour.departures[0],
     [groupTour.departures],
   );
 
-  const duration = firstDeparture?.duration || 0;
-  const startDate = firstDeparture?.startDate
-    ? moment(firstDeparture.startDate).format("DD MMM YYYY")
-    : "";
-  const endDate = firstDeparture?.endDate
-    ? moment(firstDeparture.endDate).format("DD MMM YYYY")
-    : "";
+  const duration = firstDeparture?.duration ?? 0;
+
+  const fromDate = firstDeparture?.startDate
+    ? moment(firstDeparture.startDate)
+    : null;
+  const toDate = firstDeparture?.endDate
+    ? moment(firstDeparture.endDate)
+    : null;
+
+  const formatDate = (date: moment.Moment) => {
+    const longMonthName = date.locale("en").format("MMMM").toLowerCase();
+    const shortMonthName = t(`${longMonthName}Short`);
+    return `${shortMonthName} ${date.format("D")}`;
+  };
+
+  const roomTypeLabel = useMemo(
+    () =>
+      roomTypes.find((rt) => rt.key === groupTour.roomType)?.value ?? "",
+    [roomTypes, groupTour.roomType],
+  );
+
+  const currencyLabel =
+    CURRENCY_MAP[groupTour.currency as keyof typeof CURRENCY_MAP] ||
+    groupTour.currency;
+  const priceInAmd = groupTour.rate
+    ? Math.round(groupTour.price * groupTour.rate)
+    : null;
 
   return (
-    <LanguageLink
-      to={link}
-      _hover={{ textTransform: "none" }}
-    >
-      <Box
-        maxWidth="full"
-        width="full"
-        rounded="lg"
-        overflow="hidden"
-        border="1px solid"
-        borderColor="gray.200"
-        bg="white"
-      >
-        <Flex flexDirection={{ base: "column", md: "row" }}>
-          {/* Image section */}
-          <Flex
-            gap={4}
-            bgColor="gray.50"
-            p={3}
-            grow={1}
-            flexDirection={{ base: "column", md: "row" }}
-          >
-            <Box width={{ base: "full", md: "326px" }}>
-              {images.length > 0 ? (
-                <ImageSlider
-                  images={images}
-                  starsCount={0}
-                />
-              ) : (
-                <Box
-                  width="full"
-                  height="170px"
-                  bg="gray.200"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Text color="gray.400">No Image</Text>
-                </Box>
-              )}
-            </Box>
-            <VStack spacing={2} flexGrow={1} align="flex-start">
+    <Layout link={link} {...props}>
+      <Box p={3} pb={4} bg={'gray.50'}>
+        {images.length > 0 ? (
+          <ImageSlider images={images} starsCount={0} />
+        ) : (
+          <Box
+            width="full"
+            height="170px"
+            bg="gray.200"
+            rounded={'lg'}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          />
+        )}
+
+            <Box pt="4" >
               <Text
                 color="gray.800"
-                size="md"
+                size="sm"
                 fontWeight="bold"
                 noOfLines={2}
                 as="h3"
+                mb={2}
               >
                 {groupName}
               </Text>
-              {firstDeparture && (
-                <>
-                  <Flex alignItems="center" gap={1}>
-                    <Icon name="calendar" color="gray.500" size="16" />
-                    <Text size="sm" color="gray.600">
-                      {startDate} - {endDate}
-                    </Text>
-                  </Flex>
-                  {duration > 0 && (
-                    <Flex alignItems="center" gap={1}>
-                      <Icon name="clock" color="gray.500" size="16" />
-                      <Text size="sm" color="gray.600">
-                        {duration} {t("days")}
-                      </Text>
-                    </Flex>
-                  )}
-                  <Flex alignItems="center" gap={1}>
-                    <Icon name="users" color="gray.500" size="16" />
-                    <Text size="sm" color="gray.600">
-                      {t("availableSeats", { count: firstDeparture.availableSeats })}
-                    </Text>
-                  </Flex>
-                </>
-              )}
-            </VStack>
-          </Flex>
-          {/* Price section */}
-          <Box
-            p={4}
-            minW={{ base: "full", md: "200px" }}
-            bg="white"
-            borderLeft={{ base: "none", md: "1px solid" }}
-            borderTop={{ base: "1px solid", md: "none" }}
-            borderColor="gray.200"
-            display="flex"
-            flexDirection="column"
-            justifyContent="space-between"
-          >
-            <VStack spacing={2} align="flex-start">
-              <Text size="sm" color="gray.600">
-                {t("priceFrom")}
-              </Text>
-              <Text size="xl" fontWeight="bold" color="gray.800">
-                {formatNumber(groupTour.price)} {groupTour.currency}
-              </Text>
-              {groupTour.rate && (
-                <Text size="sm" color="gray.600">
-                  ≈ {formatNumber(groupTour.price * groupTour.rate)} ֏
+              {groupTour?.routeCities?.length > 0 || groupTour?.routeCountries?.length > 0 && (
+                <Box display="flex" alignItems="center" gap={1}>
+                <Icon name="location-pin" size="16" color="gray.500" />
+                <Text size="xs" color="gray.600" fontWeight="medium">
+                  {groupTour?.routeCities?.map((city) => city[languageSuffix as keyof typeof city] || city.eng).join(", ") || groupTour?.routeCountries?.map((c) => c[languageSuffix as keyof typeof c] || c.eng).join(", ")}
                 </Text>
+              </Box>
               )}
-            </VStack>
-          </Box>
-        </Flex>
+            </Box>
       </Box>
-    </LanguageLink>
+        <Box px={3} py={4}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          flexWrap="nowrap"
+          gap={3}
+        >
+          {roomTypeLabel && (
+            <Text
+              size="xs"
+              color="gray.600"
+              fontWeight="normal"
+              flex="1 1 auto"
+              minW={0}
+              noOfLines={1}
+            >
+              {roomTypeLabel}
+            </Text>
+          )}
+          {fromDate && toDate && (
+            <Tag
+              variant="subtle-success"
+              px={3}
+              rounded="full"
+              flexShrink={0}
+              whiteSpace="nowrap"
+            >
+              {formatDate(fromDate)} - {formatDate(toDate)}
+            </Tag>
+          )}
+        </Box>
+
+          <Box display="flex" alignItems="center" justifyContent={'space-between'}>
+            <Text size="xs" color="gray.600" fontWeight="normal">
+              {t("startFrom")}
+            </Text>
+            <Box>
+              <Flex align="center" gap={2}>
+                <Text size="lg" fontWeight="bold" color="gray.800">
+                  {priceInAmd != null
+                    ? `${numberWithCommaNormalizer(priceInAmd)} ֏`
+                    : `${formatNumber(groupTour.price)} ${groupTour.currency}`}
+                </Text>
+                {groupTour.rate && priceInAmd != null && (
+                  <Flex align="center">
+                    <Icon name="approximate" size="12" color="gray.600" />
+                    <Text size="xs" color="gray.600">
+                       {formatNumber(groupTour.price)} {currencyLabel}
+                    </Text>
+                  </Flex>
+                )}
+            </Flex>
+            </Box>
+          </Box>
+        </Box>
+    </Layout>
   );
 };
+
+const Layout = ({
+  children,
+  link,
+  ...props
+}: {
+  children: ReactNode | ReactNode[];
+  link: string;
+} & LinkProps) => (
+  <LanguageLink
+    to={link}
+    _hover={{ textTransform: "none" }}
+    width="full"
+    {...props}
+  >
+    <Box
+      rounded="2xl"
+      overflow="hidden"
+      border="1px solid"
+      borderColor="gray.200"
+    >
+      {children}
+    </Box>
+  </LanguageLink>
+);

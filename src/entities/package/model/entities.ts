@@ -239,6 +239,12 @@ export interface GroupTourName {
   rus: string
 }
 
+export interface GroupTourRouteItem {
+  arm: string
+  eng: string
+  rus: string
+}
+
 export interface GroupTourEntity {
   id: string
   name: GroupTourName
@@ -250,4 +256,65 @@ export interface GroupTourEntity {
   roomType: number
   gallery: GroupTourGalleryItem[]
   departures: GroupTourDeparture[]
+  routeCountries: GroupTourRouteItem[]
+  routeCities: GroupTourRouteItem[]
+  createdAt: string
+}
+
+// Group Tour detail (getGroupTourInfo)
+export interface GroupTourTravelers {
+  adult: number
+  child: number
+  infant: number
+  adultMinAge: number
+  childMaxAge: number
+  infantMaxAge: number
+}
+
+export interface GroupTourRoomType {
+  id: number
+  name: GroupTourName
+}
+
+export interface GroupTourItineraryDay {
+  dayNumber: number
+  date: string
+  title: GroupTourName
+  description: GroupTourName
+}
+
+export interface GroupTourPolicies {
+  cancellation: GroupTourName
+}
+
+export interface GroupTourAgency {
+  id: string
+  name: string
+}
+
+export interface GroupTourInfo {
+  id: string
+  name: GroupTourName
+  description: GroupTourName
+  status: string
+  type: number
+  themeTags: string[]
+  gallery: GroupTourGalleryItem[]
+  departures: GroupTourDeparture[]
+  price: number
+  currency: string
+  rate: number
+  travelers: GroupTourTravelers
+  roomTypes: GroupTourRoomType[]
+  /** When false, infant selector must not be rendered. When true or undefined, allow infants (max 2). */
+  infantsAllowed?: boolean
+  route: GroupTourRouteItem[]
+  routeCountries: GroupTourRouteItem[]
+  routeSummary: GroupTourName
+  hotelNames: Record<string, string>
+  included: GroupTourRouteItem[]
+  excluded: GroupTourRouteItem[]
+  itinerary: GroupTourItineraryDay[]
+  policies: GroupTourPolicies
+  agency: GroupTourAgency
 }

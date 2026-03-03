@@ -29,7 +29,7 @@ export const StoriesSection: React.FC<StoriesSectionProps> = ({ isHotel = 0 }) =
       <Box
         px={{ base: 0, sm: 6, md: 10 }}
       >
-        <Box maxWidth="1376px" mx="auto">
+        <Box mx="auto">
           <StoriesContent
             storyGroups={storyGroups}
             isLoading={isLoading}

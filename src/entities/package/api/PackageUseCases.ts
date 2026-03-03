@@ -188,4 +188,8 @@ export class PackageUseCases {
   async getGroupTours() {
     return this.groupTourService.getGroupTours()
   }
+
+  async getGroupTourInfo(tourId: string) {
+    return this.groupTourService.getGroupTourInfo(tourId)
+  }
 }

@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import {
   type GroupTourEntity,
+  type GroupTourInfo,
 } from '@entities/package'
 
 export class GroupTourService {
@@ -20,8 +21,8 @@ export class GroupTourService {
     )
 
     const url = version
-      ? `/${version}/search${restConfig.url}`
-      : `/search${restConfig.url}`
+      ? `/${version}/GroupTours${restConfig.url}`
+      : `/GroupTours${restConfig.url}`
 
     return api({
       ...restConfig,
@@ -29,10 +30,16 @@ export class GroupTourService {
     })
   }
 
-  // package
   async getGroupTours(): Promise<GroupTourEntity[]> {
     return this.request<GroupTourEntity[]>({
       url: '/getGroupTours',
+      version: 'V2'
+    })
+  }
+
+  async getGroupTourInfo(tourId: string): Promise<GroupTourInfo> {
+    return this.request<GroupTourInfo>({
+      url: `/getGroupTourInfo/${tourId}`,
       version: 'V2'
     })
   }

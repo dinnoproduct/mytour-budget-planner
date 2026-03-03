@@ -7,10 +7,11 @@ import {
   IconButton,
   Flex,
   type LinkBoxProps,
-  Link, Image,
+  Link,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import React, { type ReactNode, useMemo } from 'react'
+import React, { type ReactNode, useMemo, useRef, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFlightDates } from '@entities/package/hooks/useFlightDates.ts'
 import {
@@ -24,6 +25,7 @@ import {
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import {fmt} from "@/utils/methods.ts";
 import { useLanguageRouting } from '@/hooks/useLanguageRouting.ts';
+import { Icon } from '@/shared/ui'
 
 export interface PackageCountry {
   id: number
@@ -31,6 +33,8 @@ export interface PackageCountry {
   nameEng: string
   nameRus: string
 }
+
+type cardType = 'hotel' | 'package'
 
 type NameKey = 'nameArm' | 'nameEng' | 'nameRus'
 
@@ -63,8 +67,8 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
       obj?: T
     ) => (obj ? (obj as any)[nameKey] ?? obj.nameEng : '')
 
-    if (isHotel) {
-      const countryMap = new Map<number, PackageCountry>()
+    
+    const countryMap = new Map<number, PackageCountry>()
       ; cities.forEach((c: any) => {
         const cnt = c?.country
         if (cnt) {
@@ -77,7 +81,7 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
         }
       })
 
-      return countryCards.map((card) => {
+      const tempCards = countryCards.map((card) => {
         const country = countryMap.get(card.countryId)
         const countryName = pickName(country)
         return {
@@ -86,11 +90,11 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
           titleLeft: countryName,
           titleRight: '',
           cityParam: card.cities,
+          type: 'hotel' as cardType
         }
       })
-    }
-
-    return baseCityCards.map((card) => {
+    
+    tempCards.push(...baseCityCards.map((card) => {
       const city =
         packageCities.find((c: any) => c.id === card.id) ||
         cities.find((c: any) => c.id === card.id)
@@ -106,9 +110,12 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
         titleLeft: countryName,
         titleRight: cityName,
         cityParam: String(cityId),
+        type: 'package' as cardType
       }
-    })
-  }, [isHotel, cities, packageCities, nameKey])
+    }))
+
+    return tempCards
+  }, [cities, packageCities, nameKey])
 
   const date = new Date()
   const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1);
@@ -116,7 +123,107 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
   const dateFrom = (isHotel ? fmt(firstOfTarget) : data.flightStartDate)?.slice(0, 10);
   const dateTo = (isHotel ? fmt(lastOfTarget) : data?.flightReturnDate)?.slice(0, 10);
   const hasDates = Boolean(dateFrom && dateTo)
+  const isMobile = useBreakpointValue({ base: true, md: false }) ?? false
 
+  const carouselCards = useMemo(() => cards.filter((c) => c.id !== 2), [cards])
+  const GAP_PX = isMobile ? 16 : 24
+  const MOBILE_CARD_WIDTH = 330
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [itemWidth, setItemWidth] = useState(0)
+  const effectiveWidth = isMobile ? MOBILE_CARD_WIDTH : itemWidth || 280
+  const slotWidth = effectiveWidth + GAP_PX
+  const isInfinite = hasDates && carouselCards.length > 3
+  const displayCards = useMemo(
+    () =>
+      isMobile ? carouselCards : (isInfinite ? [...carouselCards, ...carouselCards] : carouselCards),
+    [carouselCards, isInfinite, isMobile]
+  )
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [transitionOn, setTransitionOn] = useState(true)
+  const activeIndexRef = useRef(0)
+  activeIndexRef.current = activeIndex
+  const [isAutoPlay, setIsAutoPlay] = useState(true)
+  const autoPlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const n = carouselCards.length
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el || isMobile) return
+    const updateWidth = () => {
+      const w = el.offsetWidth
+      setItemWidth((w - GAP_PX * 2) / 3)
+    }
+    updateWidth()
+    const ro = new ResizeObserver(updateWidth)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [hasDates, isMobile])
+
+  useEffect(() => {
+    if (!isInfinite || n === 0 || !isAutoPlay || isMobile) return
+    const id = setInterval(() => {
+      const i = activeIndexRef.current
+      if (i >= n) {
+        setTransitionOn(false)
+        setActiveIndex(0)
+        setTimeout(() => setTransitionOn(true), 50)
+      } else {
+        setActiveIndex(i + 1)
+      }
+    }, 2000)
+    return () => clearInterval(id)
+  }, [isInfinite, n, isAutoPlay, isMobile])
+
+  useEffect(() => {
+    return () => {
+      if (autoPlayTimeoutRef.current) {
+        clearTimeout(autoPlayTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  const pauseAutoPlay = () => {
+    setIsAutoPlay(false)
+    if (autoPlayTimeoutRef.current) {
+      clearTimeout(autoPlayTimeoutRef.current)
+    }
+    autoPlayTimeoutRef.current = setTimeout(() => {
+      setIsAutoPlay(true)
+    }, 5000)
+  }
+
+  const goPrev = () => {
+    pauseAutoPlay()
+    if (!isInfinite) return
+
+    setActiveIndex((prev) => {
+      const current = prev >= n ? prev - n : prev
+
+      if (current === 0) {
+        setTransitionOn(false)
+        setActiveIndex(n)
+        requestAnimationFrame(() => {
+          setTransitionOn(true)
+          setActiveIndex(n - 1)
+        })
+        return n
+      }
+
+      return current - 1
+    })
+  }
+
+  const goNext = () => {
+    pauseAutoPlay()
+    if (!isInfinite) return
+    if (activeIndex >= n) {
+      setTransitionOn(false)
+      setActiveIndex(0)
+      setTimeout(() => setTransitionOn(true), 50)
+    } else {
+      setActiveIndex((i) => i + 1)
+    }
+  }
 
   return (
     <Layout {...props}>
@@ -124,119 +231,179 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
         as="h3"
         fontSize={{ base: '2xl', md: '4xl' }}
         mb={{ base: 6, md: 10 }}
+        ml={{ base: 4, md: 0 }}
       >
-        {!isHotel ? t`packageOffers` : t`hotelOffers`}
+        {t`otherOffers`}
       </Heading>
 
-      <SimpleGrid columns={{ base: 1, md: !isHotel ? 2 : 3 }} spacing={6}>
-        {!hasDates
-          ? Array.from({ length: !isHotel ? 2 : 3 }).map((_, i) => (
-            <React.Fragment key={`skeleton-${i}`}>
-              <SkeletonCard />
-            </React.Fragment>
-          ))
-          : cards.map((card) => (
-            card.id === 2 ?
-              <Box
-                key={card.id}
-                display='flex'
-                flexDirection='column'
-                borderRadius='12px'
-                minH={{ base: '196px', sm: '362px' }}
-                bgColor='gray.100'
-                textAlign='center'
-              >
-                <Box m='auto'>
-                  <Image src="/images/no_direction.svg" alt="" mx='auto'/>
-                  <Text color="gray.800" fontWeight="700" fontSize='16px' mt='6px'>
-                    {t`noDirection`}
-                  </Text>
+      {!hasDates ? (
+        isMobile ? (
+          <Box overflowX="hidden" width="100%">
+            <Flex gap={`${GAP_PX}px`} width="max-content">
+              {[0, 1, 2].map((i) => (
+                <Box
+                  key={i}
+                  flexShrink={0}
+                  w={`${MOBILE_CARD_WIDTH}px`}
+                  minW={`${MOBILE_CARD_WIDTH}px`}
+                  ml={i === 0 ? '16px' : 0}
+                  mr={i === 2 ? '16px' : 0}
+                >
+                  <SkeletonCard cardLike />
                 </Box>
-              </Box> :
-            <Link
-              key={`${!isHotel ? 'city' : 'country'}-${card.id}`}
-              position="relative"
-              borderRadius='12px'
-              overflow="hidden"
-              role="group"
-              minH={{ base: '196px', sm: '362px' }}
-              href={getPathWithLanguage(`/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
-              ${isHotel ? '' : `&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}`}
-              &days=${isHotel ? '7' : '6'}${isHotel ? '&dateMode=approximate' : ''}&tab=${isHotel ? 'hotel' : 'packages'}`)}
-              _before={{
-                content: '""',
-                position: 'absolute',
-                inset: 0,
-                bgImage: `url('${card.image}')`,
-                bgSize: 'cover',
-                bgPos: 'center',
-                filter: 'auto',
-                brightness: '0.9',
-                transition: 'transform .4s ease',
-                transform: 'scale(1)',
-              }}
-              _after={{
-                content: '""',
-                position: 'absolute',
-                inset: 0,
-                bgGradient:
-                  'linear(to-b, blackAlpha.300 0%, blackAlpha.400 40%, blackAlpha.700 100%)',
-              }}
-              _hover={{
-                _before: { transform: 'scale(1.03)' },
-              }}
+              ))}
+            </Flex>
+          </Box>
+        ) : (
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <React.Fragment key={`skeleton-${i}`}>
+                <SkeletonCard />
+              </React.Fragment>
+            ))}
+          </SimpleGrid>
+        )
+      ) : (
+        <Box position="relative" ref={containerRef}>
+          <Box
+            overflowX={isMobile ? 'auto' : 'hidden'}
+            overflowY="hidden"
+            width="100%"
+            sx={
+              isMobile
+                ? {
+                    WebkitOverflowScrolling: 'touch',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    '&::-webkit-scrollbar': { display: 'none' },
+                  }
+                : undefined
+            }
+          >
+            <Flex
+              gap={`${GAP_PX}px`}
+              transition={isMobile ? undefined : (transitionOn ? 'transform 0.35s ease-out' : 'none')}
+              transform={isMobile ? undefined : `translateX(-${activeIndex * slotWidth}px)`}
+              width="max-content"
             >
-              <Flex
-                position="relative"
-                zIndex={1}
-                direction="column"
-                justify="flex-end"
-                h="full"
-                p={{ base: 4, md: 6 }}
-                gap={2}
-              >
-                <Box>
-                  <Heading
-                    as="h4"
-                    fontSize={{ base: 'xl', md: '2xl' }}
-                    color="white"
+              {displayCards.map((card, idx) => {
+                const isHotelCard = card.type === 'hotel'
+                return (
+                  <Link
+                    key={`${isHotelCard ? 'country' : 'city'}-${card.id}-${idx}`}
+                    flexShrink={0}
+                    w={`${effectiveWidth}px`}
+                    minW={`${effectiveWidth}px`}
+                    ml={isMobile && idx === 0 ? '16px' : 0}
+                    mr={isMobile && idx === displayCards.length - 1 ? '16px' : 0}
+                    position="relative"
+                    borderRadius="12px"
+                    overflow="hidden"
+                    role="group"
+                    minH={{ base: '196px', sm: '362px' }}
+                    href={getPathWithLanguage(`/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
+              ${isHotelCard ? '' : `&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}`}
+              &days=${isHotelCard ? '7' : '6'}${isHotelCard ? '&dateMode=approximate' : ''}&tab=${isHotelCard ? 'hotel' : 'packages'}`)}
+                    _before={{
+                      content: '""',
+                      position: 'absolute',
+                      inset: 0,
+                      bgImage: `url('${card.image}')`,
+                      bgSize: 'cover',
+                      bgPos: 'center',
+                      filter: 'auto',
+                      brightness: '0.9',
+                      transition: 'transform .4s ease',
+                      transform: 'scale(1)',
+                    }}
+                    _after={{
+                      content: '""',
+                      position: 'absolute',
+                      inset: 0,
+                      bgGradient:
+                        'linear(to-b, blackAlpha.300 0%, blackAlpha.400 40%, blackAlpha.700 100%)',
+                    }}
+                    _hover={{
+                      _before: { transform: 'scale(1.03)' },
+                    }}
                   >
-                    {card.titleLeft}
-                    {card.titleRight ? ` | ${card.titleRight}` : ''}
-                  </Heading>
+                    <Flex
+                      position="relative"
+                      zIndex={1}
+                      direction="column"
+                      justify="flex-end"
+                      h="full"
+                      p={{ base: 4, md: 6 }}
+                      gap={2}
+                    >
+                      <Box>
+                        <Heading
+                          as="h4"
+                          fontSize={{ base: 'xl', md: '2xl' }}
+                          color="white"
+                        >
+                          {card.titleLeft}
+                          {card.titleRight ? ` | ${card.titleRight}` : ''}
+                        </Heading>
 
-                  <IconButton
-                    height={{ base: "24px", sm: "40px" }}
-                    width={{ base: "24px", sm: "40px" }}
-                    minWidth='initial'
-                    aria-label="View offer"
-                    icon={<ChevronRightIcon boxSize={{ base: "16px", md: "24px" }} />}
-                    color="white"
-                    position="absolute"
-                    right={{ base: 4, md: 6 }}
-                    transform="translateY(-50%)"
-                    rounded="full"
-                    bg="whiteAlpha.400"
-                    _hover={{pointerEvents: 'none'}}
-                    _focus={{pointerEvents: 'none'}}
-                  />
-                </Box>
-                <Text color="whiteAlpha.900" fontSize={{ base: 'sm', md: 'md' }}>
-                  {t`included`} • {!isHotel ? (<>{t`flight`} + {t`hotel`}</>) : t`hotel`}
-                </Text>
-              </Flex>
+                        <IconButton
+                          height={{ base: '24px', sm: '40px' }}
+                          width={{ base: '24px', sm: '40px' }}
+                          minWidth="initial"
+                          aria-label="View offer"
+                          icon={<ChevronRightIcon boxSize={{ base: '16px', md: '24px' }} />}
+                          color="white"
+                          position="absolute"
+                          right={{ base: 4, md: 6 }}
+                          transform="translateY(-50%)"
+                          rounded="full"
+                          bg="whiteAlpha.400"
+                          _hover={{ pointerEvents: 'none' }}
+                          _focus={{ pointerEvents: 'none' }}
+                        />
+                      </Box>
+                      <Text color="whiteAlpha.900" fontSize={{ base: 'sm', md: 'md' }}>
+                        {t`included`} • {!isHotelCard ? (<>{t`flight`} + {t`hotel`}</>) : t`hotel`}
+                      </Text>
+                    </Flex>
+                  </Link>
+                )
+              })}
+            </Flex>
+          </Box>
 
-            </Link>
-          ))}
-      </SimpleGrid>
+          {isInfinite && (
+            <Box display={{ base: 'none', md: 'flex'}} alignItems='center' justifyContent='center' gap={4} mt={6}>
+              <IconButton
+                aria-label="Previous offers"
+                icon={<Icon name='chevron-left' color={'blue.500'} />}
+                size="md"
+                bg="white"
+                variant='outline'
+                borderColor={'blue.500'}
+                onClick={goPrev}
+              />
+              <IconButton
+                aria-label="Next offers"
+                icon={<Icon name='chevron-right' color={'blue.500'} />}
+                size="md"
+                borderColor={'blue.500'}
+                variant='outline'
+                bg="white"
+                onClick={goNext}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
     </Layout>
   )
 }
 
-const SkeletonCard = () => (
+const SkeletonCard = ({ cardLike }: { cardLike?: boolean }) => (
   <Box
-    rounded="lg"
-    minH={{ base: '180px', md: '220px' }}
+    rounded={cardLike ? '12px' : 'lg'}
+    minH={cardLike ? '196px' : { base: '180px', md: '362px' }}
     bg="gray.200"
     _dark={{ bg: 'gray.700' }}
     animation="pulse 2s infinite"
@@ -247,8 +414,8 @@ const Layout = ({
                   children,
                   ...props
                 }: { children: ReactNode | ReactNode[] } & BoxProps) => (
-  <Box px={{ base: 4, md: 6 }} {...props}>
-    <Box maxWidth="1376px" mx="auto">
+  <Box px={{ base: 0, md: 10 }} {...props}>
+    <Box mx="auto">
       <Box>{children}</Box>
     </Box>
   </Box>
