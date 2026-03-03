@@ -89,6 +89,11 @@ export const RequestCard = ({
     [status, request.status]
   )
 
+  const isReserved = useMemo(
+    () => request.status === RequestStatus.Reserved,
+    [request.status]
+  )
+
   const showNextPaymentFields = useMemo(
     () =>
       (status === RequestsGroupStatus.Upcoming &&
@@ -197,6 +202,14 @@ export const RequestCard = ({
           </UnorderedList>
         </Box>
       </Box>
+
+      {/* {isReserved && (
+        <Box px="4" pb="4">
+          <Text size="sm" color="gray.600" mt="1">
+            {t`reserved`}
+          </Text>
+        </Box>
+      )} */}
 
       {(showRemainingPaymentButton ||
         showContinueButton ||
