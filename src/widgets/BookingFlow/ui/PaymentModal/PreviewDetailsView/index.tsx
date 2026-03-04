@@ -307,16 +307,10 @@ export const PreviewDetailsView = ({
   );
   const { data: foodTypes = [] } = useDictionary(
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
   const foodType = useMemo<string>(
@@ -470,7 +464,7 @@ export const PreviewDetailsView = ({
                 key: t`room`,
                 value:
                   roomTypes.find(
-                    ({ key }: any) => key === packageDetails.roomType,
+                    ({ key }: any) => Number(key) === Number(packageDetails.roomType),
                   )?.value || "",
               },
               {

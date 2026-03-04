@@ -71,7 +71,7 @@ export const PaymentMethodView = ({
               imgSrc: system.iconUrl,
               imgAlt: system.name,
               value: system.paymentSystem,
-              isDisabled: false,
+              isDisabled: isLoadingBooking || isLoadingSystems,
             };
           })
           .filter((card): card is {

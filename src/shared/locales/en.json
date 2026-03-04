@@ -180,7 +180,7 @@
   "minPrePaymentPercentage": "Prepayment of {{percentage}}% of the price",
   "payPartialDescription": "Enter the amount",
   "minPrePaymentText": "Minimum prepayment: {{amount}} of the package price",
-  "minPrePaymentTextWithDetails": "Since there are fewer than {{days}} days remaining until your trip, installment payment for this package is not available. In this case, full payment in the amount of {{amount}} AMD is required.",
+  "minPrePaymentTextWithDetails": "Partial payment is not available due to the booking dates.",
   "mon": "Mon",
   "more": "More",
   "myPackages": "My packages",
