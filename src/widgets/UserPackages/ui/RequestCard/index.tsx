@@ -198,6 +198,14 @@ export const RequestCard = ({
         </Box>
       </Box>
 
+      {/* {isReserved && (
+        <Box px="4" pb="4">
+          <Text size="sm" color="gray.600" mt="1">
+            {t`reserved`}
+          </Text>
+        </Box>
+      )} */}
+
       {(showRemainingPaymentButton ||
         showContinueButton ||
         showNotPaidButton) && (

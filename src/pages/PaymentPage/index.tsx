@@ -42,7 +42,7 @@ export const PaymentPage = () => {
   const [step, setStep] = useState<Step>(isRemainingOnly ? "paymentMethod" : "paymentForm");
   const [paymentAmount, setPaymentAmount] = useState(0);
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(PaymentMethod.bankCard);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | string>(PaymentMethod.bankCard);
 
   const packageDetails = state?.packageDetails;
   const request = state?.request;
@@ -164,8 +164,8 @@ function RemainingPaymentStep({
 }: {
   packageDetails: PackageEntity;
   request: NormalizedRequestEntity;
-  selectedMethod: PaymentMethod;
-  onMethodChange: (m: PaymentMethod) => void;
+  selectedMethod: PaymentMethod | string;
+  onMethodChange: (m: PaymentMethod | string) => void;
   onBackClick: () => void;
 }) {
   const { mutateAsync: payRemainingAmountAsync, isPending: isLoadingBooking } =
@@ -210,8 +210,8 @@ function PaymentMethodStep({
   travelers: Travelers;
   paymentAmount: number;
   paymentOption: PaymentOption;
-  selectedMethod: PaymentMethod;
-  onMethodChange: (m: PaymentMethod) => void;
+  selectedMethod: PaymentMethod | string;
+  onMethodChange: (m: PaymentMethod | string) => void;
   onBackClick: () => void;
 }) {
   const { t, i18n } = useTranslation();
@@ -222,12 +222,7 @@ function PaymentMethodStep({
   const isFullPricePayment =
     paymentOption === "payFull" || paymentAmount >= packageDetails.price;
 
-  const paymentSystem: PaymentSystem =
-    selectedMethod === PaymentMethod.ameriaPay
-      ? ("MyAmeriaPay" as PaymentSystem.MyAmeriaPay)
-      : selectedMethod === PaymentMethod.idram
-        ? ("IDram" as PaymentSystem.IDram)
-        : ("VPos" as PaymentSystem.VPos);
+  const paymentSystem: PaymentSystem = selectedMethod as PaymentSystem;
 
   const handlePay = async () => {
     if (!request?.id) {

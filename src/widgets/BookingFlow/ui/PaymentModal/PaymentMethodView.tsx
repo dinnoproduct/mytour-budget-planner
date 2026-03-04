@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Box, Flex, Grid, Img } from "@chakra-ui/react";
+import { Box, Flex, Grid, Img, Spinner } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, SoonBadge, Text } from "@ui";
 import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
@@ -8,6 +8,7 @@ import {
   type PaymentMethodCardProps,
   type PaymentMethodViewProps,
 } from "@widgets/BookingFlow/ui/PaymentModal/types.ts";
+import { usePaymentSystems } from "@entities/package";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 
 export const PaymentMethodView = ({
@@ -21,7 +22,17 @@ export const PaymentMethodView = ({
 }: PaymentMethodViewProps) => {
   const { t } = useTranslation();
 
-  const handleMethodChange = (method: PaymentMethod) => {
+  const { data: paymentSystems, isLoading: isLoadingSystems } = usePaymentSystems(
+    packageDetails?.travelAgency?.id
+  );
+
+  // If call finished and no systems returned, go one step back
+  if (!isLoadingSystems && (!paymentSystems || paymentSystems.length === 0) && onBackClick) {
+    onBackClick();
+    return null;
+  }
+
+  const handleMethodChange = (method: PaymentMethod | string) => {
     onMethodChange(method);
   };
 
@@ -48,32 +59,30 @@ export const PaymentMethodView = ({
     label: string;
     imgSrc: string;
     imgAlt: string;
-    value: PaymentMethod;
+    value: PaymentMethod | string;
     isDisabled: boolean;
     labelSuffix?: ReactNode;
-  }> = [
-    {
-      label: "bankCard",
-      imgSrc: "https://dinno.blob.core.windows.net/icons/vpos.svg",
-      imgAlt: "bank card",
-      value: PaymentMethod.bankCard,
-      isDisabled: false,
-    },
-    {
-      label: "AmeriaPay",
-      imgSrc: "https://dinno.blob.core.windows.net/icons/myameriapay.svg",
-      imgAlt: "ameriaPay",
-      value: PaymentMethod.ameriaPay,
-      isDisabled: false,
-    },
-    {
-      label: "Idram",
-      imgSrc: "https://dinno.blob.core.windows.net/icons/idram.svg",
-      imgAlt: "idram",
-      value: PaymentMethod.idram,
-      isDisabled: false,
-    },
-  ];
+  }> =
+    paymentSystems && paymentSystems.length
+      ? paymentSystems
+          .map((system) => {
+            return {
+              label: system.name,
+              imgSrc: system.iconUrl,
+              imgAlt: system.name,
+              value: system.paymentSystem,
+              isDisabled: false,
+            };
+          })
+          .filter((card): card is {
+            label: string;
+            imgSrc: string;
+            imgAlt: string;
+            value: PaymentMethod | string;
+            isDisabled: boolean;
+            labelSuffix?: ReactNode;
+          } => card !== null)
+      : [];
 
   return (
     <Flex direction="column" justify="space-between" width="full" {...(renderAsPage ? {} : { height: 'full' })}>
@@ -92,21 +101,27 @@ export const PaymentMethodView = ({
           },
         }}
       >
-        <Grid alignItems="stretch" gap={'0.75rem'} templateColumns={'repeat(2, 1fr)'}>
-          {paymentMethodCards.map((card) => (
-            <PaymentMethodCard
-              key={card.value}
-              label={card.label}
-              imgSrc={card.imgSrc}
-              imgAlt={card.imgAlt}
-              onChange={() => handleMethodChange(card.value)}
-              radioProps={{ value: card.value }}
-              isActive={selectedMethod === card.value}
-              isDisabled={card.isDisabled}
-              labelSuffix={card?.labelSuffix}
-            />
-          ))}
-        </Grid>
+        {isLoadingSystems ? (
+          <Flex justify="center" align="center" py={8}>
+            <Spinner color="blue.500" />
+          </Flex>
+        ) : (
+          <Grid alignItems="stretch" gap={'0.75rem'} templateColumns={'repeat(2, 1fr)'}>
+            {paymentMethodCards.map((card) => (
+              <PaymentMethodCard
+                key={card.value}
+                label={card.label}
+                imgSrc={card.imgSrc}
+                imgAlt={card.imgAlt}
+                onChange={() => handleMethodChange(card.value)}
+                radioProps={{ value: card.value }}
+                isActive={selectedMethod === card.value}
+                isDisabled={card.isDisabled}
+                labelSuffix={card?.labelSuffix}
+              />
+            ))}
+          </Grid>
+        )}
       </Flex>
 
       {renderAsPage && onBackClick ? (
@@ -120,6 +135,7 @@ export const PaymentMethodView = ({
               variant="solid-blue"
               size="lg"
               width="full"
+              isDisabled={isLoadingBooking}
               onClick={handleContinue}
               isLoading={isLoadingBooking}
             >
