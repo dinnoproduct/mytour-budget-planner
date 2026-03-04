@@ -258,9 +258,6 @@ export const PaymentModal = ({
 
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
   const handleLogPurchaseEvent = (amount: number) => {
@@ -277,7 +274,7 @@ export const PaymentModal = ({
       num_adults: travelers?.adults.length || 0,
       num_children: travelers?.children.length || 0,
       room_type: roomTypes.find(
-        ({ key }: any) => key === packageDetails.roomType,
+        ({ key }: any) => Number(key) === Number(packageDetails.roomType),
       )?.value,
     });
   }

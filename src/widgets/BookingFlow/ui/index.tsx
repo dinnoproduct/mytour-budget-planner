@@ -108,6 +108,10 @@ export const BookingFlow = ({
                   : totalSteps - 1);
   }, [modalView, totalSteps, startedSignedOut, currentPaymentView]);
 
+  useEffect(() => {
+    localStorage.setItem('bookingResultSource', 'booking');
+  }, []);
+  
   return (
     <Box
       width="full"
