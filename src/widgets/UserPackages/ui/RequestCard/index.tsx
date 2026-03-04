@@ -89,11 +89,6 @@ export const RequestCard = ({
     [status, request.status]
   )
 
-  const isReserved = useMemo(
-    () => request.status === RequestStatus.Reserved,
-    [request.status]
-  )
-
   const showNextPaymentFields = useMemo(
     () =>
       (status === RequestsGroupStatus.Upcoming &&

@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import {
+  PaymentSystemInfo,
   type PrepaymentCalculationParams,
   type PrepaymentInfo
 } from './types.ts'

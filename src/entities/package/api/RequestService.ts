@@ -6,7 +6,8 @@ import {
   type RequestEntity,
   type ReservePackageInput,
   type ReservePackageResponse,
-  type UpdateRequestInput
+  type UpdateRequestInput,
+  type PaymentSystemInfo
 } from '@entities/package'
 import { type LanguageName } from '@shared/model'
 
