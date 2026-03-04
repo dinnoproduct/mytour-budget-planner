@@ -44,6 +44,7 @@ export const PaymentPage = () => {
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | string>(PaymentMethod.bankCard);
 
+
   const packageDetails = state?.packageDetails;
   const request = state?.request;
   const travelersFromState = state?.travelers;
@@ -52,6 +53,10 @@ export const PaymentPage = () => {
     () => !packageDetails?.destinationFlight?.id,
     [packageDetails?.destinationFlight?.id],
   );
+
+  useEffect(() => {
+    localStorage.setItem('bookingResultSource', 'payment');
+  }, []);
 
   const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
