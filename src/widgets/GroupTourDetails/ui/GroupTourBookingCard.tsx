@@ -1,4 +1,4 @@
-import { Box, Flex, FormControl, FormLabel, Select, VStack } from '@chakra-ui/react'
+import { Box, Flex, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useMemo, useState, useEffect } from 'react'
 import { Button, Icon, Text } from '@ui'
@@ -14,58 +14,16 @@ import {
   formatDate,
   type RoomTypeKind,
 } from '../lib/utils'
+import { SectionTitle } from './GroupTourBookingCard/SectionTitle'
+import { TravelersSection } from './GroupTourBookingCard/TravelersSection'
+import { RoomTypeSection } from './GroupTourBookingCard/RoomTypeSection'
+import { DatesSection } from './GroupTourBookingCard/DatesSection'
 
 const MAX_INFANTS = 2
 
 type GroupTourBookingCardProps = {
   groupTour: GroupTourInfo
   containerRef?: React.RefObject<HTMLDivElement | null>
-}
-
-function TravelerStepper({
-  value,
-  min = 0,
-  max = 9,
-  onChange,
-  label,
-}: {
-  value: number
-  min?: number
-  max?: number
-  onChange: (n: number) => void
-  label: string
-}) {
-  const clamped = Math.max(min, Math.min(max, value))
-  return (
-    <Flex align="center" justify="space-between" width="full">
-      <Text size="sm" color="gray.700">
-        {label}
-      </Text>
-      <Flex align="center" gap={2}>
-        <Button
-          size="sm"
-          variant="outline-blue"
-          isDisabled={clamped <= min}
-          onClick={() => onChange(clamped - 1)}
-          aria-label="decrease"
-        >
-          <Icon name="remove" size="16" />
-        </Button>
-        <Text size="sm" fontWeight="medium" minW="24px" textAlign="center">
-          {clamped}
-        </Text>
-        <Button
-          size="sm"
-          variant="outline-blue"
-          isDisabled={clamped >= max}
-          onClick={() => onChange(clamped + 1)}
-          aria-label="increase"
-        >
-          <Icon name="add" size="16" />
-        </Button>
-      </Flex>
-    </Flex>
-  )
 }
 
 export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBookingCardProps) => {
@@ -90,7 +48,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
   const [children, setChildren] = useState(0)
   const [infants, setInfants] = useState(0)
 
-  const infantsAllowed = groupTour.infantsAllowed !== false
+  const infantsAllowed = groupTour.travelers?.infant > 0
   const roomTypes = groupTour.roomTypes ?? []
 
   useEffect(() => {
@@ -228,89 +186,47 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
           right="0"
           width="full"
         >
-          <VStack align="stretch" spacing={4}>
-            {/* Departure */}
-            <FormControl isInvalid={!noValidDepartures && !selectedDeparture && validDepartures.length > 0}>
-              <FormLabel fontSize="sm" fontWeight="medium" color="gray.700">
-                {t('groupTour.dates')}
-              </FormLabel>
-              {noValidDepartures ? (
-                <Text size="sm" color="red.500">
-                  {t('noAvailableDepartures')}
-                </Text>
-              ) : (
-                <Select
-                  value={selectedDepartureIndex}
-                  onChange={(e) => setSelectedDepartureIndex(Number(e.target.value))}
-                  isDisabled={noValidDepartures}
-                  size="sm"
-                >
-                  {validDepartures.map((d, i) => (
-                    <option key={`${d.startDate}-${i}`} value={i}>
-                      {formatDate(d.startDate)} · {t('availableSeats', { count: d.availableSeats })}
-                    </option>
-                  ))}
-                </Select>
-              )}
-            </FormControl>
-
-            {/* Room type */}
-            {roomTypes.length > 0 && (
-              <FormControl>
-                <FormLabel fontSize="sm" fontWeight="medium" color="gray.700">
-                  {t('roomType')}
-                </FormLabel>
-                <Select
-                  value={selectedRoomTypeId}
-                  onChange={(e) => setSelectedRoomTypeId(e.target.value ? Number(e.target.value) : '')}
-                  isDisabled={noValidDepartures}
-                  size="sm"
-                >
-                  {roomTypes.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {getLocalized(r.name, languageSuffix) || t('groupTour.selectRoomType')}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
+          <VStack align="stretch" spacing={0} >
+            <DatesSection
+              label={t('groupTour.dates')}
+              noValidDepartures={noValidDepartures}
+              validDepartures={validDepartures}
+              selectedDepartureIndex={selectedDepartureIndex}
+              onChangeSelectedDepartureIndex={setSelectedDepartureIndex}
+              noAvailableLabel={t('noAvailableDepartures')}
+            />
 
             {/* Travelers */}
-            <VStack align="stretch" spacing={2}>
-              <TravelerStepper
-                value={adults}
-                min={adultMin}
-                max={adultMax}
-                onChange={(n) => {
-                  const v = Math.max(adultMin, Math.min(adultMax, n))
-                  setAdults(v)
-                  if (isDouble) setChildren(2 - v)
-                }}
-                label={t('adults')}
-              />
-              {showChildSelector && (
-                <TravelerStepper
-                  value={children}
-                  min={childMin}
-                  max={childMax}
-                  onChange={(n) => {
-                    const v = Math.max(childMin, Math.min(childMax, n))
-                    setChildren(v)
-                    if (isDouble) setAdults(2 - v)
-                  }}
-                  label={t('children')}
-                />
-              )}
-              {showInfantSelector && (
-                <TravelerStepper
-                  value={infants}
-                  min={0}
-                  max={infantMax}
-                  onChange={(n) => setInfants(Math.max(0, Math.min(infantMax, n)))}
-                  label={t('infants')}
-                />
-              )}
-            </VStack>
+            <TravelersSection
+              title={t('travelers')}
+              adults={adults}
+              children={children}
+              infants={infants}
+              setAdults={setAdults}
+              setChildren={setChildren}
+              setInfants={setInfants}
+              adultMin={adultMin}
+              adultMax={adultMax}
+              childMin={childMin}
+              childMax={childMax}
+              infantMax={infantMax}
+              showChildSelector={showChildSelector}
+              showInfantSelector={showInfantSelector}
+              isDouble={isDouble}
+              adultsLabel={t('adults')}
+              childrenLabel={t('children')}
+              infantsLabel={t('infants')}
+            />
+
+            {/* Room type */}
+            <RoomTypeSection
+              roomTypes={roomTypes}
+              selectedRoomTypeId={selectedRoomTypeId}
+              onChangeRoomTypeId={setSelectedRoomTypeId}
+              disabled={noValidDepartures}
+              label={t('roomType')}
+              languageSuffix={languageSuffix}
+            />
 
             {validationError && (
               <Text size="sm" color="red.500">
@@ -334,7 +250,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
               isDisabled={!canProceed || noValidDepartures}
               onClick={handleBook}
             >
-              {t('groupTour.book')}
+              {t('acceptAndContinue')}
             </Button>
           </VStack>
         </CardSectionLayout>

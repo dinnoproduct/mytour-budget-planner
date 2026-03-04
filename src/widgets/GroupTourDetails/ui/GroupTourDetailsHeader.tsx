@@ -61,11 +61,15 @@ export const GroupTourDetailsHeader = ({
         >
           {groupName}
         </Heading>
-        {groupTour.themeTags?.map((tag) => (
-          <GroupTourTagBadge key={tag}>
-            {tag}
-          </GroupTourTagBadge>
-        ))}
+        {groupTour.themeTags?.map((tag) => {
+          const label = getLocalized(tag.name, languageSuffix)
+          if (!label) return null
+          return (
+            <GroupTourTagBadge key={tag.id}>
+              {label}
+            </GroupTourTagBadge>
+          )
+        })}
        </Flex>
        
 

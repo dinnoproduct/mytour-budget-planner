@@ -292,13 +292,19 @@ export interface GroupTourAgency {
   name: string
 }
 
+export interface GroupTourThemeTag {
+  id: string
+  name: GroupTourName
+  icon: string
+}
+
 export interface GroupTourInfo {
   id: string
   name: GroupTourName
   description: GroupTourName
   status: string
   type: number
-  themeTags: string[]
+  themeTags: GroupTourThemeTag[]
   gallery: GroupTourGalleryItem[]
   departures: GroupTourDeparture[]
   price: number

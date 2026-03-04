@@ -1,11 +1,13 @@
 import type { GroupTourName, GroupTourRouteItem, GroupTourDeparture, GroupTourRoomType } from '@entities/package'
+import { t } from 'i18next'
 import moment from 'moment'
 
 export type RoomTypeKind = 'single' | 'double' | 'twin' | 'triple' | 'other'
 
 /** Infer room type kind from localized name (e.g. Single, Double, Twin, Triple) for validation rules */
 export const getRoomTypeKind = (room: GroupTourRoomType, lang: string): RoomTypeKind => {
-  const name = getLocalized(room?.name, lang).toLowerCase()
+  const name = room.name.eng?.toLowerCase().trim()
+  if (!name) return 'other'
   if (name.includes('single')) return 'single'
   if (name.includes('double')) return 'double'
   if (name.includes('twin')) return 'twin'
@@ -49,4 +51,19 @@ export const getLocalizedRouteItem = (obj: GroupTourRouteItem | undefined | stri
 export const formatDate = (dateStr?: string) => {
   if (!dateStr) return '—'
   return moment(dateStr).format('DD MMM YYYY')
+}
+
+export const getDepartureMonthName = (dateStr: string | undefined): string => {
+  if (!dateStr) return ''
+  const monthName = moment(dateStr).locale("en").format('MMMM').toLowerCase()
+  const translatedMonthName = t(`${monthName}`)
+  return translatedMonthName
+}
+
+export const getDepartureDayRange = (startDateStr: string | undefined, endDateStr: string | undefined): string => {
+  if (!startDateStr) return ''
+  const startDay = moment(startDateStr).date()
+  if (!endDateStr) return String(startDay)
+  const endDay = moment(endDateStr).date()
+  return startDay === endDay ? String(startDay) : `${startDay}-${endDay}`
 }

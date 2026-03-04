@@ -1,4 +1,4 @@
-import { Box, Flex, Tag, type LinkProps } from "@chakra-ui/react";
+import { Box, Flex, Image, Tag, type LinkProps } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import ImageSlider from "@features/PackageCard/ui/ImageSlider.tsx";
 import { type ReactNode, useMemo } from "react";
@@ -93,7 +93,14 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
     <Layout link={link} {...props}>
       <Box p={3} pb={4} bg={'gray.50'}>
         {images.length > 0 ? (
-          <ImageSlider images={images} starsCount={0} />
+          <Image 
+            src={images[0].url} 
+            maxWidth="full"
+            height={170}
+            width="full"
+            objectFit="cover"
+            rounded="lg"
+          />
         ) : (
           <Box
             width="full"
