@@ -103,6 +103,15 @@ export const PaymentPage = () => {
     return null;
   }
 
+  // If API says only full payment is allowed, skip payment type step and go straight to method
+  useEffect(() => {
+    if (prepaymentInfo?.paymentType === "FullPricePayment" && step === "paymentForm") {
+      setPaymentAmount(packageDetails.price ?? 0);
+      setPaymentOption("payFull");
+      setStep("paymentMethod");
+    }
+  }, [prepaymentInfo?.paymentType, step, packageDetails?.price]);
+
   const handleFormSubmit = (amount: number, option: PaymentOption) => {
     setPaymentAmount(amount);
     setPaymentOption(option);
