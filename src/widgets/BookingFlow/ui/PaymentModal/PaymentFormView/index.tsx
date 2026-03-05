@@ -165,7 +165,9 @@ export const PaymentFormView = ({
             width: '0',
           },
         }}
+        marginBottom={renderAsPage && !isFullPaymentOnly ? {base: '140px', md: 'auto'} : 'auto'}
       >
+
         {isFullPaymentOnly ? (
           
             <SimplePaymentContent
