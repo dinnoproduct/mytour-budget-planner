@@ -95,6 +95,7 @@ export const PaymentMethodView = ({
         direction="column"
         maxWidth={renderAsPage ? "full" : "402px"}
         mx="auto"
+        mb={renderAsPage ? {base: '140px', md: 'auto'} : 'auto'}
         sx={{
           "&::-webkit-scrollbar": {
             width: "0",
