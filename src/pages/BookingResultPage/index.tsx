@@ -13,8 +13,11 @@ export const BookingResultPage = () => {
   const { navigateToMyPackages } = useLanguageNavigate()
   const { searchParams } = useQueryParams()
 
-  const isSuccess = searchParams.success === 'true' || searchParams.success === 'True'
-  const isError = searchParams.error === 'true' || searchParams.error === 'True'
+  const successParam = searchParams.success
+  const normalizedSuccess = typeof successParam === 'string' ? successParam.toLowerCase() : undefined
+  const hasSuccessFlag = normalizedSuccess === 'true' || normalizedSuccess === 'false'
+  const isSuccess = normalizedSuccess === 'true'
+
   // Same page, two messages: from localStorage (or URL) — booking flow → bookingSuccessModalText, payment flow → paymentSuccessModalText
   const fromPaymentFromUrl = searchParams.fromPayment === 'true' || searchParams.fromPayment === 'True'
   const fromPaymentFromStorage =
@@ -23,28 +26,14 @@ export const BookingResultPage = () => {
   const fromPayment = fromPaymentFromStorage || fromPaymentFromUrl
 
   useEffect(() => {
-    if (isSuccess && typeof window !== 'undefined') {
-      localStorage.removeItem('bookingResultSource')
-    }
-  }, [isSuccess])
-
-  useEffect(() => {
-    // If neither success nor error params are present, redirect to home or my packages
-    if (!isSuccess && !isError) {
+    // If success flag is missing, redirect to my packages
+    if (!hasSuccessFlag) {
       navigateToMyPackages({ replace: true })
     }
-  }, [isSuccess, isError, navigateToMyPackages])
-
-  const handleGoToMyPackages = () => {
-    if (isError) {
-      navigateToMyPackages({ queryParams: 'tab=1' })
-    } else {
-      navigateToMyPackages()
-    }
-  }
+  }, [hasSuccessFlag, navigateToMyPackages])
 
   // Don't render if no valid params
-  if (!isSuccess && !isError) {
+  if (!hasSuccessFlag) {
     return null
   }
 
