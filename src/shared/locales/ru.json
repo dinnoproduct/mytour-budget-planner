@@ -375,6 +375,7 @@
   "promoCodeValidationFailed": "Не удалось проверить промокод. Попробуйте еще раз.",
   "promoCodeApplied": "Промокод применён",
   "promoCodePlaceholder": "Введите промокод",
+  "iHavePromoCode":"У меня есть промо код",
   "discount": "Скидка",
   "finalPrice": "Итоговая цена",
   "vazgenSargsyanAddress": "Вазгена Саргсяна 2,",

@@ -486,7 +486,7 @@ export const PreviewDetailsView = ({
             ]}
           />
           {/* PromoCode Section */}
-          {/* {paymentOption !== "noPrepayment" && (
+          {paymentOption !== "noPrepayment" && (
             <PromoCode
               isApplyButtonDisabled={isApplyButtonDisabled}
               handleApplyPromoCode={handleApplyPromoCode}
@@ -497,7 +497,7 @@ export const PreviewDetailsView = ({
               setHasPromoCode={setHasPromoCode}
               promoCodeStatus={promoCodeStatus}
             />
-          )} */}
+          )}
 
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection

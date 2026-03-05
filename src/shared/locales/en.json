@@ -374,6 +374,7 @@
   "promoCodeValidationFailed": "Failed to validate promo code. Please try again.",
   "promoCodeApplied": "Promo code applied",
   "promoCodePlaceholder": "Enter promo code",
+  "iHavePromoCode":"I have a promo code",
   "discount": "Discount",
   "finalPrice": "Final Price",
   "vazgenSargsyanAddress": "Vazgen Sargsyan 2,",
