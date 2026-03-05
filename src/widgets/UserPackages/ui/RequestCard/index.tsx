@@ -416,9 +416,16 @@ const DetailsListItem = ({
       </Text>
 
       {tooltipText ? (
-        <Tooltip label={tooltipText}>
-          <Flex justify="center" align="center">
-            <Icon name="info-outline" size="16" color="gray.800" ml="1" />
+        <Tooltip label={tooltipText} hasArrow shouldWrapChildren>
+          <Flex
+            justify="center"
+            align="center"
+            ml="1"
+            p={1}
+            borderRadius="full"
+            cursor="pointer"
+          >
+            <Icon name="info-outline" size="16" color="gray.800" />
           </Flex>
         </Tooltip>
       ) : null}

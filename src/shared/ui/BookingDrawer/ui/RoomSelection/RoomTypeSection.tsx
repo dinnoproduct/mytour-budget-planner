@@ -30,7 +30,13 @@ export const RoomTypeSection = ({
         {roomType}
       </Text>
       <Divider />
-      <Flex gap={6} overflowX="auto" px={4} py={3}>
+      <Flex gap={6} overflowX="auto" px={4} py={3} sx={{
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        },
+        '-ms-overflow-style': 'none',
+        'scrollbar-width': 'none'
+      }}>
         {roomTypeOffers.map((offer) => (
           <RoomCard
             fullWidth={roomTypeOffers.length === 1}

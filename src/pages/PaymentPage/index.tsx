@@ -103,14 +103,20 @@ export const PaymentPage = () => {
     return null;
   }
 
-  // If API says only full payment is allowed, skip payment type step and go straight to method
+  // If API says only full payment is allowed, skip payment type step and go straight to method once
+  const [skippedFormForFullPayment, setSkippedFormForFullPayment] = useState(false);
   useEffect(() => {
-    if (prepaymentInfo?.paymentType === "FullPricePayment" && step === "paymentForm") {
+    if (
+      !skippedFormForFullPayment &&
+      prepaymentInfo?.paymentType === "FullPricePayment" &&
+      step === "paymentForm"
+    ) {
       setPaymentAmount(packageDetails.price ?? 0);
       setPaymentOption("payFull");
       setStep("paymentMethod");
+      setSkippedFormForFullPayment(true);
     }
-  }, [prepaymentInfo?.paymentType, step, packageDetails?.price]);
+  }, [prepaymentInfo?.paymentType, step, packageDetails?.price, skippedFormForFullPayment]);
 
   const handleFormSubmit = (amount: number, option: PaymentOption) => {
     setPaymentAmount(amount);
@@ -118,7 +124,13 @@ export const PaymentPage = () => {
     setStep("paymentMethod");
   };
 
-  const handleMethodBack = () => setStep("paymentForm");
+  const handleMethodBack = () => {
+    if (skippedFormForFullPayment) {
+      navigateBack();
+    } else {
+      setStep("paymentForm");
+    }
+  };
 
   return (
     <PageLayout background="white" showFooter={false}>
