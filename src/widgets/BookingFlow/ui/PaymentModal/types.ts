@@ -67,8 +67,10 @@ export type PaymentMethodViewProps = {
   packageDetails: PackageEntity
   onBackClick?: () => void
   renderAsPage?: boolean
-  selectedMethod: PaymentMethod
-  onMethodChange: (method: PaymentMethod) => void
+  /** Selected payment system code (e.g. 'VPos', 'MyAmeriaPay', 'IDram', or any backend value). */
+  selectedMethod: PaymentMethod | string
+  /** Called with the selected payment system code. */
+  onMethodChange: (method: PaymentMethod | string) => void
 }
 
 export type PreviewDetailsViewProps = {

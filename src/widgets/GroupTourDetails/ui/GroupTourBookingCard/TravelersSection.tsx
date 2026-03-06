@@ -17,10 +17,14 @@ type TravelersSectionProps = {
   infantMax: number
   showChildSelector: boolean
   showInfantSelector: boolean
-  isDouble: boolean
+  guestsMax: number
+  isFixedDouble: boolean
   adultsLabel: string
   childrenLabel: string
   infantsLabel: string
+  adultsAgeText?: string
+  childrenAgeText?: string
+  infantsAgeText?: string
 }
 
 export const TravelersSection = ({
@@ -38,11 +42,27 @@ export const TravelersSection = ({
   infantMax,
   showChildSelector,
   showInfantSelector,
-  isDouble,
+  guestsMax,
+  isFixedDouble,
   adultsLabel,
   childrenLabel,
   infantsLabel,
+  adultsAgeText,
+  childrenAgeText,
+  infantsAgeText,
 }: TravelersSectionProps) => {
+  const total = adults + children
+  const effectiveAdultMax = isFixedDouble
+    ? adultMax
+    : total >= guestsMax
+      ? adults
+      : adultMax
+  const effectiveChildMax = isFixedDouble
+    ? childMax
+    : total >= guestsMax
+      ? children
+      : childMax
+
   return (
     <>
       <SectionTitle title={title} />
@@ -50,25 +70,43 @@ export const TravelersSection = ({
         <TravelerStepper
           value={adults}
           min={adultMin}
-          max={adultMax}
+          max={effectiveAdultMax}
           onChange={(n) => {
-            const v = Math.max(adultMin, Math.min(adultMax, n))
-            setAdults(v)
-            if (isDouble) setChildren(2 - v)
+            const v = Math.max(adultMin, Math.min(effectiveAdultMax, n))
+            if (isFixedDouble) {
+              // keep total equal to guestsMax (typically 2): adjust children complementarily
+              setAdults(v)
+              setChildren(Math.max(0, guestsMax - v))
+            } else {
+              // prevent increasing when total would exceed guestsMax
+              if (v > adults && adults + children >= guestsMax) {
+                return
+              }
+              setAdults(v)
+            }
           }}
           label={adultsLabel}
+          description={adultsAgeText}
         />
         {showChildSelector && (
           <TravelerStepper
             value={children}
             min={childMin}
-            max={childMax}
+            max={effectiveChildMax}
             onChange={(n) => {
-              const v = Math.max(childMin, Math.min(childMax, n))
-              setChildren(v)
-              if (isDouble) setAdults(2 - v)
+              const v = Math.max(childMin, Math.min(effectiveChildMax, n))
+              if (isFixedDouble) {
+                setChildren(v)
+                setAdults(Math.max(1, guestsMax - v))
+              } else {
+                if (v > children && adults + children >= guestsMax) {
+                  return
+                }
+                setChildren(v)
+              }
             }}
             label={childrenLabel}
+            description={childrenAgeText}
           />
         )}
         {showInfantSelector && (
@@ -78,6 +116,7 @@ export const TravelersSection = ({
             max={infantMax}
             onChange={(n) => setInfants(Math.max(0, Math.min(infantMax, n)))}
             label={infantsLabel}
+            description={infantsAgeText}
           />
         )}
       </VStack>

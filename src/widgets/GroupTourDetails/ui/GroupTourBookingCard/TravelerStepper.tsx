@@ -7,14 +7,16 @@ type TravelerStepperProps = {
   max?: number
   onChange: (n: number) => void
   label: string
+  description?: string
 }
 
 export const TravelerStepper = ({
   value,
   min = 0,
-  max = 9,
+  max = 2,
   onChange,
   label,
+  description,
 }: TravelerStepperProps) => {
   const clamped = Math.max(min, Math.min(max, value))
 
@@ -23,9 +25,16 @@ export const TravelerStepper = ({
 
   return (
     <Flex align="center" justify="space-between" width="full">
-      <Text size="sm" color="gray.700">
-        {label}
-      </Text>
+      <Flex direction="column">
+        <Text size="sm" color="gray.700">
+          {label}
+        </Text>
+        {description && (
+          <Text size="xs" color="gray.500">
+            {description}
+          </Text>
+        )}
+      </Flex>
       <Flex align="center" gap={2}>
         <IconButton
           size="sm"

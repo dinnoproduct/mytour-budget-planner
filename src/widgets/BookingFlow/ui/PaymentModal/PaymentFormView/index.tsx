@@ -42,6 +42,13 @@ export const PaymentFormView = ({
   const minPrePaymentAmount =
     prepaymentInfo?.minimumAcceptablePayment ?? Math.floor(packageDetails.price / 2)
 
+  // When prepayment info arrives/changes, ensure the partial option shows the correct minimum
+  useEffect(() => {
+    if (selectedOption === 'pay') {
+      setPaymentAmount(minPrePaymentAmount)
+    }
+  }, [minPrePaymentAmount])
+
   useEffect(() => {
     if (isFullPaymentOnly) {
       setSelectedOption('payFull')
@@ -158,7 +165,9 @@ export const PaymentFormView = ({
             width: '0',
           },
         }}
+        marginBottom={renderAsPage && !isFullPaymentOnly ? {base: '140px', md: 'auto'} : 'auto'}
       >
+
         {isFullPaymentOnly ? (
           
             <SimplePaymentContent

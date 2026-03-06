@@ -307,26 +307,11 @@ export const PreviewDetailsView = ({
   );
   const { data: foodTypes = [] } = useDictionary(
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
-  // Load room-type dictionary (independent of isHotelPackage) and
-  // derive the label reactively based on current language.
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
   );
-
-  const [roomTypeLabel, setRoomTypeLabel] = useState<string>("");
-
-  useEffect(() => {
-    const value =
-      roomTypes.find(
-        ({ key }: any) => key === packageDetails.roomType,
-      )?.value || "";
-    setRoomTypeLabel(value);
-  }, [roomTypes, packageDetails.roomType, i18n.language]);
 
   const foodType = useMemo<string>(
     () =>
@@ -477,7 +462,10 @@ export const PreviewDetailsView = ({
             listItems={[
               {
                 key: t`room`,
-                value: roomTypeLabel,
+                value:
+                  roomTypes.find(
+                    ({ key }: any) => Number(key) === Number(packageDetails.roomType),
+                  )?.value || "",
               },
               {
                 key: t`checkIn`,
@@ -498,7 +486,7 @@ export const PreviewDetailsView = ({
             ]}
           />
           {/* PromoCode Section */}
-          {paymentOption !== "noPrepayment" && (
+          {/* {paymentOption !== "noPrepayment" && (
             <PromoCode
               isApplyButtonDisabled={isApplyButtonDisabled}
               handleApplyPromoCode={handleApplyPromoCode}
@@ -509,7 +497,7 @@ export const PreviewDetailsView = ({
               setHasPromoCode={setHasPromoCode}
               promoCodeStatus={promoCodeStatus}
             />
-          )}
+          )} */}
 
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection

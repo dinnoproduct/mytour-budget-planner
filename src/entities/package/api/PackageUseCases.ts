@@ -16,6 +16,8 @@ import {
   type PrepaymentCalculationParams,
   type PromoCodeValidationParams,
   type FlightDatesParams,
+  type PaymentSystemInfo,
+  type CreateGroupTourOfferInput,
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
@@ -27,6 +29,7 @@ import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculati
 import { type PromoCodeService } from './PromoCodeService.ts'
 import { type FlightEntity } from '../model/entities.ts'
 import { type GroupTourService } from './GroupTourService.ts'
+import { type RequestServiceV2 } from './RequestServiceV2.ts'
 
 export class PackageUseCases {
   private readonly packageService: PackageService
@@ -37,6 +40,7 @@ export class PackageUseCases {
   private readonly flightDatesService: FlightDatesService
   private readonly searchService: SearchService
   private readonly prepaymentInfoCalculationService: PrepaymentInfoCalculationService
+  private readonly requestServiceV2: RequestServiceV2
   private readonly promoCodeService: PromoCodeService
   private readonly groupTourService: GroupTourService
 
@@ -51,6 +55,7 @@ export class PackageUseCases {
     prepaymentInfoCalculationService,
     promoCodeService, 
     groupTourService,
+    requestServiceV2
   }: PackageUseCasesParams) {
     this.packageService = packageService
     this.flightService = flightService
@@ -62,6 +67,7 @@ export class PackageUseCases {
     this.prepaymentInfoCalculationService = prepaymentInfoCalculationService
     this.promoCodeService = promoCodeService
     this.groupTourService = groupTourService
+    this.requestServiceV2 = requestServiceV2
   }
 
   // package
@@ -151,6 +157,13 @@ export class PackageUseCases {
     return this.requestService.updateRequest(input, token)
   }
 
+  async getPaymentSystems(
+    travelAgencyId: number,
+    token: string
+  ): Promise<PaymentSystemInfo[]> {
+    return this.requestServiceV2.getPaymentSystems(travelAgencyId, token)
+  }
+
   // dictionary
   async getDictionary(dictionaryType: DictionaryTypes, language: number) {
     return this.dictionaryService.getDictionary(dictionaryType, language)
@@ -191,5 +204,9 @@ export class PackageUseCases {
 
   async getGroupTourInfo(tourId: string) {
     return this.groupTourService.getGroupTourInfo(tourId)
+  }
+
+  async createGroupTourOffer(body: CreateGroupTourOfferInput) {
+    return this.groupTourService.createGroupTourOffer(body)
   }
 }

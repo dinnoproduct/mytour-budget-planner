@@ -62,8 +62,8 @@ export const PaymentModal = ({
     [paymentOption, paymentAmount, packageDetails.price, prepaymentInfo?.paymentType],
   );
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethod | null>(null);
-  const selectedPaymentMethodRef = useRef<PaymentMethod>(PaymentMethod.bankCard);
+    useState<PaymentMethod | string | null>(null);
+  const selectedPaymentMethodRef = useRef<PaymentMethod | string>(PaymentMethod.bankCard);
   const [promoCodeStatus, setPromoCodeStatus] = useState<{
     isApplied: boolean;
     code: string;
@@ -125,7 +125,7 @@ export const PaymentModal = ({
           onSubmit={() => {
             const method = selectedPaymentMethodRef.current;
             handleLogPaymentInfoEvent(method);
-            handlePay(method);
+            handlePay(method as PaymentMethod);
             setSelectedPaymentMethod(method);
           }}
           isLoadingBooking={isLoadingBooking}
@@ -258,9 +258,6 @@ export const PaymentModal = ({
 
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
   const handleLogPurchaseEvent = (amount: number) => {
@@ -277,7 +274,7 @@ export const PaymentModal = ({
       num_adults: travelers?.adults.length || 0,
       num_children: travelers?.children.length || 0,
       room_type: roomTypes.find(
-        ({ key }: any) => key === packageDetails.roomType,
+        ({ key }: any) => Number(key) === Number(packageDetails.roomType),
       )?.value,
     });
   }
@@ -313,14 +310,14 @@ export const PaymentModal = ({
     }
   };
 
-  const handleLogPaymentInfoEvent = (paymentMethod?: PaymentMethod) => {
+  const handleLogPaymentInfoEvent = (paymentMethod?: PaymentMethod | string) => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
 
-    metaEvents.addPaymentInfo({
+      metaEvents.addPaymentInfo({
       content_type: isHotelPackage ? "hotel" : "package",
       value: amount,
       currency: packageDetails.currency,
-      payment_type: paymentMethod ?? selectedPaymentMethod,
+        payment_type: (paymentMethod ?? selectedPaymentMethod) ?? null,
       hotel_id: packageDetails.hotel.id,
       destination: packageDetails.city.nameEng,
       checkin_date: packageDetails.checkin,

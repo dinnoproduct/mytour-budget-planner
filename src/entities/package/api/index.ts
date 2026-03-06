@@ -9,6 +9,7 @@ import { PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationSer
 import { PromoCodeService } from './PromoCodeService.ts'
 import { FlightDatesService } from './FlightDatesService.ts';
 import { GroupTourService } from './GroupTourService.ts'
+import { RequestServiceV2 } from './RequestServiceV2.ts'
 
 export const packageUseCases = new PackageUseCases({
   packageService: new PackageService(),
@@ -21,6 +22,7 @@ export const packageUseCases = new PackageUseCases({
   prepaymentInfoCalculationService: new PrepaymentInfoCalculationService(),
   promoCodeService: new PromoCodeService(),
   groupTourService: new GroupTourService(),
+  requestServiceV2: new RequestServiceV2()
 })
 
 export type * from './types'

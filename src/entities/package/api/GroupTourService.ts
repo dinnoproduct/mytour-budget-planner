@@ -2,6 +2,8 @@ import axios, { type AxiosRequestConfig } from 'axios'
 import {
   type GroupTourEntity,
   type GroupTourInfo,
+  type CreateGroupTourOfferInput,
+  type GroupTourOfferPrice,
 } from '@entities/package'
 
 export class GroupTourService {
@@ -40,6 +42,17 @@ export class GroupTourService {
   async getGroupTourInfo(tourId: string): Promise<GroupTourInfo> {
     return this.request<GroupTourInfo>({
       url: `/getGroupTourInfo/${tourId}`,
+      version: 'V2'
+    })
+  }
+
+  async createGroupTourOffer(
+    body: CreateGroupTourOfferInput
+  ): Promise<GroupTourOfferPrice> {
+    return this.request<GroupTourOfferPrice>({
+      url: '/CreateGroupTourOffer',
+      method: 'POST',
+      data: body,
       version: 'V2'
     })
   }

@@ -10,6 +10,8 @@ import { type PromoCodeService } from './PromoCodeService.ts'
 import { type Currency } from '../index.ts'
 import { GroupTourService } from './GroupTourService.ts'
 
+import { type RequestServiceV2 } from './RequestServiceV2.ts'
+  
 export type PackageUseCasesParams = {
   packageService: PackageService
   flightService: FlightService
@@ -21,6 +23,7 @@ export type PackageUseCasesParams = {
   prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   promoCodeService: PromoCodeService
   groupTourService: GroupTourService
+  requestServiceV2: RequestServiceV2
 }
 
 export type GetAvailableFlightsParams = {
@@ -117,6 +120,27 @@ export enum PaymentSystem {
   'VPos' = 'VPos',
   'MyAmeriaPay' = 'MyAmeriaPay',
   'IDram' = 'IDram'
+}
+
+export type PaymentSystemInfo = {
+  paymentSystem: PaymentSystem | string
+  name: string
+  iconUrl: string
+}
+
+export type CreateGroupTourOfferInput = {
+  tourId: string
+  adult: number
+  child: number
+  infant: number
+  roomType: number
+}
+
+export type GroupTourOfferPrice = {
+  price: number
+  priceInCurrency: number
+  currency: string
+  rate: number
 }
 
 interface BookPackageTraveler {

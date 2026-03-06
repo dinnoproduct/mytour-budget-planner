@@ -85,14 +85,11 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
   const currencyLabel =
     CURRENCY_MAP[groupTour.currency as keyof typeof CURRENCY_MAP] ||
     groupTour.currency;
-  const priceInAmd = groupTour.rate
-    ? Math.round(groupTour.price * groupTour.rate)
-    : null;
-
+    
   return (
     <Layout link={link} {...props}>
       <Box p={3} pb={4} bg={'gray.50'}>
-        {images.length > 0 ? (
+        {images.length > 0 && images[0].url !== "" && images[0].url !== null ? (
           <Image 
             src={images[0].url} 
             maxWidth="full"
@@ -174,15 +171,13 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
             <Box>
               <Flex align="center" gap={2}>
                 <Text size="lg" fontWeight="bold" color="gray.800">
-                  {priceInAmd != null
-                    ? `${numberWithCommaNormalizer(priceInAmd)} ֏`
-                    : `${formatNumber(groupTour.price)} ${groupTour.currency}`}
+                  {formatNumber(groupTour.price)} ֏
                 </Text>
-                {groupTour.rate && priceInAmd != null && (
+                {groupTour.priceInCurrency != null && (
                   <Flex align="center">
                     <Icon name="approximate" size="12" color="gray.600" />
                     <Text size="xs" color="gray.600">
-                       {formatNumber(groupTour.price)} {currencyLabel}
+                       {formatNumber(groupTour.priceInCurrency)} {currencyLabel}
                     </Text>
                   </Flex>
                 )}

@@ -251,6 +251,7 @@ export interface GroupTourEntity {
   status: string
   type: number
   price: number
+  priceInCurrency: number
   currency: string
   rate: number
   roomType: number
@@ -274,6 +275,10 @@ export interface GroupTourTravelers {
 export interface GroupTourRoomType {
   id: number
   name: GroupTourName
+  guests?: {
+    maxCount: number
+    minCount: number
+  }
 }
 
 export interface GroupTourItineraryDay {
@@ -308,6 +313,7 @@ export interface GroupTourInfo {
   gallery: GroupTourGalleryItem[]
   departures: GroupTourDeparture[]
   price: number
+  priceInCurrency: number
   currency: string
   rate: number
   travelers: GroupTourTravelers

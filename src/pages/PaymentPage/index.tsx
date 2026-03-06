@@ -42,7 +42,8 @@ export const PaymentPage = () => {
   const [step, setStep] = useState<Step>(isRemainingOnly ? "paymentMethod" : "paymentForm");
   const [paymentAmount, setPaymentAmount] = useState(0);
   const [paymentOption, setPaymentOption] = useState<PaymentOption>("pay");
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(PaymentMethod.bankCard);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | string>(PaymentMethod.bankCard);
+
 
   const packageDetails = state?.packageDetails;
   const request = state?.request;
@@ -52,6 +53,10 @@ export const PaymentPage = () => {
     () => !packageDetails?.destinationFlight?.id,
     [packageDetails?.destinationFlight?.id],
   );
+
+  useEffect(() => {
+    localStorage.setItem('bookingResultSource', 'payment');
+  }, []);
 
   const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
@@ -98,13 +103,34 @@ export const PaymentPage = () => {
     return null;
   }
 
+  // If API says only full payment is allowed, skip payment type step and go straight to method once
+  const [skippedFormForFullPayment, setSkippedFormForFullPayment] = useState(false);
+  useEffect(() => {
+    if (
+      !skippedFormForFullPayment &&
+      prepaymentInfo?.paymentType === "FullPricePayment" &&
+      step === "paymentForm"
+    ) {
+      setPaymentAmount(packageDetails.price ?? 0);
+      setPaymentOption("payFull");
+      setStep("paymentMethod");
+      setSkippedFormForFullPayment(true);
+    }
+  }, [prepaymentInfo?.paymentType, step, packageDetails?.price, skippedFormForFullPayment]);
+
   const handleFormSubmit = (amount: number, option: PaymentOption) => {
     setPaymentAmount(amount);
     setPaymentOption(option);
     setStep("paymentMethod");
   };
 
-  const handleMethodBack = () => setStep("paymentForm");
+  const handleMethodBack = () => {
+    if (skippedFormForFullPayment) {
+      navigateBack();
+    } else {
+      setStep("paymentForm");
+    }
+  };
 
   return (
     <PageLayout background="white" showFooter={false}>
@@ -164,8 +190,8 @@ function RemainingPaymentStep({
 }: {
   packageDetails: PackageEntity;
   request: NormalizedRequestEntity;
-  selectedMethod: PaymentMethod;
-  onMethodChange: (m: PaymentMethod) => void;
+  selectedMethod: PaymentMethod | string;
+  onMethodChange: (m: PaymentMethod | string) => void;
   onBackClick: () => void;
 }) {
   const { mutateAsync: payRemainingAmountAsync, isPending: isLoadingBooking } =
@@ -210,8 +236,8 @@ function PaymentMethodStep({
   travelers: Travelers;
   paymentAmount: number;
   paymentOption: PaymentOption;
-  selectedMethod: PaymentMethod;
-  onMethodChange: (m: PaymentMethod) => void;
+  selectedMethod: PaymentMethod | string;
+  onMethodChange: (m: PaymentMethod | string) => void;
   onBackClick: () => void;
 }) {
   const { t, i18n } = useTranslation();
@@ -222,12 +248,7 @@ function PaymentMethodStep({
   const isFullPricePayment =
     paymentOption === "payFull" || paymentAmount >= packageDetails.price;
 
-  const paymentSystem: PaymentSystem =
-    selectedMethod === PaymentMethod.ameriaPay
-      ? ("MyAmeriaPay" as PaymentSystem.MyAmeriaPay)
-      : selectedMethod === PaymentMethod.idram
-        ? ("IDram" as PaymentSystem.IDram)
-        : ("VPos" as PaymentSystem.VPos);
+  const paymentSystem: PaymentSystem = selectedMethod as PaymentSystem;
 
   const handlePay = async () => {
     if (!request?.id) {

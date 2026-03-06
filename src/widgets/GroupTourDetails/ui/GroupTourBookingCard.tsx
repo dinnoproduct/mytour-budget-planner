@@ -5,19 +5,20 @@ import { Button, Icon, Text } from '@ui'
 import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout'
 import { useBreakpoint } from '@shared/hooks'
 import type { GroupTourInfo, GroupTourDeparture } from '@entities/package'
-import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
+import { useGroupTourOfferPrice } from '@entities/package'
+import { CURRENCY_MAP, LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import {
   getValidDepartures,
   getLocalized,
-  getRoomTypeKind,
   formatDate,
-  type RoomTypeKind,
 } from '../lib/utils'
 import { SectionTitle } from './GroupTourBookingCard/SectionTitle'
 import { TravelersSection } from './GroupTourBookingCard/TravelersSection'
 import { RoomTypeSection } from './GroupTourBookingCard/RoomTypeSection'
 import { DatesSection } from './GroupTourBookingCard/DatesSection'
+import { formatNumber } from '@/shared/utils'
+import Loader from '@/components/Loader/Loader'
 
 const MAX_INFANTS = 2
 
@@ -50,6 +51,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
 
   const infantsAllowed = groupTour.travelers?.infant > 0
   const roomTypes = groupTour.roomTypes ?? []
+  const travelersInfo = groupTour.travelers
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,47 +93,62 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
   }, [roomTypes, selectedRoomTypeId])
 
   const selectedRoom = roomTypes.find((r) => r.id === selectedRoomTypeId)
-  const roomKind: RoomTypeKind = selectedRoom
-    ? getRoomTypeKind(selectedRoom, languageSuffix)
-    : 'other'
+  const totalTravelers = adults + children
 
-  const isSingle = roomKind === 'single'
-  const isDouble = roomKind === 'double'
+  const rawGuestsMin = selectedRoom?.guests?.minCount ?? 0
+  const rawGuestsMax = selectedRoom?.guests?.maxCount ?? 0
+  const guestsMax = rawGuestsMax > 0 ? rawGuestsMax : 2
+  const isFixedSingle = rawGuestsMin === 1 && rawGuestsMax === 1
+  const isFixedDouble = rawGuestsMin === 2 && rawGuestsMax === 2
 
+  // Reset travelers when room type changes according to guests rules
   useEffect(() => {
-    if (isSingle) {
+    if (!selectedRoom) return
+    if (isFixedSingle) {
+      setAdults(1)
+      setChildren(0)
+    } else if (isFixedDouble) {
+      setAdults(1)
+      setChildren(0)
+    } else {
+      // generic default: one adult, zero children
       setAdults(1)
       setChildren(0)
     }
-  }, [isSingle])
+  }, [selectedRoomTypeId, isFixedSingle, isFixedDouble])
 
-  useEffect(() => {
-    if (isDouble && adults + children !== 2) {
-      if (adults < 1) {
-        setAdults(1)
-        setChildren(1)
-      } else {
-        setChildren(Math.max(0, 2 - adults))
-      }
-    }
-  }, [isDouble, adults, children])
-
-  const showChildSelector = !isSingle
+  const showChildSelector = !isFixedSingle
   const showInfantSelector = infantsAllowed
 
   const adultMin = 1
-  const adultMax = isSingle ? 1 : isDouble ? 2 : 9
+  const adultMax = isFixedSingle ? 1 : Math.min(guestsMax, 9)
   const childMin = 0
-  const childMax = isSingle ? 0 : isDouble ? 1 : 9
+  const childMax = isFixedSingle ? 0 : Math.max(0, guestsMax - adultMin)
   const infantMax = infantsAllowed ? MAX_INFANTS : 0
+
+  const adultsAgeText =
+    travelersInfo && travelersInfo.adultMinAge
+      ? `${travelersInfo.adultMinAge}+ ${t('age')}`
+      : undefined
+  const childrenAgeText =
+    travelersInfo && travelersInfo.childMaxAge
+      ? `${travelersInfo.infantMaxAge + 1}-${travelersInfo.childMaxAge} ${t('age')}`
+      : undefined
+  const infantsAgeText =
+    travelersInfo && travelersInfo.infantMaxAge
+      ? `0-${travelersInfo.infantMaxAge} ${t('age')}`
+      : undefined
 
   const validationError = useMemo((): string | null => {
     if (noValidDepartures) return null
     if (validDepartures.length > 0 && selectedDepartureIndex < 0) return t('groupTour.validation.selectDeparture')
     if (adults < 0 || children < 0 || infants < 0) return t('groupTour.validation.invalidTravelers')
-    if (isSingle && (adults !== 1 || children !== 0)) return t('groupTour.validation.invalidTravelers')
-    if (isDouble && adults + children !== 2) return t('groupTour.validation.invalidTravelers')
-    if ((roomKind === 'twin' || roomKind === 'triple') && adults < 1) return t('groupTour.validation.invalidTravelers')
+    if (adults < 1) return t('groupTour.validation.invalidTravelers')
+    if (isFixedSingle) {
+      if (!(adults === 1 && children === 0)) return t('groupTour.validation.invalidTravelers')
+    } else {
+      if (totalTravelers > guestsMax) return t('groupTour.validation.invalidTravelers')
+    }
     if (infants > infantMax) return t('groupTour.validation.invalidTravelers')
     return null
   }, [
@@ -141,11 +158,11 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
     adults,
     children,
     infants,
-    isSingle,
-    isDouble,
-    roomKind,
+    totalTravelers,
+    guestsMax,
     infantMax,
     t,
+    isFixedSingle,
   ])
 
   const selectedDeparture: GroupTourDeparture | null =
@@ -153,10 +170,37 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
   const canProceed =
     !noValidDepartures && selectedDeparture !== null && validationError === null
 
+  const offerPriceParams = selectedDeparture
+    ? {
+        tourId: groupTour.id,
+        adult: adults,
+        child: children,
+        infant: infants,
+        roomType: selectedRoomTypeId || groupTour.roomTypes[0].id,
+      }
+    : null
+
+  const { data: offerPrice, isLoading: isLoadingOfferPrice } = useGroupTourOfferPrice(offerPriceParams)
+
   const handleBook = () => {
     if (!canProceed) return
+
+    console.log('offerPrice', offerPrice)
+    console.log(groupTour)
+    console.log('offerPriceParams', offerPriceParams)
+    console.log('canProceed', canProceed)
+    console.log('validationError', validationError)
+    console.log('selectedDeparture', selectedDeparture)
+    console.log('selectedRoomTypeId', selectedRoomTypeId)
+    console.log('adults', adults)
+    console.log('children', children)
+    console.log('infants', infants)
     // TODO: wire to booking flow
   }
+
+  const currencyLabel =
+    CURRENCY_MAP[offerPrice?.currency as keyof typeof CURRENCY_MAP] ||
+    groupTour.currency;
 
   return (
     <Box
@@ -212,10 +256,14 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
               infantMax={infantMax}
               showChildSelector={showChildSelector}
               showInfantSelector={showInfantSelector}
-              isDouble={isDouble}
+              guestsMax={guestsMax}
+              isFixedDouble={isFixedDouble}
               adultsLabel={t('adults')}
               childrenLabel={t('children')}
               infantsLabel={t('infants')}
+              adultsAgeText={adultsAgeText}
+              childrenAgeText={childrenAgeText}
+              infantsAgeText={infantsAgeText}
             />
 
             {/* Room type */}
@@ -234,13 +282,28 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
               </Text>
             )}
 
-            <Flex width="full" justify="space-between" align="center" pt={2}>
+            <Flex width="full" justify="space-between" align="center" pt={4} mt={4} borderTop="1px solid" borderColor="gray.100">
               <Text size="sm" color="gray.600">
-                {t('startFrom')}
+                {t('total')}
               </Text>
-              <Text size="lg" fontWeight="bold" color="gray.800">
-                {numberWithCommaNormalizer(groupTour.price)} {groupTour.currency}
-              </Text>
+              <Flex align="center" gap={2} sx={{
+                  filter: isLoadingOfferPrice ? 'blur(10px)' : 'none',
+                }}>
+                <Text size="lg" fontWeight="bold" color="gray.800" >
+                  {formatNumber(offerPrice?.price || groupTour.price)} ֏
+                </Text>
+          
+              {offerPrice?.price != null && (
+                <Flex align="center" sx={{
+                  filter: isLoadingOfferPrice ? 'blur(10px)' : 'none',
+                }}>
+                  <Icon name="approximate" size="12" color="gray.600" />
+                  <Text size="xs" color="gray.600">
+                    {formatNumber(offerPrice?.priceInCurrency || groupTour.priceInCurrency)} {currencyLabel}
+                  </Text>
+                </Flex>
+                )}  
+              </Flex>
             </Flex>
 
             <Button
