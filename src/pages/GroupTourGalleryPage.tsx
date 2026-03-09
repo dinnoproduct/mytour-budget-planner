@@ -187,7 +187,7 @@ export const GroupTourGalleryPage = () => {
             <Box display={{base: "block", md: "none"}}>
               {
               items.length > 1 ? (
-                  <ImagesSlider imageUrls={items.map((item) => item.url)} width="100%" height="100%" />
+                  <ImagesSlider imageUrls={items.map((item) => item.url)} />
                 ) : (
                   <GalleryImage src={items[0].url} width="100%" height="288px" objectFit="cover" />
                   // <GalleryImage src={items[0].url} width="100%" height="100%" objectFit="cover" />
