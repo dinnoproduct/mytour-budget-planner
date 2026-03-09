@@ -35,16 +35,32 @@ export const Header: React.FC<{
 
       {/* Info Section */}
       {offer?.prepaymentInfo?.paymentType === 'NoDownPayment' && (
-        <HStack spacing={1} align="center" flexShrink={0}>
-          <Text fontSize="xs" color="blue.500" whiteSpace="nowrap">
-            {t`bookWithoutPayment`}
-          </Text>
-          <Tooltip label={t('noPrepaymentText', {days: offer?.prepaymentInfo?.minimumAcceptableDaysCount})}>
-            <Flex justify="center" align="center">
+        <Tooltip
+          hasArrow
+          shouldWrapChildren
+          label={t('noPrepaymentText', {
+            days: offer?.prepaymentInfo?.minimumAcceptableDaysCount
+          })}
+        >
+          <HStack
+            spacing={1}
+            align="center"
+            flexShrink={0}
+            cursor="pointer"
+          >
+            <Text fontSize="xs" color="blue.500" whiteSpace="nowrap">
+              {t`bookWithoutPayment`}
+            </Text>
+            <Flex
+              justify="center"
+              align="center"
+              p={1}
+              borderRadius="full"
+            >
               <Icon name="info-outline" size="16" color="blue.500" />
             </Flex>
-          </Tooltip>
-        </HStack>
+          </HStack>
+        </Tooltip>
       )}
     </HStack>
   );

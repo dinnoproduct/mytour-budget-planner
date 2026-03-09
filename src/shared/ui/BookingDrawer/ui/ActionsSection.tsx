@@ -21,7 +21,13 @@ export const ActionsSection = ({
 }: IActionsSectionProps) => {
   return (
     <VStack spacing={4} bg="white" align="stretch" py={4} px={6}>
-      <VStack align="stretch" overflowX="auto">
+      <VStack align="stretch" overflowX="auto" sx={{
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        },
+        '-ms-overflow-style': 'none',
+        'scrollbar-width': 'none'
+      }}>
         <MealPlanSelector
           selectedMealPlan={selectedMealPlan}
           onMealPlanChange={updateMealPlan}

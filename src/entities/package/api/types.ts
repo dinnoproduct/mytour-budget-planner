@@ -8,7 +8,8 @@ import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
 import { type Currency } from '../index.ts'
-
+import { type RequestServiceV2 } from './RequestServiceV2.ts'
+  
 export type PackageUseCasesParams = {
   packageService: PackageService
   flightService: FlightService
@@ -19,6 +20,7 @@ export type PackageUseCasesParams = {
   searchService: SearchService
   prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   promoCodeService: PromoCodeService
+  requestServiceV2: RequestServiceV2
 }
 
 export type GetAvailableFlightsParams = {
@@ -113,7 +115,14 @@ export interface ReservePackageInput extends BookPackageInput {}
 
 export enum PaymentSystem {
   'VPos' = 'VPos',
-  'MyAmeriaPay' = 'MyAmeriaPay'
+  'MyAmeriaPay' = 'MyAmeriaPay',
+  'IDram' = 'IDram'
+}
+
+export type PaymentSystemInfo = {
+  paymentSystem: PaymentSystem | string
+  name: string
+  iconUrl: string
 }
 
 interface BookPackageTraveler {
@@ -184,6 +193,9 @@ export type PromoCodeValidationParams = {
   agencyId: number
   destinationId: number
   hotelId: number
+  prePaymentAmount: number
+  bookingType: number
+  startDate: string
 }
 
 export type PromoCodeValidationResponse = {
@@ -191,6 +203,9 @@ export type PromoCodeValidationResponse = {
   isValid: boolean
   discount: number
   finalAmount: number
+  firstPayment: number
+  secondPayment: number
+  skipPayment: boolean
   errorCode: string
   message: string
 }

@@ -10,20 +10,23 @@ import {
   UpcomingTabEmptyState,
 } from "@widgets/UserPackages/ui/EmptyStates.tsx";
 import { useTranslation } from "react-i18next";
-import { BookingFlow } from "@widgets/BookingFlow";
 import { useSetRecoilState } from "recoil";
-import { isLateCheckoutAtom } from "@/modules/packages/store/store";
-import { useEffect } from "react";
+import { bookingContextAtom, isLateCheckoutAtom } from "@/modules/packages/store/store";
+import { useEffect, useRef } from "react";
+import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
+import { RequestStatus, transformRequestToPackage } from "@entities/package";
 
 export const UserPackages = () => {
   const { t } = useTranslation();
   const setIsLateCheckout = useSetRecoilState(isLateCheckoutAtom);
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
+  const { navigateToBooking, navigateToPayment } = useLanguageNavigate();
+  const hasNavigatedRef = useRef(false);
   const {
     activeRequests,
     pendingRequests,
     cancelledRequests,
     passedRequests,
-    handleRemainingPaymentClick,
     isLoadingRemainingPayment,
     currentRequestId,
     handleCancelClick,
@@ -46,6 +49,82 @@ export const UserPackages = () => {
     }
   }, [activeRequest?.notes.isLateCheckout, setIsLateCheckout]);
 
+  useEffect(() => {
+    if (!activeRequest) {
+      hasNavigatedRef.current = false;
+    }
+  }, [activeRequest]);
+  // When user already booked/reserved (no down payment) → go to payment page from step 1
+  useEffect(() => {
+    if (!activeRequest || hasNavigatedRef.current) return;
+
+    const isNoDownPaymentBooked =
+      activeRequest.status === RequestStatus.NotPaid ||
+      activeRequest.status === RequestStatus.Reserved;
+
+    if (isNoDownPaymentBooked) {
+      const packageDetails =
+        activeRequestPackage ?? transformRequestToPackage(activeRequest);
+      hasNavigatedRef.current = true;
+      navigateToPayment({
+        state: {
+          packageDetails,
+          request: activeRequest,
+          travelers: activeRequest.travelers
+            ? {
+                adults: activeRequest.travelers.map((t) => ({
+                  firstName: t.firstName,
+                  lastName: t.lastName,
+                  dateOfBirth: t.dateOfBirth ?? "",
+                })),
+                children: [],
+              }
+            : undefined,
+        },
+      });
+      handleBookingFlowClose();
+      return;
+    }
+
+    // Draft or other → go to booking page when package is ready
+    if (
+      activeRequestPackage?.offerId &&
+      !isLoadingActiveRequestPackage
+    ) {
+      hasNavigatedRef.current = true;
+      setBookingContext({
+        packageDetails: activeRequestPackage,
+        childrenAges: activeRequest.notes?.childrenAges || [],
+        initialView: incompleteInitialView,
+        request: activeRequest,
+        defaultTravelers: activeRequest.travelers
+          ? {
+              adults: activeRequest.travelers.map((t) => ({
+                firstName: t.firstName,
+                lastName: t.lastName,
+                dateOfBirth: t.dateOfBirth,
+              })),
+              children: [],
+            }
+          : undefined,
+        isBooked: !isActiveRequestDraft,
+      });
+      navigateToBooking();
+      handleBookingFlowClose();
+    }
+  }, [
+    activeRequest,
+    activeRequestPackage,
+    activeRequestPackage?.offerId,
+    isLoadingActiveRequestPackage,
+    incompleteInitialView,
+    isActiveRequestDraft,
+    setBookingContext,
+    navigateToBooking,
+    navigateToPayment,
+    handleBookingFlowClose,
+  ]);
+
   return (
     <Layout>
       <Heading size="sm-md">{t`myPackages`}</Heading>
@@ -64,7 +143,15 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                onRemainingPaymentClick={handleRemainingPaymentClick}
+                onRemainingPaymentClick={(request) =>
+                  navigateToPayment({
+                    state: {
+                      mode: "remainingOnly",
+                      request,
+                      packageDetails: transformRequestToPackage(request),
+                    },
+                  })
+                }
                 isLoadingRemainingPayment={
                   currentRequestId === request.id && isLoadingRemainingPayment
                 }
@@ -130,25 +217,6 @@ export const UserPackages = () => {
           </TabContentLayout>
         )}
       </Tabs>
-
-      <BookingFlow
-        key={activeRequest?.id} // Add this line
-        initialView={incompleteInitialView}
-        childrenAges={activeRequest?.notes.childrenAges || []}
-        isOpen={!!activeRequestPackage?.offerId}
-        onClose={handleBookingFlowClose}
-        packageDetails={activeRequestPackage}
-        request={activeRequest}
-        defaultTravelers={(activeRequest?.travelers ? {
-          adults: activeRequest.travelers.map(traveler => ({
-            firstName: traveler.firstName,
-            lastName: traveler.lastName,
-            dateOfBirth: traveler.dateOfBirth
-          })),
-          children: []
-        } : undefined)}
-        isBooked={!isActiveRequestDraft}
-      />
     </Layout>
   );
 };

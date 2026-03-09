@@ -6,7 +6,8 @@ import {
   type RequestEntity,
   type ReservePackageInput,
   type ReservePackageResponse,
-  type UpdateRequestInput
+  type UpdateRequestInput,
+  type PaymentSystemInfo
 } from '@entities/package'
 import { type LanguageName } from '@shared/model'
 
@@ -57,13 +58,14 @@ export class RequestService {
 
   payRemainingAmount(
     requestId: number,
-    token: string
+    token: string,
+    paymentSystem?: string
   ): Promise<BookPackageResponse> {
     return this.api.post(
       'payRemainderAmount',
       {},
       {
-        params: { id: requestId },
+        params: { id: requestId, ...(paymentSystem && { paymentSystem }) },
         headers: {
           Authorization: `Bearer ${token}`
         }

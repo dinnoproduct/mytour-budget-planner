@@ -84,7 +84,7 @@ export const metaEvents = {
     content_type: "hotel" | "package" | "flight";
     value: number;
     currency: string;
-    payment_type: PaymentMethod | null;
+    payment_type: string | null;
     hotel_id: number;
     destination?: string;
     checkin_date?: string;

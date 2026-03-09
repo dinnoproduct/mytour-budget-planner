@@ -10,7 +10,7 @@ interface LanguageRouteGuardProps {
 export const LanguageRouteGuard = ({ children }: LanguageRouteGuardProps) => {
   const location = useLocation();
   const { pathname, search, hash } = location;
-  const { navigate } = useLanguageNavigate();
+  const { navigateTo } = useLanguageNavigate();
 
   useEffect(() => {
     if (!hasUnsupportedLanguagePrefix(pathname)) {
@@ -20,8 +20,8 @@ export const LanguageRouteGuard = ({ children }: LanguageRouteGuardProps) => {
     const sanitizedPath = getPathWithoutLanguage(pathname);
     const nextLocation = `${sanitizedPath}${search ?? ''}${hash ?? ''}`;
 
-    navigate(nextLocation || '/', { replace: true });
-  }, [hash, navigate, pathname, search]);
+    navigateTo(nextLocation || '/', { replace: true });
+  }, [hash, navigateTo, pathname, search]);
 
   return <>{children}</>;
 };

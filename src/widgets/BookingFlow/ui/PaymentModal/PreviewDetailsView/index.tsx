@@ -8,6 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Button, Heading, HotelStarBadge, Input, Text } from "@ui";
+import { StepBottomActions } from "@widgets/BookingFlow/ui/StepBottomActions";
 import { useTranslation } from "react-i18next";
 import {
   type PreviewDetailsViewProps,
@@ -19,7 +20,7 @@ import { useRecoilValue } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import { formatNumber } from "@shared/utils";
 import { LANGUAGE_PREFIX, type LanguageName } from "@shared/model";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   type DictionaryTypes,
   type PackageEntity,
@@ -27,9 +28,9 @@ import {
 } from "@entities/package";
 import { Icon, type IconName } from "@foundation/Iconography";
 import moment from "moment";
-import { Layout } from "../Layout.tsx";
 import { TermsAndConditionsSection } from "./ui/TermsAndConditionsSection.tsx";
 import { BookingRulesModal } from "./ui/BookingRulesModal.tsx";
+import { PromoCode } from "./ui/PromoCode.tsx";
 
 const formatDate = (date: string, includeTime = false) => {
   if (!date) {
@@ -51,25 +52,43 @@ export const PreviewDetailsView = ({
   validatePromoCode,
   promoCodeStatus,
   setPromoCodeStatus,
+  paymentOption = "pay",
+  onBackClick,
+  renderAsPage = false,
+  isLateCheckout: isLateCheckoutProp,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
-  const [isPromoCodeModalOpen, setIsPromoCodeModalOpen] = useState(false);
   const [promoCodeValue, setPromoCodeValue] = useState("");
+  const [hasPromoCode, setHasPromoCode] = useState(promoCodeStatus.isApplied);
   const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
-  const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] = useState(false);
-  const [policyModalType, setPolicyModalType] = useState<"booking" | "cancellation">("booking");
-  const isLateCheckout = useRecoilValue(isLateCheckoutAtom);
+  const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] =
+    useState(false);
+  const [policyModalType, setPolicyModalType] = useState<
+    "booking" | "cancellation"
+  >("booking");
+  const atomLateCheckout = useRecoilValue(isLateCheckoutAtom);
+  const isLateCheckout =
+    typeof isLateCheckoutProp === "boolean"
+      ? isLateCheckoutProp
+      : typeof packageDetails?.lateCheckout === "boolean"
+        ? packageDetails.lateCheckout
+        : atomLateCheckout;
+  // Reset promo code status when payment option changes to "noPrepayment"
+  useEffect(() => {
+    if (paymentOption === "noPrepayment" && promoCodeStatus.isApplied) {
+      setPromoCodeStatus({
+        isApplied: false,
+        code: "",
+        discount: 0,
+        finalAmount: 0,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentOption]);
 
   const handleUsePromocode = () => {
-    setIsPromoCodeModalOpen(true);
     onUsePromocode();
-  };
-
-  const handleClosePromoCodeModal = () => {
-    setIsPromoCodeModalOpen(false);
-    setPromoCodeValue(""); // Reset promo code when closing modal
-    setPromoCodeError(null); // Clear error when closing modal
   };
 
   const handlePromoCodeInputChange = (value: string) => {
@@ -90,6 +109,9 @@ export const PreviewDetailsView = ({
         agencyId: packageDetails.travelAgency.id,
         destinationId: packageDetails.city.id,
         hotelId: packageDetails.hotel.id,
+        startDate: packageDetails.checkin,
+        bookingType: prepaymentInfo?.bookingType,
+        prePaymentAmount: paymentAmount
       },
       {
         onSuccess: (data: any) => {
@@ -105,7 +127,6 @@ export const PreviewDetailsView = ({
               discount: data.discount,
               finalAmount: data.finalAmount,
             });
-            handleClosePromoCodeModal();
           } else {
             console.log(`Promo code error: ${data.message}`);
 
@@ -139,11 +160,73 @@ export const PreviewDetailsView = ({
     return errorMessages[errorCode] || t`promoCodeInvalid`;
   };
 
+  /**
+   * Calculates promo code discount distribution based on user input and total price
+   *
+   * Rules:
+   * 1. If userInput == totalPrice: Discount applied to whole price (single payment)
+   * 2. If userInput != totalPrice:
+   *    - Case 1: Remainder <= discount / 2: Full discount to first payment (single payment)
+   *    - Case 2: Remainder > discount / 2: Half discount to first, half to second payment
+   */
+  const calculatePromoCodePayments = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return {
+        firstPayment: paymentAmount || 0,
+        secondPayment: isFullPricePayment ? 0 : (packageDetails.price - (paymentAmount || 0)),
+        isSinglePayment: isFullPricePayment,
+      };
+    }
+
+    const totalPrice = packageDetails.price;
+    const userInput = paymentAmount || 0;
+    const discount = promoCodeStatus.discount;
+    const finalAmount = promoCodeStatus.finalAmount;
+
+    // Case 1: User input equals total price (full payment)
+    if (userInput === totalPrice) {
+      return {
+        firstPayment: finalAmount,
+        secondPayment: 0,
+        isSinglePayment: true,
+      };
+    }
+
+    // Case 2: User input is different from total price (partial payment)
+    const remainder = totalPrice - userInput;
+
+    // Case 2a: Remainder <= discount / 2
+    // Apply full discount to first payment (single payment)
+    if (remainder <= discount / 2) {
+      return {
+        firstPayment: finalAmount,
+        secondPayment: 0,
+        isSinglePayment: true,
+      };
+    }
+
+    // Case 2b: Remainder > discount / 2
+    // Apply half discount to first payment, half to second payment
+    const halfDiscount = discount / 2;
+    const firstPayment = userInput - halfDiscount;
+    const secondPayment = remainder - halfDiscount;
+
+    return {
+      firstPayment,
+      secondPayment,
+      isSinglePayment: false,
+    };
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.discount,
+    promoCodeStatus.finalAmount,
+    paymentAmount,
+    packageDetails.price,
+    isFullPricePayment,
+  ]);
+
   const paymentDetailsItems = useMemo((): ListItemType[] => {
-    const currentPaymentAmount = promoCodeStatus.isApplied
-      ? promoCodeStatus.finalAmount -
-        (packageDetails.price - (paymentAmount || 0))
-      : paymentAmount || 0;
+    const currentPaymentAmount = calculatePromoCodePayments.firstPayment;
 
     const items: ListItemType[] = [
       {
@@ -174,10 +257,9 @@ export const PreviewDetailsView = ({
       isStrikethrough: false,
     });
 
-    if (!isFullPricePayment) {
-      const remainingAmount = promoCodeStatus.isApplied
-        ? promoCodeStatus.finalAmount - currentPaymentAmount
-        : packageDetails.price - currentPaymentAmount;
+    // Show balance only if it's not a single payment (split payment scenario)
+    if (!isFullPricePayment && !calculatePromoCodePayments.isSinglePayment) {
+      const remainingAmount = calculatePromoCodePayments.secondPayment;
 
       items.push({
         key: t`balance`,
@@ -197,6 +279,8 @@ export const PreviewDetailsView = ({
     packageDetails.price,
     paymentAmount,
     promoCodeStatus,
+    calculatePromoCodePayments,
+    prepaymentInfo?.firstPaymentDate,
     t,
   ]);
 
@@ -223,16 +307,10 @@ export const PreviewDetailsView = ({
   );
   const { data: foodTypes = [] } = useDictionary(
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
-    {
-      enabled: !isHotelPackage,
-    },
   );
 
   const foodType = useMemo<string>(
@@ -284,15 +362,21 @@ export const PreviewDetailsView = ({
         direction="column"
         justify="space-between"
         width="full"
-        height="full"
-        maxH={{ base: "calc(100dvh - 82px)", md: "526px" }}
+        {...(renderAsPage ? {} : { height: "full", maxH: { base: "calc(100dvh - 82px)", md: "none" } })}
       >
         <Box
           flex="1"
-          p="4"
-          overflowY="auto"
-          bg="gray.50"
-          height="calc(100% - 174px)"
+          py="4"
+          overflowY={renderAsPage ? { base: "visible", md: "visible" } : { base: "auto", md: "visible" }}
+          overflowX="hidden"
+          {...(renderAsPage
+            ? {}
+            : { height: { base: "calc(100% - 174px)", md: "auto" }, minH: 0 })}
+          pb={{
+            base: 4,
+            md: 4,
+          }}
+          mb={{base: renderAsPage ? "180px": '80px', md: 0}}
         >
           <Flex direction="column">
             <Flex align="center" justify="space-between">
@@ -380,7 +464,7 @@ export const PreviewDetailsView = ({
                 key: t`room`,
                 value:
                   roomTypes.find(
-                    ({ key }: any) => key === packageDetails.roomType,
+                    ({ key }: any) => Number(key) === Number(packageDetails.roomType),
                   )?.value || "",
               },
               {
@@ -391,12 +475,30 @@ export const PreviewDetailsView = ({
                 key: t`checkOut`,
                 value: formatDate(packageDetails.checkout, true),
               },
-              {
-                key: t`lateCheckOut`,
-                value: isLateCheckout ? t`included` : t`notIncluded`,
-              },
+              ...(!isHotelPackage
+                ? [
+                    {
+                      key: t`lateCheckOut`,
+                      value: isLateCheckout ? t`included` : t`notIncluded`,
+                    },
+                  ]
+                : []),
             ]}
           />
+          {/* PromoCode Section */}
+          {/* {paymentOption !== "noPrepayment" && (
+            <PromoCode
+              isApplyButtonDisabled={isApplyButtonDisabled}
+              handleApplyPromoCode={handleApplyPromoCode}
+              handlePromoCodeInputChange={handlePromoCodeInputChange}
+              promoCodeValue={promoCodeValue}
+              promoCodeError={promoCodeError}
+              hasPromoCode={hasPromoCode}
+              setHasPromoCode={setHasPromoCode}
+              promoCodeStatus={promoCodeStatus}
+            />
+          )} */}
+
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection
             openBookingRulesModal={() => {
@@ -411,19 +513,25 @@ export const PreviewDetailsView = ({
         </Box>
 
         <Box
-          p="4"
+          px={{base: "4", md: "0"}}
+          py="4"
           width="full"
-          borderTop="1px solid"
-          borderColor="gray.100"
+          borderTop={{base: "1px solid", md: "none"}} 
+          borderColor={{base: "gray.100", md: "transparent"}}
           backgroundColor="white"
           mt="auto"
+          position={{ base: 'fixed', md: 'relative' }}
+          bottom={{ base: 0, md: 'auto' }}
+          left={{ base: 0, md: 'auto' }}
+          right={{ base: 0, md: 'auto' }}
+          zIndex={{ base: 10, md: undefined }}
         >
           <Flex justify="space-between" align="center">
             <Text size="md" fontWeight="medium" color="gray.600">
               {t("total")}
             </Text>
             <Flex align="center" gap="2">
-              {/* {promoCodeStatus.isApplied && (
+              {promoCodeStatus.isApplied && (
                 <Text
                   size="xs"
                   fontWeight="medium"
@@ -432,84 +540,50 @@ export const PreviewDetailsView = ({
                 >
                   {formatNumber(packageDetails.price)}֏
                 </Text>
-              )} */}
+              )}
               <Text size="md" fontWeight="bold" color="black">
-                {/* {promoCodeStatus.isApplied
-                  ? formatNumber(promoCodeStatus.finalAmount) + "֏" */}
-                {formatNumber(paymentAmount || 0) + "֏"}
+                {promoCodeStatus.isApplied
+                  ? formatNumber(calculatePromoCodePayments.firstPayment) + "֏"
+                  : formatNumber(paymentAmount || 0) + "֏"}
               </Text>
             </Flex>
           </Flex>
-
-          <Button
-            variant="solid-blue"
-            width="full"
-            mt="3"
-            onClick={onPay}
-            isLoading={isLoadingBooking}
-            size="lg"
-          >
-            {t("pay")}
-          </Button>
-
-          {/* {prepaymentInfo?.paymentType !== "NoDownPayment" &&
-            !promoCodeStatus.isApplied && (
-              <Button
-                variant="solid-gray"
-                width="full"
-                mt="2"
-                onClick={handleUsePromocode}
-                size="lg"
-              >
-                {t("usePromoCode")}
-              </Button>
-            )} */}
-        </Box>
-      </Flex>
-
-      <Portal>
-        <Layout
-          title={t("usePromoCode")}
-          isOpen={isPromoCodeModalOpen}
-          closeModal={handleClosePromoCodeModal}
-        >
-          <Box
-            px="4"
-            py="6"
-            width="full"
-            maxW="420px"
-            height={{ base: "calc(100dvh - 164px)", md: "auto" }}
-            minH="136px"
-          >
-            <VStack spacing={2} align="stretch">
-              <Input
-                width="full"
-                value={promoCodeValue}
-                onChange={(e) => handlePromoCodeInputChange(e.target.value)}
-                state={promoCodeError ? "invalid" : "default"}
-                placeholder={t`promoCodePlaceholder`}
-              />
-              {promoCodeError && (
-                <Text color="red.500" fontSize="sm">
-                  {promoCodeError}
-                </Text>
-              )}
-            </VStack>
-          </Box>
-
-          <Box p="4" borderTop="1px solid" borderColor="gray.100" width="full">
+          {renderAsPage && onBackClick ? (
+            <StepBottomActions
+              inline
+              isLoadingBooking={isLoadingBooking}
+              stickyOnMobile
+              onBack={onBackClick}
+              backLabel={t`back`}
+              primaryButton={
+                <Button
+                  variant="solid-blue"
+                  width="full"
+                  onClick={onPay}
+                  isLoading={isLoadingBooking}
+                  size="lg"
+                >
+                  {paymentOption === "noPrepayment" || (promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0) ? t("reserve") : t("selectPaymentMethod")}
+                </Button>
+              }
+            />
+          ) : (
             <Button
               variant="solid-blue"
               width="full"
+              mt="3"
+              onClick={onPay}
+              isLoading={isLoadingBooking}
               size="lg"
-              isDisabled={isApplyButtonDisabled}
-              onClick={handleApplyPromoCode}
             >
-              {t("apply")}
+              {paymentOption === "noPrepayment" || (promoCodeStatus.isApplied && calculatePromoCodePayments.firstPayment === 0) ? t("reserve") : t("reserve")}
             </Button>
-          </Box>
-        </Layout>
-      </Portal>
+          )}
+        </Box>
+      </Flex>
+
+      {/*<Portal>*/}
+      {/*</Portal>*/}
       <Portal>
         <BookingRulesModal
           isOpen={isBookingRulesModalOpen || isCancellationPolicyModalOpen}
@@ -518,6 +592,7 @@ export const PreviewDetailsView = ({
             setIsCancellationPolicyModalOpen(false);
           }}
           policyType={policyModalType}
+          packageDetails={packageDetails}
         />
       </Portal>
     </>

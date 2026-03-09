@@ -1,7 +1,7 @@
 import { Layout } from './Layout.tsx'
 import { Box, Flex, VStack, Text } from '@chakra-ui/react'
 import { FormProvider, useForm, useFieldArray } from 'react-hook-form'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, ChangeEvent } from 'react'
 import {
   type TravelersModalProps,
   type FormData,
@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { capitalize, debounce } from '@shared/utils'
 import MDatePicker from '@/components/FormControls/MDatePicker/MDatePicker.tsx'
 import { Button, Input } from '@/shared/ui/index.ts'
+import { StepBottomActions } from '@widgets/BookingFlow/ui/StepBottomActions'
 import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
 import { validateTraveler } from '@widgets/TravelersModal/helpers'
 import moment from 'moment'
@@ -25,7 +26,8 @@ export const TravelersModal = ({
   isOpen = false,
   onChange,
   isLoading,
-  handleLogEvent
+  handleLogEvent,
+  renderAsPage = false,
 }: TravelersModalProps) => {
   const { t } = useTranslation()
   const [normalizedTravelers, setNormalizedTravelers] = useState<Traveler[]>([])
@@ -131,6 +133,7 @@ export const TravelersModal = ({
         title={capitalize(t`travelers`)}
         isOpen={isOpen}
         closeModal={closeModal}
+        renderAsPage={renderAsPage}
       >
         <Flex
           direction="column"
@@ -138,18 +141,16 @@ export const TravelersModal = ({
           as="form"
           onSubmit={handleSubmit(handleFormSubmit)}
           width="full"
-          height="full"
+          {...(renderAsPage ? {} : { height: 'full' })}
         >
+          <Text fontSize={'18px'} mb={4} fontWeight="bold">
+            {t`travelers`}
+          </Text>
           <VStack
             spacing="6"
             width="full"
-            py="6"
-            px="4"
-            overflowY="auto"
-            maxHeight={{
-              base: 'calc(100dvh - 160px)',
-              md: 'calc(600px - 160px)'
-            }}
+            overflowY={renderAsPage ? 'visible' : 'auto'}
+            mb={{base: renderAsPage ? '80px' : 0, md: 0}}
             sx={{
               '&::-webkit-scrollbar': {
                 width: '4px'
@@ -182,17 +183,17 @@ export const TravelersModal = ({
                     pattern: {
                       value: /^[A-Za-z]{2,}$/,
                       message: t`invalidFormatErrorMessage`
+                    },
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                      const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+                      e.target.value = value
+                      setValue(`adults.${index}.firstName`, value)
                     }
                   })}
                   helperText={errors.adults?.[index]?.firstName?.message}
                   state={
                     errors.adults?.[index]?.firstName ? 'invalid' : 'default'
                   }
-                  onChange={e => {
-                    const value = e.target.value.replace(/[^a-zA-Z]/g, '')
-                    e.target.value = value
-                    setValue(`adults.${index}.firstName`, value)
-                  }}
                 />
 
                 <Input
@@ -205,17 +206,17 @@ export const TravelersModal = ({
                     pattern: {
                       value: /^[A-Za-z]{2,}$/,
                       message: t`invalidFormatErrorMessage`
+                    },
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                      const value = e.target.value.replace(/[^a-zA-Z]/g, '')
+                      e.target.value = value
+                      setValue(`adults.${index}.lastName`, value)
                     }
                   })}
                   helperText={errors.adults?.[index]?.lastName?.message}
                   state={
                     errors.adults?.[index]?.lastName ? 'invalid' : 'default'
                   }
-                  onChange={e => {
-                    const value = e.target.value.replace(/[^a-zA-Z]/g, '')
-                    e.target.value = value
-                    setValue(`adults.${index}.lastName`, value)
-                  }}
                 />
 
                 <MDatePicker
@@ -263,6 +264,7 @@ export const TravelersModal = ({
                   type="text"
                   placeholder={t`writeSurnameLatinWords`}
                   label={t`surname`}
+                  autoCapitalize='off'
                   size="lg"
                   {...register(`children.${index}.lastName`, {
                     required: t`requiredField`,
@@ -300,24 +302,42 @@ export const TravelersModal = ({
             ))}
           </VStack>
 
-          <Box
-            p="4"
-            width="full"
-            borderTop="1px solid"
-            borderColor="gray.100"
-            backgroundColor="white"
-            mt="auto"
-          >
-            <Button
-              variant="solid-blue"
-              type="submit"
-              size="lg"
+          {renderAsPage ? (
+            <StepBottomActions
+              isLoadingBooking={isLoading}
+              stickyOnMobile
+              primaryButton={
+                <Button
+                  variant="solid-blue"
+                  type="submit"
+                  size="lg"
+                  width="full"
+                  isLoading={isLoading}
+                >
+                  {t`continue`}
+                </Button>
+              }
+            />
+          ) : (
+            <Box
+              p="4"
               width="full"
-              isLoading={isLoading}
+              borderTop="1px solid"
+              borderColor="gray.100"
+              backgroundColor="white"
+              mt="auto"
             >
-              {t`continue`}
-            </Button>
-          </Box>
+              <Button
+                variant="solid-blue"
+                type="submit"
+                size="lg"
+                width="full"
+                isLoading={isLoading}
+              >
+                {t`continue`}
+              </Button>
+            </Box>
+          )}
         </Flex>
       </Layout>
     </FormProvider>

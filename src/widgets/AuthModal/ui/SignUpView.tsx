@@ -9,6 +9,7 @@ export const SignUpView = ({
   onSuccess,
   onViewChange,
   formData,
+  layoutVariant = "modal",
 }: SignUpViewProps) => {
   const { t } = useTranslation();
   const {
@@ -17,6 +18,7 @@ export const SignUpView = ({
     formState: { errors },
     getValues,
   } = useForm({
+    mode: "onChange",
     defaultValues: {
       firstname: formData?.firstname || "",
       lastname: formData?.lastname || "",
@@ -56,14 +58,26 @@ export const SignUpView = ({
     registerUser(data);
   };
 
+  const contentContainerProps =
+    layoutVariant === "page"
+      ? {
+          width: "full",
+          maxWidth: "500px",
+          px: 0,
+          height: "auto",
+          overflowY: "visible" as const,
+        }
+      : {
+          height: "auto",
+        };
+
   return (
     <ContentLayout
       primaryButtonLabel={t`sign-up`}
       secondaryButtonLabel={t`sign-in`}
       onSubmit={handleSubmit(handleSignUp)}
-      contentContainerProps={{ 
-        height: "auto"
-       }}
+      contentContainerProps={contentContainerProps}
+      layoutVariant={layoutVariant}
       onSecondaryButtonClick={() => onViewChange?.("signIn")}
       isLoading={isPending}
     >
@@ -84,10 +98,6 @@ export const SignUpView = ({
         })}
         helperText={errors.firstname?.message}
         state={errors.firstname?.message ? "invalid" : "default"}
-        onChange={(e) => {
-          const value = e.target.value.replace(/[^a-zA-Z]/g, "");
-          e.target.value = value;
-        }}
       />
 
       <Input
@@ -107,10 +117,6 @@ export const SignUpView = ({
         })}
         helperText={errors.lastname?.message}
         state={errors.lastname?.message ? "invalid" : "default"}
-        onChange={(e) => {
-          const value = e.target.value.replace(/[^a-zA-Z]/g, "");
-          e.target.value = value;
-        }}
       />
 
       <Input

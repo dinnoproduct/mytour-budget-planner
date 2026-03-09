@@ -15,7 +15,13 @@ export type PaymentModalProps = {
   closeModal: () => void
   onSuccess: (
     paymentAmount: number,
-    paymentSystem: PaymentSystem
+    paymentSystem: PaymentSystem,
+    paymentOption: PaymentOption,
+    promoCodeInfo?: {
+      promoCode: string
+      initialPrice: number
+      firstPaymentSum: number
+    }
   ) => Promise<string | undefined>
   onBackClick?: () => void
   packageDetails: PackageEntity
@@ -33,6 +39,13 @@ export type PaymentModalProps = {
   >
   handleLogEvent: (step: { name: BookingStep; number: number }) => void
   skipPreviewStep?: boolean
+  renderAsPage?: boolean
+  onViewChange?: (view: PaymentModalView) => void
+  onPaymentOptionChange?: (paymentOption: PaymentOption) => void
+  /** Parent’s selected option; used so stepper and form stay in sync when returning from travelers */
+  paymentOption?: PaymentOption
+  onNavigateToMyPackages?: (queryParams?: string) => void
+  onSuccessClose?: () => void
 }
 
 export type PaymentFormViewProps = {
@@ -42,12 +55,22 @@ export type PaymentFormViewProps = {
   isBooked?: boolean
   initialPaymentOption?: PaymentOption
   prepaymentInfo?: PrepaymentInfo | null
+  onBackClick?: () => void
+  renderAsPage?: boolean
+  /** When true, disables/hides the "no prepayment" option. Used when user must pay (e.g. paying remaining amount). */
+  disableNoPrepayment?: boolean
 }
 
 export type PaymentMethodViewProps = {
-  onSubmit: (method: PaymentMethod) => void
+  onSubmit: () => void
   isLoadingBooking?: boolean
   packageDetails: PackageEntity
+  onBackClick?: () => void
+  renderAsPage?: boolean
+  /** Selected payment system code (e.g. 'VPos', 'MyAmeriaPay', 'IDram', or any backend value). */
+  selectedMethod: PaymentMethod | string
+  /** Called with the selected payment system code. */
+  onMethodChange: (method: PaymentMethod | string) => void
 }
 
 export type PreviewDetailsViewProps = {
@@ -72,6 +95,11 @@ export type PreviewDetailsViewProps = {
     discount: number;
     finalAmount: number;
   }) => void
+  paymentOption?: PaymentOption
+  onBackClick?: () => void
+  renderAsPage?: boolean
+  /** When provided (e.g. from booking flow), used for late checkout display; else falls back to packageDetails.lateCheckout then atom */
+  isLateCheckout?: boolean
 }
 
 export type LayoutProps = {
@@ -80,6 +108,8 @@ export type LayoutProps = {
   closeModal: () => void
   title: string
   onBackClick?: () => void
+  renderAsPage?: boolean
+  isLoadingBooking?: boolean
 }
 
 export type PaymentModalView =
@@ -88,13 +118,15 @@ export type PaymentModalView =
   | 'paymentMethod'
   | 'ameriaPay'
   | 'previewDetails'
+  | 'paymentSuccess'
 
 export enum PaymentMethod {
-  bankCard = 'bankCard',
-  ameriaPay = 'ameriaPay'
+  bankCard = 'VPos',
+  ameriaPay = 'MyAmeriaPay',
+  idram = 'IDram'
 }
 
-export type PaymentOption = 'noPrepayment' | 'pay'
+export type PaymentOption = 'payFull' | 'pay' | 'noPrepayment'
 
 export type PaymentMethodCardProps = {
   label: string
@@ -104,6 +136,8 @@ export type PaymentMethodCardProps = {
   isBorder?: boolean
   isDisabled?: boolean
   labelSuffix?: ReactNode
+  isActive?: boolean
+  onChange?: (isChecked: boolean) => void
 }
 
 export const VIEW_CONTENT_MAP: {
@@ -123,6 +157,9 @@ export const VIEW_CONTENT_MAP: {
   },
   previewDetails: {
     title: 'dataCheck'
+  },
+  paymentSuccess: {
+    title: 'payment'
   }
 }
 
@@ -137,10 +174,26 @@ export type SectionListProps = {
   listItems: ListItem[]
 } & ListProps
 
-export type ListItem = { 
-  key: ReactNode; 
+export type ListItem = {
+  key: ReactNode;
   value: ReactNode;
   isStrikethrough?: boolean;
   isDiscount?: boolean;
   isHighlighted?: boolean;
+}
+
+export type PromoCodeProps = {
+  isApplyButtonDisabled?: boolean,
+  handleApplyPromoCode?: () => void,
+  handlePromoCodeInputChange: (value: string) => void,
+  promoCodeError?: string | null,
+  promoCodeValue?: string,
+  hasPromoCode: boolean,
+  setHasPromoCode: (status: boolean) => void,
+  promoCodeStatus: {
+    isApplied: boolean;
+    code: string;
+    discount: number;
+    finalAmount: number;
+  }
 }

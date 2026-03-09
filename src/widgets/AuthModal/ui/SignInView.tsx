@@ -5,7 +5,7 @@ import { useLogin } from '@entities/user/hooks/useLogin'
 import { useTranslation } from 'react-i18next'
 import { ContentLayout } from './ContentLayout'
 
-export const SignInView = ({ onSuccess, formData, isAlreadyRegistered, onViewChange }: SignInViewProps) => {
+export const SignInView = ({ onSuccess, formData, isAlreadyRegistered, onViewChange, layoutVariant = 'modal' }: SignInViewProps) => {
 	const { t } = useTranslation()
 	const { handleSubmit, register, formState: { errors }, getValues } = useForm({
 		defaultValues: {
@@ -28,11 +28,24 @@ export const SignInView = ({ onSuccess, formData, isAlreadyRegistered, onViewCha
 		}
 	}
 
+	const contentContainerProps =
+		layoutVariant === 'page'
+			? {
+					width: 'full',
+					maxWidth: '500px',
+					px: 0,
+					height: 'auto',
+					overflowY: 'visible' as const
+				}
+			: undefined
+
 	return (
 		<ContentLayout
 			primaryButtonLabel={t`sign-in`}
 			onSubmit={handleSubmit(handleSignIn)}
 			isLoading={isPending}
+			contentContainerProps={contentContainerProps}
+			layoutVariant={layoutVariant}
 		>
 			{isAlreadyRegistered ? (
 				<Text size="sm" fontWeight="bold" mb="6" align="center">

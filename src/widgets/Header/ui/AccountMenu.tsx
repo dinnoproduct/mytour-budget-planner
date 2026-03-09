@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next'
 import { useModalContext } from '@app/providers'
 import { useUserContext } from '@entities/user'
 import { Link as RouterLink } from 'react-router-dom'
+import { useLanguageRouting } from '@/hooks/useLanguageRouting'
+import { appendStoredUTMsToPath } from '@/utils/utmParams'
 
 export const AccountMenu = ({}) => {
   const { user } = useUserContext()
@@ -69,6 +71,11 @@ const MenuItemsUser = ({}) => {
   const { t } = useTranslation()
   const { signOut } = useUserContext()
   const { dispatchModal } = useModalContext()
+  const { getPathWithLanguage } = useLanguageRouting()
+  const myPackagesPath = useMemo(
+    () => appendStoredUTMsToPath(getPathWithLanguage('/my-packages')),
+    [getPathWithLanguage]
+  )
 
   const handleSignOutClick = () => {
     signOut()
@@ -83,7 +90,7 @@ const MenuItemsUser = ({}) => {
 
   return (
     <>
-      <MenuItem to="/my-packages">{t`myPackages`}</MenuItem>
+      <MenuItem to={myPackagesPath}>{t`myPackages`}</MenuItem>
       <MenuItem
         onClick={handlePersonalInformationClick}
       >{t`personalInformation`}</MenuItem>

@@ -12,12 +12,13 @@ import {
   useValidatePromoCode
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { PaymentModalView } from '../ui/PaymentModal/types.ts'
+import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types.ts'
 import { isMobile } from 'react-device-detect'
 
 import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
+import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
 export const useBookingFlow = ({
   packageDetails,
@@ -27,10 +28,12 @@ export const useBookingFlow = ({
   request: initialRequest,
   childrenAges,
   defaultTravelers,
-  isLateCheckout
+  isLateCheckout,
+  renderAsPage = false
 }: useBookingFlowProps) => {
   const { user } = useUserContext()
   const { i18n } = useTranslation()
+  const { navigateToBookingResult } = useLanguageNavigate()
   const { mutateAsync: createRequestAsync } = useCreateRequest()
   const { mutateAsync: updateRequestAsync } = useUpdateRequest()
   const { mutateAsync: bookPackageAsync } = useBookPackage()
@@ -58,10 +61,19 @@ export const useBookingFlow = ({
   }, [initialRequest])
 
   useEffect(() => {
-    setModalView(initialView)
-  }, [initialView, isOpen])
+    if (!isOpen) return
+    if (renderAsPage && !user?.id) {
+      setModalView('auth')
+    } else {
+      setModalView(initialView)
+    }
+  }, [initialView, isOpen, renderAsPage, user?.id])
 
   const openTravelersModal = () => {
+    setModalView('travelers')
+  }
+
+  const onAuthSuccess = () => {
     setModalView('travelers')
   }
 
@@ -79,18 +91,31 @@ export const useBookingFlow = ({
   }
 
   const onPaymentModalSuccess = useCallback(
-    async (paymentAmount: number, paymentSystem: PaymentSystem) => {
+    async (
+      paymentAmount: number,
+      paymentSystem: PaymentSystem,
+      paymentOption: PaymentOption,
+      promoCodeInfo?: {
+        promoCode: string
+        initialPrice: number
+        firstPaymentSum: number
+      }
+    ): Promise<string | undefined> => {
       if (!packageDetails || !request?.id) {
-        return
+        return undefined
       }
 
       setIsLoadingBooking(true)
 
       try {
+        const amountToBePaid = promoCodeInfo
+          ? promoCodeInfo.firstPaymentSum
+          : paymentAmount;
+
         const bookInput: any = {
           requestId: request.id,
           cityId: packageDetails.city.id,
-          price: packageDetails.price,
+          price: promoCodeInfo?.initialPrice ?? packageDetails.price,
           hotelId: packageDetails.hotel.id,
           travelAgencyId: packageDetails.travelAgency.id,
           offerId: packageDetails.offerId,
@@ -100,12 +125,16 @@ export const useBookingFlow = ({
             ? notesJson.current
             : JSON.stringify(request.notes),
           phoneNumber: user?.phoneNumber || '',
-          amountToBePaid: +paymentAmount,
+          amountToBePaid: +amountToBePaid,
           usdRate: packageDetails.usdRate,
           currency: packageDetails.currency,
           rate: packageDetails.rate,
           travelers: [...travelers.adults, ...travelers.children],
           paymentSystem
+        }
+
+        if (promoCodeInfo?.promoCode) {
+          bookInput.promoCode = promoCodeInfo.promoCode
         }
 
         if (packageDetails.destinationFlight?.departureDate) {
@@ -121,17 +150,44 @@ export const useBookingFlow = ({
           bookInput.foodType = packageDetails.foodType || 0
         }
 
-        if (paymentAmount === 0) {
-          const reserveResponse = await reservePackageAsync(bookInput)
+        if (paymentOption === 'noPrepayment') {
+          await reservePackageAsync(bookInput)
           setIsLoadingBooking(false)
-          setModalView('success')
-
+          if (renderAsPage) {
+            navigateToBookingResult({ success: true, replace: true })
+          } else {
+            setPaymentModalView('paymentSuccess')
+          }
           return
         }
 
+        sessionStorage.setItem('isPaymentRedirect', '1')
         const bookResponse = await bookPackageAsync(bookInput)
         setIsLoadingBooking(false)
 
+        if (!bookResponse.success) {
+          if (renderAsPage) {
+            navigateToBookingResult({ error: true, replace: true })
+          } else {
+            setPaymentModalView('paymentError')
+          }
+          return
+        }
+
+        if (!bookResponse.bookingPaymentUrl) {
+          if (renderAsPage) {
+            navigateToBookingResult({ success: true, replace: true })
+          } else {
+            setPaymentModalView('paymentSuccess')
+          }
+          return
+        }
+
+        try {
+          localStorage.setItem('bookingResultSource', 'booking')
+        } catch {
+          // ignore
+        }
         if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
           window.location.href =
             bookResponse.bookingPaymentUrl +
@@ -141,19 +197,21 @@ export const useBookingFlow = ({
         } else if (
           paymentSystem === ('MyAmeriaPay' as PaymentSystem.MyAmeriaPay)
         ) {
-          if (isMobile) {
-            window.location.href = bookResponse.bookingPaymentUrl
-
-            return
-          }
-
-          return bookResponse.bookingPaymentUrl
+          window.location.href = bookResponse.bookingPaymentUrl
+        } else if (
+          paymentSystem === ('IDram' as PaymentSystem.IDram)
+        ) {
+          window.location.href = bookResponse.bookingPaymentUrl
         }
       } catch (e) {
-        setPaymentModalView('paymentError')
+        if (renderAsPage) {
+          navigateToBookingResult({ error: true, replace: true })
+        } else {
+          setPaymentModalView('paymentError')
+        }
       }
     },
-    [request, packageDetails?.offerId, travelers]
+    [request, packageDetails?.offerId, travelers, renderAsPage, navigateToBookingResult]
   )
 
   useEffect(() => {
@@ -332,6 +390,7 @@ export const useBookingFlow = ({
 
   return {
     openTravelersModal,
+    onAuthSuccess,
     onTravelersModalSuccess,
     openPaymentModal,
     onPaymentModalSuccess,
@@ -356,4 +415,5 @@ type useBookingFlowProps = {
   childrenAges?: number[]
   defaultTravelers?: Travelers
   isLateCheckout?: boolean
+  renderAsPage?: boolean
 }

@@ -1,18 +1,27 @@
 /**
  * UTM Parameters Management
- * 
- * Extracts UTM parameters from URL on initial page load and stores them
- * in sessionStorage for the duration of the session. This allows tracking
- * marketing campaign attribution across page navigations without polluting URLs.
+ *
+ * Extracts UTM parameters from URL on landing and stores them in sessionStorage
+ * for the whole session. Enables correct conversion attribution to the original campaign.
  */
 
 export interface UTMParams {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
 }
 
 const STORAGE_KEY = 'utm_params';
+
+export const UTM_KEYS: (keyof UTMParams)[] = [
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_term',
+  'utm_content',
+];
 
 /**
  * Extracts UTM parameters from the current URL
@@ -21,13 +30,7 @@ export const extractUTMParamsFromURL = (): UTMParams => {
   const params = new URLSearchParams(window.location.search);
   const utmParams: UTMParams = {};
 
-  const utmKeys: (keyof UTMParams)[] = [
-    'utm_source',
-    'utm_medium',
-    'utm_campaign',
-  ];
-
-  utmKeys.forEach((key) => {
+  UTM_KEYS.forEach((key) => {
     const value = params.get(key);
     if (value) {
       utmParams[key] = value;
@@ -112,11 +115,79 @@ export const hasUTMParams = (): boolean => {
 };
 
 /**
- * Initializes UTM parameter tracking
- * Should be called once on app initialization
+ * Appends stored UTM parameters to a URLSearchParams (mutates in place).
+ * Use when building navigation URLs so UTMs persist for the session.
+ */
+export const appendStoredUTMsToSearchParams = (queryParams: URLSearchParams): void => {
+  const stored = getStoredUTMParams();
+  UTM_KEYS.forEach((key) => {
+    const value = stored[key];
+    if (value) {
+      queryParams.set(key, value);
+    }
+  });
+};
+
+/**
+ * Returns stored UTM params as a query string (e.g. "utm_source=google&utm_medium=cpc").
+ * Empty string if none stored.
+ */
+export const getStoredUTMsAsQueryString = (): string => {
+  const stored = getStoredUTMParams();
+  const params = new URLSearchParams();
+  UTM_KEYS.forEach((key) => {
+    const value = stored[key];
+    if (value) {
+      params.set(key, value);
+    }
+  });
+  return params.toString();
+};
+
+/**
+ * Appends stored UTM parameters to a path (with or without existing query string).
+ * Use for every client-side navigation so UTMs persist in the URL for the session.
+ * Returns the same path if no UTMs are stored.
+ */
+export const appendStoredUTMsToPath = (path: string): string => {
+  const utmQuery = getStoredUTMsAsQueryString();
+  if (!utmQuery) return path;
+
+  const [pathname, existingQuery] = path.split('?');
+  const params = existingQuery ? new URLSearchParams(existingQuery) : new URLSearchParams();
+  appendStoredUTMsToSearchParams(params);
+  const queryString = params.toString();
+  return queryString ? `${pathname}?${queryString}` : pathname;
+};
+
+/**
+ * Initializes UTM parameter tracking.
+ * Call on app init and on location change so we capture UTMs from the first URL that has them.
  */
 export const initializeUTMTracking = (): void => {
-  // Extract and store UTM params from initial page load
   storeUTMParams();
+};
+
+/**
+ * If the current URL has no UTM params but we have stored UTMs (e.g. after redirect
+ * from payment gateway), restores them to the URL via replaceState so the address bar
+ * and any URL-based tracking keep attribution. Call on route/location change.
+ */
+export const restoreStoredUTMsToUrl = (): void => {
+  if (typeof window === 'undefined' || !window.history.replaceState) return;
+  const currentSearch = new URLSearchParams(window.location.search);
+  const hasUtmInUrl = UTM_KEYS.some((key) => currentSearch.has(key));
+  if (hasUtmInUrl) return;
+
+  const utmQuery = getStoredUTMsAsQueryString();
+  if (!utmQuery) return;
+
+  const params = new URLSearchParams(window.location.search);
+  appendStoredUTMsToSearchParams(params);
+  const newSearch = params.toString();
+  const newUrl = newSearch
+    ? `${window.location.pathname}?${newSearch}${window.location.hash ? window.location.hash : ''}`
+    : `${window.location.pathname}${window.location.hash || ''}`;
+  window.history.replaceState(null, '', newUrl);
 };
 

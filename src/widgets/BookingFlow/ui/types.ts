@@ -10,4 +10,6 @@ export type BookingFlowProps = {
   request?: NormalizedRequestEntity | null
   defaultTravelers?: Travelers
   isBooked?: boolean
+  renderAsPage?: boolean
+  onNavigateToMyPackages?: (queryParams?: string) => void
 }

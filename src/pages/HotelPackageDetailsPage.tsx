@@ -4,24 +4,21 @@ import {
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import {
-  type PackageEntity,
   useHotelPackagesSearchContext,
-  useSearchHotelPackage,
 } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
-import { BookingFlow } from "@widgets/BookingFlow";
 import {
   HotelPackageDetails,
   HotelPackageDetailsHeader,
 } from "@widgets/HotelPackageDetails";
 import { BookingDrawer } from "@shared/ui";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  isBookingFlowOpenAtom,
+  bookingContextAtom,
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
@@ -32,6 +29,7 @@ import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 export const HotelPackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -39,9 +37,7 @@ export const HotelPackageDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
-    isBookingFlowOpenAtom,
-  );
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
   const {
     packageDetails,
     childrenAges,
@@ -65,11 +61,20 @@ export const HotelPackageDetailsPage = () => {
   useEffect(() => {
     return () => {
       clearBookingDrawerData();
-      setBookingFlowOpen(false);
       setModalOpen(false);
-      setIsLateCheckout(false);
+      // Do not reset isLateCheckout here: when user navigates to booking it must persist for PreviewDetailsView
     };
   }, []);
+
+  useEffect(() => {
+    if (packageDetails?.offerId && childrenAges) {
+      setBookingContext({
+        packageDetails: packageDetails,
+        childrenAges,
+        initialView: 'travelers',
+      });
+    }
+  }, [packageDetails?.offerId, childrenAges, setBookingContext]);
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
@@ -117,6 +122,7 @@ export const HotelPackageDetailsPage = () => {
     // If childrenCount is 0 but childrenAges exists and is not empty, set it to empty string
     if (childrenCount === 0 && hasChildrenAges) {
       searchParams.set('childrenAges', '');
+      appendStoredUTMsToSearchParams(searchParams);
       const newUrl = `${location.pathname}?${searchParams.toString()}`;
       navigate(newUrl, { replace: true });
     }
@@ -180,14 +186,6 @@ export const HotelPackageDetailsPage = () => {
           loading={loading}
         />
       )}
-      <BookingFlow
-        packageDetails={packageDetails}
-        initialView="travelers"
-        childrenAges={childrenAges}
-        // onBookingSuccess={handleBackClick}
-        isOpen={isBookingFlowOpen}
-        onClose={() => setBookingFlowOpen(false)}
-      />
     </PageLayout>
   );
 };

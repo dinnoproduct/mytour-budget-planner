@@ -159,9 +159,9 @@ export const RequestCard = ({
             <DetailsListItem
               label={t`price`}
               value={`${formatNumber(request.price)} ֏`}
-              tooltipText={t`priceChangeText`}
+              tooltipText={request.remainingPaymentAmount !== 0 ? t`priceChangeText` : undefined}
             />
-
+            
             {showNextPaymentFields && (
               <>
                 <DetailsListItem
@@ -198,6 +198,14 @@ export const RequestCard = ({
         </Box>
       </Box>
 
+      {/* {isReserved && (
+        <Box px="4" pb="4">
+          <Text size="sm" color="gray.600" mt="1">
+            {t`reserved`}
+          </Text>
+        </Box>
+      )} */}
+
       {(showRemainingPaymentButton ||
         showContinueButton ||
         showNotPaidButton) && (
@@ -206,7 +214,7 @@ export const RequestCard = ({
             <Button
               width="full"
               onClick={() =>
-                onRemainingPaymentClick && onRemainingPaymentClick(request.id)
+                onRemainingPaymentClick && onRemainingPaymentClick(request)
               }
               isLoading={isLoadingRemainingPayment}
             >
@@ -262,9 +270,16 @@ const DetailsListItem = ({
       </Text>
 
       {tooltipText ? (
-        <Tooltip label={tooltipText}>
-          <Flex justify="center" align="center">
-            <Icon name="info-outline" size="16" color="gray.800" ml="1" />
+        <Tooltip label={tooltipText} hasArrow shouldWrapChildren>
+          <Flex
+            justify="center"
+            align="center"
+            ml="1"
+            p={1}
+            borderRadius="full"
+            cursor="pointer"
+          >
+            <Icon name="info-outline" size="16" color="gray.800" />
           </Flex>
         </Tooltip>
       ) : null}

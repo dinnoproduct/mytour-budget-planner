@@ -4,19 +4,17 @@ import {
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
-import { PackageEntity, usePackagesSearchContext } from "@entities/package";
+import { usePackagesSearchContext } from "@entities/package";
 import Loader from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
-import { BookingFlow } from "@widgets/BookingFlow";
-import { usePackageDetailsFromStore } from "@/modules/packages/hooks";
 import { BookingDrawer } from "@shared/ui";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  isBookingFlowOpenAtom,
+  bookingContextAtom,
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
@@ -26,6 +24,7 @@ import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { usePackage } from "@/entities/package/hooks/usePackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
+import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 export const PackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -33,9 +32,7 @@ export const PackageDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isBookingFlowOpen, setBookingFlowOpen] = useRecoilState(
-    isBookingFlowOpenAtom,
-  );
+  const setBookingContext = useSetRecoilState(bookingContextAtom);
   const {
     packageDetails,
     isFetched,
@@ -58,11 +55,20 @@ export const PackageDetailsPage = () => {
   useEffect(() => {
     return () => {
       clearBookingDrawerData();
-      setBookingFlowOpen(false);
       setModalOpen(false);
-      setIsLateCheckout(false);
+      // Do not reset isLateCheckout here: when user navigates to booking it must persist for PreviewDetailsView
     };
   }, []);
+
+  useEffect(() => {
+    if (packageDetails?.offerId && childrenAges) {
+      setBookingContext({
+        packageDetails,
+        childrenAges,
+        initialView: 'travelers',
+      });
+    }
+  }, [packageDetails?.offerId, childrenAges, setBookingContext]);
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
@@ -110,6 +116,7 @@ export const PackageDetailsPage = () => {
     // If childrenCount is 0 but childrenAges exists and is not empty, set it to empty string
     if (childrenCount === 0 && hasChildrenAges) {
       searchParams.set('childrenAges', '');
+      appendStoredUTMsToSearchParams(searchParams);
       const newUrl = `${location.pathname}?${searchParams.toString()}`;
       navigate(newUrl, { replace: true });
     }
@@ -177,14 +184,6 @@ export const PackageDetailsPage = () => {
           loading={loading}
         />
       )}
-      <BookingFlow
-        packageDetails={packageDetails}
-        initialView="travelers"
-        childrenAges={childrenAges}
-        // onBookingSuccess={handleBackClick}
-        isOpen={isBookingFlowOpen}
-        onClose={() => setBookingFlowOpen(false)}
-      />
     </PageLayout>
   );
 };
