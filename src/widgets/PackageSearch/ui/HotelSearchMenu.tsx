@@ -10,6 +10,7 @@ import { capitalize } from '@shared/utils'
 import { HotelSearchForm } from '@widgets/PackageSearch/ui/HotelSearchForm.tsx'
 import {
   HotelTabItem,
+  GroupTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
@@ -115,7 +116,8 @@ export const HotelSearchMenu = ({
             <Tabs
               labels={[
                 <PackageTabItem key="package-tab" />,
-                <HotelTabItem key="hotel-tab" />
+                <HotelTabItem key="hotel-tab" />,
+                <GroupTabItem key="group-tab" />
               ]}
               variant="line"
               align="center"

@@ -8,7 +8,7 @@ export type PackageSearchProps = {
   setHotel?:  Dispatch<SetStateAction<number>>
 } & Omit<LayoutProps, 'children'>
 
-export type PackageSearchVariant = 'fixed' | 'centered' | 'fixedWithoutTabs' | 'centeredPackage'
+export type PackageSearchVariant = 'fixed' | 'centered' | 'fixedWithoutTabs' | 'centeredPackage' | 'centeredGroupTours'
 
 export type LayoutProps = {
   containerProps?: BoxProps

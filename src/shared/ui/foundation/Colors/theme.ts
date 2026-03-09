@@ -65,5 +65,8 @@ export const colorsTheme = {
     },
     gr_Packages: "linear-gradient(178deg, #017BFE 1.7%, #00CFFF 98.21%)",
     gr_Hotel: "linear-gradient(178deg, #8408FF 1.7%, #93C5FF 98.21%)",
+    gr_GroupTours: "linear-gradient(178deg, #FF5070 1.7%, #FFC793 98.21%)",
   },
 };
+
+

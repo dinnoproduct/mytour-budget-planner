@@ -18,6 +18,8 @@ import { validateTraveler } from '@widgets/TravelersModal/helpers'
 import moment from 'moment'
 import { BookingStep } from '@/shared/configs/metaEvents.ts'
 
+const CHILD_MIN_AGE = 2 // infant 0 to infantMaxAge, child CHILD_MIN_AGE to childMaxAge
+
 export const TravelersModal = ({
   closeModal,
   onSuccess,
@@ -47,7 +49,7 @@ export const TravelersModal = ({
         dateOfBirth: ''
       }),
       children: Array(
-        packageDetails.childrenTravelers + packageDetails.infantTravelers
+        (packageDetails.childrenTravelers + packageDetails.infantTravelers) || 0
       ).fill({
         firstName: '',
         lastName: '',
@@ -223,18 +225,53 @@ export const TravelersModal = ({
                   name={`adults.${index}.dateOfBirth`}
                   placeholderText={t`dateOfBirth`}
                   label={t`dateOfBirth`}
-                  maxDate={moment()
-                    .subtract((packageDetails?.childMaxAge || 1) + 1, 'years')
-                    .add(packageDetails.nights, 'days')
-                    .toDate()}
+                  maxDate={(() => {
+                    const pd = packageDetails as any
+                    const gt = pd?.travelers
+                    if (gt?.adultMinAge != null) {
+                      return moment().subtract(gt.adultMinAge, 'years').toDate()
+                    }
+                    return moment()
+                      .subtract((packageDetails?.childMaxAge || 1) + 1, 'years')
+                      .add(packageDetails?.nights ?? 0, 'days')
+                      .toDate()
+                  })()}
                 />
               </VStack>
             ))}
 
-            {childrenFields.map((field, index) => (
+            {childrenFields.map((field, index) => {
+              const pd = packageDetails as any
+              const gt = pd?.travelers
+              const childCount = packageDetails?.childrenTravelers ?? 0
+              const infantCount = packageDetails?.infantTravelers ?? 0
+              const isInfant = infantCount > 0 && index >= childCount
+              const childMaxAge = gt?.childMaxAge ?? pd?.childMaxAge ?? 12
+              const infantMaxAge = gt?.infantMaxAge ?? 2
+
+              let minDate: Date
+              let maxDate: Date
+              if (gt && (gt.adultMinAge != null || gt.childMaxAge != null)) {
+                if (isInfant) {
+                  minDate = moment().subtract(infantMaxAge, 'years').toDate()
+                  maxDate = moment().toDate()
+                } else {
+                  minDate = moment().subtract(childMaxAge, 'years').toDate()
+                  maxDate = moment().subtract(CHILD_MIN_AGE, 'years').toDate()
+                }
+              } else {
+                minDate = moment()
+                  .subtract(packageDetails?.[PackagesFields.childMaxAge] || 1, 'years')
+                  .subtract(1, 'years')
+                  .add(1, 'day')
+                  .toDate()
+                maxDate = moment().subtract(1, 'days').toDate()
+              }
+
+              return (
               <VStack key={field.id} spacing="4" width="full" align="stretch">
                 <Text size="sm" fontWeight="bold">
-                  {t`child`} {index + 1}
+                  {isInfant ? t`infant` : t`child`} {index + 1}
                 </Text>
 
                 <Input
@@ -288,18 +325,12 @@ export const TravelersModal = ({
                   name={`children.${index}.dateOfBirth`}
                   placeholderText={t`dateOfBirth`}
                   label={t`dateOfBirth`}
-                  minDate={moment()
-                    .subtract(
-                      packageDetails?.[PackagesFields.childMaxAge] || 1,
-                      'years'
-                    )
-                    .subtract(1, 'years')
-                    .add(1, 'day')
-                    .toDate()}
-                  maxDate={moment().subtract(1, 'days').toDate()}
+                  minDate={minDate}
+                  maxDate={maxDate}
                 />
               </VStack>
-            ))}
+              )
+            })}
           </VStack>
 
           {renderAsPage ? (

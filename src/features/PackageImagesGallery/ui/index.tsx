@@ -1,16 +1,16 @@
-import { LayoutProps, PackageImagesGalleryProps } from './types.ts'
+import { LayoutProps, PackageImagesGalleryProps } from './types'
 import { Box } from '@chakra-ui/react'
 import { ImagesGrid } from './ImagesGrid.tsx'
 import ImagesSlider from '@features/PackageImagesGallery/ui/ImagesSlider.tsx'
 import { useBreakpoint } from '@shared/hooks'
 
-export const PackageImagesGallery = ({ imageUrls, onImageClick, ...props }: PackageImagesGalleryProps) => {
+export const PackageImagesGallery = ({ imageUrls, onImageClick, isGroupTour = false, ...props }: PackageImagesGalleryProps) => {
 	const { isMd } = useBreakpoint()
 
 	return (
 		<Layout {...props}>
 			{isMd ? (
-				<ImagesGrid imageUrls={imageUrls} onImageClick={onImageClick}/>
+				<ImagesGrid imageUrls={imageUrls} onImageClick={onImageClick} isGroupTour={isGroupTour}/>
 			) : (
 				<ImagesSlider imageUrls={imageUrls}/>
 			)}

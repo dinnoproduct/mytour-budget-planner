@@ -10,6 +10,7 @@ export enum ApiUrls {
   V2 = 'V2',
   package = 'package',
   getPackages = 'getPackages',
+  getGroupTours = 'getGroupTours',
   getPackage = 'getPackage',
   city = 'city',
   getCities = 'getCities',

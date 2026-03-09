@@ -13,7 +13,8 @@ export const StoryItem: React.FC<StoryItemProps> = React.memo(
   ({ group, onOpen, isHotel = 0 }) => {
     const { storySet } = group;
     const avatarImageUrl = `${STORIES_BASE_URL}/${storySet.avatarImageUrl}`;
-    const gradientColor = isHotel === 0 ? "gr_Hotel" : "gr_Packages";
+    const gradientColor =
+      isHotel === 0 ? "gr_Hotel" : isHotel === 1 ? "gr_Packages" : "gr_GroupTours";
 
     return (
       <VStack

@@ -7,6 +7,7 @@ import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
 import {
   HotelTabItem,
+  GroupTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
@@ -94,15 +95,15 @@ export const PackageSearchMenu = ({
           <Tabs
             labels={[
               <PackageTabItem key="package-tab" />,
-              <HotelTabItem key="hotel-tab" />
+              <HotelTabItem key="hotel-tab" />,
+              <GroupTabItem key="group-tab" />
             ]}
             variant="line"
-            align="center"
             mt="2"
             defaultIndex={0}
             onChange={onTabChange}
+            align="center"
           >
-            <></>
             <></>
           </Tabs>
           )}

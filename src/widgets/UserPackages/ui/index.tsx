@@ -65,21 +65,36 @@ export const UserPackages = () => {
     if (isNoDownPaymentBooked) {
       const packageDetails =
         activeRequestPackage ?? transformRequestToPackage(activeRequest);
+      const travelersFromNotes = activeRequest.notes?.travelers as
+        | { adults: { firstName?: string; lastName?: string; dateOfBirth?: string }[]; children: { firstName?: string; lastName?: string; dateOfBirth?: string }[] }
+        | undefined
+      const normTravelers = (arr: { firstName?: string; lastName?: string; dateOfBirth?: string }[] = []) =>
+        arr.map((t) => ({
+          firstName: t.firstName ?? "",
+          lastName: t.lastName ?? "",
+          dateOfBirth: t.dateOfBirth ?? "",
+        }))
+      const defaultTravelers = travelersFromNotes
+        ? {
+            adults: normTravelers(travelersFromNotes.adults),
+            children: normTravelers(travelersFromNotes.children),
+          }
+        : activeRequest.travelers
+          ? {
+              adults: activeRequest.travelers.map((t) => ({
+                firstName: t.firstName,
+                lastName: t.lastName,
+                dateOfBirth: t.dateOfBirth ?? "",
+              })),
+              children: [],
+            }
+          : undefined
       hasNavigatedRef.current = true;
       navigateToPayment({
         state: {
           packageDetails,
           request: activeRequest,
-          travelers: activeRequest.travelers
-            ? {
-                adults: activeRequest.travelers.map((t) => ({
-                  firstName: t.firstName,
-                  lastName: t.lastName,
-                  dateOfBirth: t.dateOfBirth ?? "",
-                })),
-                children: [],
-              }
-            : undefined,
+          travelers: defaultTravelers,
         },
       });
       handleBookingFlowClose();
@@ -87,26 +102,50 @@ export const UserPackages = () => {
     }
 
     // Draft or other → go to booking page when package is ready
-    if (
-      activeRequestPackage?.offerId &&
-      !isLoadingActiveRequestPackage
-    ) {
+    // Group tours use CreateGroupTourOffer (no offerId); hotel/package use generateOffers (offerId)
+    const isGroupTour =
+      activeRequestPackage &&
+      !(activeRequestPackage as any).hotel &&
+      (activeRequestPackage as any).departures &&
+      (activeRequestPackage as any).agency
+    const hasValidPackage =
+      (activeRequestPackage?.offerId || isGroupTour) && !isLoadingActiveRequestPackage
+
+    if (hasValidPackage) {
       hasNavigatedRef.current = true;
       setBookingContext({
         packageDetails: activeRequestPackage,
         childrenAges: activeRequest.notes?.childrenAges || [],
         initialView: incompleteInitialView,
         request: activeRequest,
-        defaultTravelers: activeRequest.travelers
-          ? {
+        defaultTravelers: (() => {
+          const travelersFromNotes = activeRequest.notes?.travelers as
+            | { adults: { firstName: string; lastName: string; dateOfBirth?: string }[]; children: { firstName: string; lastName: string; dateOfBirth?: string }[] }
+            | undefined
+          if (travelersFromNotes) {
+            const norm = (arr: { firstName?: string; lastName?: string; dateOfBirth?: string }[] = []) =>
+              arr.map((t) => ({
+                firstName: t.firstName ?? "",
+                lastName: t.lastName ?? "",
+                dateOfBirth: t.dateOfBirth ?? "",
+              }))
+            return {
+              adults: norm(travelersFromNotes.adults),
+              children: norm(travelersFromNotes.children),
+            }
+          }
+          if (activeRequest.travelers) {
+            return {
               adults: activeRequest.travelers.map((t) => ({
                 firstName: t.firstName,
                 lastName: t.lastName,
-                dateOfBirth: t.dateOfBirth,
+                dateOfBirth: t.dateOfBirth ?? "",
               })),
               children: [],
             }
-          : undefined,
+          }
+          return undefined
+        })(),
         isBooked: !isActiveRequestDraft,
       });
       navigateToBooking();
@@ -115,7 +154,6 @@ export const UserPackages = () => {
   }, [
     activeRequest,
     activeRequestPackage,
-    activeRequestPackage?.offerId,
     isLoadingActiveRequestPackage,
     incompleteInitialView,
     isActiveRequestDraft,
@@ -130,6 +168,7 @@ export const UserPackages = () => {
       <Heading size="sm-md">{t`myPackages`}</Heading>
 
       <Tabs
+        align="start"
         labels={[t`upcoming`, t`incomplete`, t`past`, t`canceled`]}
         mt="10"
         index={tab}

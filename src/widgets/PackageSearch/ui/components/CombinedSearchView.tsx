@@ -5,7 +5,7 @@ import { HotelSearchForm } from '../HotelSearchForm'
 import { PackageSearchForm } from '../PackageSearchForm'
 import {
   useHotelPackagesSearchContext,
-  usePackagesSearchContext
+  usePackagesSearchContext,
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
 
@@ -39,7 +39,7 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
       navigateToDefaultHotelSearch()
     } else if (index === 0 && isPackageSearchView) {
       navigateToDefaultPackageSearch()
-    }
+    } 
   }
 
   return (

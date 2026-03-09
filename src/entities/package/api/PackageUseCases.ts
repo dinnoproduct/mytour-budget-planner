@@ -17,6 +17,7 @@ import {
   type PromoCodeValidationParams,
   type FlightDatesParams,
   type PaymentSystemInfo,
+  type CreateGroupTourOfferInput,
 } from './types.ts'
 import { type RequestService } from './RequestService.ts'
 import { type DictionaryService } from './DictionaryService.ts'
@@ -27,6 +28,7 @@ import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
 import { type FlightEntity } from '../model/entities.ts'
+import { type GroupTourService } from './GroupTourService.ts'
 import { type RequestServiceV2 } from './RequestServiceV2.ts'
 
 export class PackageUseCases {
@@ -40,6 +42,8 @@ export class PackageUseCases {
   private readonly prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   private readonly requestServiceV2: RequestServiceV2
   private readonly promoCodeService: PromoCodeService
+  private readonly groupTourService: GroupTourService
+
   constructor({
     packageService,
     flightService,
@@ -49,7 +53,8 @@ export class PackageUseCases {
     flightDatesService,
     searchService,
     prepaymentInfoCalculationService,
-    promoCodeService,
+    promoCodeService, 
+    groupTourService,
     requestServiceV2
   }: PackageUseCasesParams) {
     this.packageService = packageService
@@ -61,6 +66,7 @@ export class PackageUseCases {
     this.searchService = searchService
     this.prepaymentInfoCalculationService = prepaymentInfoCalculationService
     this.promoCodeService = promoCodeService
+    this.groupTourService = groupTourService
     this.requestServiceV2 = requestServiceV2
   }
 
@@ -189,5 +195,18 @@ export class PackageUseCases {
   // promo code
   async validatePromoCode(params: PromoCodeValidationParams, token: string) {
     return this.promoCodeService.validate(params, token)
+  }
+
+  // group tour
+  async getGroupTours() {
+    return this.groupTourService.getGroupTours()
+  }
+
+  async getGroupTourInfo(tourId: string) {
+    return this.groupTourService.getGroupTourInfo(tourId)
+  }
+
+  async createGroupTourOffer(body: CreateGroupTourOfferInput) {
+    return this.groupTourService.createGroupTourOffer(body)
   }
 }

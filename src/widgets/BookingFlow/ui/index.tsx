@@ -52,12 +52,18 @@ export const BookingFlow = ({
     renderAsPage,
   });
 
-  if (!packageDetails?.offerId || !isOpen) {
+  const isGroupTourPackage =
+    !!packageDetails &&
+    !(packageDetails as any).hotel &&
+    (packageDetails as any).departures &&
+    (packageDetails as any).agency;
+
+  if ((!isGroupTourPackage && !packageDetails?.offerId) || !isOpen) {
     return null;
   }
 
   function handleLogEvent(step: { name: BookingStep; number: number }) {
-    if (packageDetails) {
+    if (packageDetails && !isGroupTourPackage) {
       metaEvents.bookingStepCompleted({
         hotel_id: packageDetails.hotel.id,
         step_number: step.number,
