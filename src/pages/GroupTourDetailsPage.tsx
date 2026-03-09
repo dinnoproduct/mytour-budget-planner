@@ -16,12 +16,12 @@ import {
   GroupTourDetailsHeader,
   GroupTourBookingCard,
 } from "@/widgets/GroupTourDetails";
-import { Text } from "@ui";
+import { t } from "i18next";
 
 export const GroupTourDetailsPage = () => {
   const { id: tourId } = useParams<{ id: string }>();
   const { data: groupTour, isLoading, isFetched } = useGroupTourInfo(tourId);
-  const { navigateBack, navigateToHome } = useLanguageNavigate();
+  const { navigateBack, navigateToHome, navigateToGroupTourGallery } = useLanguageNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,7 +63,7 @@ export const GroupTourDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="package" />
+      <SharedHeader onBackClick={handleBackClick} title={t("back")} />
 
       <PackageImagesGallery
         imageUrls={imageUrls}
@@ -72,6 +72,7 @@ export const GroupTourDetailsPage = () => {
           setImageModalActiveIndex(index);
           setModalOpen(true);
         }}
+        isGroupTour
       />
 
       <PackageDetailsLayout>

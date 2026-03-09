@@ -224,7 +224,7 @@ export interface GroupTourGalleryItem {
   url: string
   type: string
   order: number
-  attribute: string
+  attribute: GroupTourName
 }
 
 export interface GroupTourDeparture {

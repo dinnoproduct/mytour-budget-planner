@@ -255,19 +255,12 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
         rounded={{ base: 'none', md: 'md' }}
         overflow="hidden"
         position={isFixed ? 'fixed' : 'static'}
-        top={isFixed ? '100px' : 'auto'}
+        top={isFixed ? '90px' : 'auto'}
       >
         <CardSectionLayout
           px="4"
           py="4"
           gridArea="totalPrice"
-          position={{
-            base: 'fixed',
-            md: 'static',
-          }}
-          bottom="0"
-          left="0"
-          right="0"
           width="full"
         >
           <VStack align="stretch" spacing={0} >

@@ -10,7 +10,6 @@ export const AgencySection = ({ agency }: AgencySectionProps) => (
   <Flex
     align="center"
     pb={3}
-    pt={1}
     gap={2}
     borderBottom="1px solid"
     borderColor="gray.100"
