@@ -94,6 +94,8 @@ export type GenerateHotelOffersInput = {
 export type BookPackageInput = {
   price: number
   requestId?: number
+  /** For group tours */
+  groupTourId?: string
   cityId: number
   startDate: string
   endDate: string
@@ -161,6 +163,8 @@ export interface ReservePackageResponse extends BookPackageResponse {}
 export type CreateRequestInput = {
   offerId: number
   travelAgencyId: number
+  /** For group tours */
+  groupTourId?: string
   cityId: number
   price: number
   amountToBePaid?: number

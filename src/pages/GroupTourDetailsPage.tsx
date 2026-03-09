@@ -16,6 +16,7 @@ import {
   GroupTourDetailsHeader,
   GroupTourBookingCard,
 } from "@/widgets/GroupTourDetails";
+import { Text } from "@ui";
 
 export const GroupTourDetailsPage = () => {
   const { id: tourId } = useParams<{ id: string }>();

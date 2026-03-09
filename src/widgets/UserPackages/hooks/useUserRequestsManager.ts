@@ -9,7 +9,8 @@ import {
   useUpdateRequest,
   useUserRequests,
   type NormalizedRequestEntity,
-  useRequestCancellationMessageAsync
+  useRequestCancellationMessageAsync,
+  useGroupTourPackageFromRequest
 } from '@entities/package'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
@@ -218,12 +219,17 @@ export const useUserRequestsManager = () => {
   }
 
   const activeRequestPackageType = useMemo(() => {
+    if (
+      activeRequest &&
+      (activeRequest.bookingType === 3 || (activeRequest as any).groupTourId)
+    ) {
+      return 'groupTour'
+    }
     if (activeRequest?.destinationFlightId) {
       return 'package'
     }
-
     return 'hotel'
-  }, [activeRequest?.destinationFlightId])
+  }, [activeRequest?.destinationFlightId, activeRequest?.bookingType, (activeRequest as any)?.groupTourId])
 
   const {
     packageDetails: requestPackageData,
@@ -251,6 +257,13 @@ export const useUserRequestsManager = () => {
       onSuccess: handlePackageDetailsSuccess
     }
   )
+
+  const {
+    packageDetails: groupTourPackageData,
+    isLoading: isLoadingGroupTourPackage
+  } = useGroupTourPackageFromRequest(activeRequest, {
+    enabled: activeRequestPackageType === 'groupTour'
+  })
 
   const {
     packageDetails: requestHotelPackage,
@@ -284,12 +297,15 @@ export const useUserRequestsManager = () => {
 
   const activeRequestPackage = useMemo(
     () =>
-      activeRequestPackageType === 'package'
-        ? reservedPackage || requestPackageData
-        : reservedHotelPackage || requestHotelPackage,
+      activeRequestPackageType === 'groupTour'
+        ? groupTourPackageData ?? null
+        : activeRequestPackageType === 'package'
+          ? reservedPackage || requestPackageData
+          : reservedHotelPackage || requestHotelPackage,
     [
       requestHotelPackage,
       requestPackageData,
+      groupTourPackageData,
       activeRequestPackageType,
       reservedPackage,
       reservedHotelPackage
@@ -298,12 +314,15 @@ export const useUserRequestsManager = () => {
 
   const isLoadingActiveRequestPackage = useMemo(
     () =>
-      activeRequestPackageType === 'package'
-        ? isLoadingRequestPackage
-        : isLoadingRequestHotelPackage,
+      activeRequestPackageType === 'groupTour'
+        ? isLoadingGroupTourPackage
+        : activeRequestPackageType === 'package'
+          ? isLoadingRequestPackage
+          : isLoadingRequestHotelPackage,
     [
       isLoadingRequestHotelPackage,
       isLoadingRequestPackage,
+      isLoadingGroupTourPackage,
       activeRequestPackageType
     ]
   )
@@ -316,12 +335,15 @@ export const useUserRequestsManager = () => {
       setIncompleteInitialView('payment')
       setIsActiveRequestDraft(true)
     } else if (request.status === RequestStatus.Reserved) {
-      const transformedRequest = transformRequestToPackage(request)
-
-      if (request.destinationFlightId) {
-        setReservedPackage(transformedRequest)
-      } else {
-        setReservedHotelPackage(transformedRequest)
+      const isGroupTour =
+        request.bookingType === 3 || !!(request as any).groupTourId
+      if (!isGroupTour) {
+        const transformedRequest = transformRequestToPackage(request)
+        if (request.destinationFlightId) {
+          setReservedPackage(transformedRequest)
+        } else {
+          setReservedHotelPackage(transformedRequest)
+        }
       }
 
       setIncompleteInitialView('payment')

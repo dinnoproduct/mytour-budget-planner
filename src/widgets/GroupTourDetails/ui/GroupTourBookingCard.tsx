@@ -6,6 +6,9 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout'
 import { useBreakpoint } from '@shared/hooks'
 import type { GroupTourInfo, GroupTourDeparture } from '@entities/package'
 import { useGroupTourOfferPrice } from '@entities/package'
+import { useSetRecoilState } from 'recoil'
+import { bookingContextAtom } from '@/modules/packages/store/store'
+import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 import { CURRENCY_MAP, LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import {
@@ -30,6 +33,8 @@ type GroupTourBookingCardProps = {
 export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBookingCardProps) => {
   const { t, i18n } = useTranslation()
   const { isMd } = useBreakpoint()
+  const setBookingContext = useSetRecoilState(bookingContextAtom)
+  const { navigateToBooking } = useLanguageNavigate()
   const [isFixed, setIsFixed] = useState(false)
   const languageSuffix = useMemo(
     () => (LANGUAGE_PREFIX[i18n.language as LanguageName] ?? 'eng').toLowerCase(),
@@ -49,7 +54,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
   const [children, setChildren] = useState(0)
   const [infants, setInfants] = useState(0)
 
-  const infantsAllowed = groupTour.travelers?.infant > 0
+  const infantsAllowed = groupTour.travelers?.infantsAllowed || false
   const roomTypes = groupTour.roomTypes ?? []
   const travelersInfo = groupTour.travelers
 
@@ -108,14 +113,14 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
       setAdults(1)
       setChildren(0)
     } else if (isFixedDouble) {
-      setAdults(1)
+      setAdults(2)
       setChildren(0)
     } else {
-      // generic default: one adult, zero children
-      setAdults(1)
+      // generic default: minGuests adults, zero children
+      setAdults(Math.max(1, rawGuestsMin))
       setChildren(0)
     }
-  }, [selectedRoomTypeId, isFixedSingle, isFixedDouble])
+  }, [selectedRoomTypeId, isFixedSingle, isFixedDouble, rawGuestsMin])
 
   const showChildSelector = !isFixedSingle
   const showInfantSelector = infantsAllowed
@@ -184,18 +189,53 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
 
   const handleBook = () => {
     if (!canProceed) return
+    if (!offerPrice || !selectedDeparture) return
 
-    console.log('offerPrice', offerPrice)
-    console.log(groupTour)
-    console.log('offerPriceParams', offerPriceParams)
-    console.log('canProceed', canProceed)
-    console.log('validationError', validationError)
-    console.log('selectedDeparture', selectedDeparture)
-    console.log('selectedRoomTypeId', selectedRoomTypeId)
-    console.log('adults', adults)
-    console.log('children', children)
-    console.log('infants', infants)
-    // TODO: wire to booking flow
+    const defaultTravelers = {
+      adults: Array.from({ length: adults }).map(() => ({
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+      })),
+      children: Array.from({ length: children + infants }).map(() => ({
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+      })),
+    }
+
+    const selectedRoomId =
+      selectedRoomTypeId !== '' ? Number(selectedRoomTypeId) : groupTour.roomTypes?.[0]?.id;
+
+    setBookingContext({
+      packageDetails: {
+        // minimal shape needed by BookingFlow; using group tour data
+        ...groupTour,
+        // ensure booking flow prepayment gets correct agency id
+        travelAgency: {
+          id: Number(groupTour.agency.id),
+        } as any,
+        // use selected departure dates as booking dates in the flow
+        checkin: selectedDeparture.startDate,
+        checkout: selectedDeparture.endDate,
+        price: offerPrice.price,
+        currency: offerPrice.currency,
+        bookingType: 3,
+        // selected room type for create/update request and book
+        roomType: selectedRoomId ?? 0,
+        adultTravelers: adults,
+        childrenTravelers: children,
+        infantTravelers: infants,
+      } as any,
+      childrenAges: [], // not used for group tours yet
+      initialView: 'travelers',
+      defaultTravelers,
+      request: null,
+      isBooked: false,
+      // groupId can be carried via notes-like field
+    })
+
+    navigateToBooking()
   }
 
   const currencyLabel =
@@ -255,7 +295,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
               childMax={childMax}
               infantMax={infantMax}
               showChildSelector={showChildSelector}
-              showInfantSelector={showInfantSelector}
+              showInfantSelector={showInfantSelector ?? false}
               guestsMax={guestsMax}
               isFixedDouble={isFixedDouble}
               adultsLabel={t('adults')}

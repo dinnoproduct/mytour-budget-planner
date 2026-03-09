@@ -37,9 +37,10 @@ export const PaymentMethodView = ({
   };
 
   const handleLogEvent = () => {
-    if (packageDetails) {
+    const pd = packageDetails as any;
+    if (packageDetails && (pd?.hotel?.id != null || (pd?.departures && pd?.agency))) {
       metaEvents.bookingStepCompleted({
-        hotel_id: packageDetails.hotel.id,
+        hotel_id: pd?.hotel?.id,
         step_number: 3,
         step_name: BookingStep.PaymentMethodSelected,
       });

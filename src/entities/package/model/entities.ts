@@ -157,6 +157,8 @@ export interface RequestEntity {
   travelAgencyId: number
   foodType: number
   bookingType: number
+  /** For group tour requests */
+  groupTourId?: string
   currency: Currency
   rate: number
 }
@@ -264,6 +266,7 @@ export interface GroupTourEntity {
 
 // Group Tour detail (getGroupTourInfo)
 export interface GroupTourTravelers {
+  infantsAllowed?: boolean
   adult: number
   child: number
   infant: number
@@ -319,7 +322,6 @@ export interface GroupTourInfo {
   travelers: GroupTourTravelers
   roomTypes: GroupTourRoomType[]
   /** When false, infant selector must not be rendered. When true or undefined, allow infants (max 2). */
-  infantsAllowed?: boolean
   route: GroupTourRouteItem[]
   routeCountries: GroupTourRouteItem[]
   routeSummary: GroupTourName

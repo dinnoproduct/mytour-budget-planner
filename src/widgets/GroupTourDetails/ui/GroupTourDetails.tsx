@@ -5,6 +5,7 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout'
 import type { GroupTourInfo } from '@entities/package'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { getLocalized } from '../lib/utils'
+import { AgencySection } from './AgencySection'
 import { IncludedExcludedSection } from './IncludedExcludedSection'
 import { TourDescriptionSection } from './TourDescriptionSection'
 import { ItinerarySection } from './ItinerarySection'
@@ -31,6 +32,7 @@ export const GroupTourDetails = ({ groupTour }: { groupTour: GroupTourInfo }) =>
       width="full"
     >
       <CardSectionLayout>
+        {groupTour.agency && <AgencySection agency={groupTour.agency} />}
         <IncludedExcludedSection
           included={groupTour.included}
           excluded={groupTour.excluded}
