@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import {
   type PackageCity,
@@ -16,6 +16,8 @@ import {
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { getPluralForm } from '@shared/helpers/index.ts'
 
+const TAB_STORAGE_KEY = 'packageSearchSelectedTab'
+
 export const HotelSearchMenu = ({
   onTabChange,
   onFormOpen,
@@ -25,6 +27,7 @@ export const HotelSearchMenu = ({
 }: any) => {
   const { t, i18n } = useTranslation()
   const { searchData, cities } = useHotelPackagesSearchContext()
+  const [selectedTab, setSelectedTab] = useState(1)
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
@@ -64,6 +67,17 @@ export const HotelSearchMenu = ({
     }
   }, [isFormOpen])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const saved = window.sessionStorage.getItem(TAB_STORAGE_KEY)
+    if (saved !== null) {
+      const parsed = Number(saved)
+      if (!Number.isNaN(parsed)) {
+        setSelectedTab(parsed)
+      }
+    }
+  }, [])
+
   const cityLabel = useMemo(() => {
       return cities
         .filter(c => Array.isArray(searchData.selectedCity) ? searchData.selectedCity.includes(c.id) : [searchData.selectedCity].includes(c.id))
@@ -78,6 +92,16 @@ export const HotelSearchMenu = ({
 
   const handleFormClose = () => {
     onFormClose()
+  }
+
+  const handleTabChange = (index: number) => {
+    setSelectedTab(index)
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(TAB_STORAGE_KEY, String(index))
+    }
+    if (onTabChange) {
+      onTabChange(index)
+    }
   }
 
   return (
@@ -122,8 +146,8 @@ export const HotelSearchMenu = ({
               variant="line"
               align="center"
               mt="2"
-              defaultIndex={1}
-              onChange={onTabChange}
+              index={selectedTab}
+              onChange={handleTabChange}
             >
               <></>
               <></>

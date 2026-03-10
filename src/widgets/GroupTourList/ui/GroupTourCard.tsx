@@ -88,7 +88,7 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
     
   return (
     <Layout link={link} {...props}>
-      <Box p={3} pb={4} bg={'gray.50'}>
+      <Box p={3} pb={4} bg={'gray.50'}display="flex" flexDirection="column" height="100%">
         {images.length > 0 && images[0].url !== "" && images[0].url !== null ? (
           <Image 
             src={images[0].url} 
@@ -110,21 +110,27 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
           />
         )}
 
-            <Box pt="4" >
+            <Box pt="4">
               <Text
                 color="gray.800"
                 size="sm"
                 fontWeight="bold"
-                noOfLines={2}
+                noOfLines={1}
                 as="h3"
                 mb={2}
+                
               >
                 {groupName}
               </Text>
               {groupTour?.routeCities?.length > 0 || groupTour?.routeCountries?.length > 0 && (
                 <Box display="flex" alignItems="center" gap={1}>
                 <Icon name="location-pin" size="16" color="gray.500" />
-                <Text size="xs" color="gray.600" fontWeight="medium">
+                <Text
+                  size="xs"
+                  color="gray.600"
+                  fontWeight="medium"
+                  noOfLines={1}
+                >
                   {groupTour?.routeCities?.map((city) => city[languageSuffix as keyof typeof city] || city.eng).join(", ") || groupTour?.routeCountries?.map((c) => c[languageSuffix as keyof typeof c] || c.eng).join(", ")}
                 </Text>
               </Box>
@@ -201,6 +207,7 @@ const Layout = ({
     to={link}
     _hover={{ textTransform: "none" }}
     width="full"
+    height="100%"
     {...props}
   >
     <Box
@@ -208,6 +215,9 @@ const Layout = ({
       overflow="hidden"
       border="1px solid"
       borderColor="gray.200"
+      height="100%"
+      display="flex"
+      flexDirection="column"
     >
       {children}
     </Box>
