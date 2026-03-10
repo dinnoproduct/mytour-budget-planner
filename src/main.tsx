@@ -5,8 +5,6 @@ import App from './app/App.tsx';
 import './index.css';
 import './styles/index.scss';
 
-
-// console.log(i18next);
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
   <App />,
