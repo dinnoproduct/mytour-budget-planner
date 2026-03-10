@@ -7,6 +7,7 @@ import { MobileHeader } from './MobileHeader'
 import { ExactDatesTab } from './ExactDatesTab'
 import { ApproximateDatesTab } from './ApproximateDatesTab'
 import { MENU_LIST_MOBILE_ROOT_PROPS } from '../constants'
+import { Box } from '@chakra-ui/react'
 
 interface DatePickerMenuContentProps {
   isOpen: boolean
@@ -57,7 +58,6 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
         rootProps={!isMd ? MENU_LIST_MOBILE_ROOT_PROPS : {}}
       >
         <MobileHeader onClose={onClose} />
-
         <Tabs
           align="center"
           variant="grey-segment"
