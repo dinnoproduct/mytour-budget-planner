@@ -124,47 +124,52 @@ export const GroupTourGalleryPage = () => {
             "&::-webkit-scrollbar-thumb": { background: "#E2E8F0", borderRadius: "2px" },
           }}
         >
-          {groupedSections.map(([type, items]) => (
-            <Flex
-              key={type}
-              direction="column"
-              align="flex-start"
-              flexShrink={0}
-              gap={4}
-              cursor="pointer"
-              onClick={() => handleTabClick(type)}
-              minW="184px"
-            >
-              <Box
-                w="184px"
-                h="100px"
-                borderRadius="md"
-                overflow="hidden"
-                bg="gray.100"
+          {groupedSections.map(([attributeKey, items]) => {
+            const localizedAttribute =
+              getLocalized(items[0]?.attribute, languageSuffix) || attributeKey;
+
+            return (
+              <Flex
+                key={attributeKey}
+                direction="column"
+                align="flex-start"
+                flexShrink={0}
+                gap={4}
+                cursor="pointer"
+                onClick={() => handleTabClick(attributeKey)}
+                minW="184px"
               >
-                {items[0]?.url && (
-                  <GalleryImage
-                    src={items[0].url}
-                    width="100%"
-                    height="100%"
-                    objectFit="cover"
-                  />
-                )}
-              </Box>
-              <Box
-                fontSize="sm"
-                color="gray.800"
-                whiteSpace="nowrap"
-                overflow="hidden"
-                textOverflow="ellipsis"
-                fontWeight={"medium"}
-                maxW="100%"
-                textTransform="capitalize"
-              >
-                {type}
-              </Box>
-            </Flex>
-          ))}
+                <Box
+                  w="184px"
+                  h="100px"
+                  borderRadius="md"
+                  overflow="hidden"
+                  bg="gray.100"
+                >
+                  {items[0]?.url && (
+                    <GalleryImage
+                      src={items[0].url}
+                      width="100%"
+                      height="100%"
+                      objectFit="cover"
+                    />
+                  )}
+                </Box>
+                <Box
+                  fontSize="sm"
+                  color="gray.800"
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                  fontWeight={"medium"}
+                  maxW="100%"
+                  textTransform="capitalize"
+                >
+                  {localizedAttribute}
+                </Box>
+              </Flex>
+            );
+          })}
         </Flex>
 
         {/* Sections */}

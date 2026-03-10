@@ -11,7 +11,7 @@ import { type TabsProps } from './types'
 export const Tabs = ({ labels, children, showTabs = true, align, ...props }: TabsProps) => (
   <ChakraTabs {...props}>
     {showTabs &&
-    <Box display="flex" justifyContent={{align}} alignItems="center">
+    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
     <TabList 
       gap="2"
       sx={{
