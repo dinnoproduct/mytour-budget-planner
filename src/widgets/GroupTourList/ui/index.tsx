@@ -65,15 +65,20 @@ export const GroupTourList = () => {
           }}
           rowGap={{base: 6, md: 10}}
           columnGap={6}
-          justifyItems="center"
+          justifyItems="stretch"
+          alignItems="stretch"
+          autoRows="1fr"
           w="100%"
         >
           {groupTours.map((groupTour) => (
-            <GroupTourCard
-              key={groupTour.id}
-              groupTour={groupTour}
-              link={generateLink(groupTour.id)}
-            />
+            <GridItem key={groupTour.id} w="100%" h="100%">
+              <GroupTourCard
+                groupTour={groupTour}
+                link={generateLink(groupTour.id)}
+                w="100%"
+                h="100%"
+              />
+            </GridItem>
           ))}
         </Grid>
       )}
