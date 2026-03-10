@@ -52,6 +52,17 @@ export const GroupTourDetailsHeader = ({
   return (
     <Flex px={{ base: '4', md: '0' }}>
       <Flex direction="column">
+        <Flex direction="row" alignItems={'center'} gap={2} mb={2}>
+        {groupTour.themeTags?.map((tag) => {
+            const label = getLocalized(tag.name, languageSuffix)
+            if (!label) return null
+            return (
+              <GroupTourTagBadge key={tag.id}>
+                {label}
+              </GroupTourTagBadge>
+            )
+          })}
+          </Flex>
        <Flex direction="row" alignItems={'center'} gap={2}>
        <Heading
           as="h1"
@@ -61,15 +72,7 @@ export const GroupTourDetailsHeader = ({
         >
           {groupName}
         </Heading>
-        {groupTour.themeTags?.map((tag) => {
-          const label = getLocalized(tag.name, languageSuffix)
-          if (!label) return null
-          return (
-            <GroupTourTagBadge key={tag.id}>
-              {label}
-            </GroupTourTagBadge>
-          )
-        })}
+        
        </Flex>
        
 
