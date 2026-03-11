@@ -5,7 +5,7 @@ import { BookingFlow } from '@/widgets/BookingFlow/ui'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { bookingContextAtom } from '@/modules/packages/store/store'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
-import Loader from '@/components/Loader/Loader'
+import {Loader} from '@/components/Loader/Loader'
 
 export const BookingPage = () => {
   const { navigateToMyPackages, navigateBack } = useLanguageNavigate()

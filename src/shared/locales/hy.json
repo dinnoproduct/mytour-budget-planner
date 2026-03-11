@@ -419,5 +419,7 @@
   "groupTour.book": "Ամրագրել",
   "groupTour.whatsIncludedWhatsNot": "Ինչ է ներառված, ինչը՝ ոչ",
   "groupTour.dates": "Ամսաթվեր",
-  "acceptAndContinue": "Հաստատել և շարունակել"
+  "acceptAndContinue": "Հաստատել և շարունակել",
+  "loading.title": "Խնդրում ենք սպասել",
+  "loading.description": "Մենք հավաքագրում ենք լավագույն առաջարկները"
 }

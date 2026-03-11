@@ -1,7 +1,7 @@
 import { Box, Flex, Grid, GridItem, useBreakpoint } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useRef, useState, useMemo } from "react";
-import Loader from "@/components/Loader/Loader";
+import { Loader } from '@/components/Loader/Loader';
 import { useGroupTourInfo } from "@entities/package";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";

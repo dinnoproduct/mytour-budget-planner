@@ -7,7 +7,7 @@ import { CustomFields } from '../../data/packagesEnums.ts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { subscribeScheme } from '../../scheme/scheme.ts';
 import useSubscribe from '../../hooks/useSubscribe.ts';
-import Loader from '../../../../components/Loader/Loader.tsx';
+import { Loader } from '@/components/Loader/Loader';
 import classnames from 'classnames';
 
 const Subscribe: FC = () => {

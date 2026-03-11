@@ -419,5 +419,7 @@
   "groupTour.book": "Забронировать",
   "groupTour.whatsIncludedWhatsNot": "Что включено и что не включено",
   "groupTour.dates": "Даты",
-  "acceptAndContinue": "Подтвердить и продолжить"
+  "acceptAndContinue": "Подтвердить и продолжить",
+  "loading.title": "Пожалуйста, подождите",
+  "loading.description": "Мы собираем лучшие предложения для вас"
 }

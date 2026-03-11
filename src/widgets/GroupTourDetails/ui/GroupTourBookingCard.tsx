@@ -21,7 +21,7 @@ import { TravelersSection } from './GroupTourBookingCard/TravelersSection'
 import { RoomTypeSection } from './GroupTourBookingCard/RoomTypeSection'
 import { DatesSection } from './GroupTourBookingCard/DatesSection'
 import { formatNumber } from '@/shared/utils'
-import Loader from '@/components/Loader/Loader'
+import { Loader } from '@/components/Loader/Loader'
 
 const MAX_INFANTS = 2
 
