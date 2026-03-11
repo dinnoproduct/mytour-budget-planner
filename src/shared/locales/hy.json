@@ -420,6 +420,8 @@
   "groupTour.whatsIncludedWhatsNot": "Ինչ է ներառված, ինչը՝ ոչ",
   "groupTour.dates": "Ամսաթվեր",
   "acceptAndContinue": "Հաստատել և շարունակել",
-  "loading.title": "Խնդրում ենք սպասել",
-  "loading.description": "Մենք հավաքագրում ենք լավագույն առաջարկները"
+  "loading.packages.title": "Խնդրում ենք սպասել",
+  "loading.packages.description": "Մենք փնտրում ենք լավագույն առաջարկները Ձեզ համար",
+  "loading.mypackages.title": "Խնդրում ենք սպասել",
+  "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են"
 }

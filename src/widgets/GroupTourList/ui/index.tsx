@@ -8,7 +8,6 @@ import { useMemo } from "react";
 import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
-import { PackageLoader } from "@/components/Loader/Loader";
 
 export const GroupTourList = () => {
   const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
@@ -42,7 +41,19 @@ export const GroupTourList = () => {
   return (
     <Layout>
       {isLoading && (
-        <PackageLoader loading={isLoading} />
+        <Grid
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          }}
+          rowGap={{base: 6, md: 10}}
+          columnGap={6}
+          justifyItems="center"
+          w="100%"
+        >
+          <SkeletonLoading />
+        </Grid>
       )}
 
       {!isLoading && groupTours.length > 0 && (
