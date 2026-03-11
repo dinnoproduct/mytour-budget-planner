@@ -183,12 +183,14 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                onRemainingPaymentClick={(request) =>
+                onRemainingPaymentClick={(request, promo) =>
                   navigateToPayment({
                     state: {
                       mode: "remainingOnly",
                       request,
                       packageDetails: transformRequestToPackage(request),
+                      discountedFullPrice: promo?.discountedFullPrice,
+                      promoCode: promo?.code,
                     },
                   })
                 }

@@ -12,7 +12,10 @@ type Props = {
   showRemainingPaymentButton: boolean
   showContinueButton: boolean
   showNotPaidButton: boolean
-  onRemainingPaymentClick?: (req: RequestCardProps['request']) => void
+  onRemainingPaymentClick?: (
+    req: RequestCardProps['request'],
+    promo?: { code: string; discountedFullPrice: number }
+  ) => void
   onContinueClick?: (req: RequestCardProps['request']) => void
   isLoadingRemainingPayment?: boolean
   isLoadingContinue?: boolean
@@ -36,7 +39,14 @@ export const RequestCardActions = ({
 
   const handlePayClick = () => {
     if (showRemainingPaymentButton && onRemainingPaymentClick) {
-      onRemainingPaymentClick(request)
+      const promoPayload =
+        promo.promoApplied && promo.discountedRemainingAmount != null
+          ? {
+              code: promo.promoCode,
+              discountedFullPrice: promo.discountedRemainingAmount
+            }
+          : undefined
+      onRemainingPaymentClick(request, promoPayload)
     } else if (onContinueClick) {
       onContinueClick(request)
     }

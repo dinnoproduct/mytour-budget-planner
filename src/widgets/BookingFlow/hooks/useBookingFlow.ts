@@ -460,6 +460,13 @@ export const useBookingFlow = ({
     [initialRequest]
   )
 
+  // If backend or previous step stored a discounted full price in request notes,
+  // prefer that for prepayment calculation; otherwise fall back to package price.
+  const discountedFullPrice =
+    (initialRequest?.notes as any)?.discountedFullPrice ??
+    packageDetails?.price ??
+    0
+
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
@@ -472,7 +479,7 @@ export const useBookingFlow = ({
             : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: (packageDetails as any)?.checkin ?? '',
-      fullPrice: packageDetails?.price ?? 0,
+      fullPrice: discountedFullPrice,
       calculationSource: isDraftRequest ? 'search' : 'myBookings'
     },
     {
