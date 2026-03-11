@@ -3,7 +3,6 @@ import './index.scss';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Box, Flex } from '@chakra-ui/react';
 import { Text } from '@ui';
-import { useTranslation } from 'react-i18next';
 
 
 // Import the actual asset URL so the library loads valid Lottie data
@@ -27,19 +26,18 @@ export const Loader: FC<{ loading: boolean, style?: CSSProperties }> = ({ loadin
 };
 
 
-export const PackageLoader: FC<{ loading: boolean }> = ({ loading }) => {
-  const { t } = useTranslation();
+export const LoaderWithText: FC<{ loading: boolean, title: string, description: string, style?: CSSProperties }> = ({ loading, title, description, style }) => {
   if (loading) {
     return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" height="100%" width="100%" gap="4">
+      <Flex justifyContent="center" alignItems="center" flexDirection="column" height="100%" width="100%" gap="4" style={style}>
         <Box width="200px" height="200px">
           <DotLottieReact src={loaderLottieUrl as string} loop autoplay />
         </Box>
         <Text size="md" align="center" fontWeight="semibold" color="gray.800" maxWidth={{base: "100%", md: "400px"}} as="p">
-          {t`loading.title`}
+          {title}
         </Text>
         <Text size="sm" align="center" color="gray.600" maxWidth={{base: "100%", md: "400px"}} as="p">
-          {t`loading.description`}
+          {description}
         </Text>
       </Flex>
     );

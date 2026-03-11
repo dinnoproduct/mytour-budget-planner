@@ -15,11 +15,12 @@ import { getHotelNightsByDate, getNightsByDate } from "@/features/helper";
 import { PackageFilter } from "@/features/PackageFilter";
 import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
-import { PackageLoader } from "@/components/Loader/Loader";
+import { LoaderWithText } from "@/components/Loader/Loader";
+import { useTranslation } from "react-i18next";
 
 export const PackageList = () => {
   const { searchParams } = useQueryParams();
-
+  const { t } = useTranslation();
   const activeTab = useMemo(() => {
     if (searchParams?.tab) {
       return searchParams.tab;
@@ -132,7 +133,7 @@ export const PackageList = () => {
   if (isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
     return (
       <Layout>
-        <PackageLoader loading={isLoadingPackages || false} />
+        <LoaderWithText loading={isLoadingPackages || false} title={t("loading.packages.title")} description={t("loading.packages.description")} />
       </Layout>
     );
   }

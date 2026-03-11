@@ -420,6 +420,8 @@
   "groupTour.whatsIncludedWhatsNot": "Что включено и что не включено",
   "groupTour.dates": "Даты",
   "acceptAndContinue": "Подтвердить и продолжить",
-  "loading.title": "Пожалуйста, подождите",
-  "loading.description": "Мы собираем лучшие предложения для вас"
+  "loading.packages.title": "Пожалуйста, подождите",
+  "loading.packages.description": "Мы ищем лучшие предложения для вас",
+  "loading.mypackages.title": "Пожалуйста, подождите",
+  "loading.mypackages.description": "Информация о бронированиях обновляется."
 }

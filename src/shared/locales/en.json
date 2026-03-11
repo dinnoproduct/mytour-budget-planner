@@ -420,6 +420,8 @@
   "groupTour.whatsIncludedWhatsNot": "What’s included & excluded",
   "groupTour.dates": "Dates",
   "acceptAndContinue": "Confirm and continue",
-  "loading.title": "Please wait",
-  "loading.description": "We are collecting the best offers for you"
+  "loading.packages.title": "Please wait",
+  "loading.packages.description": "We are searching for the best offers for you",
+  "loading.mypackages.title": "Please wait",
+  "loading.mypackages.description": "Bookings information is being updated."
 }
