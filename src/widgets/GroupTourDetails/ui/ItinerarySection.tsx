@@ -13,7 +13,7 @@ export const ItinerarySection = ({ itinerary, languageSuffix }: ItinerarySection
   if (!itinerary?.length) return null
 
   return (
-    <Box mt="24px" px={{ base: '4', md: '0' }}>
+    <Box mt="24px" >
       <Accordion allowMultiple={false} allowToggle defaultIndex={0}>
         {itinerary.map((day) => (
           <ItineraryDayItem
