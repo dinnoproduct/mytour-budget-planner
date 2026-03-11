@@ -102,13 +102,16 @@ export const PreviewDetailsView = ({
   const handleApplyPromoCode = () => {
     if (isApplyButtonDisabled) return;
 
+    if (isGroupTourPackage) return; // Promo validation uses hotel/city; skip for group tours
+    const city = (packageDetails as any).city;
+    const hotel = (packageDetails as any).hotel;
     validatePromoCode.mutate(
       {
         promoCode: promoCodeValue.trim(),
         price: packageDetails.price,
         agencyId: packageDetails.travelAgency.id,
-        destinationId: packageDetails.city.id,
-        hotelId: packageDetails.hotel.id,
+        destinationId: city?.id,
+        hotelId: hotel?.id,
         startDate: packageDetails.checkin,
         bookingType: prepaymentInfo?.bookingType,
         prePaymentAmount: paymentAmount
@@ -284,19 +287,88 @@ export const PreviewDetailsView = ({
     t,
   ]);
 
+  const isGroupTourPackage = useMemo(
+    () =>
+      !!(
+        packageDetails &&
+        !(packageDetails as any).hotel &&
+        (packageDetails as any).departures &&
+        (packageDetails as any).agency
+      ),
+    [packageDetails],
+  );
+
   const countryName = useMemo(() => {
+    const country = packageDetails?.city?.country;
+    if (!country) return "";
     const key =
       `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity["city"]["country"];
-
-    return (packageDetails?.city.country[key] as string) || "";
-  }, [i18n.language, packageDetails?.city.country.nameArm]);
+    return (country[key] as string) || "";
+  }, [i18n.language, packageDetails?.city?.country]);
 
   const cityName = useMemo(() => {
+    const city = packageDetails?.city;
+    if (!city) return "";
     const key =
       `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity["city"];
+    return (city[key] as string) || "";
+  }, [i18n.language, packageDetails?.city]);
 
-    return (packageDetails?.city[key] as string) || "";
-  }, [i18n.language, packageDetails?.city.nameArm]);
+  const displayTitle = useMemo(() => {
+    const pd = packageDetails as any;
+    if (isGroupTourPackage && pd?.name) {
+      const suffix = LANGUAGE_PREFIX[i18n.language as LanguageName] ?? "Eng";
+      const key = suffix.toLowerCase() as "eng" | "arm" | "rus";
+      return pd.name[key] ?? pd.name.eng ?? pd.name.arm ?? "";
+    }
+    return pd?.nameEng ?? "";
+  }, [packageDetails, isGroupTourPackage, i18n.language]);
+
+  const displaySubtitle = useMemo(() => {
+    const pd = packageDetails as any;
+    if (isGroupTourPackage) {
+      return pd?.agency?.name ?? "";
+    }
+    return null;
+  }, [packageDetails, isGroupTourPackage]);
+
+  const groupTourRoomTypeLabel = useMemo(() => {
+    const pd = packageDetails as any;
+    if (!isGroupTourPackage || pd?.roomType == null) return "";
+    const room = (pd.roomTypes ?? []).find(
+      (r: any) => Number(r.id) === Number(pd.roomType)
+    );
+    if (!room?.name) return "";
+    const suffix = LANGUAGE_PREFIX[i18n.language as LanguageName] ?? "Eng";
+    const key = suffix.toLowerCase() as "eng" | "arm" | "rus";
+    return room.name[key] ?? room.name.eng ?? room.name.arm ?? "";
+  }, [packageDetails, isGroupTourPackage, i18n.language]);
+
+  const groupTourRouteSummary = useMemo(() => {
+    const pd = packageDetails as any;
+    if (!isGroupTourPackage || !pd?.routeSummary) return "";
+    const suffix = LANGUAGE_PREFIX[i18n.language as LanguageName] ?? "Eng";
+    const key = suffix.toLowerCase() as "eng" | "arm" | "rus";
+    return pd.routeSummary[key] ?? pd.routeSummary.eng ?? pd.routeSummary.arm ?? "";
+  }, [packageDetails, isGroupTourPackage, i18n.language]);
+
+  const groupTourRouteCountriesList = useMemo(() => {
+    const pd = packageDetails as any;
+    if (!isGroupTourPackage || !Array.isArray(pd?.routeCountries) || pd.routeCountries.length === 0)
+      return [];
+    const suffix = LANGUAGE_PREFIX[i18n.language as LanguageName] ?? "Eng";
+    const key = suffix.toLowerCase() as "eng" | "arm" | "rus";
+    return pd.routeCountries.map(
+      (item: any) => item[key] ?? item.eng ?? item.arm ?? ""
+    ).filter(Boolean);
+  }, [packageDetails, isGroupTourPackage, i18n.language]);
+
+  const groupTourDuration = useMemo(() => {
+    const pd = packageDetails as any;
+    if (!isGroupTourPackage || !pd?.departures?.length) return null;
+    const d = pd.departures[0];
+    return d?.duration != null ? d.duration : null;
+  }, [packageDetails, isGroupTourPackage]);
 
   const isHotelPackage = useMemo(
     () =>
@@ -321,14 +393,14 @@ export const PreviewDetailsView = ({
   );
 
   const summaryCards = useMemo(() => {
-    const cards = isHotelPackage
+    const cards = isHotelPackage || isGroupTourPackage
       ? []
       : ([
-          packageDetails.hotel.id ? (
+          (packageDetails as any).hotel?.id ? (
             <SummaryCard key="hotel" iconName="bed" children={t`hotel`} />
           ) : null,
-          packageDetails.destinationFlight?.id &&
-          packageDetails.returnFlight?.id ? (
+          (packageDetails as any).destinationFlight?.id &&
+          (packageDetails as any).returnFlight?.id ? (
             <SummaryCard
               key="flight"
               iconName="airplanemode-active"
@@ -354,7 +426,7 @@ export const PreviewDetailsView = ({
     }
 
     return chunkedCards;
-  }, [packageDetails, foodType, t]);
+  }, [packageDetails, foodType, t, isHotelPackage, isGroupTourPackage]);
 
   return (
     <>
@@ -386,23 +458,44 @@ export const PreviewDetailsView = ({
                 color="gray.800"
                 display="inline-block"
               >
-                {packageDetails.nameEng}
+                {displayTitle}
               </Heading>
 
-              <HotelStarBadge starsCount={packageDetails.hotel.stars} ml="2" />
+              {packageDetails?.hotel?.stars != null && (
+                <HotelStarBadge starsCount={packageDetails.hotel.stars} ml="2" />
+              )}
             </Flex>
 
-            <Text
-              size={{ base: "sm", md: "md" }}
-              color="gray.800"
-              mt="2"
-              fontWeight="medium"
-            >
-              {countryName}, {cityName}
-            </Text>
+            {(displaySubtitle || countryName || cityName) && (
+              <Text
+                size={{ base: "sm", md: "md" }}
+                color="gray.800"
+                mt="2"
+                fontWeight="medium"
+              >
+                {displaySubtitle != null && displaySubtitle !== ""
+                  ? displaySubtitle
+                  : [countryName, cityName].filter(Boolean).join(", ")}
+              </Text>
+            )}
           </Flex>
 
           <SectionLayout mt="6" listItems={paymentDetailsItems} />
+
+          {isGroupTourPackage && (groupTourRouteSummary || groupTourRouteCountriesList.length > 0) && (
+            <SectionLayout
+              mt="4"
+              title={t("route")}
+              listItems={[
+                ...(groupTourRouteCountriesList.length > 0
+                  ? [{ key: t("countries") || "Countries", value: groupTourRouteCountriesList.join(", ") }]
+                  : []),
+                ...(groupTourRouteSummary
+                    ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} /> }]
+                    : []),
+              ].filter((item: ListItemType) => !!item.value) as ListItemType[]}
+            />
+          )}
 
           {!isHotelPackage && (
             <SectionLayout title={t`included`} mt="4">
@@ -441,14 +534,14 @@ export const PreviewDetailsView = ({
                 {
                   key: t`departure`,
                   value: formatDate(
-                    packageDetails.destinationFlight.departureDate,
+                    (packageDetails as any).destinationFlight?.departureDate ?? "",
                     true,
                   ),
                 },
                 {
                   key: t`returning`,
                   value: formatDate(
-                    packageDetails.returnFlight.departureDate,
+                    (packageDetails as any).returnFlight?.departureDate ?? "",
                     true,
                   ),
                 },
@@ -458,22 +551,25 @@ export const PreviewDetailsView = ({
 
           <SectionLayout
             mt="4"
-            title={t`hotelDetails`}
+            title={isGroupTourPackage ? (t("tripDetails") || t`hotelDetails`) : t`hotelDetails`}
             listItems={[
+              ...(packageDetails?.roomType != null || (isGroupTourPackage && (packageDetails as any).roomType != null)
+                ? [{
+                    key: t`room`,
+                    value: isGroupTourPackage && groupTourRoomTypeLabel
+                      ? groupTourRoomTypeLabel
+                      : roomTypes.find(
+                          ({ key }: any) => Number(key) === Number((packageDetails as any).roomType),
+                        )?.value || "",
+                  }]
+                : []),
               {
-                key: t`room`,
-                value:
-                  roomTypes.find(
-                    ({ key }: any) => Number(key) === Number(packageDetails.roomType),
-                  )?.value || "",
+                key: isGroupTourPackage ? t("departure") : t`checkIn`,
+                value: formatDate((packageDetails as any).checkin ?? "", !isGroupTourPackage),
               },
               {
-                key: t`checkIn`,
-                value: formatDate(packageDetails.checkin, true),
-              },
-              {
-                key: t`checkOut`,
-                value: formatDate(packageDetails.checkout, true),
+                key: isGroupTourPackage ? t("returning") : t`checkOut`,
+                value: formatDate((packageDetails as any).checkout ?? "", !isGroupTourPackage),
               },
               ...(!isHotelPackage
                 ? [

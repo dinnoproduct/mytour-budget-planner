@@ -3,18 +3,32 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Tabs as ChakraTabs
+  Tabs as ChakraTabs,
+  Box
 } from '@chakra-ui/react'
 import { type TabsProps } from './types'
 
-export const Tabs = ({ labels, children, showTabs = true, ...props }: TabsProps) => (
+export const Tabs = ({ labels, children, showTabs = true, align, groupAlign = 'center', ...props }: TabsProps) => (
   <ChakraTabs {...props}>
     {showTabs &&
-    <TabList gap={2}>
+    <Box sx={{ width: '100%', display: 'flex', justifyContent: groupAlign, alignItems: 'center' }}>
+    <TabList 
+      gap="2"
+      sx={{
+        justifyContent: { base: 'start', md: align || 'center'}, 
+        overflowX: {base: 'scroll', md: 'visible'},
+        margin: 0,
+        padding: {base: '2px 16px', md: '0'},
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        '&::-webkit-scrollbar': { display: 'none' },
+      }}
+    >
       {labels.map((label, index) => (
         <Tab key={`${label}-${index}`}>{label}</Tab>
       ))}
     </TabList>
+    </Box>
     }
 
     <TabPanels>

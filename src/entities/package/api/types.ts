@@ -8,6 +8,8 @@ import { type SearchService } from './SearchService.ts'
 import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
 import { type PromoCodeService } from './PromoCodeService.ts'
 import { type Currency } from '../index.ts'
+import { GroupTourService } from './GroupTourService.ts'
+
 import { type RequestServiceV2 } from './RequestServiceV2.ts'
   
 export type PackageUseCasesParams = {
@@ -20,6 +22,7 @@ export type PackageUseCasesParams = {
   searchService: SearchService
   prepaymentInfoCalculationService: PrepaymentInfoCalculationService
   promoCodeService: PromoCodeService
+  groupTourService: GroupTourService
   requestServiceV2: RequestServiceV2
 }
 
@@ -91,6 +94,8 @@ export type GenerateHotelOffersInput = {
 export type BookPackageInput = {
   price: number
   requestId?: number
+  /** For group tours */
+  groupTourId?: string
   cityId: number
   startDate: string
   endDate: string
@@ -125,6 +130,21 @@ export type PaymentSystemInfo = {
   iconUrl: string
 }
 
+export type CreateGroupTourOfferInput = {
+  tourId: string
+  adult: number
+  child: number
+  infant: number
+  roomType: number
+}
+
+export type GroupTourOfferPrice = {
+  price: number
+  priceInCurrency: number
+  currency: string
+  rate: number
+}
+
 interface BookPackageTraveler {
   id?: number
   firstName: string
@@ -143,6 +163,8 @@ export interface ReservePackageResponse extends BookPackageResponse {}
 export type CreateRequestInput = {
   offerId: number
   travelAgencyId: number
+  /** For group tours */
+  groupTourId?: string
   cityId: number
   price: number
   amountToBePaid?: number

@@ -2,6 +2,7 @@ import { EmptyState } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { type EmptyStateProps } from '@widgets/UserPackages/ui/types.ts'
 import { Grid, Spinner } from '@chakra-ui/react'
+import {Loader} from '@/components/Loader/Loader'
 
 export const UpcomingTabEmptyState = ({ isLoading }: EmptyStateProps) => {
   const { t } = useTranslation()
@@ -79,22 +80,15 @@ const LoadingState = () => (
   <Grid
     width="full"
     placeItems="center"
-    position="fixed"
+    position="absolute"
     top="0"
     bottom="0"
     left="0"
     right="0"
     background="red"
-    zIndex="100"
+    zIndex="800"
     backgroundColor="rgba(255, 255, 255, 0.3)"
   >
-    <Spinner
-      thickness="4px"
-      speed="0.8s"
-      emptyColor="blue.200"
-      color="blue.500"
-      height="48px"
-      width="48px"
-    />
+    <Loader loading style={{ backgroundColor: 'transparent' }} />
   </Grid>
 )

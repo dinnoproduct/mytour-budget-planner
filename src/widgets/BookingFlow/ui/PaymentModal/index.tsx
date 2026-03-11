@@ -251,9 +251,20 @@ export const PaymentModal = ({
   const isHotelPackage = useMemo(
     () =>
       !(
-        packageDetails?.destinationFlight?.id && packageDetails?.returnFlight.id
+        packageDetails?.destinationFlight?.id && packageDetails?.returnFlight?.id
       ),
     [packageDetails?.destinationFlight?.id, packageDetails?.returnFlight?.id],
+  );
+
+  const isGroupTourPackage = useMemo(
+    () =>
+      !!(
+        packageDetails &&
+        !(packageDetails as any).hotel &&
+        (packageDetails as any).departures &&
+        (packageDetails as any).agency
+      ),
+    [packageDetails],
   );
 
   const { data: roomTypes = [] } = useDictionary(
@@ -261,21 +272,22 @@ export const PaymentModal = ({
   );
 
   const handleLogPurchaseEvent = (amount: number) => {
+    const pd = packageDetails as any;
     metaEvents.purchase({
-      content_type: isHotelPackage ? "hotel" : "package",
+      content_type: isGroupTourPackage ? "package" : isHotelPackage ? "hotel" : "package",
       value: amount,
       currency: packageDetails.currency,
       offer_id: packageDetails.offerId,
-      hotel_id: packageDetails.hotel.id,
-      destination: packageDetails.city.nameEng,
-      checkin_date: packageDetails.checkin,
-      checkout_date: packageDetails.checkout,
-      num_nights: packageDetails.nights,
+      hotel_id: pd?.hotel?.id,
+      destination: pd?.city?.nameEng ?? pd?.agency?.name ?? pd?.name?.eng ?? "",
+      checkin_date: pd?.checkin ?? "",
+      checkout_date: pd?.checkout ?? "",
+      num_nights: pd?.nights,
       num_adults: travelers?.adults.length || 0,
       num_children: travelers?.children.length || 0,
-      room_type: roomTypes.find(
-        ({ key }: any) => Number(key) === Number(packageDetails.roomType),
-      )?.value,
+      room_type: pd?.roomType != null
+        ? roomTypes.find(({ key }: any) => Number(key) === Number(pd.roomType))?.value
+        : undefined,
     });
   }
 
@@ -312,19 +324,19 @@ export const PaymentModal = ({
 
   const handleLogPaymentInfoEvent = (paymentMethod?: PaymentMethod | string) => {
     const amount = isFullPricePayment ? packageDetails.price : paymentAmount;
-
-      metaEvents.addPaymentInfo({
-      content_type: isHotelPackage ? "hotel" : "package",
+    const pd = packageDetails as any;
+    metaEvents.addPaymentInfo({
+      content_type: isGroupTourPackage ? "package" : isHotelPackage ? "hotel" : "package",
       value: amount,
       currency: packageDetails.currency,
-        payment_type: (paymentMethod ?? selectedPaymentMethod) ?? null,
-      hotel_id: packageDetails.hotel.id,
-      destination: packageDetails.city.nameEng,
-      checkin_date: packageDetails.checkin,
-      checkout_date: packageDetails.checkout,
-      room_type: roomTypes.find(
-        ({ key }: any) => key === packageDetails.roomType,
-      )?.value,
+      payment_type: (paymentMethod ?? selectedPaymentMethod) ?? null,
+      hotel_id: pd?.hotel?.id,
+      destination: pd?.city?.nameEng ?? pd?.agency?.name ?? pd?.name?.eng ?? "",
+      checkin_date: pd?.checkin ?? "",
+      checkout_date: pd?.checkout ?? "",
+      room_type: pd?.roomType != null
+        ? roomTypes.find(({ key }: any) => key === pd.roomType)?.value
+        : undefined,
     });
   };
 

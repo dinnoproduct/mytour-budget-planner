@@ -157,6 +157,8 @@ export interface RequestEntity {
   travelAgencyId: number
   foodType: number
   bookingType: number
+  /** For group tour requests */
+  groupTourId?: string
   currency: Currency
   rate: number
 }
@@ -215,4 +217,118 @@ export interface RequestTraveler {
   firstName: string
   lastName: string
   dateOfBirth: string
+}
+
+// Group Tour
+export interface GroupTourGalleryItem {
+  url: string
+  type: string
+  order: number
+  attribute: GroupTourName
+}
+
+export interface GroupTourDeparture {
+  startDate: string
+  endDate: string
+  duration: number
+  availableSeats: number
+  bookingDeadline: string
+}
+
+export interface GroupTourName {
+  arm: string
+  eng: string
+  rus: string
+}
+
+export interface GroupTourRouteItem {
+  arm: string
+  eng: string
+  rus: string
+}
+
+export interface GroupTourEntity {
+  id: string
+  name: GroupTourName
+  status: string
+  type: number
+  price: number
+  priceInCurrency: number
+  currency: string
+  rate: number
+  roomType: number
+  gallery: GroupTourGalleryItem[]
+  departures: GroupTourDeparture[]
+  routeCountries: GroupTourRouteItem[]
+  routeCities: GroupTourRouteItem[]
+  createdAt: string
+}
+
+// Group Tour detail (getGroupTourInfo)
+export interface GroupTourTravelers {
+  infantsAllowed?: boolean
+  adult: number
+  child: number
+  infant: number
+  adultMinAge: number
+  childMaxAge: number
+  infantMaxAge: number
+}
+
+export interface GroupTourRoomType {
+  id: number
+  name: GroupTourName
+  guests?: {
+    maxCount: number
+    minCount: number
+  }
+}
+
+export interface GroupTourItineraryDay {
+  dayNumber: number
+  date: string
+  title: GroupTourName
+  description: GroupTourName
+}
+
+export interface GroupTourPolicies {
+  cancellation: GroupTourName
+}
+
+export interface GroupTourAgency {
+  id: string
+  name: string
+}
+
+export interface GroupTourThemeTag {
+  id: string
+  name: GroupTourName
+  icon: string
+}
+
+export interface GroupTourInfo {
+  id: string
+  name: GroupTourName
+  description: GroupTourName
+  status: string
+  type: number
+  themeTags: GroupTourThemeTag[]
+  gallery: GroupTourGalleryItem[]
+  departures: GroupTourDeparture[]
+  price: number
+  priceInCurrency: number
+  currency: string
+  rate: number
+  travelers: GroupTourTravelers
+  roomTypes: GroupTourRoomType[]
+  /** When false, infant selector must not be rendered. When true or undefined, allow infants (max 2). */
+  route: GroupTourRouteItem[]
+  routeCountries: GroupTourRouteItem[]
+  routeSummary: GroupTourName
+  hotelNames: Record<string, string>
+  included: GroupTourRouteItem[]
+  excluded: GroupTourRouteItem[]
+  itinerary: GroupTourItineraryDay[]
+  policies: GroupTourPolicies
+  agency: GroupTourAgency
 }

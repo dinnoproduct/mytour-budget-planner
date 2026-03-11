@@ -8,7 +8,7 @@ export const CardSectionLayout = ({ children, ...props }: SectionLayoutProps) =>
         borderColor={'gray.100'}
         bgColor={'white'}
         borderRadius="lg"
-        p={4}>
+        p={props.padding || 4}>
         {children}
     </Box>
 )

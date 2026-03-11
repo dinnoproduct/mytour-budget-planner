@@ -22,7 +22,7 @@ import {
 	packageTravelDetailsAtom,
 	packageTravelDetailsModalShowAtom
 } from '../store/store.ts'
-import Loader from '../../../components/Loader/Loader.tsx'
+import { Loader } from '@/components/Loader/Loader'
 import PackageTravelDetailsModal from '../components/PackageTravelDetailsModal/PackageTravelDetailsModal.tsx'
 import ReactModal from 'react-modal'
 import './index.scss'

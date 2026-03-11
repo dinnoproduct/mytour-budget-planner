@@ -15,7 +15,7 @@ const TabItem = ({
     <Flex align="center">
       <Icon name={iconName} size="16" />
 
-      <Text ml="0.5" className="tab-label">
+      <Text ml="0.5" className="tab-label" whiteSpace="nowrap">
         {t(label)}
       </Text>
 
@@ -31,4 +31,8 @@ export const HotelTabItem = () => (
 )
 export const PackageTabItem = () => (
   <TabItem iconName="packages" label="package" />
+)
+
+export const GroupTabItem = () => (
+  <TabItem iconName="group-tours" label="groupTours" />
 )

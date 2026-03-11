@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { PackageSearchForm } from './PackageSearchForm.tsx'
 import { type PackageCity, usePackagesSearchContext } from '@entities/package'
@@ -7,9 +7,12 @@ import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
 import {
   HotelTabItem,
+  GroupTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
+
+const TAB_STORAGE_KEY = 'packageSearchSelectedTab'
 
 export const PackageSearchMenu = ({
   onTabChange,
@@ -20,6 +23,7 @@ export const PackageSearchMenu = ({
 }: any) => {
   const { t, i18n } = useTranslation()
   const { searchData, cities } = usePackagesSearchContext()
+  const [selectedTab, setSelectedTab] = useState(0)
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
@@ -42,6 +46,17 @@ export const PackageSearchMenu = ({
     }
   }, [isFormOpen])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const saved = window.sessionStorage.getItem(TAB_STORAGE_KEY)
+    if (saved !== null) {
+      const parsed = Number(saved)
+      if (!Number.isNaN(parsed)) {
+        setSelectedTab(parsed)
+      }
+    }
+  }, [])
+
   const cityLabel = useMemo(
     () =>
       (cities.find(city => searchData.selectedCity === city.id)?.[
@@ -56,6 +71,16 @@ export const PackageSearchMenu = ({
 
   const handleFormClose = () => {
     onFormClose()
+  }
+
+  const handleTabChange = (index: number) => {
+    setSelectedTab(index)
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(TAB_STORAGE_KEY, String(index))
+    }
+    if (onTabChange) {
+      onTabChange(index)
+    }
   }
 
   return (
@@ -94,15 +119,15 @@ export const PackageSearchMenu = ({
           <Tabs
             labels={[
               <PackageTabItem key="package-tab" />,
-              <HotelTabItem key="hotel-tab" />
+              <HotelTabItem key="hotel-tab" />,
+              <GroupTabItem key="group-tab" />
             ]}
             variant="line"
-            align="center"
             mt="2"
-            defaultIndex={0}
-            onChange={onTabChange}
+            index={selectedTab}
+            onChange={handleTabChange}
+            align="center"
           >
-            <></>
             <></>
           </Tabs>
           )}
