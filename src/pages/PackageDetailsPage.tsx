@@ -5,7 +5,7 @@ import {
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
 import { usePackagesSearchContext } from "@entities/package";
-import {Loader} from "@/components/Loader/Loader.tsx";
+import {Loader, LoaderWithText} from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
@@ -25,6 +25,7 @@ import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { usePackage } from "@/entities/package/hooks/usePackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
+import { useTranslation } from "react-i18next";
 
 export const PackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -41,7 +42,7 @@ export const PackageDetailsPage = () => {
     mealPlans,
     loading,
   } = usePackage();
-
+  const { t } = useTranslation();
   const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
@@ -125,7 +126,7 @@ export const PackageDetailsPage = () => {
   const { isOpen: isOpenBookingDrawer } = useBookingDrawer();
 
   if (!packageDetails?.offerId) {
-    return <Loader loading />;
+    return <Box position="fixed" top="0" left="0" right="0" bottom="0" height="100%" width="100%" display="flex" justifyContent="center" alignItems="center"><LoaderWithText loading={true} title={t("loading.packages.title")} description={t("loading.packages.description")} /></Box>;
   }
 
   return (
