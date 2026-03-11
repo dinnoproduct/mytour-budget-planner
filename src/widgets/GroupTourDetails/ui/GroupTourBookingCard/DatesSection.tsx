@@ -2,7 +2,7 @@ import { Flex, FormControl, Text } from '@chakra-ui/react'
 import type { GroupTourDeparture } from '@entities/package'
 import { SectionTitle } from './SectionTitle'
 import { CardDates } from './CardDates'
-import { getDepartureMonthName, getDepartureDayRange } from '../../lib/utils'
+import { getDepartureMonthName, getDepartureDay } from '../../lib/utils'
 
 type DatesSectionProps = {
   label: string
@@ -53,8 +53,10 @@ export const DatesSection = ({
               key={`${d.startDate}-${i}`}
               isActive={selectedDepartureIndex === i}
               onClick={() => onChangeSelectedDepartureIndex(i)}
-              monthName={getDepartureMonthName(d.startDate)}
-              dayRange={getDepartureDayRange(d.startDate, d.endDate)}
+              flightMonth={getDepartureMonthName(d.startDate)}
+              flightDay={getDepartureDay(d.startDate)}
+              departureMonth={getDepartureMonthName(d.endDate)}
+              departureDay={getDepartureDay(d.endDate)}
             />
           ))}
         </Flex>

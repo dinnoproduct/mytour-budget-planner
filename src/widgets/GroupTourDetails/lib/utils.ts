@@ -56,14 +56,11 @@ export const formatDate = (dateStr?: string) => {
 export const getDepartureMonthName = (dateStr: string | undefined): string => {
   if (!dateStr) return ''
   const monthName = moment(dateStr).locale("en").format('MMMM').toLowerCase()
-  const translatedMonthName = t(`${monthName}`)
+  const translatedMonthName = t(`${monthName}Short`)
   return translatedMonthName
 }
 
-export const getDepartureDayRange = (startDateStr: string | undefined, endDateStr: string | undefined): string => {
-  if (!startDateStr) return ''
-  const startDay = moment(startDateStr).date()
-  if (!endDateStr) return String(startDay)
-  const endDay = moment(endDateStr).date()
-  return startDay === endDay ? String(startDay) : `${startDay}-${endDay}`
+export const getDepartureDay = (dateStr: string | undefined): string => {
+  if (!dateStr) return ''
+  return moment(dateStr).format('D')
 }

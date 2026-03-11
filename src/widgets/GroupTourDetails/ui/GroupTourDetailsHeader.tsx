@@ -51,8 +51,8 @@ export const GroupTourDetailsHeader = ({
 
   return (
     <Flex px={{ base: '4', md: '0' }}>
-      <Flex direction="column">
-        <Flex direction="row" alignItems={'center'} gap={2} mb={2}>
+      <Flex direction="column" width="full">
+        <Flex direction="row" alignItems={'center'} gap={2} mb={2} flexWrap="wrap">
         {groupTour.themeTags?.map((tag) => {
             const label = getLocalized(tag.name, languageSuffix)
             if (!label) return null

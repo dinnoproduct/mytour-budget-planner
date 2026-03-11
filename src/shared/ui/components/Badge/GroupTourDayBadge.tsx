@@ -18,9 +18,12 @@ const Layout = ({ children, status, ...props }: FlexProps & {status: 'success'})
 			rounded="full"
 			align="center"
 			justify="center"
+			flexWrap={"nowrap"}
 			{...props}
 		>
 			<Text
+				width="auto"
+				whiteSpace="nowrap"
 				size="xs"
 				color="gray.800"
 				fontWeight="semibold"
