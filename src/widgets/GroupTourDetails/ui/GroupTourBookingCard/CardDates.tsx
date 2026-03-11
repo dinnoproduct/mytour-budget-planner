@@ -1,24 +1,26 @@
 import { Flex, Text } from '@chakra-ui/react'
 
 type CardDatesProps = {
-  monthName: string
-  dayRange: string
+  flightMonth: string
+  flightDay: string
+  departureMonth: string
+  departureDay: string
   isActive: boolean
   onClick: () => void
 }
 
-export const CardDates = ({ monthName, dayRange, isActive, onClick }: CardDatesProps) => (
+export const CardDates = ({ flightMonth, flightDay, departureMonth, departureDay, isActive, onClick }: CardDatesProps) => (
   <Flex
     direction="column"
     gap={.5}
     flexShrink={0}
     onClick={onClick}
     rounded={'lg'}
+    flexWrap={"nowrap"}
     sx={{
       cursor: 'pointer',
       _hover: { bgColor: isActive ? 'blue.600' : 'gray.100' },
-      padding: '8px 0',
-      width: '100px',
+      padding: '20px 16px',
       textAlign: 'center',
       border: '1px solid',
       borderColor: isActive ? 'blue.500' : 'gray.300',
@@ -30,12 +32,7 @@ export const CardDates = ({ monthName, dayRange, isActive, onClick }: CardDatesP
     <Text fontSize="12px" color={isActive ? 'white' : 'gray.700'} fontWeight={'semibold'} sx={{
         transition: 'all 0.2s ease-in-out',
     }}>
-      {monthName}
-    </Text>
-    <Text fontSize="12px" color={isActive ? 'gray.200' : 'gray.500'} fontWeight={'semibold'} sx={{
-        transition: 'all 0.2s ease-in-out',
-    }}>
-      {dayRange}
+      {flightMonth === departureMonth ? `${flightMonth} ${flightDay}-${departureDay}` : `${flightMonth} ${flightDay} - ${departureMonth} ${departureDay}`}
     </Text>
   </Flex>
 )
