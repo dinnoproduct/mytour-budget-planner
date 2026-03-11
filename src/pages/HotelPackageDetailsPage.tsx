@@ -6,7 +6,7 @@ import {
 import {
   useHotelPackagesSearchContext,
 } from "@entities/package";
-import Loader from "@/components/Loader/Loader.tsx";
+import {Loader} from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../hooks/useLanguageNavigate";

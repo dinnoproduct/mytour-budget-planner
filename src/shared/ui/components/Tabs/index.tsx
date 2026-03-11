@@ -8,10 +8,10 @@ import {
 } from '@chakra-ui/react'
 import { type TabsProps } from './types'
 
-export const Tabs = ({ labels, children, showTabs = true, align, ...props }: TabsProps) => (
+export const Tabs = ({ labels, children, showTabs = true, align, groupAlign = 'center', ...props }: TabsProps) => (
   <ChakraTabs {...props}>
     {showTabs &&
-    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Box sx={{ width: '100%', display: 'flex', justifyContent: groupAlign, alignItems: 'center' }}>
     <TabList 
       gap="2"
       sx={{

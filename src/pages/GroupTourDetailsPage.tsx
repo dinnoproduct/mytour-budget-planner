@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState, useRef } from "react";
-import Loader from "@/components/Loader/Loader";
+import {Loader} from "@/components/Loader/Loader";
 import { useGroupTourInfo } from "@entities/package";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";

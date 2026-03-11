@@ -24,7 +24,7 @@ import { packageEditScheme } from '../../scheme/scheme.ts';
 import useOffer from '../../hooks/useOffer.ts';
 import './index.scss';
 import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
-import Loader from '../../../../components/Loader/Loader.tsx';
+import { Loader } from '@/components/Loader/Loader';
 import { calculateAge } from '../../../../utils/methods.ts';
 import { toast } from 'react-toastify';
 

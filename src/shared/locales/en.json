@@ -419,5 +419,7 @@
   "groupTour.book": "Book",
   "groupTour.whatsIncludedWhatsNot": "What’s included & excluded",
   "groupTour.dates": "Dates",
-  "acceptAndContinue": "Confirm and continue"
+  "acceptAndContinue": "Confirm and continue",
+  "loading.title": "Please wait",
+  "loading.description": "We are collecting the best offers for you"
 }

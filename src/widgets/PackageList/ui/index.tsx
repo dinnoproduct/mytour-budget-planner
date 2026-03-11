@@ -15,6 +15,7 @@ import { getHotelNightsByDate, getNightsByDate } from "@/features/helper";
 import { PackageFilter } from "@/features/PackageFilter";
 import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
+import { PackageLoader } from "@/components/Loader/Loader";
 
 export const PackageList = () => {
   const { searchParams } = useQueryParams();
@@ -90,7 +91,7 @@ export const PackageList = () => {
     filteredPackages: filteredActivePackages,
     isFilterActive,
     onFilter,
-  } = useFilterPackage(activePackages);
+  }: ReturnType<typeof useFilterPackage> = useFilterPackage(activePackages);
 
   const isLoadingPackages = useMemo(
     () =>
@@ -128,6 +129,14 @@ export const PackageList = () => {
       : getNightsByDate(fromDate, toDate);
   };
 
+  if (isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
+    return (
+      <Layout>
+        <PackageLoader loading={isLoadingPackages || false} />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       {!isLoadingPackages ? (
@@ -147,12 +156,6 @@ export const PackageList = () => {
         />
       )}
 
-      {isLoadingPackages && (
-        <VStack spacing={4} flexGrow={1} width="full">
-          {isLoadingPackages ? <SkeletonLoading /> : null}
-        </VStack>
-      )}
-
       {!isLoadingPackages && filteredActivePackages.length > 0 && (
         <VStack spacing={4} flexGrow={1} width="full">
           {!isLoadingPackages &&
@@ -170,12 +173,6 @@ export const PackageList = () => {
   );
 };
 
-const SkeletonLoading = ({ carsCount = 8 }) =>
-  Array(carsCount)
-    .fill(1)
-    .map((_data, index) => (
-      <PackageCardSkeleton key={`package-card-skeleton-${index}`} />
-    ));
 
 const Layout = ({ children }: LayoutProps) => (
   <Box py={{ base: 6, md: 10 }} width="100%">
