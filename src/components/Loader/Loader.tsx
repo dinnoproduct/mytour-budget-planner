@@ -35,10 +35,10 @@ export const PackageLoader: FC<{ loading: boolean }> = ({ loading }) => {
         <Box width="200px" height="200px">
           <DotLottieReact src={loaderLottieUrl as string} loop autoplay />
         </Box>
-        <Text size="md" align="center" fontWeight="semibold" color="gray.800" maxWidth="200px" as="p">
+        <Text size="md" align="center" fontWeight="semibold" color="gray.800" maxWidth={{base: "100%", md: "400px"}} as="p">
           {t`loading.title`}
         </Text>
-        <Text size="sm" align="center" color="gray.600" maxWidth="200px" as="p">
+        <Text size="sm" align="center" color="gray.600" maxWidth={{base: "100%", md: "400px"}} as="p">
           {t`loading.description`}
         </Text>
       </Flex>
