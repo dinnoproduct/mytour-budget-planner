@@ -150,12 +150,12 @@ export const useBookingFlow = ({
             }
           : {
               ...baseBookInput,
-              cityId: packageDetails.city.id,
-              hotelId: packageDetails.hotel.id,
+              cityId: packageDetails.city?.id ?? 0,
+              hotelId: packageDetails.hotel?.id ?? 0,
               offerId: packageDetails.offerId,
               roomType: packageDetails.roomType,
-              destinationFlightId: packageDetails.destinationFlight.id,
-              returnFlightId: packageDetails.returnFlight.id,
+              destinationFlightId: packageDetails.destinationFlight?.id ?? 0,
+              returnFlightId: packageDetails.returnFlight?.id ?? 0,
               startDate: packageDetails.destinationFlight?.departureDate
                 ? packageDetails.destinationFlight.departureDate
                 : packageDetails.checkin,

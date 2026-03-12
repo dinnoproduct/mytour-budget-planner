@@ -180,6 +180,8 @@ export type ListItem = {
   isStrikethrough?: boolean;
   isDiscount?: boolean;
   isHighlighted?: boolean;
+  isNewLine?: boolean;
+  isBorderless?: boolean;
 }
 
 export type PromoCodeProps = {

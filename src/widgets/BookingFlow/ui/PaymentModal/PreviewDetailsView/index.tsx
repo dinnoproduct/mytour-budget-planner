@@ -488,10 +488,10 @@ export const PreviewDetailsView = ({
               title={t("route")}
               listItems={[
                 ...(groupTourRouteCountriesList.length > 0
-                  ? [{ key: t("countries") || "Countries", value: groupTourRouteCountriesList.join(", ") }]
+                  ? [{ key: t("countries") || "Countries", value: groupTourRouteCountriesList.join(", "), isStrikethrough: false, isNewLine: true, isBorderless: true }]
                   : []),
                 ...(groupTourRouteSummary
-                    ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} /> }]
+                    ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} />, isStrikethrough: false, isNewLine: true, isBorderless: true }]
                     : []),
               ].filter((item: ListItemType) => !!item.value) as ListItemType[]}
             />
@@ -719,10 +719,11 @@ const SectionLayout = ({
     <Box>
       {children}
 
-      {listItems?.length ? <SectionList listItems={listItems} mt={4} /> : null}
+      {listItems?.length ? <SectionList listItems={listItems} mt={4}/> : null}
     </Box>
   </Box>
 );
+
 
 const SectionList = ({ listItems, ...props }: SectionListProps) => (
   <UnorderedList
@@ -735,23 +736,23 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
   >
     {listItems.map(
       (
-        { key, value, isStrikethrough, isDiscount, isHighlighted }: any,
+        { key, value, isStrikethrough, isDiscount, isHighlighted, isNewLine, isBorderless }: any,
         index: number,
       ) => (
-        <ListItem key={index} as={HStack} spacing="2" width="full">
+        <ListItem key={index} as={HStack} flexDirection={isNewLine ? "column" : "row"} alignItems={isNewLine ? "flex-start" : "center"} spacing="2" width="full">
           <Text fontWeight="normal" size="sm" flexShrink={0}>
             {key}
           </Text>
 
-          {value && (
+          {value && !isNewLine && (
             <>
               <Box
-                backgroundImage="/assets/images/border.svg"
+                backgroundImage={isBorderless ? "none" : "/assets/images/border.svg"}
                 height="2px"
                 flexGrow={1}
                 backgroundRepeat="repeat-x"
                 borderRadius="full"
-                mt="0.5"
+                mt={isBorderless ? "0" : "0.5"}
                 minW="100px"
               />
               <Text
@@ -772,6 +773,25 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
                 {value}
               </Text>
             </>
+          )}
+          {value && isNewLine && (
+             <Text
+             textAlign="left"
+             fontWeight="semibold"
+             size="sm"
+             textDecoration={isStrikethrough ? "line-through" : "none"}
+             color={
+               isDiscount
+                 ? "red.500"
+                 : isHighlighted
+                   ? "green.600"
+                   : isStrikethrough
+                     ? "gray.500"
+                     : "inherit"
+             }
+           >
+             {value}
+           </Text>
           )}
         </ListItem>
       ),
