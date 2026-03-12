@@ -9,7 +9,8 @@ export const PackageSearch = ({
   contentProps,
   variant = 'centered',
   showTabs = true,
-  setHotel = () => {}
+  setHotel = () => {},
+  initialTab,
 }: PackageSearchProps) => {
   const { isMd } = useBreakpoint()
 
@@ -21,6 +22,7 @@ export const PackageSearch = ({
         variant={variant}
         showTabs={showTabs}
         setHotel={setHotel}
+        initialTab={initialTab}
       />
     )
   }
@@ -32,6 +34,7 @@ export const PackageSearch = ({
       variant={variant}
       showTabs={showTabs}
       setHotel={setHotel}
+      initialTab={initialTab}
     />
   )
 }

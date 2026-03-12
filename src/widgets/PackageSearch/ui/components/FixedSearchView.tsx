@@ -8,14 +8,13 @@ import {
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
 
-const MAIN_TAB_STORAGE_KEY = 'mainSearchTabIndex'
-
 interface FixedSearchViewProps {
   containerProps?: any
   contentProps?: any
   variant?: PackageSearchVariant
   showTabs?: boolean
   setHotel?: (index: number) => void
+  initialTab?: number
 }
 
 export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
@@ -23,9 +22,10 @@ export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
   contentProps,
   variant = 'centered',
   showTabs = true,
-  setHotel
+  setHotel,
+  initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState(0)
+  const [activeTab, setActiveTab] = useState(initialTab ?? 0)
   const [isFormOpen, setFormOpen] = useState(false)
   const { isAllowedSearchRoute: isHotelSearchView } =
     useHotelPackagesSearchContext()
@@ -33,24 +33,13 @@ export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
     usePackagesSearchContext()
 
   useEffect(() => {
-    const baseIndex = isHotelSearchView ? 1 : 0
-    let nextIndex = baseIndex
-    if (typeof window !== 'undefined') {
-      const saved = window.sessionStorage.getItem(MAIN_TAB_STORAGE_KEY)
-      const parsed = saved !== null ? Number(saved) : NaN
-      if (!Number.isNaN(parsed)) {
-        nextIndex = parsed
-      }
-    }
-    setActiveTab(nextIndex)
-    setHotel?.(nextIndex)
-  }, [isHotelSearchView, isPackageSearchView, setHotel])
+    const baseIndex = initialTab ?? (isHotelSearchView ? 1 : 0)
+    setActiveTab(baseIndex)
+    setHotel?.(baseIndex)
+  }, [isHotelSearchView, isPackageSearchView, setHotel, initialTab])
 
   const handleTabChange = (index: number) => {
     setActiveTab(index)
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(MAIN_TAB_STORAGE_KEY, String(index))
-    }
     setHotel?.(index)
   }
 

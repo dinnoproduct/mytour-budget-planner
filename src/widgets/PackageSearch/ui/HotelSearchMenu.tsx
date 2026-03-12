@@ -16,8 +16,6 @@ import {
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { getPluralForm } from '@shared/helpers/index.ts'
 
-const TAB_STORAGE_KEY = 'packageSearchSelectedTab'
-
 export const HotelSearchMenu = ({
   onTabChange,
   onFormOpen,
@@ -67,17 +65,6 @@ export const HotelSearchMenu = ({
     }
   }, [isFormOpen])
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const saved = window.sessionStorage.getItem(TAB_STORAGE_KEY)
-    if (saved !== null) {
-      const parsed = Number(saved)
-      if (!Number.isNaN(parsed)) {
-        setSelectedTab(parsed)
-      }
-    }
-  }, [])
-
   const cityLabel = useMemo(() => {
       return cities
         .filter(c => Array.isArray(searchData.selectedCity) ? searchData.selectedCity.includes(c.id) : [searchData.selectedCity].includes(c.id))
@@ -96,9 +83,6 @@ export const HotelSearchMenu = ({
 
   const handleTabChange = (index: number) => {
     setSelectedTab(index)
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(TAB_STORAGE_KEY, String(index))
-    }
     if (onTabChange) {
       onTabChange(index)
     }

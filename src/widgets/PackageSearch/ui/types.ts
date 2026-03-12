@@ -5,7 +5,8 @@ export type PackageSearchProps = {
   variant?: PackageSearchVariant
   showTabs?: boolean
   isHotel?: number
-  setHotel?:  Dispatch<SetStateAction<number>>
+  setHotel?: (index: number) => void
+  initialTab?: number
 } & Omit<LayoutProps, 'children'>
 
 export type PackageSearchVariant = 'fixed' | 'centered' | 'fixedWithoutTabs' | 'centeredPackage' | 'centeredGroupTours'
