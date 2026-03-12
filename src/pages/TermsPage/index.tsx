@@ -3,7 +3,7 @@ import { Box } from "@chakra-ui/react"
 import { useTranslation } from "react-i18next"
 import { PageLayout } from "@/shared/ui/layout/PageLayout"
 import { sectionsConfig } from "./config"
-import { Section, SectionDivider, SectionItemRenderer } from "./SectionComponents"
+import { Section, SectionDivider, SectionItemRenderer } from "./components"
 
 export const TermsPage = () => {
   const { t } = useTranslation()
