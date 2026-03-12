@@ -12,8 +12,6 @@ import {
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
-const TAB_STORAGE_KEY = 'packageSearchSelectedTab'
-
 export const PackageSearchMenu = ({
   onTabChange,
   onFormOpen,
@@ -46,17 +44,6 @@ export const PackageSearchMenu = ({
     }
   }, [isFormOpen])
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const saved = window.sessionStorage.getItem(TAB_STORAGE_KEY)
-    if (saved !== null) {
-      const parsed = Number(saved)
-      if (!Number.isNaN(parsed)) {
-        setSelectedTab(parsed)
-      }
-    }
-  }, [])
-
   const cityLabel = useMemo(
     () =>
       (cities.find(city => searchData.selectedCity === city.id)?.[
@@ -75,9 +62,6 @@ export const PackageSearchMenu = ({
 
   const handleTabChange = (index: number) => {
     setSelectedTab(index)
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(TAB_STORAGE_KEY, String(index))
-    }
     if (onTabChange) {
       onTabChange(index)
     }
