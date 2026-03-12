@@ -6,6 +6,11 @@ import {Loader, LoaderWithText} from '@/components/Loader/Loader'
 
 export const UpcomingTabEmptyState = ({ isLoading }: EmptyStateProps) => {
   const { t } = useTranslation()
+
+  if (isLoading) {
+    return <LoadingState />
+  }
+
   return (
     <EmptyState
       illustrationName="error"
