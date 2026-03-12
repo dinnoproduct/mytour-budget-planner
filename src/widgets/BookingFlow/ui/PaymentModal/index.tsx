@@ -44,6 +44,7 @@ export const PaymentModal = ({
   onNavigateToMyPackages,
   onSuccessClose,
   isLateCheckout: isLateCheckoutProp,
+  onPromoDiscountedPriceChange,
 }: PaymentModalProps) => {
   const { t } = useTranslation();
   const [activeView, setActiveView] = useState<PaymentModalView>(
@@ -77,36 +78,12 @@ export const PaymentModal = ({
   });
 
   const calculatePromoCodePaymentAmount = useMemo(() => {
-    if (!promoCodeStatus.isApplied) {
-      return isFullPricePayment ? packageDetails.price : paymentAmount;
+    if (promoCodeStatus.isApplied) {
+      return isFullPricePayment ? promoCodeStatus.finalAmount : paymentAmount;
     }
-
-    const totalPrice = packageDetails.price;
-    const userInput = isFullPricePayment ? totalPrice : paymentAmount;
-    const discount = promoCodeStatus.discount;
-    const finalAmount = promoCodeStatus.finalAmount;
-
-    // Case 1: User input equals total price (full payment)
-    if (userInput === totalPrice) {
-      return finalAmount;
-    }
-
-    // Case 2: User input is different from total price (partial payment)
-    const remainder = totalPrice - userInput;
-
-    // Case 2a: Remainder <= discount / 2
-    // Apply full discount to first payment (single payment)
-    if (remainder <= discount / 2) {
-      return finalAmount;
-    }
-
-    // Case 2b: Remainder > discount / 2
-    // Apply half discount to first payment, half to second payment
-    const halfDiscount = discount / 2;
-    return userInput - halfDiscount;
+    return isFullPricePayment ? packageDetails.price : paymentAmount;
   }, [
     promoCodeStatus.isApplied,
-    promoCodeStatus.discount,
     promoCodeStatus.finalAmount,
     paymentAmount,
     packageDetails.price,
@@ -216,6 +193,7 @@ export const PaymentModal = ({
           onBackClick={renderAsPage ? () => setActiveView("paymentForm") : undefined}
           renderAsPage={renderAsPage}
           isLateCheckout={isLateCheckoutProp}
+          onPromoDiscountedPriceChange={onPromoDiscountedPriceChange}
         />
       ),
     };

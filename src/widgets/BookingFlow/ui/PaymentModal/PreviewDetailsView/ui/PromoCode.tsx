@@ -14,6 +14,7 @@ export const PromoCode = ({
                             setHasPromoCode,
                             hasPromoCode,
                             promoCodeStatus,
+                            onRemovePromo,
                             ...props
                           }: PromoCodeProps) => {
   const { t } = useTranslation();
@@ -35,8 +36,13 @@ export const PromoCode = ({
 
         <Switch
           isChecked={hasPromoCode}
-          isDisabled={promoCodeStatus?.isApplied}
-          onChange={() => setHasPromoCode(!hasPromoCode)}/>
+          onChange={() => {
+            if (hasPromoCode && promoCodeStatus?.isApplied) {
+              onRemovePromo?.();
+            } else {
+              setHasPromoCode(!hasPromoCode);
+            }
+          }}/>
       </Box>
 
       {hasPromoCode && (

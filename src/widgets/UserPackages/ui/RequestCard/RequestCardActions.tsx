@@ -38,7 +38,7 @@ export const RequestCardActions = ({
   }
 
   const handlePayClick = () => {
-    if (showRemainingPaymentButton && onRemainingPaymentClick) {
+    if ((showRemainingPaymentButton || showNotPaidButton) && onRemainingPaymentClick) {
       const promoPayload =
         promo.promoApplied && promo.discountedRemainingAmount != null
           ? {
