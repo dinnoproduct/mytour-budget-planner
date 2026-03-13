@@ -4,7 +4,7 @@ import {
   useGroupToursList,
   useHotelPackagesSearchContext,
 } from "@entities/package";
-import { useMemo } from "react";
+
 import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
@@ -14,21 +14,11 @@ export const GroupTourList = () => {
   const {
     data: groupTours = [],
     isLoading: isLoadingGroupTours,
-    isFetching: isFetchingGroupTours,
   } = useGroupToursList();
 
-  const isLoading = useMemo(
-    () =>
-      isLoadingGroupTours ||
-      isFetchingGroupTours ||
-      (!groupTours.length && isLoadingFilteredHotelPackages),
-    [
-      isLoadingGroupTours,
-      isFetchingGroupTours,
-      groupTours.length,
-      isLoadingFilteredHotelPackages,
-    ],
-  );
+  const isLoading =
+    !groupTours.length &&
+    (isLoadingGroupTours || isLoadingFilteredHotelPackages);
 
   const generateLink = (groupTourId: string) => {
     return `/group-tour/${groupTourId}`;
