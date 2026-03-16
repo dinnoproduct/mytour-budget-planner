@@ -16,12 +16,24 @@ const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
   const departures = groupTour.departures ?? [];
   if (!departures.length) return false;
 
-  const now = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const hasValidDeparture = departures.some((departure) => {
-    if (!departure.bookingDeadline) return false;
-    const deadline = new Date(departure.bookingDeadline);
-    return deadline > now && departure.availableSeats > 0;
+    if (departure.availableSeats <= 0) return false;
+
+    if (departure.bookingDeadline) {
+      const deadline = new Date(departure.bookingDeadline);
+      return deadline > today;
+    }
+
+    if (departure.startDate) {
+      const start = new Date(departure.startDate);
+      start.setHours(0, 0, 0, 0);
+      return start > today;
+    }
+
+    return false;
   });
 
   return hasValidDeparture;
