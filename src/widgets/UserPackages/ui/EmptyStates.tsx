@@ -78,20 +78,21 @@ export const CanceledTabEmptyState = ({ isLoading }: EmptyStateProps) => {
 
 const LoadingState = () => {
   const { t } = useTranslation()
-    return (  
-  <Grid
-    width="full"
-    placeItems="center"
-    position="absolute"
-    top="0"
-    bottom="0"
-    left="0"
-    right="0"
-    background="red"
-    zIndex="800"
-    backgroundColor="rgba(255, 255, 255, 0.3)"
-  >
-    <LoaderWithText loading={true} title={t("loading.mypackages.title")} description={t("loading.mypackages.description")} style={{ backgroundColor: "rgba(255, 255, 255, 0.3)", textAlign: "center" }} />
-  </Grid>
+
+  return (
+    <Grid
+      width="full"
+      placeItems="center"
+      mt={{ base: '40px', md: '60px' }}
+    >
+      <LoaderWithText
+        loading={true}
+        title={t('loading.mypackages.title')}
+        description={t('loading.mypackages.description')}
+        style={{
+          textAlign: 'center',
+        }}
+      />
+    </Grid>
   )
 }

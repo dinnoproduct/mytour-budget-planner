@@ -7,4 +7,5 @@ export type TabsProps = {
   showTabs?: boolean
   align?: 'start' | 'end' | 'center',
   groupAlign?: 'flex-start' | 'flex-end' | 'center',
+  isDisabled?: boolean
 } & ChakraTabsProps
