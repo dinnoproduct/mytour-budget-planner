@@ -1,7 +1,6 @@
 import { Avatar, Box, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { type StoryGroup } from "../types";
-import { STORIES_BASE_URL } from "../constants";
 
 interface StoryItemProps {
   group: StoryGroup;
@@ -12,7 +11,7 @@ interface StoryItemProps {
 export const StoryItem: React.FC<StoryItemProps> = React.memo(
   ({ group, onOpen, isHotel = 0 }) => {
     const { storySet } = group;
-    const avatarImageUrl = `${STORIES_BASE_URL}/${storySet.avatarImageUrl}`;
+    const avatarImageUrl = storySet.avatarImageUrl;
     const gradientColor =
       isHotel === 0 ? "gr_Hotel" : isHotel === 1 ? "gr_Packages" : "gr_GroupTours";
 
