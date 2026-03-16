@@ -247,6 +247,8 @@ export interface GroupTourRouteItem {
   rus: string
 }
 
+
+
 export interface GroupTourEntity {
   id: string
   name: GroupTourName

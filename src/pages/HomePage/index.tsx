@@ -46,6 +46,26 @@ export const HomePage = () => {
     [setSearchParams],
   )
 
+  // When any tab is selected (e.g. via URL, reload, or back navigation),
+  // scroll the horizontal tab list so the active tab is visible.
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      const tabList = document.querySelector<HTMLElement>('.showTabs [role="tablist"]')
+      if (!tabList) return
+      const activeTab = tabList.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')
+
+      if (activeTab && 'scrollIntoView' in activeTab) {
+        activeTab.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        })
+      }
+    })
+
+    return () => window.cancelAnimationFrame(frameId)
+  }, [tabIndex])
+
   useEffect(() => {
     const scriptId = 'EmbedSocialHashtagScript'
 
@@ -61,10 +81,19 @@ export const HomePage = () => {
 
   return (
     <PageLayout background='white'>
-      <PackageSearch variant={tabIndex === 1 ? 'centeredPackage' : tabIndex === 0 ? "centered" : "centeredGroupTours"} isHotel={tabIndex} setHotel={handleTabChange} initialTab={tabIndex} />
-      {
-        tabIndex === 2 && <GroupTourList />
-      }
+      <PackageSearch
+        variant={
+          tabIndex === 1
+            ? 'centeredPackage'
+            : tabIndex === 0
+              ? "centered"
+              : "centeredGroupTours"
+        }
+        isHotel={tabIndex}
+        setHotel={handleTabChange}
+        initialTab={tabIndex}
+      />
+      {tabIndex === 2 && <GroupTourList />}
       <StoriesSection isHotel={tabIndex} />
       {
         tabIndex !== 2 && <PackageBanner mx={{base: 4, md: 10 }} mt={10} isHotel={tabIndex}/>

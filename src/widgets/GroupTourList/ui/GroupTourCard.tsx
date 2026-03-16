@@ -113,12 +113,11 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
             <Box pt="4">
               <Text
                 color="gray.800"
-                size="sm"
+                size="md"
                 fontWeight="bold"
                 noOfLines={1}
                 as="h3"
                 mb={2}
-                
               >
                 {groupName}
               </Text>
