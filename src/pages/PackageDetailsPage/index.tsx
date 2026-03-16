@@ -134,7 +134,7 @@ export const PackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="package" />
+      <SharedHeader onBackClick={handleBackClick} title={t('package')} />
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
