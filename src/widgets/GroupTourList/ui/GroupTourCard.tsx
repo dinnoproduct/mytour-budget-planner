@@ -14,6 +14,7 @@ import {
 import { formatNumber } from "@shared/utils";
 import moment from "moment";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
+import { getValidDepartures } from "@/widgets/GroupTourDetails/lib/utils";
 
 type GroupTourCardProps = {
   groupTour: GroupTourEntity;
@@ -51,13 +52,21 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
   );
 
   const firstDeparture = useMemo(
-    () =>
-      groupTour.departures
-        .filter((dep) => dep.availableSeats > 0)
-        .sort(
-          (a, b) =>
-            moment(a.startDate).valueOf() - moment(b.startDate).valueOf(),
-        )[0] || groupTour.departures[0],
+    () => {
+      const valid = getValidDepartures(groupTour.departures);
+      if (valid.length > 0) {
+        return valid[0];
+      }
+
+      return (
+        groupTour.departures
+          .filter((dep) => dep.availableSeats > 0)
+          .sort(
+            (a, b) =>
+              moment(a.startDate).valueOf() - moment(b.startDate).valueOf(),
+          )[0] || groupTour.departures[0]
+      );
+    },
     [groupTour.departures],
   );
 
