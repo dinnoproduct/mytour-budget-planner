@@ -39,13 +39,14 @@ type cardType = 'hotel' | 'package'
 type NameKey = 'nameArm' | 'nameEng' | 'nameRus'
 
 interface CityOffersSectionProps extends LinkBoxProps {
+  /** Tab index from home page: 0 = hotels, 1 = packages, 2 = group tours */
   isHotel: number
 }
 
 export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
-                                                                      isHotel,
-                                                                      ...props
-                                                                    }) => {
+  isHotel,
+  ...props
+}) => {
   const { data: dates = { flightStartDate: '', flightReturnDate: '' } } =
     useFlightDates()
   const { i18n, t } = useTranslation()
@@ -69,30 +70,46 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
 
     
     const countryMap = new Map<number, PackageCountry>()
-      ; cities.forEach((c: any) => {
-        const cnt = c?.country
-        if (cnt) {
-          countryMap.set(cnt.id, {
-            id: cnt.id,
-            nameArm: cnt.nameArm,
-            nameEng: cnt.nameEng,
-            nameRus: cnt.nameRus,
-          })
-        }
+    const countryCityIdsMap = new Map<number, number[]>()
+
+    cities.forEach((c: any) => {
+      const cnt = c?.country
+      if (!cnt) return
+
+      countryMap.set(cnt.id, {
+        id: cnt.id,
+        nameArm: cnt.nameArm,
+        nameEng: cnt.nameEng,
+        nameRus: cnt.nameRus,
       })
 
-      const tempCards = countryCards.map((card) => {
-        const country = countryMap.get(card.countryId)
-        const countryName = pickName(country)
-        return {
-          id: card.countryId,
-          image: card.image,
-          titleLeft: countryName,
-          titleRight: '',
-          cityParam: card.cities,
-          type: 'hotel' as cardType
-        }
-      })
+      const list = countryCityIdsMap.get(cnt.id) ?? []
+      list.push(c.id)
+      countryCityIdsMap.set(cnt.id, list)
+    })
+
+    const tempCards = countryCards.map((card) => {
+      const country = countryMap.get(card.countryId)
+      const countryName = pickName(country)
+
+      // Derive city ids for this country from actual cities list.
+      // If backend mapping changed, this keeps us in sync.
+      const derivedCityIds = countryCityIdsMap.get(card.countryId) ?? []
+
+      // Fallback to legacy constant if nothing was derived.
+      const legacyCityValue = decodeURIComponent(card.cities)
+      const cityParam =
+        derivedCityIds.length > 0 ? derivedCityIds.join(',') : legacyCityValue
+
+      return {
+        id: card.countryId,
+        image: card.image,
+        titleLeft: countryName,
+        titleRight: '',
+        cityParam,
+        type: 'hotel' as cardType,
+      }
+    })
     
     tempCards.push(...baseCityCards.map((card) => {
       const city =
@@ -118,11 +135,19 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
   }, [cities, packageCities, nameKey])
 
   const date = new Date()
-  const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1);
-  const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
-  const dateFrom = (isHotel ? fmt(firstOfTarget) : data.flightStartDate)?.slice(0, 10);
-  const dateTo = (isHotel ? fmt(lastOfTarget) : data?.flightReturnDate)?.slice(0, 10);
-  const hasDates = Boolean(dateFrom && dateTo)
+  const firstOfTarget = new Date(date.getFullYear(), date.getMonth() + 2, 1)
+  const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0)
+
+  // Base dates for hotel-type cards (approximate future window)
+  const hotelDateFrom = fmt(firstOfTarget)?.slice(0, 10)
+  const hotelDateTo = fmt(lastOfTarget)?.slice(0, 10)
+
+  // Base dates for package-type cards (use actual flight dates when available)
+  const packageDateFrom = data.flightStartDate?.slice(0, 10)
+  const packageDateTo = data.flightReturnDate?.slice(0, 10)
+
+  // Carousel rendering just needs *some* dates to be present; use hotel window for that check
+  const hasDates = Boolean(hotelDateFrom && hotelDateTo)
   const isMobile = useBreakpointValue({ base: true, md: false }) ?? false
 
   const carouselCards = useMemo(() => cards.filter((c) => c.id !== 2), [cards])
@@ -287,9 +312,40 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
               width="max-content"
             >
               {displayCards.map((card, idx) => {
-                const isHotelCard = card.type === 'hotel'
-                return (
-                  <Link
+              const isHotelCard = card.type === 'hotel'
+
+              // Pick dates based purely on card type:
+              // - hotel cards: always use approximate hotel window
+              // - package cards: prefer real flight dates, fall back to hotel window if missing
+              const from = isHotelCard ? hotelDateFrom : (packageDateFrom || hotelDateFrom)
+              const to = isHotelCard ? hotelDateTo : (packageDateTo || hotelDateTo)
+
+              // Build URL query params safely to avoid broken links.
+              const params = new URLSearchParams()
+              if (from) params.set('from', from)
+              if (to) params.set('to', to)
+              const rawCityParam = String(card.cityParam)
+              params.set('city', rawCityParam)
+              params.set('adultsCount', '2')
+              params.set('childrenCount', '0')
+              params.set('childrenAges', '')
+
+              if (!isHotelCard && data?.startFlightId && data?.returnFlightId) {
+                params.set('departureFlightId', String(data.startFlightId))
+                params.set('returnFlightId', String(data.returnFlightId))
+              }
+
+              // For hotel cards we use 7 days and approximate mode; for package cards 6 days.
+              params.set('days', isHotelCard ? '7' : '6')
+              if (isHotelCard) {
+                params.set('dateMode', 'approximate')
+              }
+              params.set('tab', isHotelCard ? 'hotel' : 'packages')
+
+              const href = getPathWithLanguage(`/packages?${params.toString()}`)
+
+              return (
+              <Link
                     key={`${isHotelCard ? 'country' : 'city'}-${card.id}-${idx}`}
                     flexShrink={0}
                     w={`${effectiveWidth}px`}
@@ -301,9 +357,7 @@ export const CityOffersSection: React.FC<CityOffersSectionProps> = ({
                     overflow="hidden"
                     role="group"
                     minH={{ base: '196px', sm: '362px' }}
-                    href={getPathWithLanguage(`/packages?from=${dateFrom}&to=${dateTo}&city=${card.cityParam}&adultsCount=2&childrenCount=0&childrenAges=
-              ${isHotelCard ? '' : `&departureFlightId=${data?.startFlightId}&returnFlightId=${data?.returnFlightId}`}
-              &days=${isHotelCard ? '7' : '6'}${isHotelCard ? '&dateMode=approximate' : ''}&tab=${isHotelCard ? 'hotel' : 'packages'}`)}
+                    href={href}
                     _before={{
                       content: '""',
                       position: 'absolute',

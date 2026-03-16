@@ -3,11 +3,29 @@ import { Box, Flex, Grid, GridItem } from "@chakra-ui/react";
 import {
   useGroupToursList,
   useHotelPackagesSearchContext,
+  type GroupTourEntity,
 } from "@entities/package";
 
 import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
+
+const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
+  if (groupTour?.status?.toLowerCase() !== "active") return false;
+
+  const departures = groupTour.departures ?? [];
+  if (!departures.length) return false;
+
+  const now = new Date();
+
+  const hasValidDeparture = departures.some((departure) => {
+    if (!departure.bookingDeadline) return false;
+    const deadline = new Date(departure.bookingDeadline);
+    return deadline > now && departure.availableSeats > 0;
+  });
+
+  return hasValidDeparture;
+};
 
 export const GroupTourList = () => {
   const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
@@ -60,16 +78,16 @@ export const GroupTourList = () => {
           autoRows="1fr"
           w="100%"
         >
-          {groupTours.map((groupTour) => (
-            <GridItem key={groupTour.id} w="100%" h="100%">
-              <GroupTourCard
-                groupTour={groupTour}
-                link={generateLink(groupTour.id)}
-                w="100%"
-                h="100%"
-              />
-            </GridItem>
-          ))}
+          {groupTours.map((groupTour) =>
+            isGroupTourVisible(groupTour) ? (
+              <GridItem key={groupTour.id} w="100%" h="100%">
+                <GroupTourCard
+                  groupTour={groupTour}
+                  link={generateLink(groupTour.id)}
+                />
+              </GridItem>
+            ) : null,
+          )}
         </Grid>
       )}
     </Layout>
