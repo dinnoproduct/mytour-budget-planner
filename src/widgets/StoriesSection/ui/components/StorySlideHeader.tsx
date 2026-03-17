@@ -24,7 +24,7 @@ export const StorySlideHeader: React.FC<StorySlideHeaderProps> = ({
     justify="space-between"
     gap={2}
     bgGradient="linear(to-b, blackAlpha.600 0%, transparent 100%)"
-    zIndex={1}
+    zIndex={10000}
   >
     <Flex align="center" gap={2}>
       <Box
