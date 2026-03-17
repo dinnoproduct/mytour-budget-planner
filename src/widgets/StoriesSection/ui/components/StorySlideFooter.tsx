@@ -24,7 +24,10 @@ export const StorySlideFooter: React.FC<StorySlideFooterProps> = ({
       bgGradient="linear(to-t, blackAlpha.800 0%, transparent 100%)"
       p={4}
       pt={12}
-      zIndex={1}
+      zIndex={1000}
+      // Disable Swiper swipe handling within the footer area (CTA button),
+      // so taps on the button don't trigger slide navigation.
+      data-swiper-no-swiping="true"
     >
       {title && (
         <Text color="white" fontSize="lg" fontWeight="bold" mb={1}>
@@ -41,8 +44,14 @@ export const StorySlideFooter: React.FC<StorySlideFooterProps> = ({
           href={cta.link}
           isExternal={cta.type === 'EXTERNAL'}
           _hover={{ textDecoration: 'none' }}
+          zIndex={1000}
           display="block"
-          onPointerDown={(e) => e.stopPropagation()}
+          // Ensure the CTA is clickable inside the swipeable stories slider:
+          // stop propagation on all relevant events so Swiper/slider
+          // doesn't interpret the tap as a slide gesture.
+          onClickCapture={(e) => e.stopPropagation()}
+          onMouseDownCapture={(e) => e.stopPropagation()}
+          onTouchStartCapture={(e) => e.stopPropagation()}
         >
           <Flex
             justify="center"
