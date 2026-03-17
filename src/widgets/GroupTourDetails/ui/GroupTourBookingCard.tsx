@@ -137,7 +137,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
       : undefined
   const childrenAgeText =
     travelersInfo && travelersInfo.childMaxAge
-      ? `${travelersInfo.infantMaxAge + 1}-${travelersInfo.childMaxAge} ${t('age')}`
+      ? `${travelersInfo.infantMaxAge}-${travelersInfo.childMaxAge} ${t('age')}`
       : undefined
   const infantsAgeText =
     travelersInfo && travelersInfo.infantMaxAge

@@ -36,29 +36,28 @@ export const TravelerStepper = ({
         )}
       </Flex>
       <Flex align="center" gap={2}>
-        <IconButton
+        <Button
           size="sm"
-          variant="solid"
+          variant="solid-gray"
           isDisabled={isBackButtonDisabled}
           onClick={() => onChange(clamped - 1)}
           aria-label="decrease"
           isActive={!isBackButtonDisabled}
-        >
-          <Icon name="remove" size="16" color="gray.500" />
-        </IconButton>
+          icon="remove"
+        />
         <Text size="sm" fontWeight="medium" minW="24px" textAlign="center">
           {clamped}
         </Text>
-        <IconButton
+        <Button
           size="sm"
-          variant="solid"
+          variant="solid-gray"
           isDisabled={isForwardButtonDisabled}
           onClick={() => onChange(clamped + 1)}
           aria-label="increase"
           isActive={!isForwardButtonDisabled}
-        >
-          <Icon name="add" size="16" color="gray.500" />
-        </IconButton>
+          icon="add"
+        />
+        
       </Flex>
     </Flex>
   )

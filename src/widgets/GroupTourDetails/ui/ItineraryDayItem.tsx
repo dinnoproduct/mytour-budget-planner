@@ -9,6 +9,8 @@ import {
 import { GroupTourDayBadge, Text } from '@ui'
 import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout'
 import type { GroupTourItineraryDay } from '@entities/package'
+import { useBreakpoint } from '@shared/hooks'
+import { useRef } from 'react'
 
 type ItineraryDayItemProps = {
   day: GroupTourItineraryDay
@@ -18,9 +20,12 @@ type ItineraryDayItemProps = {
 
 export const ItineraryDayItem = ({ day, dayTitle, dayDescription }: ItineraryDayItemProps) => {
   const { t } = useTranslation()
+  const { isMd } = useBreakpoint()
+  const rootRef = useRef<HTMLDivElement | null>(null)
 
   return (
     <CardSectionLayout mb={3} _last={{ mb: 0 }} padding="0px">
+      <Box ref={rootRef}>
       <AccordionItem key={`${day.dayNumber}-${day.date}`} overflow="hidden" border="0px">
         <AccordionButton
           _hover={{ bg: 'transparent' }}
@@ -29,6 +34,18 @@ export const ItineraryDayItem = ({ day, dayTitle, dayDescription }: ItineraryDay
           alignItems="center"
           textAlign="left"
           p={4}
+          onClick={() => {
+            if (!isMd && rootRef.current) {
+              const rect = rootRef.current.getBoundingClientRect()
+              const headerOffset = 160
+              const targetY = window.scrollY + rect.top - headerOffset
+
+              window.scrollTo({
+                top: targetY,
+                behavior: 'smooth',
+              })
+            }
+          }}
         >
           <Flex align="center" gap={3} flex={1} minW={0}>
             <GroupTourDayBadge>
@@ -57,6 +74,7 @@ export const ItineraryDayItem = ({ day, dayTitle, dayDescription }: ItineraryDay
           )}
         </AccordionPanel>
       </AccordionItem>
+      </Box>
     </CardSectionLayout>
   )
 }

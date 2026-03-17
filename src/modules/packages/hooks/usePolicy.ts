@@ -1,6 +1,6 @@
 import { langKeyAdapter } from '../../../utils/normalizers.ts';
 import type { PackagesFields } from '../data/packagesEnums.ts';
-import type { PackageEntity } from '@entities/package';
+import type { PackageEntity, GroupTourName } from '@entities/package';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelectedPackage } from './useSelectedPackage.ts';
@@ -53,7 +53,21 @@ const usePolicy = (packageOverride?: PackageEntity | null) => {
     }
   }, [packageData?.[bookingPolicy], bookingPolicy]);
 
-  const cancelationPolicyContent = packageData?.[cancelationPolicy] ?? '';
+  let cancelationPolicyContent = packageData?.[cancelationPolicy] ?? '';
+
+  // Fallback for group tours: use policies.cancellation localized text
+  if (!cancelationPolicyContent && (packageData as any)?.policies?.cancellation) {
+    const cancellationName = (packageData as any).policies.cancellation as GroupTourName;
+    const suffix = langKeyAdapter[correctedTypeLanguage]; // Arm | Eng | Rus
+    const key =
+      suffix === 'Arm' ? 'arm' :
+      suffix === 'Rus' ? 'rus' : 'eng';
+
+    cancelationPolicyContent =
+      cancellationName?.[key as keyof GroupTourName] ||
+      cancellationName?.eng ||
+      '';
+  }
 
   return { parsedPolicy, cancelationPolicy, cancelationPolicyContent };
 };

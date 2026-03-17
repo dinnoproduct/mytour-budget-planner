@@ -21,7 +21,7 @@ import { t } from "i18next";
 export const GroupTourDetailsPage = () => {
   const { id: tourId } = useParams<{ id: string }>();
   const { data: groupTour, isLoading, isFetched } = useGroupTourInfo(tourId);
-  const { navigateBack, navigateToHome, navigateToGroupTourGallery } = useLanguageNavigate();
+  const { navigateBack, navigateToHome, navigateToGroupTourGallery, navigateTo } = useLanguageNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,9 +46,10 @@ export const GroupTourDetailsPage = () => {
 
   useEffect(() => {
     if (isFetched && tourId && !groupTour) {
-      navigateBack();
+      // If tour cannot be fetched (e.g. 404), go to home with Group Tours tab selected
+      navigateTo('/?tab=group-tours', { replace: true });
     }
-  }, [isFetched, tourId, groupTour, navigateBack]);
+  }, [isFetched, tourId, groupTour, navigateTo]);
 
   if (!tourId) {
     return null;
@@ -60,11 +61,9 @@ export const GroupTourDetailsPage = () => {
 
   return (
     <PageLayout
-      mb={{ base: "117px", md: "0" }}
-      footerProps={{ mt: { base: "100px", md: "0px" } }}
+    footerProps={{ mt: 0 }}
     >
-      <SharedHeader onBackClick={handleBackClick} title={t("back")} />
-
+      <SharedHeader onBackClick={handleBackClick} title={t("homePage")} />
       <PackageImagesGallery
         imageUrls={imageUrls}
         mt={{ md: 10 }}
