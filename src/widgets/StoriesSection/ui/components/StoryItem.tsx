@@ -24,6 +24,7 @@ export const StoryItem: React.FC<StoryItemProps> = React.memo(
         onClick={() => onOpen(storySet.id)}
         _hover={{ opacity: 0.8 }}
         flexShrink={0}
+        zIndex={1000}
       >
         <Box
           width={{ base: 14, sm: 20 }}
