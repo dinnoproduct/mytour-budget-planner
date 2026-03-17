@@ -28,7 +28,7 @@ import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 import { useTranslation } from "react-i18next";
 
 export const PackageDetailsPage = () => {
-  const { navigateBack, navigateToHome } = useLanguageNavigate();
+  const { navigateBack, navigateToHome, navigateToPackages, navigateTo } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ export const PackageDetailsPage = () => {
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
-      handleBackClick();
+      navigateToPackages();
     }
   }, [packageDetails?.offerId, isFetched]);
 
@@ -92,11 +92,8 @@ export const PackageDetailsPage = () => {
   };
 
   const handleBackClick = () => {
-    if (filteredPackages?.length) {
-      navigateBack();
-    } else {
-      navigateToHome({ replace: true });
-    }
+    // Go back to HOME page with Packages tab selected
+    navigateTo('/?tab=packages', { replace: true });
   };
 
   useEffect(() => {
@@ -134,7 +131,7 @@ export const PackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} title={t('packages')} />
+      {/* <SharedHeader onBackClick={handleBackClick} title={t('packages')} /> */}
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
