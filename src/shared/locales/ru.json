@@ -155,7 +155,7 @@
   "inProgress": "Разрабатывается",
   "included": "Включено",
   "incomplete": "Неполные",
-  "incompleteRequestsEmptyText": "Незаконченных правок нет",
+  "incompleteRequestsEmptyText": "Нет незаконченных бронирований",
   "incorrectOTPErrorMessage": "Одноразовый пароль неверен, пожалуйста, попробуйте снова.",
   "infants": "Младенцы",
   "infant": "Младенец",
