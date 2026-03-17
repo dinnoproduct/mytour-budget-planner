@@ -17,7 +17,7 @@ export const TourDescriptionSection = ({ descriptionHtml }: TourDescriptionSecti
       </Text>
       <Box
         sx={{
-          '& p': { color: 'gray.800', fontSize: 'md', lineHeight: 'md', fontWeight: '400' },
+          '& p': { color: 'gray.800', fontSize: 'sm !important', lineHeight: 'sm !important', fontWeight: '400 !important' },
         }}
         color="gray.700"
         whiteSpace="pre-wrap"
