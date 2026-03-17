@@ -25,7 +25,7 @@ export const StoriesSection: React.FC<StoriesSectionProps> = ({ isHotel = 0 }) =
 
   return (
     <>
-      <Box px={{ base: 0, sm: 6, md: 10 }}>
+      <Box px={{ base: 0, sm: 6, md: 10 }} zIndex={1}>
         <Box mx="auto">
           <StoriesContent
             storyGroups={storyGroups}

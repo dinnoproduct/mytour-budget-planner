@@ -42,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => (
       position="fixed"
       bgColor="white"
       width="full"
-      zIndex={10}
+      zIndex={11}
       maxWidth="100dvw"
       borderBottom="1px solid"
       borderColor="gray.100"

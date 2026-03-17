@@ -130,7 +130,9 @@ export const StoriesList: React.FC<StoriesListProps> = ({
             {storyGroups.map((group) => (
               <SwiperSlide
                 key={group.storySet.id}
+                
                 style={{
+                  zIndex: 0,
                   width: `${slideWidth}px`,
                   maxWidth: `${slideWidth}px`,
                   display: "flex",
