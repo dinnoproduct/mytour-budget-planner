@@ -42,17 +42,28 @@ export const DatesSection = ({
           flexWrap="nowrap"
           overflowX="auto"
           gap={2}
+          pb={{ base: 0, md: 3 }}
           sx={{
             // hide scrollbar by default (all devices)
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
+            '&:hover': {
+                scrollbarWidth: { base: 'none', md: 'thin'},
+                msOverflowStyle: 'auto',
+              },
+              '&:hover::-webkit-scrollbar': {
+                display: 'block',
+                height: { base: 0, md: '6px' },
+              },
+              '&:hover::-webkit-scrollbar-track': {
+                backgroundColor: 'transparent',
+              },
+              '&:hover::-webkit-scrollbar-thumb': {
+                backgroundColor: 'transparent',
+                borderRadius: '999px',
+              },
             // show thin scrollbar only on hover (desktop / pointer devices)
             '@media (hover: hover)': {
               '&:hover': {
-                scrollbarWidth: {base: 'none', md: 'thin'},
+                scrollbarWidth: { base: 'none', md: 'thin'},
                 msOverflowStyle: 'auto',
               },
               '&:hover::-webkit-scrollbar': {
