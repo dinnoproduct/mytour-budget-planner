@@ -1,4 +1,4 @@
-import { Box, ListItem, UnorderedList } from '@chakra-ui/react'
+import { Box, Button, ListItem, UnorderedList } from '@chakra-ui/react'
 import { Text } from '@ui'
 import {
   type DictionaryTypes,
@@ -7,7 +7,7 @@ import {
   useDictionary
 } from '@entities/package'
 import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { useTranslation } from 'react-i18next'
 
@@ -16,10 +16,11 @@ export const HotelPackageDescription = ({
 }: {
   tourPackage: PackageEntity
 }) => {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const { data: facilities = [] } = useDictionary(
     'FacilityDictionary' as DictionaryTypes.FacilityDictionary
   )
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const hotelFacilities = useMemo(() => {
     if (!facilities.length || !tourPackage.hotel?.facilities) {
@@ -36,9 +37,22 @@ export const HotelPackageDescription = ({
     return (tourPackage?.hotel[key] as string) || ''
   }, [i18n.language, tourPackage?.hotel.descriptionArm])
 
+  const shouldShowToggle = hotelDescription.trim().length > 220
+
   return (
     <Box mt="8" px={{ base: '4', md: '0' }}>
-      <Text>{hotelDescription}</Text>
+      <Text noOfLines={isExpanded ? undefined : 4}>{hotelDescription}</Text>
+      {shouldShowToggle && (
+        <Button
+          onClick={() => setIsExpanded((v) => !v)}
+          variant="link"
+          mt="2"
+          color="primary.500"
+          alignSelf="flex-start"
+        >
+          {isExpanded ? t('readLess') : t('readMore')}
+        </Button>
+      )}
 
       <UnorderedList listStyleType="none" spacing="4" mx="0" mt="4">
         {hotelFacilities?.map(({ key, value }) => (
