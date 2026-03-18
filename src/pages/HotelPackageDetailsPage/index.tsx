@@ -139,7 +139,7 @@ export const HotelPackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="hotel" />
+      {/* <SharedHeader onBackClick={handleBackClick} packageType="hotel" /> */}
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
