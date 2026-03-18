@@ -43,9 +43,18 @@ export const DatesSection = ({
           overflowX="auto"
           gap={2}
           sx={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            '&::-webkit-scrollbar': { display: 'none' },
+            scrollbarWidth:{ base: 0, md:'thin'},
+            msOverflowStyle: 'auto',
+            '&::-webkit-scrollbar': {
+              height: { base: 0, md: '6px' },
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'gray.200 !important',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'gray.400', // gray.300
+              borderRadius: '999px !important',
+            },
           }}
         >
           {validDepartures.map((d, i) => (
