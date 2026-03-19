@@ -63,7 +63,7 @@ export const GroupTourDetailsPage = () => {
     <PageLayout
     footerProps={{ mt: 0 }}
     >
-      <SharedHeader onBackClick={handleBackClick} title={t("homePage")} />
+      {/* <SharedHeader onBackClick={handleBackClick} title={t("homePage")} /> */}
       <PackageImagesGallery
         imageUrls={imageUrls}
         mt={{ md: 10 }}

@@ -779,6 +779,10 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
              textAlign="left"
              fontWeight="normal"
              size="sm"
+             sx={{
+              '& p': { color: 'gray.800', fontSize: 'md', lineHeight: 'md', fontWeight: '500' },
+              '& strong': { fontWeight: '500' },
+             }}
              textDecoration={isStrikethrough ? "line-through" : "none"}
              color={
                isDiscount
