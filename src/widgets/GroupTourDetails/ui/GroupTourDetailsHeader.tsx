@@ -93,6 +93,7 @@ export const GroupTourDetailsHeader = ({
         <Box dangerouslySetInnerHTML={{ __html: routeSummary }} sx={{
           marginTop: 2,
           '& p': { color: 'gray.800', fontSize: 'md', lineHeight: 'md', fontWeight: '500' },
+          '& strong': { fontWeight: '500' },
         }} />
         
       )}

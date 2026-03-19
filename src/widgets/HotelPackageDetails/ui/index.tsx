@@ -8,7 +8,7 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 
 export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
   const { t } = useTranslation()
-  const mapQuery = encodeURIComponent(tourPackage.hotel?.name ?? '')
+  const mapQuery = encodeURIComponent(`${tourPackage.hotel?.name}, ${tourPackage.city.nameEng}, ${tourPackage.city.country.nameEng}`)
 
   return (
     <Flex direction="column" mt={{ base: 5, md: 0 }} gap="6">
