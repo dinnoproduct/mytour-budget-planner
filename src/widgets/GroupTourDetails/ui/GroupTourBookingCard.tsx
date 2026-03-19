@@ -172,6 +172,14 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
 
   const selectedDeparture: GroupTourDeparture | null =
     validDepartures[selectedDepartureIndex] ?? null
+
+  const isSingleSeatLeft = Number(selectedDeparture?.availableSeats ?? 0) === 1
+
+  useEffect(() => {
+    if (!isSingleSeatLeft) return
+    setAdults(1)
+    setChildren(0)
+  }, [isSingleSeatLeft])
   const canProceed =
     !noValidDepartures && selectedDeparture !== null && validationError === null
 
@@ -297,6 +305,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
               adultsAgeText={adultsAgeText}
               childrenAgeText={childrenAgeText}
               infantsAgeText={infantsAgeText}
+              controlsDisabled={isSingleSeatLeft}
             />
 
             {/* Room type */}

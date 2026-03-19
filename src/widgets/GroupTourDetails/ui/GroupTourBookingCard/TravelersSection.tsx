@@ -25,6 +25,7 @@ type TravelersSectionProps = {
   adultsAgeText?: string
   childrenAgeText?: string
   infantsAgeText?: string
+  controlsDisabled?: boolean
 }
 
 export const TravelersSection = ({
@@ -50,6 +51,7 @@ export const TravelersSection = ({
   adultsAgeText,
   childrenAgeText,
   infantsAgeText,
+  controlsDisabled,
 }: TravelersSectionProps) => {
   const total = adults + children
   const effectiveAdultMax = isFixedDouble
@@ -71,6 +73,7 @@ export const TravelersSection = ({
           value={adults}
           min={adultMin}
           max={effectiveAdultMax}
+          isLocked={!!controlsDisabled}
           onChange={(n) => {
             const v = Math.max(adultMin, Math.min(effectiveAdultMax, n))
             if (isFixedDouble) {
@@ -93,6 +96,7 @@ export const TravelersSection = ({
             value={children}
             min={childMin}
             max={effectiveChildMax}
+            isLocked={!!controlsDisabled}
             onChange={(n) => {
               const v = Math.max(childMin, Math.min(effectiveChildMax, n))
               if (isFixedDouble) {

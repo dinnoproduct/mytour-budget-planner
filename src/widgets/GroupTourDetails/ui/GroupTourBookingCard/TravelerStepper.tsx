@@ -8,6 +8,7 @@ type TravelerStepperProps = {
   onChange: (n: number) => void
   label: string
   description?: string
+  isLocked?: boolean
 }
 
 export const TravelerStepper = ({
@@ -17,11 +18,12 @@ export const TravelerStepper = ({
   onChange,
   label,
   description,
+  isLocked,
 }: TravelerStepperProps) => {
   const clamped = Math.max(min, Math.min(max, value))
 
-  const isBackButtonDisabled = clamped <= min
-  const isForwardButtonDisabled = clamped >= max
+  const isBackButtonDisabled = !!isLocked || clamped <= min
+  const isForwardButtonDisabled = !!isLocked || clamped >= max
 
   return (
     <Flex align="center" justify="space-between" width="full">
