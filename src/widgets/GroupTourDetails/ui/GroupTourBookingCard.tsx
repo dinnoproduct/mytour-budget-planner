@@ -10,18 +10,13 @@ import { useSetRecoilState } from 'recoil'
 import { bookingContextAtom } from '@/modules/packages/store/store'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 import { CURRENCY_MAP, LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
-import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import {
   getValidDepartures,
-  getLocalized,
-  formatDate,
 } from '../lib/utils'
-import { SectionTitle } from './GroupTourBookingCard/SectionTitle'
 import { TravelersSection } from './GroupTourBookingCard/TravelersSection'
 import { RoomTypeSection } from './GroupTourBookingCard/RoomTypeSection'
 import { DatesSection } from './GroupTourBookingCard/DatesSection'
 import { formatNumber } from '@/shared/utils'
-import { Loader } from '@/components/Loader/Loader'
 
 const MAX_INFANTS = 2
 
