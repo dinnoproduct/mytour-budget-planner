@@ -780,8 +780,8 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
              fontWeight="normal"
              size="sm"
              sx={{
-              '& p': { color: 'gray.800', fontSize: 'md', lineHeight: 'md', fontWeight: '500' },
-              '& strong': { fontWeight: '500' },
+              '& p': { color: 'gray.800', fontSize: 'sm', lineHeight: 'sm', fontWeight: '500' },
+              '& strong': { fontSize: 'sm', lineHeight: 'sm', fontWeight: '500', color: 'gray.800',  },
              }}
              textDecoration={isStrikethrough ? "line-through" : "none"}
              color={
