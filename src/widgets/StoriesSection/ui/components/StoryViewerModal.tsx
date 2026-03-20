@@ -71,10 +71,10 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
     >
       <ModalOverlay bg="rgba(0, 0, 0, 0.8)" onClick={onClose} />
       <ModalContent
-        maxW="100vw"
-        maxH="100vh"
-        width="100vw"
-        height="100vh"
+        maxW="100%"
+        maxH="100%"
+        width="100%"
+        height="100%"
         m={0}
         borderRadius={0}
         bg="transparent"
@@ -84,8 +84,8 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
         onClick={onClose}
       >
         <Box
-          width={{ base: '100vw', md: '420px' }}
-          height={{ base: '100vh', md: '750px' }}
+          width={{ base: '100%', md: '420px' }}
+          height={{ base: '100%', md: '750px' }}
           borderRadius={{ base: 0, md: '16px' }}
           overflow="hidden"
           position="relative"
