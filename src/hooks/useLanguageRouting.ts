@@ -9,8 +9,21 @@ export const useLanguageRouting = () => {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
 
-  // Get current language from URL
-  const currentLanguage = getLanguageFromPath(location.pathname);
+  const normalizeLanguage = (language?: string): LanguageName => {
+    if (!language) return 'hy';
+    const baseLanguage = language.split('-')[0]?.toLowerCase();
+    if (baseLanguage === 'en' || baseLanguage === 'ru' || baseLanguage === 'hy') {
+      return baseLanguage as LanguageName;
+    }
+    return 'hy';
+  };
+
+  // Prefer explicit URL language; fallback to current i18n language when URL has no prefix.
+  const languageFromPath = getLanguageFromPath(location.pathname);
+  const hasLanguagePrefix = location.pathname.startsWith('/en') || location.pathname.startsWith('/ru');
+  const currentLanguage = hasLanguagePrefix
+    ? languageFromPath
+    : normalizeLanguage(i18n.resolvedLanguage || i18n.language);
 
   // Change language and update URL
   const changeLanguage = useCallback(async (newLanguage: LanguageName) => {
