@@ -29,7 +29,10 @@ export const GroupTourDetailsPage = () => {
   const imageUrls = useMemo(
     () =>
       groupTour?.gallery
-        .sort((a, b) => a.order - b.order)
+        .sort((a, b) => {
+          if (a.isMain === b.isMain) return a.order - b.order;
+          return a.isMain ? -1 : 1;
+        })
         .map((item) => item.url) ?? [],
     [groupTour?.gallery]
   );
