@@ -122,7 +122,12 @@ export const PriceSummaryCard = ({
         <Button mt="4" width="full" onClick={handleBookClick} size="lg">
           {t`selectRoomAndMealType`}
         </Button>
+
+
+        WRM WRM
       </CardSectionLayout>
+      WRM WRM
+
     </Layout>
   );
 };
