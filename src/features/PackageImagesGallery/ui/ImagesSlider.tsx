@@ -1,7 +1,7 @@
 import Slider, { Settings } from 'react-slick'
 import React, { useRef, useState } from 'react'
 import { Box, BoxProps } from '@chakra-ui/react'
-import { ImageSliderProps } from '@features/PackageImagesGallery/ui/types.ts'
+import { ImageSliderProps } from '@features/PackageImagesGallery/ui/types'
 import { PaginationBadge } from './Badge.tsx'
 import { GalleryImage } from './GalleryImage.tsx'
 import classnames from 'classnames'

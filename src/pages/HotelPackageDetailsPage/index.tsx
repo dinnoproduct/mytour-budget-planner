@@ -6,10 +6,10 @@ import {
 import {
   useHotelPackagesSearchContext,
 } from "@entities/package";
-import Loader from "@/components/Loader/Loader.tsx";
+import {Loader, LoaderWithText } from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
+import { useLanguageNavigate } from "../../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
 import {
   HotelPackageDetails,
@@ -30,6 +30,7 @@ import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
+import { useTranslation } from "react-i18next";
 
 export const HotelPackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
@@ -38,6 +39,7 @@ export const HotelPackageDetailsPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const setBookingContext = useSetRecoilState(bookingContextAtom);
+  const { t } = useTranslation();
   const {
     packageDetails,
     childrenAges,
@@ -129,7 +131,7 @@ export const HotelPackageDetailsPage = () => {
   }, [location.search, navigate]);
 
   if (!packageDetails?.offerId) {
-    return <Loader loading />;
+    return <Box position="fixed" top="0" left="0" right="0" bottom="0" height="100%" width="100%" display="flex" justifyContent="center" alignItems="center"><LoaderWithText loading={true} title={t("loading.packages.title")} description={t("loading.packages.description")} /></Box>;
   }
 
   return (
@@ -137,7 +139,7 @@ export const HotelPackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="hotel" />
+      {/* <SharedHeader onBackClick={handleBackClick} packageType="hotel" /> */}
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}

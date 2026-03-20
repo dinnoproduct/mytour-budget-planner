@@ -38,7 +38,7 @@ export const PackageBanner: React.FC<PackageBannerProps> = ({ isHotel, ...props 
                 base: '440px',
                 sm: !isHotel ? '330px' : '270px'
             }}
-            width={{base: 'auto', md: 'full'}}
+            width="auto"
             rounded="40px"
             bgImage={!isHotel ?`linear-gradient(90deg, rgba(38,231,139,.8), rgba(80,148,255,.8))` :'linear-gradient(90deg, #FF9A3D 0%, #FF4E00 100%)'}
             bgBlendMode="overlay"

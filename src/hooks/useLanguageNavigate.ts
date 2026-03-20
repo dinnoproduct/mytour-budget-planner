@@ -33,6 +33,10 @@ export const useLanguageNavigate = () => {
     navigateTo(`/hotel/${hotelId}`, options);
   };
 
+  const navigateToGroupTourGallery = (tourId: string, options?: { replace?: boolean }) => {
+    navigateTo(`/group-tour/${tourId}/gallery`, options);
+  };
+
   const navigateToBlogs = (options?: { replace?: boolean }) => {
     navigateTo('/blogs', options);
   };
@@ -103,6 +107,7 @@ export const useLanguageNavigate = () => {
     navigateToPackages,
     navigateToPackage,
     navigateToHotel,
+    navigateToGroupTourGallery,
     navigateToBlogs,
     navigateToMyPackages,
     navigateToBooking,

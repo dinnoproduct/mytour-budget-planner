@@ -1,8 +1,7 @@
-import { Box, useBreakpointValue } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import React, { useCallback, useState } from 'react'
 import { useStoriesData } from './hooks'
 import { StoriesContent, StoryViewerModal } from './components'
-import { STORY_VIEWER_URL } from './constants'
 
 interface StoriesSectionProps {
   isHotel?: number
@@ -10,26 +9,24 @@ interface StoriesSectionProps {
 
 export const StoriesSection: React.FC<StoriesSectionProps> = ({ isHotel = 0 }) => {
   const { storyGroups, isLoading, error } = useStoriesData()
+  console.log('StoriesSection data:', { storyGroups, isLoading, error })
   const [isViewerOpen, setIsViewerOpen] = useState(false)
-  const [viewerUrl, setViewerUrl] = useState<string | null>(null)
+  const [activeGroupIndex, setActiveGroupIndex] = useState(0)
 
   const handleOpenStorySet = useCallback((storySetId: number) => {
-    const url = `${STORY_VIEWER_URL}&id=${storySetId}`
-    setViewerUrl(url)
+    const index = storyGroups.findIndex((g) => g.storySet.id === storySetId)
+    setActiveGroupIndex(index !== -1 ? index : 0)
     setIsViewerOpen(true)
-  }, [])
+  }, [storyGroups])
 
   const handleCloseViewer = useCallback(() => {
     setIsViewerOpen(false)
-    setViewerUrl(null)
   }, [])
 
   return (
     <>
-      <Box
-        px={{ base: 0, sm: 6, md: 10 }}
-      >
-        <Box maxWidth="1376px" mx="auto">
+      <Box px={{ base: 0, sm: 6, md: 10 }} zIndex={1}>
+        <Box mx="auto">
           <StoriesContent
             storyGroups={storyGroups}
             isLoading={isLoading}
@@ -43,9 +40,9 @@ export const StoriesSection: React.FC<StoriesSectionProps> = ({ isHotel = 0 }) =
       <StoryViewerModal
         isOpen={isViewerOpen}
         onClose={handleCloseViewer}
-        url={viewerUrl}
+        groups={storyGroups}
+        initialGroupIndex={activeGroupIndex}
       />
     </>
   )
 }
-

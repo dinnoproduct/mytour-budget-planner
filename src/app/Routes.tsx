@@ -13,7 +13,7 @@ import { BookingResultPage } from "@pages/BookingResultPage";
 import { PackageListPage } from "@pages/PackageListPage";
 import { PackageDetailsPage } from "@pages/PackageDetailsPage";
 import { useScrollToTop } from "@shared/hooks";
-import { MyPackagesPage } from "@pages/MyPackagesPage.tsx";
+import { MyPackagesPage } from "@pages/MyPackagesPage";
 import { PaymentPage } from "@pages/PaymentPage";
 import {
   HotelPackagesSearchProvider,
@@ -21,10 +21,12 @@ import {
 } from "@entities/package";
 import { useUserContext } from "@entities/user";
 import { useEffect } from "react";
-import { HotelPackageDetailsPage } from "@pages/HotelPackageDetailsPage.tsx";
-import { BlogsPage } from "@pages/BlogsPage.tsx";
+import { HotelPackageDetailsPage } from "@pages/HotelPackageDetailsPage";
+import { GroupTourDetailsPage } from "@pages/GroupTourDetailsPage";
+import { GroupTourGalleryPage } from "@pages/GroupTourGalleryPage";
+import { BlogsPage } from "@pages/BlogsPage";
 import { FAQPage } from "@pages/FAQPage/index.tsx";
-import { TermsPage } from "@pages/TermsPage.tsx";
+import { TermsPage } from "@pages/TermsPage";
 import { LanguageRouteGuard } from "../components/LanguageRouteGuard/LanguageRouteGuard";
 import { useLanguageRouting } from "../hooks/useLanguageRouting";
 
@@ -42,6 +44,8 @@ const Routes = () => {
             <Route path="packages" element={<PackageListPage />} />
             <Route path="package" element={<PackageDetailsPage />} />
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
+            <Route path="group-tour/:id/gallery" element={<GroupTourGalleryPage />} />
+            <Route path="group-tour/:id" element={<GroupTourDetailsPage />} />
           </Route>
           <Route path="booking" element={<BookingPage />} />
           <Route path="payment" element={<AuthorizedRoute><PaymentPage /></AuthorizedRoute>} />
@@ -69,6 +73,8 @@ const Routes = () => {
             <Route path="packages" element={<PackageListPage />} />
             <Route path="package" element={<PackageDetailsPage />} />
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
+            <Route path="group-tour/:id/gallery" element={<GroupTourGalleryPage />} />
+            <Route path="group-tour/:id" element={<GroupTourDetailsPage />} />
           </Route>
           <Route path="booking" element={<BookingPage />} />
           <Route path="payment" element={<AuthorizedRoute><PaymentPage /></AuthorizedRoute>} />
@@ -96,6 +102,8 @@ const Routes = () => {
             <Route path="packages" element={<PackageListPage />} />
             <Route path="package" element={<PackageDetailsPage />} />
             <Route path="hotel" element={<HotelPackageDetailsPage />} />
+            <Route path="group-tour/:id/gallery" element={<GroupTourGalleryPage />} />
+            <Route path="group-tour/:id" element={<GroupTourDetailsPage />} />
           </Route>
           <Route path="booking" element={<BookingPage />} />
           <Route path="payment" element={<AuthorizedRoute><PaymentPage /></AuthorizedRoute>} />
@@ -133,7 +141,7 @@ const RouteOutlet = () => <Outlet />;
 const PackagesLayout = () => (
   <PackagesSearchProvider>
     <HotelPackagesSearchProvider>
-      <Outlet />
+        <Outlet />
     </HotelPackagesSearchProvider>
   </PackagesSearchProvider>
 );

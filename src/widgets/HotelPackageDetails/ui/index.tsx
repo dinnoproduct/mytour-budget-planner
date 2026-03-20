@@ -8,9 +8,10 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 
 export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
   const { t } = useTranslation()
+  const mapQuery = encodeURIComponent(`${tourPackage.hotel?.name}, ${tourPackage.city.nameEng}, ${tourPackage.city.country.nameEng}`)
 
   return (
-    <Flex direction="column" mt={{ base: 5, md: 0 }}>
+    <Flex direction="column" mt={{ base: 5, md: 0 }} gap="6">
       <CardSectionLayout>
         <SectionLayout
           title={t`hotelDetails`}
@@ -28,6 +29,16 @@ export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
           ]}
         />
         <HotelPackageDescription tourPackage={tourPackage} />
+      </CardSectionLayout>
+      <CardSectionLayout>
+          <iframe
+            width="100%"
+            height={"350"}
+            style={{ border: 0 }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=${mapQuery}`}
+          />
       </CardSectionLayout>
     </Flex>
   )

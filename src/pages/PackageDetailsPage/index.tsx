@@ -5,10 +5,10 @@ import {
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
 import { usePackagesSearchContext } from "@entities/package";
-import Loader from "@/components/Loader/Loader.tsx";
+import {Loader, LoaderWithText} from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
+import { useLanguageNavigate } from "../../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
 import { BookingDrawer } from "@shared/ui";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
@@ -25,9 +25,10 @@ import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { usePackage } from "@/entities/package/hooks/usePackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
+import { useTranslation } from "react-i18next";
 
 export const PackageDetailsPage = () => {
-  const { navigateBack, navigateToHome } = useLanguageNavigate();
+  const { navigateBack, navigateToHome, navigateToPackages, navigateTo } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ export const PackageDetailsPage = () => {
     mealPlans,
     loading,
   } = usePackage();
-
+  const { t } = useTranslation();
   const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
@@ -72,7 +73,7 @@ export const PackageDetailsPage = () => {
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
-      handleBackClick();
+      navigateToPackages();
     }
   }, [packageDetails?.offerId, isFetched]);
 
@@ -91,11 +92,8 @@ export const PackageDetailsPage = () => {
   };
 
   const handleBackClick = () => {
-    if (filteredPackages?.length) {
-      navigateBack();
-    } else {
-      navigateToHome({ replace: true });
-    }
+    // Go back to HOME page with Packages tab selected
+    navigateTo('/?tab=packages', { replace: true });
   };
 
   useEffect(() => {
@@ -125,7 +123,7 @@ export const PackageDetailsPage = () => {
   const { isOpen: isOpenBookingDrawer } = useBookingDrawer();
 
   if (!packageDetails?.offerId) {
-    return <Loader loading />;
+    return <Box position="fixed" top="0" left="0" right="0" bottom="0" height="100%" width="100%" display="flex" justifyContent="center" alignItems="center"><LoaderWithText loading={true} title={t("loading.packages.title")} description={t("loading.packages.description")} /></Box>;
   }
 
   return (
@@ -133,7 +131,7 @@ export const PackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="package" />
+      {/* <SharedHeader onBackClick={handleBackClick} title={t('packages')} /> */}
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}

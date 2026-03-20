@@ -14,6 +14,7 @@ interface FixedSearchViewProps {
   variant?: PackageSearchVariant
   showTabs?: boolean
   setHotel?: (index: number) => void
+  initialTab?: number
 }
 
 export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
@@ -21,9 +22,10 @@ export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
   contentProps,
   variant = 'centered',
   showTabs = true,
-  setHotel
+  setHotel,
+  initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState(0)
+  const [activeTab, setActiveTab] = useState(initialTab ?? 0)
   const [isFormOpen, setFormOpen] = useState(false)
   const { isAllowedSearchRoute: isHotelSearchView } =
     useHotelPackagesSearchContext()
@@ -31,10 +33,10 @@ export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
     usePackagesSearchContext()
 
   useEffect(() => {
-    const activeTabIndex = isHotelSearchView ? 1 : 0
-    setActiveTab(activeTabIndex)
-    setHotel?.(activeTabIndex)
-  }, [isHotelSearchView, isPackageSearchView, setHotel])
+    const baseIndex = initialTab ?? (isHotelSearchView ? 1 : 0)
+    setActiveTab(baseIndex)
+    setHotel?.(baseIndex)
+  }, [isHotelSearchView, isPackageSearchView, setHotel, initialTab])
 
   const handleTabChange = (index: number) => {
     setActiveTab(index)

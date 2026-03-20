@@ -112,14 +112,16 @@ export const useBookingFlow = ({
           ? promoCodeInfo.firstPaymentSum
           : paymentAmount;
 
-        const bookInput: any = {
+        const isGroupTour =
+          (packageDetails as any)?.bookingType === 3 ||
+          (!(packageDetails as any).hotel &&
+            (packageDetails as any).departures &&
+            (packageDetails as any).agency)
+
+        const baseBookInput: any = {
           requestId: request.id,
-          cityId: packageDetails.city.id,
           price: promoCodeInfo?.initialPrice ?? packageDetails.price,
-          hotelId: packageDetails.hotel.id,
-          travelAgencyId: packageDetails.travelAgency.id,
-          offerId: packageDetails.offerId,
-          roomType: packageDetails.roomType,
+          travelAgencyId: packageDetails.travelAgency?.id ?? 0,
           email: user?.email || '',
           notes: notesJson.current
             ? notesJson.current
@@ -132,6 +134,35 @@ export const useBookingFlow = ({
           travelers: [...travelers.adults, ...travelers.children],
           paymentSystem
         }
+
+        const bookInput: any = isGroupTour
+          ? {
+              ...baseBookInput,
+              groupTourId: (packageDetails as any).id,
+              cityId: 0,
+              hotelId: 0,
+              offerId: 0,
+              roomType: (packageDetails as any).roomType ?? 0,
+              startDate: (packageDetails as any).checkin,
+              endDate: (packageDetails as any).checkout,
+              destinationFlightId: 0,
+              returnFlightId: 0
+            }
+          : {
+              ...baseBookInput,
+              cityId: packageDetails.city?.id ?? 0,
+              hotelId: packageDetails.hotel?.id ?? 0,
+              offerId: packageDetails.offerId,
+              roomType: packageDetails.roomType,
+              destinationFlightId: packageDetails.destinationFlight?.id ?? 0,
+              returnFlightId: packageDetails.returnFlight?.id ?? 0,
+              startDate: packageDetails.destinationFlight?.departureDate
+                ? packageDetails.destinationFlight.departureDate
+                : packageDetails.checkin,
+              endDate: packageDetails.destinationFlight?.departureDate
+                ? packageDetails.returnFlight.departureDate
+                : packageDetails.checkout
+            }
 
         if (promoCodeInfo?.promoCode) {
           bookInput.promoCode = promoCodeInfo.promoCode
@@ -215,13 +246,24 @@ export const useBookingFlow = ({
   )
 
   useEffect(() => {
-    if (!packageDetails?.offerId) {
+    if (!packageDetails) {
       return
     }
 
     if (defaultTravelers) {
-      setTravelers(defaultTravelers)
-    } else if (user?.firstName) {
+      const merged: Travelers = {
+        ...defaultTravelers,
+        adults:
+          defaultTravelers.adults.length > 0 && user?.firstName
+            ? defaultTravelers.adults.map((adult, i) =>
+                i === 0
+                  ? { ...adult, firstName: user.firstName, lastName: user.lastName }
+                  : adult
+              )
+            : defaultTravelers.adults
+      }
+      setTravelers(merged)
+    } else if (!isGroupTourPackage && packageDetails.offerId && user?.firstName) {
       setTravelers((prevState: any) => ({
         adults: [
           {
@@ -245,6 +287,8 @@ export const useBookingFlow = ({
     }
   }, [
     user?.id,
+    user?.firstName,
+    user?.lastName,
     packageDetails?.adultTravelers,
     packageDetails?.childrenTravelers,
     packageDetails?.infantTravelers,
@@ -279,17 +323,33 @@ export const useBookingFlow = ({
   // draft request sync
   const handleTravelersChange = useCallback(
     async (data: Travelers) => {
-      if (!packageDetails?.offerId) {
-        return
-      }
+      if (!packageDetails) return
+
+      const isGroupTour =
+        (packageDetails as any)?.bookingType === 3 ||
+        (!(packageDetails as any).hotel &&
+          (packageDetails as any).departures &&
+          (packageDetails as any).agency)
+
+      const childrenCount = isGroupTour
+        ? (packageDetails as any).childrenTravelers ?? 0
+        : packageDetails.childrenTravelers
+      const infantCount = isGroupTour
+        ? (packageDetails as any).infantTravelers ?? 0
+        : packageDetails.infantTravelers
 
       const notes = {
         childrenAges: childrenAges || [],
-        totalTravelersCount:
-          packageDetails.adultTravelers +
-          packageDetails.childrenTravelers +
-          packageDetails.infantTravelers,
-        adultTravelersCount: packageDetails.adultTravelers,
+        totalTravelersCount: isGroupTour
+          ? data.adults.length + data.children.length
+          : packageDetails.adultTravelers +
+            packageDetails.childrenTravelers +
+            packageDetails.infantTravelers,
+        adultTravelersCount: isGroupTour
+          ? data.adults.length
+          : packageDetails.adultTravelers,
+        childrenTravelersCount: isGroupTour ? childrenCount : undefined,
+        infantTravelersCount: isGroupTour ? infantCount : undefined,
         travelers: data,
         isSoldOut: false
       } as any
@@ -305,29 +365,45 @@ export const useBookingFlow = ({
         return
       }
 
-      const requestInput: any = {
-        offerId: packageDetails.offerId,
-        travelers: [...data.adults, ...data.children],
-        cityId: packageDetails.city.id,
-        hotelId: packageDetails.hotel.id,
-        price: packageDetails.price,
-        roomType: packageDetails.roomType,
-        travelAgencyId: packageDetails.travelAgency.id,
-        foodType: packageDetails.foodType,
-        notes: newNotesJson,
-        currency: packageDetails.currency,
-        rate: packageDetails.rate
-      }
-
-      if (packageDetails.destinationFlight?.departureDate) {
-        requestInput.startDate = packageDetails.destinationFlight.departureDate
-        requestInput.endDate = packageDetails.returnFlight.departureDate
-        requestInput.destinationFlightId = packageDetails.destinationFlight.id
-        requestInput.returnFlightId = packageDetails.returnFlight.id
-      } else {
-        requestInput.startDate = packageDetails.checkin
-        requestInput.endDate = packageDetails.checkout
-      }
+      const requestInput: any = isGroupTour
+        ? {
+            groupTourId: (packageDetails as any).id,
+            offerId: 0,
+            travelers: [...data.adults, ...data.children],
+            cityId: 0,
+            hotelId: 0,
+            price: packageDetails.price,
+            roomType: (packageDetails as any).roomType ?? 0,
+            travelAgencyId: packageDetails.travelAgency?.id ?? 0,
+            notes: newNotesJson,
+            currency: packageDetails.currency,
+            rate: packageDetails.rate,
+            startDate: (packageDetails as any).checkin,
+            endDate: (packageDetails as any).checkout,
+            destinationFlightId: 0,
+            returnFlightId: 0
+          }
+        : {
+            offerId: packageDetails.offerId,
+            travelers: [...data.adults, ...data.children],
+            cityId: packageDetails.city.id,
+            hotelId: packageDetails.hotel.id,
+            price: packageDetails.price,
+            roomType: packageDetails.roomType,
+            travelAgencyId: packageDetails.travelAgency.id,
+            foodType: packageDetails.foodType,
+            notes: newNotesJson,
+            currency: packageDetails.currency,
+            rate: packageDetails.rate,
+            startDate: packageDetails.destinationFlight?.departureDate
+              ? packageDetails.destinationFlight.departureDate
+              : packageDetails.checkin,
+            endDate: packageDetails.destinationFlight?.departureDate
+              ? packageDetails.returnFlight.departureDate
+              : packageDetails.checkout,
+            destinationFlightId: packageDetails.destinationFlight?.id,
+            returnFlightId: packageDetails.returnFlight?.id
+          }
 
       isRequestInProgressRef.current = true
 
@@ -359,12 +435,20 @@ export const useBookingFlow = ({
         isRequestInProgressRef.current = false
       }
     },
-    [request?.id, requestIdRef.current, packageDetails?.offerId, childrenAges]
+    [request?.id, requestIdRef.current, packageDetails, childrenAges]
   )
 
   // calculate prepayment
   const isHotelPackage = useMemo(
     () => !!(packageDetails && !packageDetails.destinationFlight?.id),
+    [packageDetails]
+  )
+  const isGroupTourPackage = useMemo(
+    () =>
+      !!packageDetails &&
+      !(packageDetails as any).hotel &&
+      (packageDetails as any).departures &&
+      (packageDetails as any).agency,
     [packageDetails]
   )
   const isDraftRequest = useMemo(
@@ -378,14 +462,22 @@ export const useBookingFlow = ({
 
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
-      travelAgencyId: packageDetails?.travelAgency.id || 0,
-      bookingType: initialRequest?.bookingType ? initialRequest.bookingType : isHotelPackage ? 2 : 1,
-      destinationId: packageDetails?.city.id || 0,
-      startDate: packageDetails?.checkin || '',
-      fullPrice: packageDetails?.price || 0,
+      travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
+      bookingType: initialRequest?.bookingType
+        ? initialRequest.bookingType
+        : isGroupTourPackage
+          ? 3
+          : isHotelPackage
+            ? 2
+            : 1,
+      destinationId: packageDetails?.city?.id ?? 0,
+      startDate: (packageDetails as any)?.checkin ?? '',
+      fullPrice: packageDetails?.price ?? 0,
       calculationSource: isDraftRequest ? 'search' : 'myBookings'
     },
-    { enabled: !!packageDetails?.checkin && isOpen }
+    {
+      enabled: !!packageDetails && isOpen
+    }
   )
 
   return {

@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import { Layout } from '../Layouts'
 import { HotelSearchForm } from '../HotelSearchForm'
 import { PackageSearchForm } from '../PackageSearchForm'
 import {
   useHotelPackagesSearchContext,
-  usePackagesSearchContext
+  usePackagesSearchContext,
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
 
@@ -15,6 +15,7 @@ interface CombinedSearchViewProps {
   variant?: PackageSearchVariant
   showTabs?: boolean
   setHotel?: (index: number) => void
+  initialTab?: number
 }
 
 export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
@@ -22,7 +23,8 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
   contentProps,
   variant = 'centered',
   showTabs = true,
-  setHotel
+  setHotel,
+  initialTab,
 }) => {
   const {
     isAllowedSearchRoute: isHotelSearchView,
@@ -33,14 +35,22 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
     navigateToDefaultSearch: navigateToDefaultPackageSearch
   } = usePackagesSearchContext()
 
+  const baseIndex = isPackageSearchView ? 1 : 0
+  const defaultTabIndex = initialTab ?? baseIndex
+
   const handleTabChange = (index: number) => {
     setHotel?.(index)
     if (index === 1 && isHotelSearchView) {
       navigateToDefaultHotelSearch()
     } else if (index === 0 && isPackageSearchView) {
       navigateToDefaultPackageSearch()
-    }
+    } 
   }
+
+  useEffect(() => {
+    handleTabChange(defaultTabIndex)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Box position="relative">
@@ -49,7 +59,7 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
         containerProps={containerProps}
         contentProps={contentProps}
         variant={variant}
-        defaultTabIndex={isPackageSearchView ? 1 : 0}
+        defaultTabIndex={defaultTabIndex}
         onTabChange={handleTabChange}
         showTabs={showTabs}
       >

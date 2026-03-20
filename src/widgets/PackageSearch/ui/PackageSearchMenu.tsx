@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { PackageSearchForm } from './PackageSearchForm.tsx'
 import { type PackageCity, usePackagesSearchContext } from '@entities/package'
@@ -7,6 +7,7 @@ import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
 import {
   HotelTabItem,
+  GroupTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem.tsx'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
@@ -20,6 +21,7 @@ export const PackageSearchMenu = ({
 }: any) => {
   const { t, i18n } = useTranslation()
   const { searchData, cities } = usePackagesSearchContext()
+  const [selectedTab, setSelectedTab] = useState(0)
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
@@ -58,6 +60,13 @@ export const PackageSearchMenu = ({
     onFormClose()
   }
 
+  const handleTabChange = (index: number) => {
+    setSelectedTab(index)
+    if (onTabChange) {
+      onTabChange(index)
+    }
+  }
+
   return (
     <Box height="full" width="full">
       {isFormOpen && (
@@ -94,15 +103,15 @@ export const PackageSearchMenu = ({
           <Tabs
             labels={[
               <PackageTabItem key="package-tab" />,
-              <HotelTabItem key="hotel-tab" />
+              <HotelTabItem key="hotel-tab" />,
+              <GroupTabItem key="group-tab" />
             ]}
             variant="line"
-            align="center"
             mt="2"
-            defaultIndex={0}
-            onChange={onTabChange}
+            index={selectedTab}
+            onChange={handleTabChange}
+            align="center"
           >
-            <></>
             <></>
           </Tabs>
           )}

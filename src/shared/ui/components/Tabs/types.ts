@@ -5,4 +5,7 @@ export type TabsProps = {
   labels: ReactNode[]
   children: ReactNode[] | ReactNode
   showTabs?: boolean
+  align?: 'start' | 'end' | 'center',
+  groupAlign?: 'flex-start' | 'flex-end' | 'center',
+  isDisabled?: boolean
 } & ChakraTabsProps

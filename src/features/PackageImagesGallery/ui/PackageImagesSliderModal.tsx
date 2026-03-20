@@ -103,7 +103,8 @@ export const PackageImagesSliderModal = ({
         </ModalHeader>
 
         <ModalBody p={6} position="relative">
-          <Box mx="72px">
+        {imageUrls.length > 1 ? (
+          <><Box mx="72px">
             <Slider ref={sliderRef} {...settings}>
               {imageUrls.map((url, index) => (
                 <Box
@@ -119,7 +120,12 @@ export const PackageImagesSliderModal = ({
 
           <Text align="center" size="sm" fontWeight="semibold" mt=".5">
             {currentSlide + 1}/{imageUrls.length}
-          </Text>
+          </Text></> ) : (
+            <Box mx="72px">
+              <GalleryImage src={imageUrls[0]} minHeight="full" />
+            </Box>
+          )
+        }
         </ModalBody>
       </ModalContent>
     </Modal>

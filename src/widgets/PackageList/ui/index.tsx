@@ -15,10 +15,12 @@ import { getHotelNightsByDate, getNightsByDate } from "@/features/helper";
 import { PackageFilter } from "@/features/PackageFilter";
 import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
+import { LoaderWithText } from "@/components/Loader/Loader";
+import { useTranslation } from "react-i18next";
 
 export const PackageList = () => {
   const { searchParams } = useQueryParams();
-
+  const { t } = useTranslation();
   const activeTab = useMemo(() => {
     if (searchParams?.tab) {
       return searchParams.tab;
@@ -90,7 +92,7 @@ export const PackageList = () => {
     filteredPackages: filteredActivePackages,
     isFilterActive,
     onFilter,
-  } = useFilterPackage(activePackages);
+  }: ReturnType<typeof useFilterPackage> = useFilterPackage(activePackages);
 
   const isLoadingPackages = useMemo(
     () =>
@@ -128,6 +130,14 @@ export const PackageList = () => {
       : getNightsByDate(fromDate, toDate);
   };
 
+  if ( isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
+    return (
+      <Layout >
+        <LoaderWithText style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} loading={isLoadingPackages || false} title={t("loading.packages.title")} description={t("loading.packages.description")} />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       {!isLoadingPackages ? (
@@ -147,12 +157,6 @@ export const PackageList = () => {
         />
       )}
 
-      {isLoadingPackages && (
-        <VStack spacing={4} flexGrow={1} width="full">
-          {isLoadingPackages ? <SkeletonLoading /> : null}
-        </VStack>
-      )}
-
       {!isLoadingPackages && filteredActivePackages.length > 0 && (
         <VStack spacing={4} flexGrow={1} width="full">
           {!isLoadingPackages &&
@@ -170,12 +174,6 @@ export const PackageList = () => {
   );
 };
 
-const SkeletonLoading = ({ carsCount = 8 }) =>
-  Array(carsCount)
-    .fill(1)
-    .map((_data, index) => (
-      <PackageCardSkeleton key={`package-card-skeleton-${index}`} />
-    ));
 
 const Layout = ({ children }: LayoutProps) => (
   <Box py={{ base: 6, md: 10 }} width="100%">
