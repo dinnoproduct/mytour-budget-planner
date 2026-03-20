@@ -224,6 +224,7 @@ export interface GroupTourGalleryItem {
   url: string
   type: string
   order: number
+  isMain: boolean
   attribute: GroupTourName
 }
 

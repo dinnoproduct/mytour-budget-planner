@@ -11,6 +11,8 @@ lerna-debug.log*
 azure-pipelines.yml
 
 node_modules
+./.env
+./azure-pipelines.yml
 dist
 dist-ssr
 *.local
@@ -26,3 +28,6 @@ dist-ssr
 *.sln
 *.sw?
 !/src/widgets/BookingFlow/ui/PaymentModal/index.tsx
+
+./.env
+./azure-pipelines.yml

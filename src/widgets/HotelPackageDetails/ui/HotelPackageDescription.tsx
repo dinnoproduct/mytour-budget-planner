@@ -28,7 +28,7 @@ export const HotelPackageDescription = ({
     }
 
     return facilities.filter(({ key }) => tourPackage.hotel?.facilities & key)
-  }, [facilities?.length, tourPackage.hotel?.facilities])
+  }, [facilities, tourPackage.hotel?.facilities])
 
   const hotelDescription = useMemo(() => {
     const key =
