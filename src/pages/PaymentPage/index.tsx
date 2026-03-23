@@ -28,8 +28,6 @@ export type PaymentPageState = {
   prepaymentInfo?: PrepaymentInfo | null;
   travelers?: Travelers;
   request?: NormalizedRequestEntity;
-  discountedFullPrice?: number;
-  promoCode?: string;
 };
 
 type Step = "paymentForm" | "paymentMethod";
@@ -59,17 +57,6 @@ export const PaymentPage = () => {
   useEffect(() => {
     localStorage.setItem('bookingResultSource', 'payment');
   }, []);
-  // Discounted full price and promo can come from navigation state (e.g. My Packages promo flow).
-  // Base "full price" depends on mode:
-  // - remainingOnly: remainingPaymentAmount of the request
-  // - full: original package price
-  const baseFullPriceForMode =
-    isRemainingOnly
-      ? request?.remainingPaymentAmount ?? 0
-      : packageDetails?.price ?? 0;
-
-  const discountedFullPrice =
-    state?.discountedFullPrice ?? baseFullPriceForMode;
 
   const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
@@ -77,19 +64,13 @@ export const PaymentPage = () => {
       bookingType: isHotelPackage ? 2 : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: packageDetails?.checkin ?? packageDetails?.destinationFlight?.departureDate ?? "",
-      fullPrice: discountedFullPrice,
+      fullPrice: packageDetails?.price ?? 0,
       calculationSource: "myBookings",
     },
     { enabled: !!packageDetails?.checkin || !!packageDetails?.destinationFlight?.departureDate },
   );
 
   const prepaymentInfo = state?.prepaymentInfo ?? prepaymentInfoFromApi;
-
-  // Use discounted full price consistently in the UI and logic on this page
-  // by overriding the price we pass down into payment components.
-  const effectivePackageDetails: PackageEntity | undefined = packageDetails
-    ? { ...packageDetails, price: discountedFullPrice }
-    : undefined;
 
   const travelers: Travelers = useMemo(
     () =>
@@ -105,12 +86,12 @@ export const PaymentPage = () => {
   );
 
   const hasValidState =
-    effectivePackageDetails &&
+    packageDetails &&
     (isRemainingOnly
       ? request
       : request
         ? true
-        : (effectivePackageDetails.offerId != null && effectivePackageDetails.offerId > 0));
+        : (packageDetails.offerId != null && packageDetails.offerId > 0));
 
   useEffect(() => {
     if (!hasValidState) {
@@ -130,7 +111,7 @@ export const PaymentPage = () => {
       prepaymentInfo?.paymentType === "FullPricePayment" &&
       step === "paymentForm"
     ) {
-      setPaymentAmount(effectivePackageDetails!.price ?? 0);
+      setPaymentAmount(packageDetails.price ?? 0);
       setPaymentOption("payFull");
       setStep("paymentMethod");
       setSkippedFormForFullPayment(true);
@@ -162,7 +143,7 @@ export const PaymentPage = () => {
 
         {step === "paymentForm" && (
           <PaymentFormView
-            packageDetails={effectivePackageDetails!}
+            packageDetails={packageDetails}
             prepaymentInfo={prepaymentInfo}
             initialPaymentOption="pay"
             onSubmit={handleFormSubmit}
@@ -176,7 +157,7 @@ export const PaymentPage = () => {
         {step === "paymentMethod" && (
           isRemainingOnly ? (
             <RemainingPaymentStep
-              packageDetails={effectivePackageDetails!}
+              packageDetails={packageDetails}
               request={request!}
               selectedMethod={selectedMethod}
               onMethodChange={setSelectedMethod}
@@ -184,8 +165,7 @@ export const PaymentPage = () => {
             />
           ) : (
             <PaymentMethodStep
-              packageDetails={effectivePackageDetails!}
-              originalPrice={packageDetails!.price}
+              packageDetails={packageDetails}
               request={request}
               travelers={travelers}
               paymentAmount={paymentAmount}
@@ -243,7 +223,6 @@ function RemainingPaymentStep({
 
 function PaymentMethodStep({
   packageDetails,
-  originalPrice,
   request,
   travelers,
   paymentAmount,
@@ -253,7 +232,6 @@ function PaymentMethodStep({
   onBackClick,
 }: {
   packageDetails: PackageEntity;
-  originalPrice: number;
   request?: NormalizedRequestEntity | null;
   travelers: Travelers;
   paymentAmount: number;
@@ -267,15 +245,8 @@ function PaymentMethodStep({
   const { navigateToBookingResult } = useLanguageNavigate();
   const { mutateAsync: bookPackageAsync, isPending: isLoadingBooking } = useBookPackage();
 
-  // Full payment comparison uses the (possibly discounted) price shown in UI.
   const isFullPricePayment =
     paymentOption === "payFull" || paymentAmount >= packageDetails.price;
-
-  // Promo information comes from navigation state (My Packages flow).
-  const location = useLocation();
-  const state = location.state as PaymentPageState | null;
-  const promoCodeFromState = state?.promoCode;
-  const discountedFullPriceFromState = state?.discountedFullPrice;
 
   const paymentSystem: PaymentSystem = selectedMethod as PaymentSystem;
 
@@ -285,24 +256,13 @@ function PaymentMethodStep({
       return;
     }
 
-    // Backend should still see the original full package price,
-    // even if UI shows a discounted total.
-    const baseFullPrice = originalPrice;
-    const isPromoApplied =
-      !!promoCodeFromState && typeof discountedFullPriceFromState === "number";
-
-    // For full payment, if promo is applied, pay the discounted full price; otherwise original.
-    // For partial payment, respect the amount the user entered.
-    const amountToBePaid = isFullPricePayment
-      ? (isPromoApplied ? discountedFullPriceFromState! : baseFullPrice)
-      : paymentAmount;
+    const amountToBePaid = isFullPricePayment ? packageDetails.price : paymentAmount;
     const travelersList = [...travelers.adults, ...travelers.children];
 
     const bookInput: any = {
       requestId: request.id,
       cityId: packageDetails.city.id,
-      // Keep original (pre-discount) price so backend still knows full package price
-      price: baseFullPrice,
+      price: packageDetails.price,
       hotelId: packageDetails.hotel.id,
       travelAgencyId: packageDetails.travelAgency.id,
       offerId: packageDetails.offerId,
@@ -317,10 +277,6 @@ function PaymentMethodStep({
       travelers: travelersList,
       paymentSystem,
     };
-
-    if (promoCodeFromState) {
-      bookInput.promoCode = promoCodeFromState;
-    }
 
     if (packageDetails.destinationFlight?.departureDate) {
       bookInput.startDate = packageDetails.destinationFlight.departureDate;
