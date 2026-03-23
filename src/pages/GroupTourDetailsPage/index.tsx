@@ -51,6 +51,16 @@ export const GroupTourDetailsPage = () => {
     if (isFetched && tourId && !groupTour) {
       // If tour cannot be fetched (e.g. 404), go to home with Group Tours tab selected
       navigateTo('/?tab=group-tours', { replace: true });
+      return;
+    }
+
+    if (
+      isFetched &&
+      tourId &&
+      groupTour &&
+      (!Array.isArray(groupTour.roomTypes) || groupTour.roomTypes.length === 0)
+    ) {
+      navigateTo('/?tab=group-tours', { replace: true });
     }
   }, [isFetched, tourId, groupTour, navigateTo]);
 
