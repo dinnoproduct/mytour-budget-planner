@@ -42,9 +42,11 @@ const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
 export const GroupTourList = () => {
   const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
   const {
-    data: groupTours = [],
+    data: groupToursResponse,
     isLoading: isLoadingGroupTours,
-  } = useGroupToursList();
+  } = useGroupToursList({ page: null, limit: null });
+
+  const groupTours = groupToursResponse?.data ?? [];
 
   const isLoading =
     !groupTours.length &&
