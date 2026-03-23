@@ -40,7 +40,6 @@ export const BookingFlow = ({
     isLoadingTravelersModal,
     prepaymentInfo,
     validatePromoCode,
-    setPromoDiscountedPrice,
   } = useBookingFlow({
     initialView,
     packageDetails,
@@ -212,7 +211,6 @@ export const BookingFlow = ({
                   onNavigateToMyPackages={onNavigateToMyPackages}
                   onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
                   isLateCheckout={isLateCheckout}
-                  onPromoDiscountedPriceChange={setPromoDiscountedPrice}
                 />
               )}
 
@@ -271,7 +269,6 @@ export const BookingFlow = ({
               onNavigateToMyPackages={onNavigateToMyPackages}
               onSuccessClose={onNavigateToMyPackages ? () => onNavigateToMyPackages() : undefined}
               isLateCheckout={isLateCheckout}
-              onPromoDiscountedPriceChange={setPromoDiscountedPrice}
             />
           )}
 
