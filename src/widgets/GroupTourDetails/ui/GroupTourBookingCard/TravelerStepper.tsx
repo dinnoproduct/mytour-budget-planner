@@ -8,6 +8,7 @@ type TravelerStepperProps = {
   onChange: (n: number) => void
   label: string
   description?: string
+  isLocked?: boolean
 }
 
 export const TravelerStepper = ({
@@ -17,11 +18,12 @@ export const TravelerStepper = ({
   onChange,
   label,
   description,
+  isLocked,
 }: TravelerStepperProps) => {
   const clamped = Math.max(min, Math.min(max, value))
 
-  const isBackButtonDisabled = clamped <= min
-  const isForwardButtonDisabled = clamped >= max
+  const isBackButtonDisabled = !!isLocked || clamped <= min
+  const isForwardButtonDisabled = !!isLocked || clamped >= max
 
   return (
     <Flex align="center" justify="space-between" width="full">
@@ -36,29 +38,28 @@ export const TravelerStepper = ({
         )}
       </Flex>
       <Flex align="center" gap={2}>
-        <IconButton
+        <Button
           size="sm"
-          variant="solid"
+          variant="solid-gray"
           isDisabled={isBackButtonDisabled}
           onClick={() => onChange(clamped - 1)}
           aria-label="decrease"
           isActive={!isBackButtonDisabled}
-        >
-          <Icon name="remove" size="16" color="gray.500" />
-        </IconButton>
+          icon="remove"
+        />
         <Text size="sm" fontWeight="medium" minW="24px" textAlign="center">
           {clamped}
         </Text>
-        <IconButton
+        <Button
           size="sm"
-          variant="solid"
+          variant="solid-gray"
           isDisabled={isForwardButtonDisabled}
           onClick={() => onChange(clamped + 1)}
           aria-label="increase"
           isActive={!isForwardButtonDisabled}
-        >
-          <Icon name="add" size="16" color="gray.500" />
-        </IconButton>
+          icon="add"
+        />
+        
       </Flex>
     </Flex>
   )

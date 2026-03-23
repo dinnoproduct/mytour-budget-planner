@@ -10,18 +10,13 @@ import { useSetRecoilState } from 'recoil'
 import { bookingContextAtom } from '@/modules/packages/store/store'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 import { CURRENCY_MAP, LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
-import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import {
   getValidDepartures,
-  getLocalized,
-  formatDate,
 } from '../lib/utils'
-import { SectionTitle } from './GroupTourBookingCard/SectionTitle'
 import { TravelersSection } from './GroupTourBookingCard/TravelersSection'
 import { RoomTypeSection } from './GroupTourBookingCard/RoomTypeSection'
 import { DatesSection } from './GroupTourBookingCard/DatesSection'
 import { formatNumber } from '@/shared/utils'
-import { Loader } from '@/components/Loader/Loader'
 
 const MAX_INFANTS = 2
 
@@ -137,7 +132,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
       : undefined
   const childrenAgeText =
     travelersInfo && travelersInfo.childMaxAge
-      ? `${travelersInfo.infantMaxAge + 1}-${travelersInfo.childMaxAge} ${t('age')}`
+      ? `${travelersInfo.infantMaxAge}-${travelersInfo.childMaxAge} ${t('age')}`
       : undefined
   const infantsAgeText =
     travelersInfo && travelersInfo.infantMaxAge
@@ -172,6 +167,14 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
 
   const selectedDeparture: GroupTourDeparture | null =
     validDepartures[selectedDepartureIndex] ?? null
+
+  const isSingleSeatLeft = Number(selectedDeparture?.availableSeats ?? 0) === 1
+
+  useEffect(() => {
+    if (!isSingleSeatLeft) return
+    setAdults(1)
+    setChildren(0)
+  }, [isSingleSeatLeft])
   const canProceed =
     !noValidDepartures && selectedDeparture !== null && validationError === null
 
@@ -297,6 +300,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
               adultsAgeText={adultsAgeText}
               childrenAgeText={childrenAgeText}
               infantsAgeText={infantsAgeText}
+              controlsDisabled={isSingleSeatLeft}
             />
 
             {/* Room type */}

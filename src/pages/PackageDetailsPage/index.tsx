@@ -3,62 +3,55 @@ import {
   PackageImagesGallery,
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
-import {
-  useHotelPackagesSearchContext,
-} from "@entities/package";
-import {Loader, LoaderWithText } from "@/components/Loader/Loader.tsx";
+import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
+import { usePackagesSearchContext } from "@entities/package";
+import {Loader, LoaderWithText} from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
+import { useLanguageNavigate } from "../../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
-import {
-  HotelPackageDetails,
-  HotelPackageDetailsHeader,
-} from "@widgets/HotelPackageDetails";
 import { BookingDrawer } from "@shared/ui";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   bookingContextAtom,
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
-import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
 import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
 import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
-import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
+import { usePackage } from "@/entities/package/hooks/usePackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 import { useTranslation } from "react-i18next";
 
-export const HotelPackageDetailsPage = () => {
-  const { navigateBack, navigateToHome } = useLanguageNavigate();
+export const PackageDetailsPage = () => {
+  const { navigateBack, navigateToHome, navigateToPackages, navigateTo } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const setBookingContext = useSetRecoilState(bookingContextAtom);
-  const { t } = useTranslation();
   const {
     packageDetails,
-    childrenAges,
     isFetched,
+    childrenAges,
     generatedMultivendorOffers,
     mealPlans,
     loading,
-  } = useHotelPackage();
-  const { clearBookingDrawerData, isOpen: isOpenBookingDrawer } =
-    useBookingDrawer();
-
-  const { filteredHotelPackages } = useHotelPackagesSearchContext();
+  } = usePackage();
+  const { t } = useTranslation();
+  const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
+  const { uniqueImageUrls } = usePackageImages(packageDetails);
+  const { clearBookingDrawerData } = useBookingDrawer();
+
   const [isLateCheckout, setIsLateCheckout] =
     useRecoilState(isLateCheckoutAtom);
-
-  const { uniqueImageUrls } = usePackageImages(packageDetails);
 
   useEffect(() => {
     return () => {
@@ -71,7 +64,7 @@ export const HotelPackageDetailsPage = () => {
   useEffect(() => {
     if (packageDetails?.offerId && childrenAges) {
       setBookingContext({
-        packageDetails: packageDetails,
+        packageDetails,
         childrenAges,
         initialView: 'travelers',
       });
@@ -80,7 +73,7 @@ export const HotelPackageDetailsPage = () => {
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
-      handleBackClick();
+      navigateToPackages();
     }
   }, [packageDetails?.offerId, isFetched]);
 
@@ -99,11 +92,8 @@ export const HotelPackageDetailsPage = () => {
   };
 
   const handleBackClick = () => {
-    if (filteredHotelPackages?.length) {
-      navigateBack();
-    } else {
-      navigateToHome({ replace: true });
-    }
+    // Go back to HOME page with Packages tab selected
+    navigateTo('/?tab=packages', { replace: true });
   };
 
   useEffect(() => {
@@ -130,6 +120,8 @@ export const HotelPackageDetailsPage = () => {
     }
   }, [location.search, navigate]);
 
+  const { isOpen: isOpenBookingDrawer } = useBookingDrawer();
+
   if (!packageDetails?.offerId) {
     return <Box position="fixed" top="0" left="0" right="0" bottom="0" height="100%" width="100%" display="flex" justifyContent="center" alignItems="center"><LoaderWithText loading={true} title={t("loading.packages.title")} description={t("loading.packages.description")} /></Box>;
   }
@@ -139,7 +131,7 @@ export const HotelPackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="hotel" />
+      {/* <SharedHeader onBackClick={handleBackClick} title={t('packages')} /> */}
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
@@ -148,7 +140,7 @@ export const HotelPackageDetailsPage = () => {
       />
 
       <PackageDetailsLayout>
-        <HotelPackageDetailsHeader
+        <PackageDetailsHeader
           tourPackage={packageDetails}
           onMoreImagesClick={() => {
             handleLogEvent(0);
@@ -161,14 +153,17 @@ export const HotelPackageDetailsPage = () => {
           mt={{ md: "10" }}
           ref={containerRef}
         >
-          <HotelPackageDetails tourPackage={packageDetails} />
+          <PackageDetails
+            tourPackage={packageDetails}
+            isLateCheckout={isLateCheckout}
+          />
           <PriceSummaryCard
             tourPackage={packageDetails}
             ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
             containerRef={containerRef}
-            contentType="hotel"
+            contentType="package"
           />
         </Flex>
       </PackageDetailsLayout>
@@ -179,7 +174,6 @@ export const HotelPackageDetailsPage = () => {
         imageUrls={uniqueImageUrls}
         activeIndex={imageModalActiveIndex}
       />
-
       {isOpenBookingDrawer && (
         <BookingDrawer
           childrenAges={childrenAges}

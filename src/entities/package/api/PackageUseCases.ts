@@ -198,8 +198,8 @@ export class PackageUseCases {
   }
 
   // group tour
-  async getGroupTours() {
-    return this.groupTourService.getGroupTours()
+  async getGroupTours(params: { page?: number | null; limit?: number | null } | undefined) {
+    return this.groupTourService.getGroupTours(params)
   }
 
   async getGroupTourInfo(tourId: string) {

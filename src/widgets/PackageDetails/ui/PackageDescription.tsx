@@ -1,14 +1,15 @@
-import { Box, ListItem, UnorderedList } from '@chakra-ui/react'
+import { Box, Button, ListItem, UnorderedList } from '@chakra-ui/react'
 import { Text } from '@ui'
 import { DictionaryTypes, PACKAGE_FACILITY_ICON_MAP, PackageEntity, useDictionary } from '@entities/package'
 import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { LANGUAGE_PREFIX, LanguageName } from '@shared/model'
 import { useTranslation } from 'react-i18next'
 
 export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}) => {
-	const { i18n } = useTranslation()
+	const { i18n, t } = useTranslation()
 	const { data: facilities=[] } = useDictionary('FacilityDictionary' as DictionaryTypes.FacilityDictionary)
+	const [isExpanded, setIsExpanded] = useState(false)
 
 	const hotelFacilities = useMemo(() => {
 		if (!facilities.length || !tourPackage.hotel?.facilities) {
@@ -17,18 +18,33 @@ export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}
 
 		return facilities.filter(({ key }) => tourPackage.hotel?.facilities & key)
 
-	}, [facilities?.length, tourPackage.hotel?.facilities])
+	}, [facilities, tourPackage.hotel?.facilities])
 
 	const hotelDescription = useMemo(() => {
 		const key = `description${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity['hotel']
 		return tourPackage?.hotel[key] as string || ''
 	}, [i18n.language, tourPackage?.hotel.descriptionArm])
 
+	const shouldShowToggle = hotelDescription.trim().length > 220
+
 	return (
 		<Box mt="8" px={{base: '4', md: '0'}}>
-			<Text>
+			<Text noOfLines={isExpanded ? undefined : 4} transition="all 0.3s ease-in-out" height={'fit-content'}>
 				{hotelDescription}
 			</Text>
+			{shouldShowToggle && (
+				<Button
+					onClick={() => setIsExpanded((v) => !v)}
+					variant="text-blue"
+					mt="0"
+					mb="3"
+					p={0}
+					fontSize="sm"
+					alignSelf="flex-start"
+				>
+					{isExpanded ? t('readLess') : t('readMore')}
+				</Button>
+			)}
 
 			<UnorderedList
 			 listStyleType="none"

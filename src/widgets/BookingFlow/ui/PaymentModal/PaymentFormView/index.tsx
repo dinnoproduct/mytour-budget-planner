@@ -39,6 +39,8 @@ export const PaymentFormView = ({
 
   const isFullPaymentOnly =
     prepaymentInfo?.paymentType === 'FullPricePayment'
+  const isNoPrepaymentDisabled =
+    disableNoPrepayment || prepaymentInfo?.paymentType === 'PartialPricePayment'
   const minPrePaymentAmount =
     prepaymentInfo?.minimumAcceptablePayment ?? Math.floor(packageDetails.price / 2)
 
@@ -196,7 +198,7 @@ export const PaymentFormView = ({
             minPrePaymentAmount={minPrePaymentAmount}
             noPrepaymentData={noPrepaymentData}
             t={t}
-            disableNoPrepayment={disableNoPrepayment}
+            disableNoPrepayment={isNoPrepaymentDisabled}
           />
         )}
       </Flex>

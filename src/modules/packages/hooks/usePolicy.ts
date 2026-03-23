@@ -1,6 +1,6 @@
 import { langKeyAdapter } from '../../../utils/normalizers.ts';
 import type { PackagesFields } from '../data/packagesEnums.ts';
-import type { PackageEntity } from '@entities/package';
+import type { PackageEntity, GroupTourName } from '@entities/package';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelectedPackage } from './useSelectedPackage.ts';
@@ -15,13 +15,19 @@ const usePolicy = (packageOverride?: PackageEntity | null) => {
   const cancelationPolicy =
     `cancelationPolicy${langKeyAdapter[correctedTypeLanguage]}` as PackagesFields.cancelationPolicyArm;
 
+  // Group tours: travelAgencyPolicy has bookingPolicy/cancelationPolicy with Arm/Eng/Rus suffix
+  const groupTourBookingRaw = (packageData as any)?.travelAgencyPolicy?.[bookingPolicy] as string | undefined;
+  const groupTourCancelationRaw = (packageData as any)?.travelAgencyPolicy?.[cancelationPolicy] as string | undefined;
+
   const parsedPolicy = useMemo(() => {
-    if (!packageData?.[bookingPolicy]) {
+    // Use package/hotel field first, then fall back to group tour field
+    const rawSource = packageData?.[bookingPolicy] ?? groupTourBookingRaw;
+    if (!rawSource) {
       return { before: '', after: '', urlText: '', url: '' };
     }
 
     try {
-      const parsedBookingPolicy = JSON.parse(packageData[bookingPolicy]);
+      const parsedBookingPolicy = JSON.parse(rawSource);
 
       if (!parsedBookingPolicy?.policy) {
         return { before: '', after: '', urlText: '', url: '' };
@@ -51,9 +57,10 @@ const usePolicy = (packageOverride?: PackageEntity | null) => {
       console.error('Error parsing booking policy:', error);
       return { before: '', after: '', urlText: '', url: '' };
     }
-  }, [packageData?.[bookingPolicy], bookingPolicy]);
+  }, [packageData?.[bookingPolicy], groupTourBookingRaw, bookingPolicy]);
 
-  const cancelationPolicyContent = packageData?.[cancelationPolicy] ?? '';
+  // Package/hotel field first, then group tour field
+  const cancelationPolicyContent = packageData?.[cancelationPolicy] ?? groupTourCancelationRaw ?? '';
 
   return { parsedPolicy, cancelationPolicy, cancelationPolicyContent };
 };

@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { GroupTourTagBadge } from '@shared/ui/components/Badge'
-import { formatDate } from '@/widgets/PackageDetails/utils'
 import moment from 'moment'
+import { getValidDepartures } from '@/widgets/GroupTourDetails/lib/utils'
 
 const getLocalized = (obj: { arm?: string; eng?: string; rus?: string } | undefined, lang: string) =>
   obj?.[lang as keyof typeof obj] || obj?.eng || ''
@@ -41,13 +41,26 @@ export const GroupTourDetailsHeader = ({
     return `${shortMonthName} ${date.format("D")}`;
   };
 
-  const fromDate = useMemo(() => groupTour.departures[0]?.startDate
-  ? moment(groupTour.departures[0].startDate)
-  : null, [groupTour.departures]);
-  
-  const toDate = useMemo(() => groupTour.departures[0]?.endDate
-    ? moment(groupTour.departures[0].endDate)
-    : null, [groupTour.departures]);
+  const firstValidDeparture = useMemo(() => {
+    const valid = getValidDepartures(groupTour.departures);
+    return valid[0] ?? groupTour.departures[0];
+  }, [groupTour.departures]);
+
+  const fromDate = useMemo(
+    () =>
+      firstValidDeparture?.startDate
+        ? moment(firstValidDeparture.startDate)
+        : null,
+    [firstValidDeparture?.startDate],
+  );
+
+  const toDate = useMemo(
+    () =>
+      firstValidDeparture?.endDate
+        ? moment(firstValidDeparture.endDate)
+        : null,
+    [firstValidDeparture?.endDate],
+  );
 
   return (
     <Flex px={{ base: '4', md: '0' }}>
@@ -79,7 +92,8 @@ export const GroupTourDetailsHeader = ({
       {routeSummary && (
         <Box dangerouslySetInnerHTML={{ __html: routeSummary }} sx={{
           marginTop: 2,
-          '& p': { color: 'gray.800', fontSize: 'md', lineHeight: 'md', fontWeight: '400' },
+          '& p': { color: 'gray.800', fontSize: 'md', lineHeight: 'md', fontWeight: '500' },
+          '& strong': { fontWeight: '500' },
         }} />
         
       )}
@@ -89,11 +103,11 @@ export const GroupTourDetailsHeader = ({
             {formatDate(fromDate)} - {formatDate(toDate)}
           </Text>
         )}
-        {(fromDate && toDate) && groupTour.departures[0]?.duration && (
+        {(fromDate && toDate) && firstValidDeparture?.duration && (
           <Text size="sm" color="gray.800">•</Text>
         )}
-        {groupTour.departures[0]?.duration && (
-          <Text size="sm" color="gray.800">{t('daysQuantity.other', {day: groupTour.departures[0]?.duration})}</Text>
+        {firstValidDeparture?.duration && (
+          <Text size="sm" color="gray.800">{t('daysQuantity.other', {day: firstValidDeparture.duration})}</Text>
           )}
         </Flex>
       </Flex>

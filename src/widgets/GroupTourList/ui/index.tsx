@@ -3,32 +3,54 @@ import { Box, Flex, Grid, GridItem } from "@chakra-ui/react";
 import {
   useGroupToursList,
   useHotelPackagesSearchContext,
+  type GroupTourEntity,
 } from "@entities/package";
-import { useMemo } from "react";
+
 import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
 
+const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
+  if (groupTour?.status?.toLowerCase() !== "active") return false;
+
+  const departures = groupTour.departures ?? [];
+  if (!departures.length) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const hasValidDeparture = departures.some((departure) => {
+    if (departure.availableSeats <= 0) return false;
+
+    if (departure.bookingDeadline) {
+      const deadline = new Date(departure.bookingDeadline);
+      return deadline > today;
+    }
+
+    if (departure.startDate) {
+      const start = new Date(departure.startDate);
+      start.setHours(0, 0, 0, 0);
+      return start > today;
+    }
+
+    return false;
+  });
+
+  return hasValidDeparture;
+};
+
 export const GroupTourList = () => {
   const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
   const {
-    data: groupTours = [],
+    data: groupToursResponse,
     isLoading: isLoadingGroupTours,
-    isFetching: isFetchingGroupTours,
-  } = useGroupToursList();
+  } = useGroupToursList({ page: null, limit: null });
 
-  const isLoading = useMemo(
-    () =>
-      isLoadingGroupTours ||
-      isFetchingGroupTours ||
-      (!groupTours.length && isLoadingFilteredHotelPackages),
-    [
-      isLoadingGroupTours,
-      isFetchingGroupTours,
-      groupTours.length,
-      isLoadingFilteredHotelPackages,
-    ],
-  );
+  const groupTours = groupToursResponse?.data ?? [];
+
+  const isLoading =
+    !groupTours.length &&
+    (isLoadingGroupTours || isLoadingFilteredHotelPackages);
 
   const generateLink = (groupTourId: string) => {
     return `/group-tour/${groupTourId}`;
@@ -70,16 +92,16 @@ export const GroupTourList = () => {
           autoRows="1fr"
           w="100%"
         >
-          {groupTours.map((groupTour) => (
-            <GridItem key={groupTour.id} w="100%" h="100%">
-              <GroupTourCard
-                groupTour={groupTour}
-                link={generateLink(groupTour.id)}
-                w="100%"
-                h="100%"
-              />
-            </GridItem>
-          ))}
+          {groupTours.map((groupTour) =>
+            isGroupTourVisible(groupTour) ? (
+              <GridItem key={groupTour.id} w="100%" h="100%">
+                <GroupTourCard
+                  groupTour={groupTour}
+                  link={generateLink(groupTour.id)}
+                />
+              </GridItem>
+            ) : null,
+          )}
         </Grid>
       )}
     </Layout>

@@ -3,55 +3,62 @@ import {
   PackageImagesGallery,
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
-import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
-import { usePackagesSearchContext } from "@entities/package";
-import {Loader, LoaderWithText} from "@/components/Loader/Loader.tsx";
+import {
+  useHotelPackagesSearchContext,
+} from "@entities/package";
+import {Loader, LoaderWithText } from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLanguageNavigate } from "../hooks/useLanguageNavigate";
+import { useLanguageNavigate } from "../../hooks/useLanguageNavigate";
 import { useBreakpoint } from "@shared/hooks";
+import {
+  HotelPackageDetails,
+  HotelPackageDetailsHeader,
+} from "@widgets/HotelPackageDetails";
 import { BookingDrawer } from "@shared/ui";
-import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   bookingContextAtom,
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
+import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
 import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
 import { metaEvents } from "@/shared/configs/metaEvents";
 import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
-import { usePackage } from "@/entities/package/hooks/usePackage";
+import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 import { useTranslation } from "react-i18next";
 
-export const PackageDetailsPage = () => {
+export const HotelPackageDetailsPage = () => {
   const { navigateBack, navigateToHome } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const setBookingContext = useSetRecoilState(bookingContextAtom);
+  const { t } = useTranslation();
   const {
     packageDetails,
-    isFetched,
     childrenAges,
+    isFetched,
     generatedMultivendorOffers,
     mealPlans,
     loading,
-  } = usePackage();
-  const { t } = useTranslation();
-  const { filteredPackages } = usePackagesSearchContext();
+  } = useHotelPackage();
+  const { clearBookingDrawerData, isOpen: isOpenBookingDrawer } =
+    useBookingDrawer();
+
+  const { filteredHotelPackages } = useHotelPackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
-  const { uniqueImageUrls } = usePackageImages(packageDetails);
-  const { clearBookingDrawerData } = useBookingDrawer();
-
   const [isLateCheckout, setIsLateCheckout] =
     useRecoilState(isLateCheckoutAtom);
+
+  const { uniqueImageUrls } = usePackageImages(packageDetails);
 
   useEffect(() => {
     return () => {
@@ -64,7 +71,7 @@ export const PackageDetailsPage = () => {
   useEffect(() => {
     if (packageDetails?.offerId && childrenAges) {
       setBookingContext({
-        packageDetails,
+        packageDetails: packageDetails,
         childrenAges,
         initialView: 'travelers',
       });
@@ -92,7 +99,7 @@ export const PackageDetailsPage = () => {
   };
 
   const handleBackClick = () => {
-    if (filteredPackages?.length) {
+    if (filteredHotelPackages?.length) {
       navigateBack();
     } else {
       navigateToHome({ replace: true });
@@ -123,8 +130,6 @@ export const PackageDetailsPage = () => {
     }
   }, [location.search, navigate]);
 
-  const { isOpen: isOpenBookingDrawer } = useBookingDrawer();
-
   if (!packageDetails?.offerId) {
     return <Box position="fixed" top="0" left="0" right="0" bottom="0" height="100%" width="100%" display="flex" justifyContent="center" alignItems="center"><LoaderWithText loading={true} title={t("loading.packages.title")} description={t("loading.packages.description")} /></Box>;
   }
@@ -134,7 +139,7 @@ export const PackageDetailsPage = () => {
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
-      <SharedHeader onBackClick={handleBackClick} packageType="package" />
+      {/* <SharedHeader onBackClick={handleBackClick} packageType="hotel" /> */}
 
       <PackageImagesGallery
         imageUrls={uniqueImageUrls}
@@ -143,7 +148,7 @@ export const PackageDetailsPage = () => {
       />
 
       <PackageDetailsLayout>
-        <PackageDetailsHeader
+        <HotelPackageDetailsHeader
           tourPackage={packageDetails}
           onMoreImagesClick={() => {
             handleLogEvent(0);
@@ -156,17 +161,14 @@ export const PackageDetailsPage = () => {
           mt={{ md: "10" }}
           ref={containerRef}
         >
-          <PackageDetails
-            tourPackage={packageDetails}
-            isLateCheckout={isLateCheckout}
-          />
+          <HotelPackageDetails tourPackage={packageDetails} />
           <PriceSummaryCard
             tourPackage={packageDetails}
             ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
             containerRef={containerRef}
-            contentType="package"
+            contentType="hotel"
           />
         </Flex>
       </PackageDetailsLayout>
@@ -177,6 +179,7 @@ export const PackageDetailsPage = () => {
         imageUrls={uniqueImageUrls}
         activeIndex={imageModalActiveIndex}
       />
+
       {isOpenBookingDrawer && (
         <BookingDrawer
           childrenAges={childrenAges}

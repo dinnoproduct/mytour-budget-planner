@@ -174,6 +174,7 @@ export const UserPackages = () => {
         index={tab}
         onChange={handleTabChange}
         groupAlign="flex-start"
+        isDisabled={isLoadingUserRequests}
       >
         {!activeRequests?.length ? (
           <UpcomingTabEmptyState isLoading={isLoadingUserRequests} />

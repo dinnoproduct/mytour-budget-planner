@@ -1,71 +1,56 @@
-import { useCallback, useEffect, useState } from 'react'
-import { type StoryApiResponse, type StoryGroup } from '../types'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { type StoriesApiResponse, type StoryGroup } from '../types'
 import { STORIES_ENDPOINT } from '../constants'
+import { LANGUAGE_NAME_MAP } from '@shared/model'
+import type { LanguageName } from '@shared/model'
 
 export const useStoriesData = () => {
   const [storyGroups, setStoryGroups] = useState<StoryGroup[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const groupStories = useCallback((data: StoryApiResponse[]): StoryGroup[] => {
-    const map = new Map<number, StoryGroup>()
-
-    data.forEach((item) => {
-      const { story, storySet } = item
-
-      if (!story?.isActive || !storySet?.isActive) {
-        return
-      }
-
-      if (!map.has(storySet.id)) {
-        map.set(storySet.id, {
-          storySet,
-          stories: []
-        })
-      }
-
-      const group = map.get(storySet.id)
-
-      if (group) {
-        group.stories.push(story)
-      }
-    })
-
-    return Array.from(map.values())
-      .map((group) => ({
-        storySet: group.storySet,
-        stories: [...group.stories].sort(
-          (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
-        )
-      }))
-      .sort(
-        (a, b) =>
-          (a.storySet.displayOrder ?? 0) - (b.storySet.displayOrder ?? 0)
-      )
-  }, [])
+  const { i18n } = useTranslation()
 
   useEffect(() => {
     let isMounted = true
 
     const loadStories = async () => {
-      setIsLoading(true)
+      if (!storyGroups.length) {
+        setIsLoading(true)
+      }
       setError(null)
 
+      const contentLanguage =
+        LANGUAGE_NAME_MAP[i18n.language as LanguageName] ?? 'am'
+
       try {
-        const response = await fetch(STORIES_ENDPOINT)
+        const response = await fetch(STORIES_ENDPOINT, {
+          headers: {
+            'Platform': 'web',
+            'Content-Language': contentLanguage,
+          },
+        })
 
         if (!response.ok) {
           throw new Error('Failed to fetch stories')
         }
 
-        const payload: StoryApiResponse[] = await response.json()
+        const payload: StoriesApiResponse = await response.json()
 
         if (!isMounted) {
           return
         }
 
-        const grouped = groupStories(payload)
-        setStoryGroups(grouped)
+        const groups: StoryGroup[] = (payload.storySets ?? [])
+          .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+          .map(({ stories, ...storySet }) => ({
+            storySet,
+            stories: [...stories].sort(
+              (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0),
+            ),
+          }))
+
+        setStoryGroups(groups)
       } catch (err) {
         if (isMounted) {
           setError((err as Error).message)
@@ -82,7 +67,7 @@ export const useStoriesData = () => {
     return () => {
       isMounted = false
     }
-  }, [groupStories])
+  }, [i18n.language])
 
   return { storyGroups, isLoading, error }
 }

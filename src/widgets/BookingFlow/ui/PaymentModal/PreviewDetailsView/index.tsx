@@ -721,7 +721,7 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
         index: number,
       ) => (
         <ListItem key={index} as={HStack} flexDirection={isNewLine ? "column" : "row"} alignItems={isNewLine ? "flex-start" : "center"} spacing="2" width="full">
-          <Text fontWeight="normal" size="sm" flexShrink={0}>
+          <Text fontWeight={isNewLine ? "semibold" : "normal"} size="sm" flexShrink={0}>
             {key}
           </Text>
 
@@ -758,8 +758,12 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
           {value && isNewLine && (
              <Text
              textAlign="left"
-             fontWeight="semibold"
+             fontWeight="normal"
              size="sm"
+             sx={{
+              '& p': { color: 'gray.800', fontSize: 'sm', lineHeight: 'sm', fontWeight: '500' },
+              '& strong': { fontSize: 'sm', lineHeight: 'sm', fontWeight: '500', color: 'gray.800',  },
+             }}
              textDecoration={isStrikethrough ? "line-through" : "none"}
              color={
                isDiscount

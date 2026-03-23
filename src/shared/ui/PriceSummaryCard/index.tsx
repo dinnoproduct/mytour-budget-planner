@@ -29,9 +29,12 @@ export const PriceSummaryCard = ({
       if (containerRef?.current && isMd) {
         const layoutTop = containerRef.current.getBoundingClientRect().top;
 
-        if (layoutTop <= 40 && !isFixed) {
+        // When the content block scrolls past a certain point,
+        // fix the price card so the whole section stays visible,
+        // similar to the group tour booking card behavior.
+        if (layoutTop <= 100 && !isFixed) {
           setIsFixed(true);
-        } else if (layoutTop > 40 && isFixed) {
+        } else if (layoutTop > 100 && isFixed) {
           setIsFixed(false);
         }
       }
@@ -157,7 +160,7 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
       gridTemplateRows="auto"
       gridTemplateColumns="1fr"
       position={isFixed ? "fixed" : "static"}
-      top={isFixed ? "40px" : "auto"}
+      top={isFixed ? "90px" : "auto"}
     >
       {children}
     </Grid>

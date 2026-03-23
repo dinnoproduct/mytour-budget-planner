@@ -42,10 +42,35 @@ export const DatesSection = ({
           flexWrap="nowrap"
           overflowX="auto"
           gap={2}
+          pb={{ base: 0, md: 3 }}
           sx={{
-            scrollbarWidth: 'none',
+            // base (mobile): no scrollbar at all
+            scrollbarWidth: { base: 'none', md: 'none' },
             msOverflowStyle: 'none',
-            '&::-webkit-scrollbar': { display: 'none' },
+            '&::-webkit-scrollbar': {
+              height: { base: 0, md: '6px' },
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'transparent',
+              borderRadius: '999px',
+            },
+            // desktop hover: bring back colors so it becomes visible
+            '@media (hover: hover)': {
+              '&:hover': {
+                scrollbarWidth: 'thin',
+                msOverflowStyle: 'auto',
+              },
+              '&:hover::-webkit-scrollbar-track': {
+                backgroundColor: 'gray.200',
+              },
+              '&:hover::-webkit-scrollbar-thumb': {
+                backgroundColor: 'gray.400',
+              },
+            },
           }}
         >
           {validDepartures.map((d, i) => (

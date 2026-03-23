@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import { Layout } from '../Layouts'
 import { HotelSearchForm } from '../HotelSearchForm'
@@ -9,14 +9,13 @@ import {
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
 
-const MAIN_TAB_STORAGE_KEY = 'mainSearchTabIndex'
-
 interface CombinedSearchViewProps {
   containerProps?: any
   contentProps?: any
   variant?: PackageSearchVariant
   showTabs?: boolean
   setHotel?: (index: number) => void
+  initialTab?: number
 }
 
 export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
@@ -24,7 +23,8 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
   contentProps,
   variant = 'centered',
   showTabs = true,
-  setHotel
+  setHotel,
+  initialTab,
 }) => {
   const {
     isAllowedSearchRoute: isHotelSearchView,
@@ -36,18 +36,10 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
   } = usePackagesSearchContext()
 
   const baseIndex = isPackageSearchView ? 1 : 0
-  const [defaultTabIndex] = useState(() => {
-    if (typeof window === 'undefined') return baseIndex
-    const saved = window.sessionStorage.getItem(MAIN_TAB_STORAGE_KEY)
-    const parsed = saved !== null ? Number(saved) : NaN
-    return !Number.isNaN(parsed) ? parsed : baseIndex
-  })
+  const defaultTabIndex = initialTab ?? baseIndex
 
   const handleTabChange = (index: number) => {
     setHotel?.(index)
-    if (typeof window !== 'undefined') {
-      window.sessionStorage.setItem(MAIN_TAB_STORAGE_KEY, String(index))
-    }
     if (index === 1 && isHotelSearchView) {
       navigateToDefaultHotelSearch()
     } else if (index === 0 && isPackageSearchView) {
@@ -55,8 +47,6 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
     } 
   }
 
-  // Apply saved tab side‑effects (navigation, setHotel) on mount so
-  // UI behaves the same as if user had clicked that tab.
   useEffect(() => {
     handleTabChange(defaultTabIndex)
     // eslint-disable-next-line react-hooks/exhaustive-deps
