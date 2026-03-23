@@ -184,15 +184,20 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                onRemainingPaymentClick={(request) =>
+                onRemainingPaymentClick={(request, promo) => {
+                  const isNotPaidOrReserved =
+                    request.status === RequestStatus.NotPaid ||
+                    request.status === RequestStatus.Reserved;
                   navigateToPayment({
                     state: {
-                      mode: "remainingOnly",
+                      mode: isNotPaidOrReserved ? undefined : "remainingOnly",
                       request,
                       packageDetails: transformRequestToPackage(request),
+                      discountedFullPrice: promo?.discountedFullPrice,
+                      promoCode: promo?.code,
                     },
-                  })
-                }
+                  });
+                }}
                 isLoadingRemainingPayment={
                   currentRequestId === request.id && isLoadingRemainingPayment
                 }
@@ -217,6 +222,16 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
+                onRemainingPaymentClick={(request, promo) =>
+                  navigateToPayment({
+                    state: {
+                      request,
+                      packageDetails: transformRequestToPackage(request),
+                      discountedFullPrice: promo?.discountedFullPrice,
+                      promoCode: promo?.code,
+                    },
+                  })
+                }
                 onCancelClick={handleCancelClick}
                 status={RequestsGroupStatus.Incomplete}
                 onContinueClick={handleContinueClick}

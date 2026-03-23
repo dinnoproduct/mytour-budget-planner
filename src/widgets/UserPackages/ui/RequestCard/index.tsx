@@ -1,34 +1,25 @@
-import {
-  Box,
-  type BoxProps,
-  Flex,
-  ListItem,
-  MenuItem as ChakraMenuItem,
-  type MenuItemProps,
-  UnorderedList,
-  VStack
-} from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import React, { type ReactNode, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { LANGUAGE_PREFIX } from '@shared/model'
 import { type Language } from '@widgets/Header/model'
-import { Button, Icon, Text, Tooltip } from '@ui'
 import {
   type DictionaryTypes,
   type PackageCity,
   type PackageCountry,
   RequestStatus,
-  useDictionary
+  useDictionary,
 } from '@entities/package'
 import {
-  type DetailsListItemProps,
   type RequestCardProps,
-  type RequestCardStatus
+  type RequestCardStatus,
 } from '@widgets/UserPackages/ui/RequestCard/types.ts'
-import { capitalize, formatNumber } from '@shared/utils'
-import moment from 'moment'
-import { ImagesSlider } from './ImagesSlider'
 import { RequestsGroupStatus } from '@widgets/UserPackages/ui/types.ts'
+import { useRequestPromoCode } from './useRequestPromoCode'
+import { Layout } from './RequestCardLayout.tsx'
+import { RequestCardMainInfo } from './RequestCardMainInfo.tsx'
+import { RequestCardPromoToggle } from './RequestCardPromoToggle.tsx'
+import { RequestCardPromoModal } from './RequestCardPromoModal.tsx'
+import { RequestCardActions } from './RequestCardActions.tsx'
 
 export const RequestCard = ({
   request,
@@ -42,7 +33,7 @@ export const RequestCard = ({
   ...props
 }: RequestCardProps) => {
   const { i18n, t } = useTranslation()
-
+  const promo = useRequestPromoCode(request, t)
   const { data: roomTypes = [] } = useDictionary(
     'RoomTypeDictionary' as DictionaryTypes.RoomTypeDictionary
   )
@@ -137,196 +128,44 @@ export const RequestCard = ({
 
   return (
     <Layout {...props}>
-      <Box flex="1">
-        {' '}
-        {/* Main content takes available space */}
-        <ImagesSlider
-          images={request.hotel.images}
-          starsCount={request.hotel.stars}
-          status={request.status as RequestCardStatus}
-          showBadge={showBadge}
-        />
-        <Box py="4" px="4">
-          <Text color="gray.800" size="sm" fontWeight="semibold" noOfLines={1}>
-            {packageName}
-          </Text>
+      <RequestCardMainInfo
+        request={request}
+        status={request.status as RequestCardStatus}
+        showBadge={showBadge}
+        packageName={packageName}
+        cityLabel={cityLabel}
+        countryLabel={countryLabel}
+        roomType={roomType}
+        foodType={foodType}
+        showNextPaymentFields={showNextPaymentFields}
+        totalTravelers={totalTravelers}
+        t={t}
+      />
 
-          <Text size="sm" color="gray.600" mt="1">
-            {cityLabel}, {countryLabel}
-          </Text>
+      <RequestCardPromoToggle
+        showNotPaidButton={showNotPaidButton}
+        promo={promo}
+        t={t}
+      />
 
-          <UnorderedList mx="0" mt="4" spacing="2">
-            <DetailsListItem
-              label={t`price`}
-              value={`${formatNumber(request.price)} ֏`}
-              tooltipText={request.remainingPaymentAmount !== 0 ? t`priceChangeText` : undefined}
-            />
-            
-            {showNextPaymentFields && (
-              <>
-                <DetailsListItem
-                  label={t`paidAmount`}
-                  value={`${formatNumber(request.prePaymentAmount)} ֏`}
-                />
-                <DetailsListItem
-                  label={t`remainingPayment`}
-                  value={`${formatNumber(request.remainingPaymentAmount)} ֏`}
-                />
-                <DetailsListItem
-                  label={t`nextPayment`}
-                  value={moment(request.nextPaymentDate).format('DD.MM.YYYY')}
-                />
-              </>
-            )}
+      <RequestCardPromoModal
+        showNotPaidButton={showNotPaidButton}
+        promo={promo}
+        t={t}
+      />
 
-            <DetailsListItem
-              label={capitalize(t`traveler`)}
-              value={totalTravelers}
-            />
-            <DetailsListItem label={t`room`} value={roomType} />
-
-            {foodType && (
-              <DetailsListItem label={t`mealType`} value={foodType} />
-            )}
-
-            <DetailsListItem
-              label={t`travelDates`}
-              value={`${moment(request.startDate).format('DD.MM.YYYY')} - ${moment(request.endDate).format('DD.MM.YYYY')}`}
-              isWithoutBorder
-            />
-          </UnorderedList>
-        </Box>
-      </Box>
-
-      {/* {isReserved && (
-        <Box px="4" pb="4">
-          <Text size="sm" color="gray.600" mt="1">
-            {t`reserved`}
-          </Text>
-        </Box>
-      )} */}
-
-      {(showRemainingPaymentButton ||
-        showContinueButton ||
-        showNotPaidButton) && (
-        <VStack px="4" pb="4" align="stretch" spacing="2">
-          {showRemainingPaymentButton ? (
-            <Button
-              width="full"
-              onClick={() =>
-                onRemainingPaymentClick && onRemainingPaymentClick(request)
-              }
-              isLoading={isLoadingRemainingPayment}
-            >
-              {t`pay`} ({formatNumber(request.remainingPaymentAmount)} ֏)
-            </Button>
-          ) : null}
-
-          {showContinueButton ? (
-            <Button
-              width="full"
-              onClick={() => onContinueClick && onContinueClick(request)}
-              isLoading={isLoadingContinue}
-            >
-              {t`continue`}
-            </Button>
-          ) : null}
-
-          {showNotPaidButton ? (
-            <Button
-              width="full"
-              onClick={() => onContinueClick && onContinueClick(request)}
-              isLoading={isLoadingContinue}
-            >
-              {t`pay`}
-            </Button>
-          ) : null}
-        </VStack>
-      )}
+      <RequestCardActions
+        request={request}
+        promo={promo}
+        t={t}
+        showRemainingPaymentButton={showRemainingPaymentButton}
+        showContinueButton={showContinueButton}
+        showNotPaidButton={showNotPaidButton}
+        onRemainingPaymentClick={onRemainingPaymentClick}
+        onContinueClick={onContinueClick}
+        isLoadingRemainingPayment={isLoadingRemainingPayment}
+        isLoadingContinue={isLoadingContinue}
+      />
     </Layout>
   )
 }
-
-const DetailsListItem = ({
-  isWithoutBorder,
-  label,
-  value,
-  tooltipText
-}: DetailsListItemProps) => (
-  <ListItem
-    display="flex"
-    justifyContent="space-between"
-    borderBottom={isWithoutBorder ? 'none' : '1px solid'}
-    borderColor="gray.100"
-    pb={isWithoutBorder ? '0' : '2'}
-  >
-    <Text size="xs" color="gray.500">
-      {label}
-    </Text>
-
-    <Flex align="center">
-      <Text size="xs" color="gray.800" ml="2" align="end">
-        {value}
-      </Text>
-
-      {tooltipText ? (
-        <Tooltip label={tooltipText} hasArrow shouldWrapChildren>
-          <Flex
-            justify="center"
-            align="center"
-            ml="1"
-            p={1}
-            borderRadius="full"
-            cursor="pointer"
-          >
-            <Icon name="info-outline" size="16" color="gray.800" />
-          </Flex>
-        </Tooltip>
-      ) : null}
-    </Flex>
-  </ListItem>
-)
-
-const MenuItem = (props: MenuItemProps) => (
-  <ChakraMenuItem
-    bgColor="white"
-    height="40px"
-    px="4"
-    _hover={{
-      bgColor: 'gray.50'
-    }}
-    _active={{
-      bgColor: 'gray.100'
-    }}
-    _focus={{
-      bgColor: 'gray.100'
-    }}
-    _focusVisible={{
-      bgColor: 'gray.100'
-    }}
-    fontSize="text-md"
-    lineHeight="text-md"
-    {...props}
-  />
-)
-
-const Layout = ({
-  children,
-  ...props
-}: { children: ReactNode | ReactNode[] } & BoxProps) => (
-  <Box
-    display="flex"
-    flexDirection="column"
-    justifyContent="space-between" // Ensures the top and bottom parts are spaced out
-    maxWidth="362px"
-    width="full"
-    rounded="lg"
-    overflow="hidden"
-    border="1px solid"
-    borderColor="gray.200"
-    height="100%" // Ensures the layout fills available height
-    {...props}
-  >
-    {children}
-  </Box>
-)

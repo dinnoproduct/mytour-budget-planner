@@ -56,6 +56,7 @@ export const PreviewDetailsView = ({
   onBackClick,
   renderAsPage = false,
   isLateCheckout: isLateCheckoutProp,
+  onPromoDiscountedPriceChange,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [promoCodeValue, setPromoCodeValue] = useState("");
@@ -91,6 +92,19 @@ export const PreviewDetailsView = ({
     onUsePromocode();
   };
 
+  const handleRemovePromoCode = () => {
+    setPromoCodeStatus({
+      isApplied: false,
+      code: "",
+      discount: 0,
+      finalAmount: 0,
+    });
+    setHasPromoCode(false);
+    setPromoCodeValue("");
+    setPromoCodeError(null);
+    onPromoDiscountedPriceChange?.(null);
+  };
+
   const handlePromoCodeInputChange = (value: string) => {
     setPromoCodeValue(value);
     // Clear error when user starts typing
@@ -119,17 +133,13 @@ export const PreviewDetailsView = ({
       {
         onSuccess: (data: any) => {
           if (data.success && data.isValid) {
-            console.log(
-              `Promo code applied! Discount: ${data.discount}, Final Amount: ${data.finalAmount}`,
-            );
-
-            // Update promo code status
             setPromoCodeStatus({
               isApplied: true,
               code: promoCodeValue.trim(),
               discount: data.discount,
               finalAmount: data.finalAmount,
             });
+            onPromoDiscountedPriceChange?.(data.finalAmount);
           } else {
             console.log(`Promo code error: ${data.message}`);
 
@@ -163,15 +173,6 @@ export const PreviewDetailsView = ({
     return errorMessages[errorCode] || t`promoCodeInvalid`;
   };
 
-  /**
-   * Calculates promo code discount distribution based on user input and total price
-   *
-   * Rules:
-   * 1. If userInput == totalPrice: Discount applied to whole price (single payment)
-   * 2. If userInput != totalPrice:
-   *    - Case 1: Remainder <= discount / 2: Full discount to first payment (single payment)
-   *    - Case 2: Remainder > discount / 2: Half discount to first, half to second payment
-   */
   const calculatePromoCodePayments = useMemo(() => {
     if (!promoCodeStatus.isApplied) {
       return {
@@ -181,13 +182,9 @@ export const PreviewDetailsView = ({
       };
     }
 
-    const totalPrice = packageDetails.price;
-    const userInput = paymentAmount || 0;
-    const discount = promoCodeStatus.discount;
     const finalAmount = promoCodeStatus.finalAmount;
 
-    // Case 1: User input equals total price (full payment)
-    if (userInput === totalPrice) {
+    if (isFullPricePayment) {
       return {
         firstPayment: finalAmount,
         secondPayment: 0,
@@ -195,33 +192,16 @@ export const PreviewDetailsView = ({
       };
     }
 
-    // Case 2: User input is different from total price (partial payment)
-    const remainder = totalPrice - userInput;
-
-    // Case 2a: Remainder <= discount / 2
-    // Apply full discount to first payment (single payment)
-    if (remainder <= discount / 2) {
-      return {
-        firstPayment: finalAmount,
-        secondPayment: 0,
-        isSinglePayment: true,
-      };
-    }
-
-    // Case 2b: Remainder > discount / 2
-    // Apply half discount to first payment, half to second payment
-    const halfDiscount = discount / 2;
-    const firstPayment = userInput - halfDiscount;
-    const secondPayment = remainder - halfDiscount;
+    const userInput = paymentAmount || 0;
+    const remainingBalance = finalAmount - userInput;
 
     return {
-      firstPayment,
-      secondPayment,
-      isSinglePayment: false,
+      firstPayment: userInput,
+      secondPayment: remainingBalance > 0 ? remainingBalance : 0,
+      isSinglePayment: remainingBalance <= 0,
     };
   }, [
     promoCodeStatus.isApplied,
-    promoCodeStatus.discount,
     promoCodeStatus.finalAmount,
     paymentAmount,
     packageDetails.price,
@@ -582,7 +562,7 @@ export const PreviewDetailsView = ({
             ]}
           />
           {/* PromoCode Section */}
-          {/* {paymentOption !== "noPrepayment" && (
+          {paymentOption !== "noPrepayment" && (
             <PromoCode
               isApplyButtonDisabled={isApplyButtonDisabled}
               handleApplyPromoCode={handleApplyPromoCode}
@@ -592,8 +572,9 @@ export const PreviewDetailsView = ({
               hasPromoCode={hasPromoCode}
               setHasPromoCode={setHasPromoCode}
               promoCodeStatus={promoCodeStatus}
+              onRemovePromo={handleRemovePromoCode}
             />
-          )} */}
+          )}
 
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection
