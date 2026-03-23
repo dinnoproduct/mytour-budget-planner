@@ -248,7 +248,12 @@ export interface GroupTourRouteItem {
   rus: string
 }
 
-
+export interface GroupTourPagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
 
 export interface GroupTourEntity {
   id: string
@@ -265,6 +270,12 @@ export interface GroupTourEntity {
   routeCountries: GroupTourRouteItem[]
   routeCities: GroupTourRouteItem[]
   createdAt: string
+}
+
+
+export interface GroupTourList {
+  data: GroupTourEntity[]
+  pagination: GroupTourPagination
 }
 
 // Group Tour detail (getGroupTourInfo)

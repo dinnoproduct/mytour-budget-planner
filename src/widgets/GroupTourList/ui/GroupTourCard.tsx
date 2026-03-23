@@ -216,6 +216,8 @@ const Layout = ({
     _hover={{ textTransform: "none" }}
     width="full"
     height="100%"
+    target="_blank"
+    rel="noopener noreferrer"
     {...props}
   >
     <Box
