@@ -18,7 +18,7 @@ export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}
 
 		return facilities.filter(({ key }) => tourPackage.hotel?.facilities & key)
 
-	}, [facilities?.length, tourPackage.hotel?.facilities])
+	}, [facilities, tourPackage.hotel?.facilities])
 
 	const hotelDescription = useMemo(() => {
 		const key = `description${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity['hotel']

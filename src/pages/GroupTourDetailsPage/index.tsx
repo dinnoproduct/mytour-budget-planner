@@ -29,7 +29,10 @@ export const GroupTourDetailsPage = () => {
   const imageUrls = useMemo(
     () =>
       groupTour?.gallery
-        .sort((a, b) => a.order - b.order)
+        .sort((a, b) => {
+          if (a.isMain === b.isMain) return a.order - b.order;
+          return a.isMain ? -1 : 1;
+        })
         .map((item) => item.url) ?? [],
     [groupTour?.gallery]
   );
@@ -47,6 +50,16 @@ export const GroupTourDetailsPage = () => {
   useEffect(() => {
     if (isFetched && tourId && !groupTour) {
       // If tour cannot be fetched (e.g. 404), go to home with Group Tours tab selected
+      navigateTo('/?tab=group-tours', { replace: true });
+      return;
+    }
+
+    if (
+      isFetched &&
+      tourId &&
+      groupTour &&
+      (!Array.isArray(groupTour.roomTypes) || groupTour.roomTypes.length === 0)
+    ) {
       navigateTo('/?tab=group-tours', { replace: true });
     }
   }, [isFetched, tourId, groupTour, navigateTo]);

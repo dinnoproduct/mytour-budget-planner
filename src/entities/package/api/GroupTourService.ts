@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import {
   type GroupTourEntity,
+  type GroupTourList,
   type GroupTourInfo,
   type CreateGroupTourOfferInput,
   type GroupTourOfferPrice,
@@ -32,11 +33,37 @@ export class GroupTourService {
     })
   }
 
-  async getGroupTours(): Promise<GroupTourEntity[]> {
-    return this.request<GroupTourEntity[]>({
-      url: '/getGroupTours',
+  async getGroupTours(params?: { page?: number | null; limit?: number | null }): Promise<GroupTourList> {
+    const searchParams = new URLSearchParams()
+    if (params?.page) {
+      searchParams.set('page', String(params.page))
+    }
+    if (params?.limit) {
+      searchParams.set('limit', String(params.limit))
+    }
+
+    const query = searchParams.toString()
+    const url = query ? `/getGroupTours?${query}` : '/getGroupTours'
+
+    const response = await this.request<GroupTourList | GroupTourEntity[]>({
+      url,
       version: 'V2'
     })
+
+    // Backward compatibility: normalize old array response into paginated shape.
+    if (Array.isArray(response)) {
+      return {
+        data: response,
+        pagination: {
+          page: 1,
+          limit: response.length,
+          total: response.length,
+          totalPages: 1,
+        },
+      }
+    }
+
+    return response
   }
 
   async getGroupTourInfo(tourId: string): Promise<GroupTourInfo> {
