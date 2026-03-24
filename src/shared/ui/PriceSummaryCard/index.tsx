@@ -1,4 +1,15 @@
-import { Box, Flex, Grid } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Grid,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, Text } from "@ui";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
@@ -10,6 +21,16 @@ import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { type PriceSummaryCardProps, type LayoutProps } from "./types.ts";
 import { metaEvents } from "@/shared/configs/metaEvents";
+import { PriceChangeSubscriptionForm } from "./PriceChangeSubscriptionForm";
+
+
+enum LayoutAreas {
+  CONFIG = "config",
+  AVAILABILITY = "availability",
+  LATE_CHECKOUT = "lateCheckout",
+  TOTAL_PRICE = "totalPrice",
+  SUBSCRIBE_CTA = "subscribeCTA",
+}
 
 export const PriceSummaryCard = ({
   tourPackage,
@@ -21,20 +42,17 @@ export const PriceSummaryCard = ({
   const { isMd } = useBreakpoint();
 
   const [isFixed, setIsFixed] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { openBookingDrawer } = useBookingDrawer();
 
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef?.current && isMd) {
-        const layoutTop = containerRef.current.getBoundingClientRect().top;
-
-        // When the content block scrolls past a certain point,
-        // fix the price card so the whole section stays visible,
-        // similar to the group tour booking card behavior.
-        if (layoutTop <= 100 && !isFixed) {
+        const layoutTop = containerRef.current.getBoundingClientRect().top
+        if (layoutTop <= 90 && !isFixed) {
           setIsFixed(true);
-        } else if (layoutTop > 100 && isFixed) {
+        } else if (layoutTop > 90 && isFixed) {
           setIsFixed(false);
         }
       }
@@ -70,7 +88,7 @@ export const PriceSummaryCard = ({
       num_nights: Math.ceil(
         (new Date(tourPackage.checkout).getTime() -
           new Date(tourPackage.checkin).getTime()) /
-          (1000 * 60 * 60 * 24),
+        (1000 * 60 * 60 * 24),
       ),
       num_adults: tourPackage.adultTravelers,
       num_children: tourPackage.childrenTravelers + tourPackage.infantTravelers,
@@ -84,51 +102,99 @@ export const PriceSummaryCard = ({
   };
 
   return (
-    <Layout isFixed={isFixed} {...props}>
-      <CardSectionLayout
-        px="4"
-        gridArea="totalPrice"
-        position={{
-          base: "fixed",
-          md: "static",
-        }}
-        bottom="0"
-        left="0"
-        right="0"
-        width="full"
-      >
-        <Flex width="full" justify="space-between" align="center" height="28px">
-          <Text size="sm">{t`total`} :</Text>
+    <>
+      <Layout isFixed={isFixed} {...props}>
+        <CardSectionLayout
+          px="4"
+          gridArea={LayoutAreas.TOTAL_PRICE}
+          position={{
+            base: "fixed",
+            md: "static",
+          }}
+          bottom="0"
+          left="0"
+          right="0"
+          width="full"
+        >
+          <Flex width="full" justify="space-between" align="center" height="28px">
+            <Text size="sm">{t`total`} :</Text>
 
-          <Flex>
-            <Text size="lg" fontWeight="bold" ml="2">
-              {numberWithCommaNormalizer(tourPackage?.price)} ֏
-            </Text>
-            <Flex align="center" ml="2">
-              {tourPackage ? (
-                <>
-                  <Icon name="approximate" size="20" color="gray.500" />
+            <Flex>
+              <Text size="lg" fontWeight="bold" ml="2">
+                {numberWithCommaNormalizer(tourPackage?.price)} ֏
+              </Text>
+              <Flex align="center" ml="2">
+                {tourPackage ? (
+                  <>
+                    <Icon name="approximate" size="20" color="gray.500" />
 
-                  <Text size="sm" color="gray.500" ml="0.5">
-                    {CURRENCY_MAP[tourPackage.currency]}{" "}
-                    {formatNumber(parseFloat(tourPackage.priceInCurrency))}
-                  </Text>
-                </>
-              ) : null}
+                    <Text size="sm" color="gray.500" ml="0.5">
+                      {CURRENCY_MAP[tourPackage.currency]}{" "}
+                      {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+                    </Text>
+                  </>
+                ) : null}
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
+          <Button mt="4" width="full" onClick={handleBookClick} size="lg">
+            {t`selectRoomAndMealType`}
+          </Button>
+        </CardSectionLayout>
+        <SubscribeCTAButton onOpen={onOpen} />
+      </Layout>
 
-        <Button mt="4" width="full" onClick={handleBookClick} size="lg">
-          {t`selectRoomAndMealType`}
-        </Button>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size={{ base: "full", md: "md" }} >
+        <ModalOverlay />
+        <ModalContent mx={{ base: 0, md: 4 }} sx={{ borderRadius: "2xl" }}>
+          <ModalHeader bgColor="blue.500" p={4} sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <Text size="lg" fontWeight="bold" color="white" textAlign="left">
+              {t("priceSummaryCard.subscribeModalTitle")}
+            </Text>
+            <Icon name="close" size="24" color="white" cursor="pointer" onClick={onClose} />
+          </ModalHeader>
+          <ModalBody p={0}>
+            <PriceChangeSubscriptionForm />
+          </ModalBody>
+        </ModalContent>
+      </Modal >
+    </>
+  );
+};
 
 
-        WRM WRM
-      </CardSectionLayout>
-      WRM WRM
-
-    </Layout>
+const SubscribeCTAButton = ({ onOpen }: { onOpen: () => void }) => {
+  const { t } = useTranslation();
+  return (
+    <Box
+      gridArea={LayoutAreas.SUBSCRIBE_CTA}
+      mt={{ base: 0, md: 6 }}
+      width="full"
+      bgColor="gray.700"
+      color="white"
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      cursor="pointer"
+      transition="all 0.2s ease-in-out"
+      _hover={{ bgColor: "gray.800" }}
+      _active={{ bgColor: "gray.900" }}
+      borderRadius={'lg'}
+      p={4}
+      onClick={onOpen}
+    >
+      <Flex display="flex" alignItems="center" gap={2}>
+        <Box backgroundColor="green.500" borderRadius="full" display="flex" alignItems="center" p={1}>
+          <Icon name="fluent-alert" size="16" color="white" />
+        </Box>
+        <Text size="sm" fontWeight={'semibold'} color="white">{t("priceSummaryCard.subscribeCTA")}</Text>
+      </Flex>
+      <Icon name="chevron-right" size="16" color="white" />
+    </Box>
   );
 };
 
@@ -140,26 +206,24 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
       borderY="1px solid"
       borderX={{
         base: "none",
-        md: "1px solid",
+        md: "none",
       }}
-      bgColor="white"
-      borderTopColor="gray.100"
-      borderLeftColor={{ base: "transparent", md: "gray.100" }}
-      borderRightColor={{ base: "transparent", md: "gray.100" }}
-      borderBottomColor="gray.100"
+      borderColor="transparent"
       rounded={{ base: "none", md: "md" }}
       templateAreas={{
         base: `
-        "availability"
-        "config"
-        "lateCheckout"
-        "totalPrice"
+        "${LayoutAreas.AVAILABILITY}"
+        "${LayoutAreas.CONFIG}"
+        "${LayoutAreas.LATE_CHECKOUT}"
+        "${LayoutAreas.TOTAL_PRICE}"
+        "${LayoutAreas.SUBSCRIBE_CTA}"
         `,
         md: `
-        "config"
-        "availability"
-        "lateCheckout"
-        "totalPrice"
+        "${LayoutAreas.CONFIG}"
+        "${LayoutAreas.AVAILABILITY}"
+        "${LayoutAreas.LATE_CHECKOUT}"
+        "${LayoutAreas.TOTAL_PRICE}"
+        "${LayoutAreas.SUBSCRIBE_CTA}"
         `,
       }}
       gridTemplateRows="auto"
