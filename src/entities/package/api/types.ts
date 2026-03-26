@@ -114,6 +114,9 @@ export type BookPackageInput = {
   phoneNumber: string
   amountToBePaid: number
   paymentSystem: PaymentSystem
+  promoCode?: string
+  bookingType?: number
+  foodType?: number
 }
 
 export interface ReservePackageInput extends BookPackageInput {}
