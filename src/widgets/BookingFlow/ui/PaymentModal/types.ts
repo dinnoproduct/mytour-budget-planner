@@ -46,7 +46,6 @@ export type PaymentModalProps = {
   paymentOption?: PaymentOption
   onNavigateToMyPackages?: (queryParams?: string) => void
   onSuccessClose?: () => void
-  onPromoDiscountedPriceChange?: (price: number | null) => void
 }
 
 export type PaymentFormViewProps = {
@@ -101,7 +100,6 @@ export type PreviewDetailsViewProps = {
   renderAsPage?: boolean
   /** When provided (e.g. from booking flow), used for late checkout display; else falls back to packageDetails.lateCheckout then atom */
   isLateCheckout?: boolean
-  onPromoDiscountedPriceChange?: (price: number | null) => void
 }
 
 export type LayoutProps = {
@@ -199,6 +197,5 @@ export type PromoCodeProps = {
     code: string;
     discount: number;
     finalAmount: number;
-  },
-  onRemovePromo?: () => void,
+  }
 }

@@ -54,7 +54,6 @@ export const useBookingFlow = ({
     children: []
   })
   const notesJson = useRef<any>('')
-  const [promoDiscountedPrice, setPromoDiscountedPrice] = useState<number | null>(null)
 
   useEffect(() => {
     setRequest(initialRequest || null)
@@ -461,15 +460,6 @@ export const useBookingFlow = ({
     [initialRequest]
   )
 
-  // If backend or previous step stored a discounted full price in request notes,
-  // prefer that for prepayment calculation; otherwise fall back to package price.
-  const discountedFullPrice =
-    (initialRequest?.notes as any)?.discountedFullPrice ??
-    packageDetails?.price ??
-    0
-
-  const effectiveFullPrice = promoDiscountedPrice ?? discountedFullPrice
-
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
@@ -482,7 +472,7 @@ export const useBookingFlow = ({
             : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: (packageDetails as any)?.checkin ?? '',
-      fullPrice: effectiveFullPrice,
+      fullPrice: packageDetails?.price ?? 0,
       calculationSource: isDraftRequest ? 'search' : 'myBookings'
     },
     {
@@ -504,8 +494,7 @@ export const useBookingFlow = ({
     closeModal,
     handleTravelersChange,
     prepaymentInfo,
-    validatePromoCode,
-    setPromoDiscountedPrice
+    validatePromoCode
   }
 }
 
