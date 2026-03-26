@@ -4,16 +4,23 @@ import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 
 export const useGroupToursList = (
 	params?: { page?: number | null; limit?: number | null },
-	options?: Omit<UseQueryOptions<GroupTourList>, 'queryFn' | 'queryKey'>
+	options?: Omit<
+		UseQueryOptions<GroupTourList>,
+		'queryFn' | 'queryKey'
+	>
 ) => {
 	return useQuery({
-	  ...(options || {}),
+		...(options || {}),
 		refetchInterval: false,
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		staleTime: PACKAGE_REQUEST_REFETCH_INTERVAL,
-		queryFn: () => packageUseCases.getGroupTours(params),
 		queryKey: ['group-tours', params?.page ?? null, params?.limit ?? null],
+		queryFn: () =>
+			packageUseCases.getGroupTours({
+				page: params?.page ?? null,
+				limit: params?.limit ?? null,
+			}),
 	})
 }
