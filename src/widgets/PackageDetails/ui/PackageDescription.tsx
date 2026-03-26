@@ -6,9 +6,9 @@ import { useMemo, useState } from 'react'
 import { LANGUAGE_PREFIX, LanguageName } from '@shared/model'
 import { useTranslation } from 'react-i18next'
 
-export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}) => {
+export const PackageDescription = ({ tourPackage }: { tourPackage: PackageEntity }) => {
 	const { i18n, t } = useTranslation()
-	const { data: facilities=[] } = useDictionary('FacilityDictionary' as DictionaryTypes.FacilityDictionary)
+	const { data: facilities = [] } = useDictionary('FacilityDictionary' as DictionaryTypes.FacilityDictionary)
 	const [isExpanded, setIsExpanded] = useState(false)
 
 	const hotelFacilities = useMemo(() => {
@@ -28,7 +28,7 @@ export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}
 	const shouldShowToggle = hotelDescription.trim().length > 220
 
 	return (
-		<Box mt="8" px={{base: '4', md: '0'}}>
+		<Box mt="8" px={0}>
 			<Text noOfLines={isExpanded ? undefined : 4} transition="all 0.3s ease-in-out" height={'fit-content'}>
 				{hotelDescription}
 			</Text>
@@ -47,16 +47,16 @@ export const PackageDescription = ({ tourPackage }: {tourPackage: PackageEntity}
 			)}
 
 			<UnorderedList
-			 listStyleType="none"
-			 spacing="4"
-			 mx="0"
-			 mt="4"
+				listStyleType="none"
+				spacing="4"
+				mx="0"
+				mt="4"
 			>
-				{hotelFacilities?.map(({key, value}) => (
+				{hotelFacilities?.map(({ key, value }) => (
 					<ListItem key={key}>
 						<SummaryCard
 							iconName={PACKAGE_FACILITY_ICON_MAP[key]}
-						  children={value}
+							children={value}
 						/>
 					</ListItem>
 				))}
