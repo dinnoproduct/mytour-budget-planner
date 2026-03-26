@@ -28,6 +28,7 @@ export const PaginationBadge = ({
   </Flex>
 )
 
+
 export const HotelStarBadge = ({
   starsCount,
   ...props
