@@ -11,7 +11,7 @@ export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
   const mapQuery = encodeURIComponent(`${tourPackage.hotel?.name}, ${tourPackage.city.nameEng}, ${tourPackage.city.country.nameEng}`)
 
   return (
-    <Flex direction="column" mt={{ base: 4, md: 0 }} gap={{ base: "2", md: "6" }}>
+    <Flex direction="column" mt={{ base: 2, md: 0 }} gap={{ base: "2", md: "6" }}>
       <CardSectionLayout>
         <SectionLayout
           title={t`hotelDetails`}

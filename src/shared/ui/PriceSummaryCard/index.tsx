@@ -10,6 +10,9 @@ import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
 import { type PriceSummaryCardProps, type LayoutProps } from "./types.ts";
 import { metaEvents } from "@/shared/configs/metaEvents";
+import { getPluralForm } from "@/shared/helpers/getPluralForm.ts";
+import { SectionLayout } from "./SectionLayout.tsx";
+import { DictionaryTypes, useDictionary } from "@entities/package";
 
 export const PriceSummaryCard = ({
   tourPackage,
@@ -19,6 +22,9 @@ export const PriceSummaryCard = ({
 }: PriceSummaryCardProps) => {
   const { t } = useTranslation();
   const { isMd } = useBreakpoint();
+  const { data: foodTypes = [] } = useDictionary(
+    "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
+  );
 
   const [isFixed, setIsFixed] = useState(false);
 
@@ -70,7 +76,7 @@ export const PriceSummaryCard = ({
       num_nights: Math.ceil(
         (new Date(tourPackage.checkout).getTime() -
           new Date(tourPackage.checkin).getTime()) /
-          (1000 * 60 * 60 * 24),
+        (1000 * 60 * 60 * 24),
       ),
       num_adults: tourPackage.adultTravelers,
       num_children: tourPackage.childrenTravelers + tourPackage.infantTravelers,
@@ -83,8 +89,42 @@ export const PriceSummaryCard = ({
     openBookingDrawer();
   };
 
+  const formatShortLocalizedDate = (rawDate?: string) => {
+    if (!rawDate) return "";
+    const date = new Date(rawDate);
+    if (Number.isNaN(date.getTime())) return "";
+
+    const longMonthName = date
+      .toLocaleString("en-US", { month: "long" })
+      .toLowerCase();
+    const shortMonthName = t(`${longMonthName}Short`);
+    return `${shortMonthName} ${date.getDate()}`;
+  };
+
+  const durationDateRange = [formatShortLocalizedDate(tourPackage.checkin), formatShortLocalizedDate(tourPackage.checkout)]
+    .filter(Boolean)
+    .join(" - ");
+  const mealTypeLabel =
+    foodTypes.find(({ key }) => key === tourPackage.foodType)?.value ??
+    String(tourPackage.foodType ?? "");
+
   return (
     <Layout isFixed={isFixed} {...props}>
+      <CardSectionLayout
+        px="4"
+        gridArea="config"
+        width="full"
+        borderBottomRadius={{ base: "md !important", md: "0 !important" }}
+        borderTopRadius={"md !important"}
+      >
+        <SectionLayout
+          listItems={[
+            { key: t`travelers`, value: `${tourPackage.adultTravelers} ${t`adult`}${tourPackage.childrenTravelers > 0 ? `, ${tourPackage.childrenTravelers} ${t(getPluralForm(tourPackage.childrenTravelers, 'children')).toLowerCase()}` : ''}` },
+            { key: t`duration`, value: durationDateRange },
+            { key: t`mealType`, value: mealTypeLabel }
+          ]}
+        />
+      </CardSectionLayout>
       <CardSectionLayout
         px="4"
         gridArea="totalPrice"
@@ -96,6 +136,8 @@ export const PriceSummaryCard = ({
         left="0"
         right="0"
         width="full"
+        borderBottomRadius={"md !important"}
+        borderTopRadius={{ base: "md !important", md: "0 !important" }}
       >
         <Flex width="full" justify="space-between" align="center" height="28px">
           <Text size="sm">{t`total`} :</Text>
@@ -123,7 +165,7 @@ export const PriceSummaryCard = ({
           {t`selectRoomAndMealType`}
         </Button>
       </CardSectionLayout>
-    </Layout>
+    </Layout >
   );
 };
 
@@ -138,6 +180,7 @@ export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
         md: "1px solid",
       }}
       bgColor="white"
+      overflow="hidden"
       borderTopColor="gray.100"
       borderLeftColor={{ base: "transparent", md: "gray.100" }}
       borderRightColor={{ base: "transparent", md: "gray.100" }}
