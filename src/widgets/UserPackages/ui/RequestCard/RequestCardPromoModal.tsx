@@ -61,4 +61,3 @@ export const RequestCardPromoModal = ({ showNotPaidButton, promo, t }: Props) =>
     </Modal>
   )
 }
-

@@ -2,6 +2,7 @@ import { Flex, ListItem } from '@chakra-ui/react'
 import { Icon, Text, Tooltip } from '@ui'
 import type { DetailsListItemProps } from './types'
 
+
 export const DetailsListItem = ({
   isWithoutBorder,
   label,

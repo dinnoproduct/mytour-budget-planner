@@ -20,4 +20,3 @@ export const Layout = ({ children, ...props }: Props) => (
     {children}
   </Box>
 )
-

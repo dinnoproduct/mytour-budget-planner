@@ -34,4 +34,3 @@ export const RequestCardPromoToggle = ({ showNotPaidButton, promo, t }: Props) =
     </Flex>
   )
 }
-

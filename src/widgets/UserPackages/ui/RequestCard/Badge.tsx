@@ -53,3 +53,4 @@ export const HotelStarBadge = ({
     </Text>
   </Flex>
 )
+

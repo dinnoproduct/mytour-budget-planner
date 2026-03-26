@@ -41,3 +41,4 @@ export type ImagesSliderProps = {
   status: RequestCardStatus
   showBadge?: boolean
 }
+
