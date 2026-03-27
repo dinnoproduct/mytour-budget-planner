@@ -426,5 +426,7 @@
   "loading.packages.title": "Խնդրում ենք սպասել",
   "loading.packages.description": "Մենք փնտրում ենք լավագույն առաջարկները Ձեզ համար",
   "loading.mypackages.title": "Խնդրում ենք սպասել",
-  "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են"
+  "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են",
+  "destination": "Ուղղություն",
+  "month": "Ամիս"
 }

@@ -426,5 +426,7 @@
   "loading.packages.title": "Пожалуйста, подождите",
   "loading.packages.description": "Мы ищем лучшие предложения для вас",
   "loading.mypackages.title": "Пожалуйста, подождите",
-  "loading.mypackages.description": "Информация о бронированиях обновляется."
+  "loading.mypackages.description": "Информация о бронированиях обновляется.",
+  "destination": "Направление",
+  "month": "Месяц"
 }

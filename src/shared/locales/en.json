@@ -426,5 +426,7 @@
   "loading.packages.title": "Please wait",
   "loading.packages.description": "We are searching for the best offers for you",
   "loading.mypackages.title": "Please wait",
-  "loading.mypackages.description": "Bookings information is being updated."
+  "loading.mypackages.description": "Bookings information is being updated.",
+  "destination": "Destination",
+  "month": "Month"
 }
