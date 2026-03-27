@@ -9,6 +9,22 @@ import {
 import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
+import { useSearchParams } from "react-router-dom";
+
+const MONTH_INDEX_BY_KEY: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11
+}
 
 const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
   if (groupTour?.status?.toLowerCase() !== "active") return false;
@@ -40,6 +56,7 @@ const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
 };
 
 export const GroupTourList = () => {
+  const [searchParams] = useSearchParams();
   const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
   const {
     data: groupToursResponse,
@@ -47,16 +64,54 @@ export const GroupTourList = () => {
   } = useGroupToursList({ page: null, limit: null });
 
   const groupTours = groupToursResponse?.data ?? [];
+  const selectedMonthKeys = (searchParams.get("groupTourMonths") || "")
+    .split(",")
+    .map(item => item.trim())
+    .filter(Boolean)
+    .map(item => {
+      const [yearRaw, monthRaw] = item.split("-")
+      const year = Number(yearRaw)
+      if (!Number.isFinite(year)) {
+        return null
+      }
+
+      const numericMonth = Number(monthRaw)
+      if (Number.isFinite(numericMonth) && numericMonth >= 1 && numericMonth <= 12) {
+        return `${year}-${String(numericMonth).padStart(2, "0")}`
+      }
+
+      // Backward compatibility for old format: YYYY-monthName
+      const monthIndex = MONTH_INDEX_BY_KEY[monthRaw?.toLowerCase() || ""]
+      if (monthIndex === undefined) {
+        return null
+      }
+      return `${year}-${String(monthIndex + 1).padStart(2, "0")}`
+    })
+    .filter((item): item is string => item !== null);
+
+  const filteredGroupTours =
+    selectedMonthKeys.length === 0
+      ? groupTours
+      : groupTours.filter(groupTour =>
+        (groupTour.departures ?? []).some(departure => {
+          const rawDate = departure.startDate || departure.endDate
+          if (!rawDate) return false
+
+          // API format example: 2026-07-01T00:00:00 -> month key: 2026-07
+          const departureMonthKey = rawDate.slice(0, 7)
+          return selectedMonthKeys.includes(departureMonthKey)
+        })
+      );
 
   const isLoading =
-    !groupTours.length &&
+    !filteredGroupTours.length &&
     (isLoadingGroupTours || isLoadingFilteredHotelPackages);
 
   const generateLink = (groupTourId: string) => {
     return `/group-tour/${groupTourId}`;
   };
 
-  if (!isLoading && !groupTours?.length) {
+  if (!isLoading && !filteredGroupTours?.length) {
     return <EmptyView />;
   }
 
@@ -69,7 +124,7 @@ export const GroupTourList = () => {
             md: "repeat(3, 1fr)",
             lg: "repeat(4, 1fr)",
           }}
-          rowGap={{base: 6, md: 10}}
+          rowGap={{ base: 6, md: 10 }}
           columnGap={6}
           justifyItems="center"
           w="100%"
@@ -78,21 +133,21 @@ export const GroupTourList = () => {
         </Grid>
       )}
 
-      {!isLoading && groupTours.length > 0 && (
+      {!isLoading && filteredGroupTours.length > 0 && (
         <Grid
           templateColumns={{
             base: "repeat(1, 1fr)",
             md: "repeat(3, 1fr)",
             lg: "repeat(4, 1fr)",
           }}
-          rowGap={{base: 6, md: 10}}
+          rowGap={{ base: 6, md: 10 }}
           columnGap={6}
           justifyItems="stretch"
           alignItems="stretch"
           autoRows="1fr"
           w="100%"
         >
-          {groupTours.map((groupTour) =>
+          {filteredGroupTours.map((groupTour) =>
             isGroupTourVisible(groupTour) ? (
               <GridItem key={groupTour.id} w="100%" h="100%">
                 <GroupTourCard
@@ -122,7 +177,7 @@ const SkeletonLoading = ({ carsCount = 8 }) =>
     ));
 
 const Layout = ({ children }: LayoutProps) => (
-  <Box pt={{ base: 0, md: 5 }} pb={{ base: 16, md: 24}} width="100%">
+  <Box pt={{ base: 0, md: 5 }} pb={{ base: 16, md: 24 }} width="100%">
     <Box px={{ base: 4, md: 10 }}>
       <Flex
         gap={6}

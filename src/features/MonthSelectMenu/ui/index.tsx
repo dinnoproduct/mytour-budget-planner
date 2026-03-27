@@ -139,8 +139,8 @@ export const MonthSelectMenu: React.FC<MonthSelectMenuProps> = ({
       </MenuButton>
       <MenuList
         maxWidth={{ base: 'full', md: '420px' }}
-        width={{ base: 'calc(100% - 32px)', md: '420px' }}
-        minW="auto"
+        width={{ base: 'calc(100vw - 32px)', md: '420px' }}
+        minW={{ base: 'calc(100vw - 32px)', md: "auto" }}
         mx={{ base: 4, md: 0 }}
         p="3"
       >
@@ -161,7 +161,11 @@ export const MonthSelectMenu: React.FC<MonthSelectMenuProps> = ({
             if (canGoNextYear) {
               setSelectedYear(prev => prev + 1)
             }
-          }} variant="solid-gray" isDisabled={!canGoNextYear} isActive={canGoNextYear} />
+          }}
+            variant="solid-gray"
+            isDisabled={!canGoNextYear}
+            isActive={canGoNextYear}
+          />
 
         </Flex>
         <SimpleGrid columns={3} spacing="2">
@@ -198,9 +202,9 @@ export const MonthSelectMenu: React.FC<MonthSelectMenuProps> = ({
           })}
         </SimpleGrid>
         <Button mt="4" size="lg" width="full" onClick={() => onApply(pendingSelections)}>
-          {t`apply`}
+          {t`confirm`}
         </Button>
       </MenuList>
-    </Menu>
+    </Menu >
   )
 }

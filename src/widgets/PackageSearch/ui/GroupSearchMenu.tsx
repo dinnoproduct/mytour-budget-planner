@@ -9,6 +9,22 @@ import {
 import { GroupTourSearchForm } from './GroupTourSearchForm'
 import { useTranslation } from 'react-i18next'
 import type { MonthSelection } from '@features/MonthSelectMenu'
+import { useSearchParams } from 'react-router-dom'
+
+const MONTH_INDEX_BY_KEY: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11
+}
 
 export const GroupSearchMenu = ({
   onTabChange,
@@ -18,6 +34,7 @@ export const GroupSearchMenu = ({
   showTabs = true
 }: any) => {
   const { t } = useTranslation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedTab, setSelectedTab] = useState(2)
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([])
   const [selectedMonths, setSelectedMonths] = useState<MonthSelection[]>([])
@@ -33,6 +50,26 @@ export const GroupSearchMenu = ({
   const handleTabChange = (index: number) => {
     setSelectedTab(index)
     onTabChange?.(index)
+  }
+
+  const handleSearch = () => {
+    const monthsParam = selectedMonths
+      .map(item => {
+        const monthIndex = MONTH_INDEX_BY_KEY[item.month] ?? 0
+        return `${item.year}-${String(monthIndex + 1).padStart(2, '0')}`
+      })
+      .join(',')
+
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', 'group-tours')
+    if (monthsParam.length > 0) {
+      nextParams.set('groupTourMonths', monthsParam)
+    } else {
+      nextParams.delete('groupTourMonths')
+    }
+    setSearchParams(nextParams, { replace: true })
+
+    onFormClose?.()
   }
 
   const summary = useMemo(() => {
@@ -111,7 +148,7 @@ export const GroupSearchMenu = ({
               selectedMonths={selectedMonths}
               onDestinationChange={setSelectedDestinations}
               onMonthChange={setSelectedMonths}
-              onSearch={onFormClose}
+              onSearch={() => { handleSearch() }}
             />
           </VStack>
         </Box>
