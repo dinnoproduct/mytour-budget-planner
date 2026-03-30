@@ -32,6 +32,7 @@
   "augustShort": "Авг",
   "availableSeats": "Доступно {{count}} мест",
   "availableSeatsTooltip": "Продленное пребывание в номере до отправления в аэропорт",
+  "groupTourDeparturesTooltipText": "Групповой тур также доступен.",
   "back": "Назад",
   "faq.back": "Назад",
   "backHomePage": "Вернуться на главную",
@@ -84,6 +85,7 @@
   "class": "Класс",
   "cleanliness": "Чистота",
   "clear": "Удалить",
+  "clearAll": "Удалить все",
   "close": "Закрыть",
   "confirm": "Подтвердить",
   "confirmNights.few": "Подтвердить ({{count}} ночи)",
@@ -412,6 +414,9 @@
   "faq.cta.orWriteUs": "или напишите нам",
   "groupTourDetails": "Детали группового тура",
   "groupTours": "Групповые туры",
+  "groupToursTotalTours": "Всего {{total}} туров",
+  "groupToursEmptyFilterText": "По выбранным критериям не найдено групповых туров.",
+  "groupToursEmptyFilterTextAction": "Посмотреть все групповые туры",
   "groupTourDescriptionTitle": "Важно знать перед бронированием",
   "booking.step": "Шаг {{step}}/{{total}}",
   "noAvailableDepartures": "Нет доступных выездов",
@@ -426,5 +431,10 @@
   "loading.packages.title": "Пожалуйста, подождите",
   "loading.packages.description": "Мы ищем лучшие предложения для вас",
   "loading.mypackages.title": "Пожалуйста, подождите",
-  "loading.mypackages.description": "Информация о бронированиях обновляется."
+  "loading.mypackages.description": "Информация о бронированиях обновляется.",
+  "destination": "Направление",
+  "month": "Месяц",
+  "groupToursSort.closestDates": "Ближайшие даты",
+  "groupToursSort.newest": "Новые",
+  "groupToursSort.cheapest": "Самые дешевые"
 }

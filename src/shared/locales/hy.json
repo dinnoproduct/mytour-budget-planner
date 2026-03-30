@@ -32,6 +32,7 @@
   "augustShort": "Օգս",
   "availableSeats": "Հասանելի է {{count}} տեղ",
   "availableSeatsTooltip": "Հյուրանոցային համարը հասանելի կլինի նախքան օդանավակայան մեկնելը",
+  "groupTourDeparturesTooltipText": "Խմբային ճանապարհորդությունը նաև հասանելի է`",
   "back": "Վերադարձ",
   "backHomePage": "Վերադարձ Գլխավոր Էջ",
   "homePage": "Գլխավոր Էջ",
@@ -84,6 +85,7 @@
   "class": "Դաս",
   "cleanliness": "Մաքրություն",
   "clear": "Ջնջել",
+  "clearAll": "Ջնջել բոլորը",
   "close": "Փակել",
   "confirm": "Հաստատել",
   "confirmNights.few": "Confirm ({{count}} nights)",
@@ -412,6 +414,9 @@
   "faq.cta.orWriteUs": "կամ գրեք մեզ",
   "groupTourDetails": "Խմբային ճանապարհորդության մանրամասներ",
   "groupTours": "Խմբային տուրեր",
+  "groupToursTotalTours": "Ընդհանուր {{total}} տուր",
+  "groupToursEmptyFilterText": "Որոնմանը համապատասխան խմբային տուրեր չեն գտնվել",
+  "groupToursEmptyFilterTextAction": "Տեսնել բոլոր խմբային տուրերը",
   "groupTourDescriptionTitle": "Իմացեք նախքան ամրագրելը",
   "booking.step": "Քայլ {{step}}/{{total}}",
   "noAvailableDepartures": "Հասանելի մեկնումներ չկան",
@@ -426,5 +431,10 @@
   "loading.packages.title": "Խնդրում ենք սպասել",
   "loading.packages.description": "Մենք փնտրում ենք լավագույն առաջարկները Ձեզ համար",
   "loading.mypackages.title": "Խնդրում ենք սպասել",
-  "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են"
+  "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են",
+  "destination": "Ուղղություն",
+  "month": "Ամիս",
+  "groupToursSort.closestDates": "Ամենամոտ ամսաթվերը",
+  "groupToursSort.newest": "Նորագույն",
+  "groupToursSort.cheapest": "Ամենաէժանը"
 }

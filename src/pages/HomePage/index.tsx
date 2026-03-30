@@ -20,6 +20,7 @@ const TAB_NAME_TO_INDEX: Record<string, number> = {
   packages: 1,
   'group-tours': 2,
 }
+let isReloadCleanupDone = false
 
 export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -38,10 +39,14 @@ export const HomePage = () => {
         return
       }
       const name = TAB_NAMES[index] ?? 'hotels'
-      setSearchParams(prev => {
-        prev.set('tab', name)
-        return prev
-      }, { replace: true })
+      setSearchParams(
+        prev => {
+          const next = new URLSearchParams(prev)
+          next.set('tab', name)
+          return next
+        },
+        { replace: true }
+      )
     },
     [setSearchParams],
   )
@@ -65,6 +70,52 @@ export const HomePage = () => {
 
     return () => window.cancelAnimationFrame(frameId)
   }, [tabIndex])
+
+  useEffect(() => {
+    if (isReloadCleanupDone) {
+      return
+    }
+
+    const navigationEntry = performance.getEntriesByType('navigation')[0] as
+      | PerformanceNavigationTiming
+      | undefined
+
+    if (navigationEntry?.type !== 'reload') {
+      return
+    }
+
+    isReloadCleanupDone = true
+
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev)
+        next.delete('groupTourMonths')
+        next.delete('groupTourRouteCountries')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
+
+  useEffect(() => {
+    if (tabIndex === 2) {
+      return
+    }
+
+    if (!searchParams.get('groupTourMonths') && !searchParams.get('groupTourRouteCountries')) {
+      return
+    }
+
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev)
+        next.delete('groupTourMonths')
+        next.delete('groupTourRouteCountries')
+        return next
+      },
+      { replace: true }
+    )
+  }, [tabIndex, searchParams, setSearchParams])
 
   useEffect(() => {
     const scriptId = 'EmbedSocialHashtagScript'

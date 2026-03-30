@@ -32,6 +32,7 @@
   "augustShort": "Aug",
   "availableSeats": "Available seats {{count}}",
   "availableSeatsTooltip": "Extended hotel room access prior to departure for the airport",
+  "groupTourDeparturesTooltipText": "The group tour is also available.",
   "back": "Back",
   "backHomePage": "Back to Home Page",
   "homePage": "Home Page",
@@ -84,6 +85,7 @@
   "class": "Class",
   "cleanliness": "Cleanliness",
   "clear": "Clear",
+  "clearAll": "Clear all",
   "close": "Close",
   "confirm": "Confirm",
   "confirmNights.few": "Confirm ({{count}} nights)",
@@ -412,6 +414,9 @@
   "faq.cta.orWriteUs": "or write to us",
   "groupTourDetails": "Group tour details",
   "groupTours": "Group Tours",
+  "groupToursTotalTours": "Total {{total}} tours",
+  "groupToursEmptyFilterText": "No group tours found based on your filters",
+  "groupToursEmptyFilterTextAction": "See all group tours",
   "groupTourDescriptionTitle": "Know before you book",
   "booking.step": "Step {{step}}/{{total}}",
   "noAvailableDepartures": "No available departures",
@@ -426,5 +431,10 @@
   "loading.packages.title": "Please wait",
   "loading.packages.description": "We are searching for the best offers for you",
   "loading.mypackages.title": "Please wait",
-  "loading.mypackages.description": "Bookings information is being updated."
+  "loading.mypackages.description": "Bookings information is being updated.",
+  "destination": "Destination",
+  "month": "Month",
+  "groupToursSort.closestDates": "Closest Dates",
+  "groupToursSort.newest": "Newest",
+  "groupToursSort.cheapest": "Cheapest"
 }
