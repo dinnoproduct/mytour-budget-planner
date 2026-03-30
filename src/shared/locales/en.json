@@ -414,6 +414,7 @@
   "faq.cta.orWriteUs": "or write to us",
   "groupTourDetails": "Group tour details",
   "groupTours": "Group Tours",
+  "groupToursTotalTours": "Total {{total}} tours",
   "groupToursEmptyFilterText": "No group tours found based on your filters",
   "groupToursEmptyFilterTextAction": "See all group tours",
   "groupTourDescriptionTitle": "Know before you book",
@@ -432,5 +433,8 @@
   "loading.mypackages.title": "Please wait",
   "loading.mypackages.description": "Bookings information is being updated.",
   "destination": "Destination",
-  "month": "Month"
+  "month": "Month",
+  "groupToursSort.closestDates": "Closest Dates",
+  "groupToursSort.newest": "Newest",
+  "groupToursSort.cheapest": "Cheapest"
 }

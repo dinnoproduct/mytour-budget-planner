@@ -414,6 +414,7 @@
   "faq.cta.orWriteUs": "или напишите нам",
   "groupTourDetails": "Детали группового тура",
   "groupTours": "Групповые туры",
+  "groupToursTotalTours": "Всего {{total}} туров",
   "groupToursEmptyFilterText": "По выбранным критериям не найдено групповых туров.",
   "groupToursEmptyFilterTextAction": "Посмотреть все групповые туры",
   "groupTourDescriptionTitle": "Важно знать перед бронированием",
@@ -432,5 +433,8 @@
   "loading.mypackages.title": "Пожалуйста, подождите",
   "loading.mypackages.description": "Информация о бронированиях обновляется.",
   "destination": "Направление",
-  "month": "Месяц"
+  "month": "Месяц",
+  "groupToursSort.closestDates": "Ближайшие даты",
+  "groupToursSort.newest": "Новые",
+  "groupToursSort.cheapest": "Самые дешевые"
 }

@@ -414,6 +414,7 @@
   "faq.cta.orWriteUs": "կամ գրեք մեզ",
   "groupTourDetails": "Խմբային ճանապարհորդության մանրամասներ",
   "groupTours": "Խմբային տուրեր",
+  "groupToursTotalTours": "Ընդհանուր {{total}} տուր",
   "groupToursEmptyFilterText": "Որոնմանը համապատասխան խմբային տուրեր չեն գտնվել",
   "groupToursEmptyFilterTextAction": "Տեսնել բոլոր խմբային տուրերը",
   "groupTourDescriptionTitle": "Իմացեք նախքան ամրագրելը",
@@ -432,5 +433,8 @@
   "loading.mypackages.title": "Խնդրում ենք սպասել",
   "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են",
   "destination": "Ուղղություն",
-  "month": "Ամիս"
+  "month": "Ամիս",
+  "groupToursSort.closestDates": "Ամենամոտ ամսաթվերը",
+  "groupToursSort.newest": "Նորագույն",
+  "groupToursSort.cheapest": "Ամենաէժանը"
 }

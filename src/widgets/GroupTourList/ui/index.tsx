@@ -11,6 +11,8 @@ import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
 import { useSearchParams } from "react-router-dom";
 import { getValidDepartures } from "@/widgets/GroupTourDetails/lib/utils";
+import { Actions, GroupTourSortType } from "./Actions";
+import { useMemo, useState } from "react";
 
 const MONTH_INDEX_BY_KEY: Record<string, number> = {
   january: 0,
@@ -57,6 +59,7 @@ const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
 };
 
 export const GroupTourList = () => {
+  const [sortType, setSortType] = useState<GroupTourSortType>(GroupTourSortType.NEWEST);
   const [searchParams] = useSearchParams();
   const { isLoadingFilteredHotelPackages } = useHotelPackagesSearchContext();
   const {
@@ -121,15 +124,44 @@ export const GroupTourList = () => {
     return isMonthMatch && isDestinationMatch
   });
 
+  const sortedGroupTours = useMemo(() => {
+    const tours = [...filteredGroupTours]
+
+    if (sortType === GroupTourSortType.CHEAPEST) {
+      tours.sort((a, b) => (a.price ?? Number.MAX_SAFE_INTEGER) - (b.price ?? Number.MAX_SAFE_INTEGER))
+      return tours
+    }
+
+    if (sortType === GroupTourSortType.CLOSEST_DATES) {
+      tours.sort((a, b) => {
+        const aDate = getValidDepartures(a.departures ?? [])[0]?.startDate
+        const bDate = getValidDepartures(b.departures ?? [])[0]?.startDate
+
+        if (!aDate && !bDate) return 0
+        if (!aDate) return 1
+        if (!bDate) return -1
+        return new Date(aDate).getTime() - new Date(bDate).getTime()
+      })
+      return tours
+    }
+
+    return tours
+  }, [filteredGroupTours, sortType])
+
+  const visibleSortedGroupTours = useMemo(
+    () => sortedGroupTours.filter(isGroupTourVisible),
+    [sortedGroupTours]
+  )
+
   const isLoading =
-    !filteredGroupTours.length &&
+    !visibleSortedGroupTours.length &&
     (isLoadingGroupTours || isLoadingFilteredHotelPackages);
 
   const generateLink = (groupTourId: string) => {
     return `/group-tour/${groupTourId}`;
   };
 
-  if (!isLoading && !filteredGroupTours?.length) {
+  if (!isLoading && !visibleSortedGroupTours?.length) {
     return selectedRouteCountries.length > 0 || selectedMonthKeys.length > 0 ? <EmptyViewWithAfterSearch /> : <EmptyView />;
   }
 
@@ -151,31 +183,37 @@ export const GroupTourList = () => {
         </Grid>
       )}
 
-      {!isLoading && filteredGroupTours.length > 0 && (
-        <Grid
-          templateColumns={{
-            base: "repeat(1, 1fr)",
-            md: "repeat(3, 1fr)",
-            lg: "repeat(4, 1fr)",
-          }}
-          rowGap={{ base: 6, md: 10 }}
-          columnGap={6}
-          justifyItems="stretch"
-          alignItems="stretch"
-          autoRows="1fr"
-          w="100%"
-        >
-          {filteredGroupTours.map((groupTour) =>
-            isGroupTourVisible(groupTour) ? (
+      {!isLoading && visibleSortedGroupTours.length > 0 && (
+        <>
+
+          <Actions
+            totalTours={visibleSortedGroupTours.length}
+            sortType={sortType}
+            onSortChange={setSortType}
+          />
+          <Grid
+            templateColumns={{
+              base: "repeat(1, 1fr)",
+              md: "repeat(3, 1fr)",
+              lg: "repeat(4, 1fr)",
+            }}
+            rowGap={{ base: 6, md: 10 }}
+            columnGap={6}
+            justifyItems="stretch"
+            alignItems="stretch"
+            autoRows="1fr"
+            w="100%"
+          >
+            {visibleSortedGroupTours.map((groupTour) => (
               <GridItem key={groupTour.id} w="100%" h="100%">
                 <GroupTourCard
                   groupTour={groupTour}
                   link={generateLink(groupTour.id)}
                 />
               </GridItem>
-            ) : null,
-          )}
-        </Grid>
+            ))}
+          </Grid>
+        </>
       )}
     </Layout>
   );
@@ -199,7 +237,7 @@ const Layout = ({ children }: LayoutProps) => (
     <Box px={{ base: 4, md: 10 }}>
       <Flex
         gap={6}
-        direction={{ base: "column", md: "row" }}
+        direction={"column"}
         align={{ base: "flex-start", md: "initial" }}
       >
         {children}
