@@ -6,10 +6,11 @@ import {
   type GroupTourEntity,
 } from "@entities/package";
 
-import { EmptyView } from "@widgets/GroupTourList/ui/EmptyView.tsx";
+import { EmptyView, EmptyViewWithAfterSearch } from "@widgets/GroupTourList/ui/EmptyView.tsx";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
 import { useSearchParams } from "react-router-dom";
+import { getValidDepartures } from "@/widgets/GroupTourDetails/lib/utils";
 
 const MONTH_INDEX_BY_KEY: Record<string, number> = {
   january: 0,
@@ -94,9 +95,10 @@ export const GroupTourList = () => {
     .filter(Boolean);
 
   const filteredGroupTours = groupTours.filter(groupTour => {
+    const validDepartures = getValidDepartures(groupTour.departures ?? []);
     const isMonthMatch =
       selectedMonthKeys.length === 0 ||
-      (groupTour.departures ?? []).some(departure => {
+      (validDepartures ?? []).some(departure => {
         const startMonthKey = departure.startDate?.slice(0, 7)
         const endMonthKey = departure.endDate?.slice(0, 7)
 
@@ -128,7 +130,7 @@ export const GroupTourList = () => {
   };
 
   if (!isLoading && !filteredGroupTours?.length) {
-    return <EmptyView />;
+    return selectedRouteCountries.length > 0 || selectedMonthKeys.length > 0 ? <EmptyViewWithAfterSearch /> : <EmptyView />;
   }
 
   return (

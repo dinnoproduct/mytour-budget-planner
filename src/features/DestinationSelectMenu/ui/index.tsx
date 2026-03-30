@@ -1,17 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import {
-  Box,
-  Checkbox,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  VStack
-} from '@chakra-ui/react'
+import { Box, Menu, MenuButton, MenuList, VStack } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { Button, Icon, Input, Text } from '@ui'
+import { Button, Icon, Input } from '@ui'
 import { useTranslation } from 'react-i18next'
+
+import { DestinationSearchBar } from './components/DestinationSearchBar'
+import { SelectedSummaryRow } from './components/SelectedSummaryRow'
+import { DestinationItem } from './components/DestinationItem'
 
 interface DestinationSelectMenuProps {
   isOpen: boolean
@@ -95,37 +90,29 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
           color="gray.700"
         />
       </MenuButton>
-      <MenuList width={{ base: '328px', md: '420px' }} p="2">
-        <Input
-          value={searchValue}
-          onChange={e => setSearchValue(e.target.value)}
+      <MenuList width={{ base: '328px', md: '420px' }} p="3">
+        <DestinationSearchBar
+          searchValue={searchValue}
+          onSearchValueChange={setSearchValue}
           placeholder={t`search`}
-          mb="2"
-          borderRadius="10px"
         />
 
-        <Box height="340px" overflowY="auto" pr="1">
-          <VStack align="stretch" spacing="1">
+        <SelectedSummaryRow
+          count={pendingSelections.length}
+          onClearAll={() => setPendingSelections([])}
+          selectedText={t`selected`}
+          clearAllText={t`clearAll`}
+        />
+
+        <Box height="320px" overflowY="auto" borderBottom="1px solid" borderColor="gray.200">
+          <VStack align="stretch" spacing="0">
             {filteredOptions.map(option => (
-              <MenuItem
+              <DestinationItem
                 key={option}
-                onClick={() => togglePendingDestination(option)}
-                borderRadius="8px"
-              >
-                <Flex align="center" width="full" gap="2">
-                  <Checkbox
-                    isChecked={pendingSelections.includes(option)}
-                    pointerEvents="none"
-                    colorScheme="blue"
-                  />
-                  <Text
-                    color={pendingSelections.includes(option) ? 'blue.600' : 'gray.700'}
-                    fontWeight={pendingSelections.includes(option) ? '600' : '400'}
-                  >
-                    {option}
-                  </Text>
-                </Flex>
-              </MenuItem>
+                option={option}
+                isSelected={pendingSelections.includes(option)}
+                onToggle={togglePendingDestination}
+              />
             ))}
           </VStack>
         </Box>

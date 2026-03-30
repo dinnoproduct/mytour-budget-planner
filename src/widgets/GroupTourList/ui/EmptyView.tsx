@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 export const EmptyView = () => {
   const { t } = useTranslation()
-  
+
   return (
     <EmptyState
       illustrationName="error"
@@ -11,5 +11,22 @@ export const EmptyView = () => {
       mb={{ base: '160px', md: '150px' }}
       text={t`filterGroupTourNotFound`}
     />
-  ) 
+  )
+}
+
+export const EmptyViewWithAfterSearch = () => {
+  const { t } = useTranslation()
+
+  return (
+    <EmptyState
+      illustrationName="error"
+      mt={{ base: '160px', md: '190px' }}
+      mb={{ base: '160px', md: '150px' }}
+      text={t`groupToursEmptyFilterText`}
+      buttonLabel={t`groupToursEmptyFilterTextAction`}
+      buttonProps={{
+        to: '?tab=group-tours'
+      }}
+    />
+  )
 }

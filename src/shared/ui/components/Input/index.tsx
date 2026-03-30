@@ -88,7 +88,7 @@ export const Input = forwardRef(
         state={state}
         {...containerProps}
       >
-        <InputGroup>
+        <InputGroup alignItems="center">
           {showInputLeftElement && (
             <InputLeftElement
               iconName={leftIconName}
