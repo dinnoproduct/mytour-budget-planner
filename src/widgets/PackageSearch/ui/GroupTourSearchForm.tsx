@@ -90,11 +90,7 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
     [t]
   )
 
-  const handleDestinationChange = (value: string) => {
-    const next = selectedDestinations.includes(value)
-      ? selectedDestinations.filter(item => item !== value)
-      : [...selectedDestinations, value]
-
+  const handleDestinationChange = (next: string[]) => {
     if (onDestinationChange) {
       onDestinationChange(next)
     } else {
@@ -122,6 +118,7 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
         return `${item.year}-${String(monthIndex + 1).padStart(2, '0')}`
       })
       .join(',')
+    const destinationsParam = selectedDestinations.join(',')
 
     const nextParams = new URLSearchParams(searchParams)
     nextParams.set('tab', 'group-tours')
@@ -129,6 +126,11 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
       nextParams.set('groupTourMonths', monthsParam)
     } else {
       nextParams.delete('groupTourMonths')
+    }
+    if (destinationsParam.length > 0) {
+      nextParams.set('groupTourRouteCountries', destinationsParam)
+    } else {
+      nextParams.delete('groupTourRouteCountries')
     }
     setSearchParams(nextParams, { replace: true })
   }
@@ -141,7 +143,10 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
         selectedValues={selectedDestinations}
         onToggleOpen={() => setDestinationOpen(!isDestinationOpen)}
         onClose={() => setDestinationOpen(false)}
-        onToggleDestination={handleDestinationChange}
+        onApply={values => {
+          handleDestinationChange(values)
+          setDestinationOpen(false)
+        }}
       />
 
       <MonthSelectMenu

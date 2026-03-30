@@ -59,15 +59,26 @@ export const GroupSearchMenu = ({
         return `${item.year}-${String(monthIndex + 1).padStart(2, '0')}`
       })
       .join(',')
+    const destinationsParam = selectedDestinations.join(',')
 
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', 'group-tours')
-    if (monthsParam.length > 0) {
-      nextParams.set('groupTourMonths', monthsParam)
-    } else {
-      nextParams.delete('groupTourMonths')
-    }
-    setSearchParams(nextParams, { replace: true })
+    setSearchParams(
+      prev => {
+        const nextParams = new URLSearchParams(prev)
+        nextParams.set('tab', 'group-tours')
+        if (monthsParam.length > 0) {
+          nextParams.set('groupTourMonths', monthsParam)
+        } else {
+          nextParams.delete('groupTourMonths')
+        }
+        if (destinationsParam.length > 0) {
+          nextParams.set('groupTourRouteCountries', destinationsParam)
+        } else {
+          nextParams.delete('groupTourRouteCountries')
+        }
+        return nextParams
+      },
+      { replace: true }
+    )
 
     onFormClose?.()
   }

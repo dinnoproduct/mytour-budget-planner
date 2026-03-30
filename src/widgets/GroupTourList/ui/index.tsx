@@ -88,20 +88,36 @@ export const GroupTourList = () => {
       return `${year}-${String(monthIndex + 1).padStart(2, "0")}`
     })
     .filter((item): item is string => item !== null);
+  const selectedRouteCountries = (searchParams.get("groupTourRouteCountries") || "")
+    .split(",")
+    .map(item => item.trim().toLowerCase())
+    .filter(Boolean);
 
-  const filteredGroupTours =
-    selectedMonthKeys.length === 0
-      ? groupTours
-      : groupTours.filter(groupTour =>
-        (groupTour.departures ?? []).some(departure => {
-          const rawDate = departure.startDate || departure.endDate
-          if (!rawDate) return false
+  const filteredGroupTours = groupTours.filter(groupTour => {
+    const isMonthMatch =
+      selectedMonthKeys.length === 0 ||
+      (groupTour.departures ?? []).some(departure => {
+        const startMonthKey = departure.startDate?.slice(0, 7)
+        const endMonthKey = departure.endDate?.slice(0, 7)
 
-          // API format example: 2026-07-01T00:00:00 -> month key: 2026-07
-          const departureMonthKey = rawDate.slice(0, 7)
-          return selectedMonthKeys.includes(departureMonthKey)
-        })
-      );
+        // Match by either boundary month so ranges like May -> June
+        // are visible when June is selected.
+        return (
+          (startMonthKey ? selectedMonthKeys.includes(startMonthKey) : false) ||
+          (endMonthKey ? selectedMonthKeys.includes(endMonthKey) : false)
+        )
+      })
+
+    const routeCountryValues = (groupTour.routeCountries ?? [])
+      .flatMap(country => [country.arm, country.eng, country.rus])
+      .map(item => item?.trim().toLowerCase())
+      .filter(Boolean)
+    const isDestinationMatch =
+      selectedRouteCountries.length === 0 ||
+      selectedRouteCountries.some(item => routeCountryValues.includes(item))
+
+    return isMonthMatch && isDestinationMatch
+  });
 
   const isLoading =
     !filteredGroupTours.length &&

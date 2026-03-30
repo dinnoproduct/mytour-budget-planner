@@ -201,7 +201,12 @@ export const MonthSelectMenu: React.FC<MonthSelectMenuProps> = ({
             )
           })}
         </SimpleGrid>
-        <Button mt="4" size="lg" width="full" onClick={() => onApply(pendingSelections)}>
+        <Button
+          mt="4"
+          size="lg"
+          width="full"
+          onClick={() => onApply(pendingSelections)}
+        >
           {t`confirm`}
         </Button>
       </MenuList>

@@ -1,7 +1,16 @@
-import React from 'react'
-import { Box, Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
+import React, { useEffect, useMemo, useState } from 'react'
+import {
+  Box,
+  Checkbox,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  VStack
+} from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
-import { Icon, Input } from '@ui'
+import { Button, Icon, Input, Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 
 interface DestinationSelectMenuProps {
@@ -10,7 +19,7 @@ interface DestinationSelectMenuProps {
   selectedValues: string[]
   onToggleOpen: () => void
   onClose: () => void
-  onToggleDestination: (value: string) => void
+  onApply: (values: string[]) => void
 }
 
 export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
@@ -19,9 +28,32 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
   selectedValues,
   onToggleOpen,
   onClose,
-  onToggleDestination
+  onApply
 }) => {
   const { t } = useTranslation()
+  const [searchValue, setSearchValue] = useState('')
+  const [pendingSelections, setPendingSelections] = useState<string[]>(selectedValues)
+
+  useEffect(() => {
+    if (isOpen) {
+      setPendingSelections(selectedValues)
+      setSearchValue('')
+    }
+  }, [isOpen, selectedValues])
+
+  const filteredOptions = useMemo(() => {
+    const normalizedSearch = searchValue.trim().toLowerCase()
+    if (!normalizedSearch) return options
+    return options.filter(option => option.toLowerCase().includes(normalizedSearch))
+  }, [options, searchValue])
+
+  const togglePendingDestination = (value: string) => {
+    if (pendingSelections.includes(value)) {
+      setPendingSelections(prev => prev.filter(item => item !== value))
+      return
+    }
+    setPendingSelections(prev => [...prev, value])
+  }
 
   return (
     <Menu isOpen={isOpen} onClose={onClose} offset={[0, 4]} closeOnSelect={false}>
@@ -64,25 +96,48 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
         />
       </MenuButton>
       <MenuList width={{ base: '328px', md: '420px' }} p="2">
-        {options.map(option => (
-          <MenuItem
-            key={option}
-            onClick={() => onToggleDestination(option)}
-            borderRadius="8px"
-          >
-            <Flex align="center" justify="space-between" width="full">
-              <Text
-                color={selectedValues.includes(option) ? 'blue.600' : 'gray.700'}
-                fontWeight={selectedValues.includes(option) ? '600' : '400'}
+        <Input
+          value={searchValue}
+          onChange={e => setSearchValue(e.target.value)}
+          placeholder={t`search`}
+          mb="2"
+          borderRadius="10px"
+        />
+
+        <Box height="340px" overflowY="auto" pr="1">
+          <VStack align="stretch" spacing="1">
+            {filteredOptions.map(option => (
+              <MenuItem
+                key={option}
+                onClick={() => togglePendingDestination(option)}
+                borderRadius="8px"
               >
-                {option}
-              </Text>
-              {selectedValues.includes(option) && (
-                <Icon name="check" size="18" color="blue.500" />
-              )}
-            </Flex>
-          </MenuItem>
-        ))}
+                <Flex align="center" width="full" gap="2">
+                  <Checkbox
+                    isChecked={pendingSelections.includes(option)}
+                    pointerEvents="none"
+                    colorScheme="blue"
+                  />
+                  <Text
+                    color={pendingSelections.includes(option) ? 'blue.600' : 'gray.700'}
+                    fontWeight={pendingSelections.includes(option) ? '600' : '400'}
+                  >
+                    {option}
+                  </Text>
+                </Flex>
+              </MenuItem>
+            ))}
+          </VStack>
+        </Box>
+
+        <Button
+          mt="3"
+          size="lg"
+          width="full"
+          onClick={() => onApply(pendingSelections)}
+        >
+          {t`confirm`}
+        </Button>
       </MenuList>
     </Menu>
   )
