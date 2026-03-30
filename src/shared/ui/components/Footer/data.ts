@@ -4,6 +4,10 @@ export const SOCIALS = [
 		link: 'https://www.instagram.com/mytour.am/'
 	},
 	{
+		icon: 'telegram',
+		link: 'https://t.me/mytour_am'
+	},
+	{
 		icon: 'facebook',
 		link: 'https://www.facebook.com/profile.php?id=61558534410193'
 	},
