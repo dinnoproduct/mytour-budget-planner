@@ -434,7 +434,8 @@
   "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են",
   "destination": "Ուղղություն",
   "month": "Ամիս",
-  "groupToursSort.closestDates": "Ըստ ամսաթվի",
-  "groupToursSort.newest": "Ըստ թարմացման",
-  "groupToursSort.cheapest": "Ըստ գնի"
+  "groupToursSort.closestDates": "ըստ ամսաթվի",
+  "groupToursSort.newest": "ըստ թարմացման",
+  "groupToursSort.cheapest": "ըստ գնի",
+  "groupToursSort.title": "Դասակարգել"
 }

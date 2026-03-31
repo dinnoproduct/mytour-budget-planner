@@ -434,7 +434,8 @@
   "loading.mypackages.description": "Информация о бронированиях обновляется.",
   "destination": "Направление",
   "month": "Месяц",
-  "groupToursSort.closestDates": "Ближайшие даты",
-  "groupToursSort.newest": "Новые",
-  "groupToursSort.cheapest": "Самые дешевые"
+  "groupToursSort.closestDates": "по дате",
+  "groupToursSort.newest": "по новизне",
+  "groupToursSort.cheapest": "по цене",
+  "groupToursSort.title": "Сортировать"
 }

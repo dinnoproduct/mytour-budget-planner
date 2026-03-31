@@ -40,7 +40,7 @@ export const Actions = ({
                     color="blue.700"
                     bg="white"
                 >
-                    {t(`groupToursSort.${sortType}`)}
+                    {t('groupToursSort.title')} {t(`groupToursSort.${sortType}`)}
                     <ChevronDownIcon ml="12px" transform={isOpen ? 'rotate(180deg)' : ''} transition="transform 0.2s ease-in-out" />
                 </MenuButton>
                 <MenuList minW="240px">
@@ -51,11 +51,15 @@ export const Actions = ({
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
-                                    fontSize: '16px',
-                                    fontWeight: '400',
                                 }}
                             >
-                                {t(`groupToursSort.${sort}`)}
+                                <Text fontSize="16px" fontWeight="400" display="inline-block" sx={{
+                                    '&:first-letter': {
+                                        textTransform: 'capitalize',
+                                    },
+                                }}>
+                                    {t(`groupToursSort.${sort}`)}
+                                </Text>
                                 {sortType === sort && <Icon name={'check'} width="20px" height="20px" color="blue.500" />}
                             </MenuItem>
                         ))
