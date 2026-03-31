@@ -25,7 +25,7 @@ export const Actions = ({
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <Flex justify="space-between" align="center" width="full">
+        <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} width="full" flexDirection={{ base: "column", md: "row" }} gap={{ base: 2, md: 0 }}>
             <Text fontSize={{ base: "14px", md: "18px" }} color="gray.700" fontWeight="semibold">
                 {t(`groupToursTotalTours`, { total: totalTours })}
             </Text>
