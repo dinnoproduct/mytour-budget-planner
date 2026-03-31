@@ -434,7 +434,8 @@
   "loading.mypackages.description": "Bookings information is being updated.",
   "destination": "Destination",
   "month": "Month",
-  "groupToursSort.closestDates": "Closest Dates",
-  "groupToursSort.newest": "Newest",
-  "groupToursSort.cheapest": "Cheapest"
+  "groupToursSort.closestDates": "by date",
+  "groupToursSort.newest": "by newest",
+  "groupToursSort.cheapest": "by price",
+  "groupToursSort.title": "Sort"
 }
