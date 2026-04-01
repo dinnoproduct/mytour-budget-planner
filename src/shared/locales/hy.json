@@ -432,10 +432,10 @@
   "loading.packages.description": "Մենք փնտրում ենք լավագույն առաջարկները Ձեզ համար",
   "loading.mypackages.title": "Խնդրում ենք սպասել",
   "loading.mypackages.description": "Ամրագրումների մասին տվյալները թարմացվում են",
-  "destination": "Ուղղություն",
+  "country": "Երկիր",
   "month": "Ամիս",
-  "groupToursSort.closestDates": "ըստ ամսաթվի",
-  "groupToursSort.newest": "ըստ թարմացման",
-  "groupToursSort.cheapest": "ըստ գնի",
-  "groupToursSort.title": "Դասակարգել"
+  "groupToursSort.closestDates": "ամսաթվի",
+  "groupToursSort.newest": "թարմացման",
+  "groupToursSort.cheapest": "գնի",
+  "groupToursSort.title": "Դասավորել ըստ"
 }

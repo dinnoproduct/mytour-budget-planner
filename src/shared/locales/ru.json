@@ -432,10 +432,10 @@
   "loading.packages.description": "Мы ищем лучшие предложения для вас",
   "loading.mypackages.title": "Пожалуйста, подождите",
   "loading.mypackages.description": "Информация о бронированиях обновляется.",
-  "destination": "Направление",
+  "country": "Страна",
   "month": "Месяц",
-  "groupToursSort.closestDates": "по дате",
-  "groupToursSort.newest": "по новизне",
-  "groupToursSort.cheapest": "по цене",
-  "groupToursSort.title": "Сортировать"
+  "groupToursSort.closestDates": "дате",
+  "groupToursSort.newest": "обновлению",
+  "groupToursSort.cheapest": "цене",
+  "groupToursSort.title": "Сортировать по"
 }

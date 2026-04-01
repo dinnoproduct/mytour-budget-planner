@@ -72,7 +72,7 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
         <Input
           type="text"
           value={selectedValues.join(', ')}
-          placeholder={t`destination`}
+          placeholder={t`country`}
           isReadOnly
           px="36px"
           borderRadius="12px"
@@ -90,7 +90,12 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
           color="gray.700"
         />
       </MenuButton>
-      <MenuList width={{ base: '328px', md: '420px' }} p="3">
+      <MenuList maxWidth={{ base: 'full', md: '420px' }}
+        width={{ base: 'calc(100vw - 32px)', md: '420px' }}
+        minW={{ base: 'calc(100vw - 32px)', md: "auto" }}
+        mx={{ base: 4, md: 0 }}
+        p="3"
+      >
         <DestinationSearchBar
           searchValue={searchValue}
           onSearchValueChange={setSearchValue}
