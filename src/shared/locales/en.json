@@ -432,10 +432,10 @@
   "loading.packages.description": "We are searching for the best offers for you",
   "loading.mypackages.title": "Please wait",
   "loading.mypackages.description": "Bookings information is being updated.",
-  "destination": "Destination",
+  "country": "Country",
   "month": "Month",
-  "groupToursSort.closestDates": "by date",
-  "groupToursSort.newest": "by newest",
-  "groupToursSort.cheapest": "by price",
-  "groupToursSort.title": "Sort"
+  "groupToursSort.closestDates": "date",
+  "groupToursSort.newest": "newest",
+  "groupToursSort.cheapest": "price",
+  "groupToursSort.title": "Sort by"
 }
