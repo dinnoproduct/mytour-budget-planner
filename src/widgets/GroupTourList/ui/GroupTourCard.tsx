@@ -7,7 +7,7 @@ import { Icon, Text, Tooltip } from "@ui";
 import { LanguageLink } from "@/components/LanguageLink/LanguageLink";
 import {
   type DictionaryTypes,
-  GroupTourDeparture,
+  type GroupTourDeparture,
   type GroupTourEntity,
   useDictionary,
 } from "@entities/package";
@@ -17,10 +17,16 @@ import { getValidDepartures } from "@/widgets/GroupTourDetails/lib/utils";
 
 type GroupTourCardProps = {
   groupTour: GroupTourEntity;
+  matchedDeparture?: GroupTourDeparture;
   link?: string;
 } & LinkProps;
 
-export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCardProps) => {
+export const GroupTourCard = ({
+  groupTour,
+  matchedDeparture,
+  link = "#",
+  ...props
+}: GroupTourCardProps) => {
   const { i18n, t } = useTranslation();
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
@@ -72,11 +78,16 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
     [groupTour.departures],
   );
 
-  const fromDate = firstDeparture?.startDate
-    ? moment(firstDeparture.startDate)
+  const departureToDisplay = matchedDeparture ?? firstDeparture;
+
+  const getDepartureKey = (departure: GroupTourDeparture) =>
+    `${departure.startDate ?? ""}-${departure.endDate ?? ""}-${departure.bookingDeadline ?? ""}`;
+
+  const fromDate = departureToDisplay?.startDate
+    ? moment(departureToDisplay.startDate)
     : null;
-  const toDate = firstDeparture?.endDate
-    ? moment(firstDeparture.endDate)
+  const toDate = departureToDisplay?.endDate
+    ? moment(departureToDisplay.endDate)
     : null;
 
   const formatDate = (date: moment.Moment) => {
@@ -95,30 +106,39 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
     CURRENCY_MAP[groupTour.currency as keyof typeof CURRENCY_MAP] ||
     groupTour.currency;
 
-  const groupTourDeparturesTooltipText = useMemo(() => {
-    const departuresToShow = validDepartures.length > 0 ? validDepartures : groupTour.departures
+  const departuresInTooltip = useMemo(() => {
+    const departuresToShow =
+      validDepartures.length > 0 ? validDepartures : groupTour.departures;
 
+    if (!departureToDisplay) {
+      return departuresToShow;
+    }
+
+    const displayedDepartureKey = getDepartureKey(departureToDisplay);
+    return departuresToShow.filter(
+      (departure) => getDepartureKey(departure) !== displayedDepartureKey,
+    );
+  }, [validDepartures, groupTour.departures, departureToDisplay]);
+
+  const groupTourDeparturesTooltipText = useMemo(() => {
     return (
       <Box>
         <Text color="white" fontWeight="400" fontSize="sm">
           {t('groupTourDeparturesTooltipText')}
         </Text>
-        {departuresToShow.map(
-          (dep: GroupTourDeparture, index: number) =>
-            index !== 0 && (
-              <Text
-                color="white"
-                fontWeight="400"
-                fontSize="sm"
-                key={`${dep.startDate}-${dep.endDate}-${index}`}
-              >
-                {formatDate(moment(dep.startDate))} - {formatDate(moment(dep.endDate))}
-              </Text>
-            ),
-        )}
+        {departuresInTooltip.map((dep: GroupTourDeparture, index: number) => (
+          <Text
+            color="white"
+            fontWeight="400"
+            fontSize="sm"
+            key={`${dep.startDate}-${dep.endDate}-${index}`}
+          >
+            {formatDate(moment(dep.startDate))} - {formatDate(moment(dep.endDate))}
+          </Text>
+        ))}
       </Box>
     )
-  }, [validDepartures, groupTour.departures, t]);
+  }, [departuresInTooltip, t]);
 
   return (
     <Layout link={link} {...props}>
@@ -200,7 +220,7 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
               alignItems="center"
               gap={2}
             >
-              {formatDate(fromDate)} - {formatDate(toDate)} {validDepartures.length > 1 &&
+              {formatDate(fromDate)} - {formatDate(toDate)} {departuresInTooltip.length > 0 &&
                 <Tooltip
                   label={groupTourDeparturesTooltipText}
                   hasArrow

@@ -58,6 +58,22 @@ const isGroupTourVisible = (groupTour: GroupTourEntity): boolean => {
   return hasValidDeparture;
 };
 
+const isDepartureMatchesSelectedMonths = (
+  startDate: string | undefined,
+  endDate: string | undefined,
+  selectedMonthKeys: string[],
+) => {
+  if (selectedMonthKeys.length === 0) return true;
+
+  const startMonthKey = startDate?.slice(0, 7);
+  const endMonthKey = endDate?.slice(0, 7);
+
+  return (
+    (startMonthKey ? selectedMonthKeys.includes(startMonthKey) : false) ||
+    (endMonthKey ? selectedMonthKeys.includes(endMonthKey) : false)
+  );
+};
+
 export const GroupTourList = () => {
   const [sortType, setSortType] = useState<GroupTourSortType>(GroupTourSortType.NEWEST);
   const [searchParams] = useSearchParams();
@@ -102,14 +118,12 @@ export const GroupTourList = () => {
     const isMonthMatch =
       selectedMonthKeys.length === 0 ||
       (validDepartures ?? []).some(departure => {
-        const startMonthKey = departure.startDate?.slice(0, 7)
-        const endMonthKey = departure.endDate?.slice(0, 7)
-
         // Match by either boundary month so ranges like May -> June
         // are visible when June is selected.
-        return (
-          (startMonthKey ? selectedMonthKeys.includes(startMonthKey) : false) ||
-          (endMonthKey ? selectedMonthKeys.includes(endMonthKey) : false)
+        return isDepartureMatchesSelectedMonths(
+          departure.startDate,
+          departure.endDate,
+          selectedMonthKeys,
         )
       })
 
@@ -206,10 +220,29 @@ export const GroupTourList = () => {
           >
             {visibleSortedGroupTours.map((groupTour) => (
               <GridItem key={groupTour.id} w="100%" h="100%">
-                <GroupTourCard
-                  groupTour={groupTour}
-                  link={generateLink(groupTour.id)}
-                />
+                {/*
+                  Keep card date aligned with month filter:
+                  when multiple valid departures exist, show the first departure
+                  matching selected month(s) instead of default first valid departure.
+                */}
+                {(() => {
+                  const validDepartures = getValidDepartures(groupTour.departures ?? []);
+                  const matchedDeparture = validDepartures.find((departure) =>
+                    isDepartureMatchesSelectedMonths(
+                      departure.startDate,
+                      departure.endDate,
+                      selectedMonthKeys,
+                    ),
+                  );
+
+                  return (
+                    <GroupTourCard
+                      groupTour={groupTour}
+                      matchedDeparture={matchedDeparture}
+                      link={generateLink(groupTour.id)}
+                    />
+                  );
+                })()}
               </GridItem>
             ))}
           </Grid>
