@@ -70,21 +70,27 @@ export const PaymentModal = ({
     code: string;
     discount: number;
     finalAmount: number;
+    firstPayment: number;
+    secondPayment: number;
+    skipPayment: boolean;
   }>({
     isApplied: false,
     code: "",
     discount: 0,
     finalAmount: 0,
+    firstPayment: 0,
+    secondPayment: 0,
+    skipPayment: false,
   });
 
   const calculatePromoCodePaymentAmount = useMemo(() => {
     if (promoCodeStatus.isApplied) {
-      return isFullPricePayment ? promoCodeStatus.finalAmount : paymentAmount;
+      return promoCodeStatus.firstPayment;
     }
     return isFullPricePayment ? packageDetails.price : paymentAmount;
   }, [
     promoCodeStatus.isApplied,
-    promoCodeStatus.finalAmount,
+    promoCodeStatus.firstPayment,
     paymentAmount,
     packageDetails.price,
     isFullPricePayment,
@@ -328,6 +334,9 @@ export const PaymentModal = ({
         code: "",
         discount: 0,
         finalAmount: 0,
+        firstPayment: 0,
+        secondPayment: 0,
+        skipPayment: false,
       });
     }
 

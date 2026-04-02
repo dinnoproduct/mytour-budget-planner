@@ -89,12 +89,18 @@ export type PreviewDetailsViewProps = {
     code: string;
     discount: number;
     finalAmount: number;
+    firstPayment: number;
+    secondPayment: number;
+    skipPayment: boolean;
   }
   setPromoCodeStatus: (status: {
     isApplied: boolean;
     code: string;
     discount: number;
     finalAmount: number;
+    firstPayment: number;
+    secondPayment: number;
+    skipPayment: boolean;
   }) => void
   paymentOption?: PaymentOption
   onBackClick?: () => void
@@ -199,6 +205,9 @@ export type PromoCodeProps = {
     code: string;
     discount: number;
     finalAmount: number;
+    firstPayment: number;
+    secondPayment: number;
+    skipPayment: boolean;
   },
   onRemovePromo?: () => void,
 }
