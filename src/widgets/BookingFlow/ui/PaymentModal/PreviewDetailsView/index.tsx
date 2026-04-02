@@ -83,6 +83,9 @@ export const PreviewDetailsView = ({
         code: "",
         discount: 0,
         finalAmount: 0,
+        firstPayment: 0,
+        secondPayment: 0,
+        skipPayment: false,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,6 +101,9 @@ export const PreviewDetailsView = ({
       code: "",
       discount: 0,
       finalAmount: 0,
+      firstPayment: 0,
+      secondPayment: 0,
+      skipPayment: false,
     });
     setHasPromoCode(false);
     setPromoCodeValue("");
@@ -138,6 +144,9 @@ export const PreviewDetailsView = ({
               code: promoCodeValue.trim(),
               discount: data.discount,
               finalAmount: data.finalAmount,
+              firstPayment: data.firstPayment,
+              secondPayment: data.secondPayment,
+              skipPayment: data.skipPayment,
             });
             onPromoDiscountedPriceChange?.(data.finalAmount);
           } else {
@@ -181,28 +190,20 @@ export const PreviewDetailsView = ({
         isSinglePayment: isFullPricePayment,
       };
     }
-
-    const finalAmount = promoCodeStatus.finalAmount;
-
-    if (isFullPricePayment) {
-      return {
-        firstPayment: finalAmount,
-        secondPayment: 0,
-        isSinglePayment: true,
-      };
-    }
-
-    const userInput = paymentAmount || 0;
-    const remainingBalance = finalAmount - userInput;
-
+    
+    // Use backend calculation for promo scenarios.
+    const firstPayment = promoCodeStatus.firstPayment ?? 0;
+    const secondPayment = promoCodeStatus.secondPayment ?? 0;
     return {
-      firstPayment: userInput,
-      secondPayment: remainingBalance > 0 ? remainingBalance : 0,
-      isSinglePayment: remainingBalance <= 0,
+      firstPayment,
+      secondPayment,
+      isSinglePayment: promoCodeStatus.skipPayment || secondPayment <= 0,
     };
   }, [
     promoCodeStatus.isApplied,
-    promoCodeStatus.finalAmount,
+    promoCodeStatus.firstPayment,
+    promoCodeStatus.secondPayment,
+    promoCodeStatus.skipPayment,
     paymentAmount,
     packageDetails.price,
     isFullPricePayment,
@@ -561,8 +562,8 @@ export const PreviewDetailsView = ({
                 : []),
             ]}
           />
-          {/* PromoCode Section */}
-          {paymentOption !== "noPrepayment" && (
+          {/* PromoCode Section (not available for group tours) */}
+          {!isGroupTourPackage && paymentOption !== "noPrepayment" && (
             <PromoCode
               isApplyButtonDisabled={isApplyButtonDisabled}
               handleApplyPromoCode={handleApplyPromoCode}
