@@ -10,6 +10,8 @@ import { GroupTourSearchForm } from './GroupTourSearchForm'
 import { useTranslation } from 'react-i18next'
 import type { MonthSelection } from '@features/MonthSelectMenu'
 import { useSearchParams } from 'react-router-dom'
+import { useGroupToursList } from '@entities/package'
+import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
 const MONTH_INDEX_BY_KEY: Record<string, number> = {
   january: 0,
@@ -26,6 +28,36 @@ const MONTH_INDEX_BY_KEY: Record<string, number> = {
   december: 11
 }
 
+const MONTH_KEY_BY_INDEX: Record<number, string> = {
+  0: 'january',
+  1: 'february',
+  2: 'march',
+  3: 'april',
+  4: 'may',
+  5: 'june',
+  6: 'july',
+  7: 'august',
+  8: 'september',
+  9: 'october',
+  10: 'november',
+  11: 'december'
+}
+
+const MONTH_INDEX_BY_VALUE: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+}
+
 export const GroupSearchMenu = ({
   onTabChange,
   onFormOpen,
@@ -35,9 +67,60 @@ export const GroupSearchMenu = ({
 }: any) => {
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [selectedTab, setSelectedTab] = useState(2)
+  const routeCountriesParam = searchParams.get('groupTourRouteCountries') || ''
+  const monthsParam = searchParams.get('groupTourMonths') || ''
+  const currentTab = searchParams.get('tab') || 'hotels'
+  const [selectedTab, setSelectedTab] = useState(currentTab === 'group-tours' ? 2 : 0)
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([])
   const [selectedMonths, setSelectedMonths] = useState<MonthSelection[]>([])
+  const { i18n } = useTranslation()
+  const shouldLoadGroupTours = selectedTab === 2 || currentTab === 'group-tours' || !!isFormOpen
+  const { data: groupToursData } = useGroupToursList(undefined, {
+    enabled: shouldLoadGroupTours
+  })
+
+  const languageKey = useMemo(
+    () =>
+      (LANGUAGE_PREFIX[i18n.language as LanguageName] ?? 'Eng').toLowerCase() as
+      | 'eng'
+      | 'arm'
+      | 'rus',
+    [i18n.language]
+  )
+
+  const destinationOptions = useMemo(() => {
+    const tours = groupToursData?.data ?? []
+    const optionsByKey = new Map<
+      string,
+      { key: string; label: string; searchTerms: string[] }
+    >()
+
+    tours.forEach(tour => {
+      tour.routeCountries?.forEach(country => {
+        const key = (country.eng || country.arm || country.rus || '').trim()
+        if (!key) return
+
+        const label = (
+          country[languageKey] ||
+          country.eng ||
+          country.arm ||
+          country.rus
+        )?.trim()
+
+        const searchTerms = [country.eng, country.arm, country.rus]
+          .map(value => value?.trim())
+          .filter((value): value is string => !!value)
+
+        optionsByKey.set(key, {
+          key,
+          label: label || key,
+          searchTerms,
+        })
+      })
+    })
+
+    return Array.from(optionsByKey.values())
+  }, [groupToursData?.data, languageKey])
 
   useEffect(() => {
     if (isFormOpen) {
@@ -46,6 +129,57 @@ export const GroupSearchMenu = ({
       document.body.style.overflow = ''
     }
   }, [isFormOpen])
+
+  useEffect(() => {
+    setSelectedTab(currentTab === 'group-tours' ? 2 : 0)
+  }, [currentTab])
+
+  useEffect(() => {
+    const destinations = routeCountriesParam
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean)
+    if (destinations.length > 0) {
+      setSelectedDestinations(Array.from(new Set(destinations)))
+    } else {
+      // When URL has no country filter (e.g. after reload/tab change cleanup)
+      // clear local selection so default "select all" effect can re-apply.
+      setSelectedDestinations([])
+    }
+
+    const months = monthsParam
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean)
+      .map(item => {
+        const [yearRaw, monthRaw] = item.split('-')
+        const year = Number(yearRaw)
+        if (!Number.isFinite(year)) return null
+
+        const numericMonth = Number(monthRaw)
+        if (Number.isFinite(numericMonth) && numericMonth >= 1 && numericMonth <= 12) {
+          const month = MONTH_KEY_BY_INDEX[numericMonth - 1]
+          return month ? { month, year } : null
+        }
+
+        const monthIndex = MONTH_INDEX_BY_KEY[monthRaw?.toLowerCase() || '']
+        if (monthIndex === undefined) return null
+
+        return { month: MONTH_KEY_BY_INDEX[monthIndex], year }
+      })
+      .filter((item): item is MonthSelection => item !== null)
+    setSelectedMonths(months)
+  }, [routeCountriesParam, monthsParam])
+
+  useEffect(() => {
+    // Initial default: when there is no country filter in URL,
+    // preselect all countries once options are loaded.
+    if (routeCountriesParam.length > 0) return
+    if (selectedDestinations.length > 0) return
+    if (destinationOptions.length === 0) return
+
+    setSelectedDestinations(destinationOptions.map(option => option.key))
+  }, [routeCountriesParam, selectedDestinations.length, destinationOptions])
 
   const handleTabChange = (index: number) => {
     setSelectedTab(index)
@@ -84,14 +218,27 @@ export const GroupSearchMenu = ({
   }
 
   const summary = useMemo(() => {
-    const destination = selectedDestinations.join(', ') || t`destination`
+    const destinationLabelByKey = new Map(
+      destinationOptions.map(option => [option.key, option.label])
+    )
+    const destination = selectedDestinations.length > 0
+      ? selectedDestinations
+        .map(value => destinationLabelByKey.get(value) ?? value)
+        .join(', ')
+      : t`destination`
     const month =
       selectedMonths.length > 0
-        ? Array.from(new Set(selectedMonths.map(item => t(item.month)))).join(', ')
+        ? [...selectedMonths]
+          .sort((a, b) => {
+            if (a.year !== b.year) return a.year - b.year
+            return (MONTH_INDEX_BY_VALUE[a.month] ?? 99) - (MONTH_INDEX_BY_VALUE[b.month] ?? 99)
+          })
+          .map(item => t(item.month))
+          .join(', ')
         : t`month`
 
     return `${destination} • ${month}`
-  }, [selectedDestinations, selectedMonths, t])
+  }, [destinationOptions, selectedDestinations, selectedMonths, t])
 
   return (
     <Box height="full" width="full">
@@ -155,6 +302,7 @@ export const GroupSearchMenu = ({
             mx="auto"
           >
             <GroupTourSearchForm
+              destinationOptions={destinationOptions}
               selectedDestinations={selectedDestinations}
               selectedMonths={selectedMonths}
               onDestinationChange={setSelectedDestinations}

@@ -7,13 +7,13 @@ export const DestinationItem = ({
   isSelected,
   onToggle
 }: {
-  option: string
+  option: { key: string; label: string }
   isSelected: boolean
   onToggle: (v: string) => void
 }) => {
   return (
     <MenuItem
-      onClick={() => onToggle(option)}
+      onClick={() => onToggle(option.key)}
       py="6px"
       px="1"
       borderRadius="8px"
@@ -21,8 +21,8 @@ export const DestinationItem = ({
     >
       <Flex align="center" width="full" gap="2">
         <Checkbox isChecked={isSelected} pointerEvents="none" colorScheme="blue" />
-        <Text color={isSelected ? 'blue.600' : 'gray.800'} fontWeight="400">
-          {option}
+        <Text color={'gray.800'} fontWeight="400" fontSize="14px">
+          {option.label}
         </Text>
       </Flex>
     </MenuItem>

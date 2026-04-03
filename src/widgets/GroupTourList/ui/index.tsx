@@ -81,7 +81,7 @@ export const GroupTourList = () => {
   const {
     data: groupToursResponse,
     isLoading: isLoadingGroupTours,
-  } = useGroupToursList({ page: null, limit: null });
+  } = useGroupToursList();
 
   const groupTours = groupToursResponse?.data ?? [];
   const selectedMonthKeys = (searchParams.get("groupTourMonths") || "")
@@ -158,6 +158,13 @@ export const GroupTourList = () => {
       })
       return tours
     }
+
+    // Default sort: newest created tours first.
+    tours.sort((a, b) => {
+      const aCreatedAt = a.createdAt ? new Date(a.createdAt).getTime() : 0
+      const bCreatedAt = b.createdAt ? new Date(b.createdAt).getTime() : 0
+      return bCreatedAt - aCreatedAt
+    })
 
     return tours
   }, [filteredGroupTours, sortType])
