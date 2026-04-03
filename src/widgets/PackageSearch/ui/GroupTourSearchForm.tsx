@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
 import { SearchButton } from './SearchButton'
-import { useGroupToursList } from '@entities/package'
-import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { useTranslation } from 'react-i18next'
 import { DestinationSelectMenu } from '@features/DestinationSelectMenu'
 import { MonthSelectMenu, type MonthSelection } from '@features/MonthSelectMenu'
 import { useSearchParams } from 'react-router-dom'
+import { useGroupToursList } from '@entities/package'
+import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
 const MONTH_VALUES = [
   'january',
@@ -39,6 +39,7 @@ const MONTH_INDEX_BY_KEY: Record<string, number> = {
 }
 
 interface GroupTourSearchFormProps {
+  destinationOptions?: { key: string; label: string; searchTerms: string[] }[]
   selectedDestinations?: string[]
   selectedMonths?: MonthSelection[]
   onDestinationChange?: (value: string[]) => void
@@ -47,6 +48,7 @@ interface GroupTourSearchFormProps {
 }
 
 export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
+  destinationOptions = [],
   selectedDestinations: selectedDestinationsProp,
   selectedMonths: selectedMonthsProp,
   onDestinationChange,
@@ -55,13 +57,16 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
 }) => {
   const { i18n, t } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { data: groupToursData } = useGroupToursList({ page: 1, limit: 100 })
   const [isDestinationOpen, setDestinationOpen] = useState(false)
   const [isMonthOpen, setMonthOpen] = useState(false)
   const [localDestinations, setLocalDestinations] = useState<string[]>([])
   const [localMonths, setLocalMonths] = useState<MonthSelection[]>([])
   const selectedDestinations = selectedDestinationsProp ?? localDestinations
   const selectedMonths = selectedMonthsProp ?? localMonths
+  const { data: groupToursData } = useGroupToursList(undefined, {
+    enabled: destinationOptions.length === 0
+  })
+
   const languageKey = useMemo(
     () =>
       (LANGUAGE_PREFIX[i18n.language as LanguageName] ?? 'Eng').toLowerCase() as
@@ -71,23 +76,100 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
     [i18n.language]
   )
 
-  const destinationOptions = useMemo(() => {
+  const resolvedDestinationOptions = useMemo(() => {
+    if (destinationOptions.length > 0) {
+      return destinationOptions
+    }
+
     const tours = groupToursData?.data ?? []
-    const uniqueValues = new Set<string>()
+    const optionsByKey = new Map<
+      string,
+      { key: string; label: string; searchTerms: string[] }
+    >()
 
     tours.forEach(tour => {
       tour.routeCountries?.forEach(country => {
-        const value = country[languageKey] ?? country.eng ?? country.arm
-        if (value) uniqueValues.add(value)
+        const key = (country.eng || country.arm || country.rus || '').trim()
+        if (!key) return
+
+        const label = (
+          country[languageKey] ||
+          country.eng ||
+          country.arm ||
+          country.rus
+        )?.trim()
+        const searchTerms = [country.eng, country.arm, country.rus]
+          .map(value => value?.trim())
+          .filter((value): value is string => !!value)
+
+        optionsByKey.set(key, { key, label: label || key, searchTerms })
       })
     })
 
-    return Array.from(uniqueValues)
-  }, [groupToursData?.data, languageKey])
+    return Array.from(optionsByKey.values())
+  }, [destinationOptions, groupToursData?.data, languageKey])
+
+  useEffect(() => {
+    if (selectedDestinationsProp) return
+
+    const destinations = (searchParams.get('groupTourRouteCountries') || '')
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean)
+    if (destinations.length > 0) {
+      setLocalDestinations(Array.from(new Set(destinations)))
+    } else {
+      setLocalDestinations([])
+    }
+  }, [searchParams, selectedDestinationsProp])
+
+  useEffect(() => {
+    if (selectedDestinationsProp) return
+
+    const hasCountryFilter = !!(searchParams.get('groupTourRouteCountries') || '').trim()
+    if (hasCountryFilter) return
+    if (localDestinations.length > 0) return
+    if (resolvedDestinationOptions.length === 0) return
+
+    // Initial default: select all when URL doesn't contain country filter.
+    setLocalDestinations(resolvedDestinationOptions.map(option => option.key))
+  }, [
+    searchParams,
+    selectedDestinationsProp,
+    localDestinations.length,
+    resolvedDestinationOptions
+  ])
+
+  useEffect(() => {
+    if (selectedMonthsProp) return
+
+    const months = (searchParams.get('groupTourMonths') || '')
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean)
+      .map(item => {
+        const [yearRaw, monthRaw] = item.split('-')
+        const year = Number(yearRaw)
+        if (!Number.isFinite(year)) return null
+
+        const numericMonth = Number(monthRaw)
+        if (Number.isFinite(numericMonth) && numericMonth >= 1 && numericMonth <= 12) {
+          const month = MONTH_VALUES[numericMonth - 1]
+          return month ? { month, year } : null
+        }
+
+        const monthIndex = MONTH_INDEX_BY_KEY[monthRaw?.toLowerCase() || '']
+        if (monthIndex === undefined) return null
+        return { month: MONTH_VALUES[monthIndex], year }
+      })
+      .filter((item): item is MonthSelection => item !== null)
+
+    setLocalMonths(months)
+  }, [searchParams, selectedMonthsProp])
 
   const monthOptions = useMemo(
     () => MONTH_VALUES.map(value => ({ value, label: t(value) })),
-    [t]
+    [i18n.language, t]
   )
 
   const handleDestinationChange = (next: string[]) => {
@@ -139,7 +221,7 @@ export const GroupTourSearchForm: React.FC<GroupTourSearchFormProps> = ({
     <Layouts>
       <DestinationSelectMenu
         isOpen={isDestinationOpen}
-        options={destinationOptions}
+        options={resolvedDestinationOptions}
         selectedValues={selectedDestinations}
         onToggleOpen={() => setDestinationOpen(!isDestinationOpen)}
         onClose={() => setDestinationOpen(false)}

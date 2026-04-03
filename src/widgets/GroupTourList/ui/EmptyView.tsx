@@ -1,5 +1,6 @@
 import { EmptyState } from '@ui'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 
 export const EmptyView = () => {
   const { t } = useTranslation()
@@ -16,6 +17,17 @@ export const EmptyView = () => {
 
 export const EmptyViewWithAfterSearch = () => {
   const { t } = useTranslation()
+  const [, setSearchParams] = useSearchParams()
+
+  const handleResetFilters = () => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      next.set('tab', 'group-tours')
+      next.delete('groupTourMonths')
+      next.delete('groupTourRouteCountries')
+      return next
+    }, { replace: true })
+  }
 
   return (
     <EmptyState
@@ -25,7 +37,7 @@ export const EmptyViewWithAfterSearch = () => {
       text={t`groupToursEmptyFilterText`}
       buttonLabel={t`groupToursEmptyFilterTextAction`}
       buttonProps={{
-        to: '?tab=group-tours'
+        onClick: handleResetFilters
       }}
     />
   )

@@ -122,8 +122,8 @@ export const GroupTourCard = ({
 
   const groupTourDeparturesTooltipText = useMemo(() => {
     return (
-      <Box>
-        <Text color="white" fontWeight="400" fontSize="sm">
+      <Box maxW={{ base: "240px", md: "320px" }} whiteSpace="normal">
+        <Text color="white" fontWeight="400" fontSize="sm" wordBreak="break-word">
           {t('groupTourDeparturesTooltipText')}
         </Text>
         {departuresInTooltip.map((dep: GroupTourDeparture, index: number) => (
@@ -131,6 +131,7 @@ export const GroupTourCard = ({
             color="white"
             fontWeight="400"
             fontSize="sm"
+            wordBreak="break-word"
             key={`${dep.startDate}-${dep.endDate}-${index}`}
           >
             {formatDate(moment(dep.startDate))} - {formatDate(moment(dep.endDate))}

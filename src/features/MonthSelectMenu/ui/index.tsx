@@ -32,6 +32,21 @@ interface MonthSelectMenuProps {
   onApply: (values: MonthSelection[]) => void
 }
 
+const MONTH_INDEX_BY_VALUE: Record<string, number> = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+}
+
 export const MonthSelectMenu: React.FC<MonthSelectMenuProps> = ({
   isOpen,
   options,
@@ -55,14 +70,17 @@ export const MonthSelectMenu: React.FC<MonthSelectMenuProps> = ({
     }
   }, [isOpen, selectedValues])
 
-  const selectedMonthLabel = useMemo(
-    () =>
-      selectedValues
-        .map(value => options.find(option => option.value === value.month)?.label)
-        .filter(Boolean)
-        .join(', '),
-    [options, selectedValues]
-  )
+  const selectedMonthLabel = useMemo(() => {
+    const sorted = [...selectedValues].sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year
+      return (MONTH_INDEX_BY_VALUE[a.month] ?? 99) - (MONTH_INDEX_BY_VALUE[b.month] ?? 99)
+    })
+
+    return sorted
+      .map(value => options.find(option => option.value === value.month)?.label)
+      .filter(Boolean)
+      .join(', ')
+  }, [options, selectedValues])
 
   const isMonthDisabled = (monthIndex: number) => {
     if (selectedYear < currentYear || selectedYear > maxYear) {

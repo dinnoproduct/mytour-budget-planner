@@ -40,8 +40,8 @@ export const Actions = ({
                         borderRadius="12px"
                         size={{ base: "sm", md: "md" }}
                         variant="outline"
-                        borderColor="blue.700"
-                        color="blue.700"
+                        borderColor="blue.500"
+                        color="blue.500"
                         bg="white"
                     >
                         {t(`groupToursSort.${sortType}`)}

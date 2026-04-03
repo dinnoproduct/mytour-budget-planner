@@ -86,6 +86,7 @@
   "cleanliness": "Cleanliness",
   "clear": "Clear",
   "clearAll": "Clear all",
+  "selectAll": "Select all",
   "close": "Close",
   "confirm": "Confirm",
   "confirmNights.few": "Confirm ({{count}} nights)",

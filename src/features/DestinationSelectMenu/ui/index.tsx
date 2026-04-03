@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Menu, MenuButton, MenuList, VStack } from '@chakra-ui/react'
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import { Button, Icon, Input } from '@ui'
@@ -10,7 +10,7 @@ import { DestinationItem } from './components/DestinationItem'
 
 interface DestinationSelectMenuProps {
   isOpen: boolean
-  options: string[]
+  options: { key: string; label: string; searchTerms: string[] }[]
   selectedValues: string[]
   onToggleOpen: () => void
   onClose: () => void
@@ -28,19 +28,46 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
   const { t } = useTranslation()
   const [searchValue, setSearchValue] = useState('')
   const [pendingSelections, setPendingSelections] = useState<string[]>(selectedValues)
+  const wasOpenRef = useRef(false)
 
   useEffect(() => {
-    if (isOpen) {
+    const wasOpen = wasOpenRef.current
+
+    // Reset local state only once when menu is opened.
+    if (isOpen && !wasOpen) {
       setPendingSelections(selectedValues)
       setSearchValue('')
+      wasOpenRef.current = true
+      return
+    }
+
+    // Keep pending selections in sync while menu is closed.
+    if (!isOpen) {
+      wasOpenRef.current = false
+      setPendingSelections(selectedValues)
     }
   }, [isOpen, selectedValues])
+
+  const allKeys = useMemo(
+    () => options.map(option => option.key),
+    [options]
+  )
+
+  const hasAnySelection = pendingSelections.length > 0
+  const hasAllSelection = pendingSelections.length === allKeys.length && allKeys.length > 0
 
   const filteredOptions = useMemo(() => {
     const normalizedSearch = searchValue.trim().toLowerCase()
     if (!normalizedSearch) return options
-    return options.filter(option => option.toLowerCase().includes(normalizedSearch))
+    return options.filter(option =>
+      option.searchTerms.some(term => term.toLowerCase().includes(normalizedSearch))
+    )
   }, [options, searchValue])
+
+  const selectedLabels = useMemo(() => {
+    const optionByKey = new Map(options.map(option => [option.key, option.label]))
+    return selectedValues.map(value => optionByKey.get(value) ?? value)
+  }, [options, selectedValues])
 
   const togglePendingDestination = (value: string) => {
     if (pendingSelections.includes(value)) {
@@ -71,7 +98,7 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
         />
         <Input
           type="text"
-          value={selectedValues.join(', ')}
+          value={selectedLabels.join(', ')}
           placeholder={t`country`}
           isReadOnly
           px="36px"
@@ -104,18 +131,24 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
 
         <SelectedSummaryRow
           count={pendingSelections.length}
-          onClearAll={() => setPendingSelections([])}
+          onClearAll={() => {
+            if (hasAllSelection) {
+              setPendingSelections([])
+            } else {
+              setPendingSelections(allKeys)
+            }
+          }}
           selectedText={t`selected`}
-          clearAllText={t`clearAll`}
+          clearAllText={hasAllSelection ? t`clearAll` : t`selectAll`}
         />
 
         <Box height="320px" overflowY="auto" borderBottom="1px solid" borderColor="gray.200">
           <VStack align="stretch" spacing="0">
             {filteredOptions.map(option => (
               <DestinationItem
-                key={option}
+                key={option.key}
                 option={option}
-                isSelected={pendingSelections.includes(option)}
+                isSelected={pendingSelections.includes(option.key)}
                 onToggle={togglePendingDestination}
               />
             ))}
@@ -127,6 +160,7 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
           size="lg"
           width="full"
           onClick={() => onApply(pendingSelections)}
+          isDisabled={!hasAnySelection}
         >
           {t`confirm`}
         </Button>

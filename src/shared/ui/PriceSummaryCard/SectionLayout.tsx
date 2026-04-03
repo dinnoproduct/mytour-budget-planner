@@ -42,18 +42,37 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
     spacing="4"
   >
     {listItems.map(({ key, value }) => (
-      <ListItem key={key as any} as={HStack} spacing="2" width="full">
-        <Text fontWeight="normal" size="sm" flexShrink={0}>
+      <ListItem
+        key={key as any}
+        as={HStack}
+        spacing="2"
+        width="full"
+        minW={0}
+        alignItems="center"
+      >
+        <Text
+          fontWeight="normal"
+          size="sm"
+          flex="0 1 auto"
+          minW={0}
+          whiteSpace="nowrap"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          title={String(key)}
+        >
           {key}
         </Text>
 
         <Box
+          flex="1"
+          minW="8px"
+          flexShrink={1}
           backgroundImage="/assets/images/border.svg"
           height="2px"
-          width="full"
           backgroundRepeat="repeat-x"
+          backgroundPosition="center"
           borderRadius="full"
-          mt="0.5"
+          alignSelf="center"
         />
 
         <Text fontWeight="semibold" size="sm" flexShrink={0}>

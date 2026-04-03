@@ -13,16 +13,12 @@ export const SelectedSummaryRow = ({
   selectedText: string
   clearAllText: string
 }) => {
-  const maxHeight = count > 0 ? '30px' : '0'
 
   return (
     <Flex
       align="center"
       justify="space-between"
       my="1"
-      overflow="hidden"
-      maxHeight={maxHeight}
-      transition="max-height 0.3s ease-in-out"
     >
       <Text fontSize="14px" fontWeight="semibold" color="gray.700">
         {count} {selectedText}
@@ -31,7 +27,6 @@ export const SelectedSummaryRow = ({
         variant="text-blue"
         size="sm"
         onClick={onClearAll}
-        isDisabled={count === 0}
       >
         {clearAllText}
       </Button>
