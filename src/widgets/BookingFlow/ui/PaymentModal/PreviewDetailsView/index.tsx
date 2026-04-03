@@ -209,13 +209,30 @@ export const PreviewDetailsView = ({
     isFullPricePayment,
   ]);
 
+  // With promo: full payment → "old" amount is full package price; partial → old amount is the
+  // prepayment being discounted, not the full package price.
+  const promoCompareAmount = useMemo(
+    () =>
+      promoCodeStatus.isApplied
+        ? isFullPricePayment
+          ? packageDetails.price
+          : paymentAmount ?? 0
+        : packageDetails.price,
+    [
+      promoCodeStatus.isApplied,
+      isFullPricePayment,
+      packageDetails.price,
+      paymentAmount,
+    ],
+  );
+
   const paymentDetailsItems = useMemo((): ListItemType[] => {
     const currentPaymentAmount = calculatePromoCodePayments.firstPayment;
 
     const items: ListItemType[] = [
       {
         key: t`price`,
-        value: formatNumber(packageDetails.price) + "֏",
+        value: formatNumber(promoCompareAmount) + "֏",
         isStrikethrough: promoCodeStatus.isApplied,
       },
     ];
@@ -260,8 +277,7 @@ export const PreviewDetailsView = ({
     return items;
   }, [
     isFullPricePayment,
-    packageDetails.price,
-    paymentAmount,
+    promoCompareAmount,
     promoCodeStatus,
     calculatePromoCodePayments,
     prepaymentInfo?.firstPaymentDate,
@@ -616,7 +632,7 @@ export const PreviewDetailsView = ({
                   textDecoration="line-through"
                   color="red.400"
                 >
-                  {formatNumber(packageDetails.price)}֏
+                  {formatNumber(promoCompareAmount)}֏
                 </Text>
               )}
               <Text size="md" fontWeight="bold" color="black">

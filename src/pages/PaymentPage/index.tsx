@@ -351,6 +351,11 @@ function PaymentMethodStep({
       } catch {
         // ignore
       }
+
+      if (res.bookingPaymentUrl === "amount_is_zero") {
+        navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+        return;
+      }
       if (paymentSystem === ("VPos" as PaymentSystem.VPos)) {
         window.location.href =
           res.bookingPaymentUrl +
