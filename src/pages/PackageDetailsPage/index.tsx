@@ -4,7 +4,6 @@ import {
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
-import { usePackagesSearchContext } from "@entities/package";
 import {Loader, LoaderWithText} from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,10 +24,11 @@ import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { usePackage } from "@/entities/package/hooks/usePackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
+import { buildPackagesListQueryFromDetailsSearch } from "@/utils/packagesListNavigation";
 import { useTranslation } from "react-i18next";
 
 export const PackageDetailsPage = () => {
-  const { navigateBack, navigateToHome, navigateToPackages, navigateTo } = useLanguageNavigate();
+  const { navigateToPackages, navigateTo } = useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,7 +43,6 @@ export const PackageDetailsPage = () => {
     loading,
   } = usePackage();
   const { t } = useTranslation();
-  const { filteredPackages } = usePackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
@@ -73,9 +72,18 @@ export const PackageDetailsPage = () => {
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
-      navigateToPackages();
+      const query = buildPackagesListQueryFromDetailsSearch(
+        location.search,
+        "packages",
+      );
+      navigateToPackages(query, { replace: true });
     }
-  }, [packageDetails?.offerId, isFetched]);
+  }, [
+    packageDetails?.offerId,
+    isFetched,
+    location.search,
+    navigateToPackages,
+  ]);
 
   const handleLogEvent = (index: number) => {
     metaEvents.hotelGalleryOpened({
