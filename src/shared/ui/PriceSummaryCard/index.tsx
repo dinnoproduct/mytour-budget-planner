@@ -101,7 +101,19 @@ export const PriceSummaryCard = ({
     return `${shortMonthName} ${date.getDate()}`;
   };
 
-  const durationDateRange = [formatShortLocalizedDate(tourPackage.checkin), formatShortLocalizedDate(tourPackage.checkout)]
+  const isHotelContent = contentType === "hotel";
+  const durationDateRange = [
+    formatShortLocalizedDate(
+      isHotelContent
+        ? tourPackage.checkin
+        : (tourPackage.destinationFlight?.departureDate ?? tourPackage.checkin),
+    ),
+    formatShortLocalizedDate(
+      isHotelContent
+        ? tourPackage.checkout
+        : (tourPackage.returnFlight?.departureDate ?? tourPackage.checkout),
+    ),
+  ]
     .filter(Boolean)
     .join(" - ");
   const mealTypeLabel =
