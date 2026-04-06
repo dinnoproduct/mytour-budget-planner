@@ -30,10 +30,12 @@ import { PriceSummaryCard } from "@/shared/ui/PriceSummaryCard";
 import { useHotelPackage } from "@/entities/package/hooks/useHotelPackage";
 import { PageLayout } from "@/shared/ui/layout/PageLayout";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
+import { buildPackagesListQueryFromDetailsSearch } from "@/utils/packagesListNavigation";
 import { useTranslation } from "react-i18next";
 
 export const HotelPackageDetailsPage = () => {
-  const { navigateBack, navigateToHome } = useLanguageNavigate();
+  const { navigateBack, navigateToHome, navigateToPackages } =
+    useLanguageNavigate();
   const { isMd } = useBreakpoint();
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,9 +82,18 @@ export const HotelPackageDetailsPage = () => {
 
   useEffect(() => {
     if (!packageDetails?.offerId && isFetched) {
-      handleBackClick();
+      const query = buildPackagesListQueryFromDetailsSearch(
+        location.search,
+        "hotel",
+      );
+      navigateToPackages(query, { replace: true });
     }
-  }, [packageDetails?.offerId, isFetched]);
+  }, [
+    packageDetails?.offerId,
+    isFetched,
+    location.search,
+    navigateToPackages,
+  ]);
 
   const handleLogEvent = (index: number) => {
     metaEvents.hotelGalleryOpened({

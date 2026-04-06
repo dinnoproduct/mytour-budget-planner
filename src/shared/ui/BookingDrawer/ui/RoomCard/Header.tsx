@@ -22,7 +22,7 @@ export const Header: React.FC<{
             textOverflow="ellipsis"
             whiteSpace="nowrap"
             minW={0}
-            maxW="120px"
+            maxW="100%"
             cursor="pointer"
             _hover={{
               color: "gray.700",
