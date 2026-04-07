@@ -59,13 +59,18 @@ export class RequestService {
   payRemainingAmount(
     requestId: number,
     token: string,
-    paymentSystem?: string
+    paymentSystem?: string,
+    amountToBePaid?: number
   ): Promise<BookPackageResponse> {
     return this.api.post(
       'payRemainderAmount',
       {},
       {
-        params: { id: requestId, ...(paymentSystem && { paymentSystem }) },
+        params: {
+          id: requestId,
+          ...(paymentSystem && { paymentSystem }),
+          ...(typeof amountToBePaid === 'number' && { amountToBePaid })
+        },
         headers: {
           Authorization: `Bearer ${token}`
         }

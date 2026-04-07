@@ -190,7 +190,7 @@ export const PreviewDetailsView = ({
         isSinglePayment: isFullPricePayment,
       };
     }
-    
+
     // Use backend calculation for promo scenarios.
     const firstPayment = promoCodeStatus.firstPayment ?? 0;
     const secondPayment = promoCodeStatus.secondPayment ?? 0;
@@ -209,22 +209,64 @@ export const PreviewDetailsView = ({
     isFullPricePayment,
   ]);
 
-  // With promo: full payment → "old" amount is full package price; partial → old amount is the
-  // prepayment being discounted, not the full package price.
+  // Old price display rule: when promo is applied, always show full package price.
   const promoCompareAmount = useMemo(
-    () =>
-      promoCodeStatus.isApplied
-        ? isFullPricePayment
-          ? packageDetails.price
-          : paymentAmount ?? 0
-        : packageDetails.price,
+    () => (promoCodeStatus.isApplied ? packageDetails.price : packageDetails.price),
     [
       promoCodeStatus.isApplied,
-      isFullPricePayment,
       packageDetails.price,
-      paymentAmount,
     ],
   );
+
+  const footerDisplayAmount = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return paymentAmount || 0;
+    }
+
+    const isPromoCoveringFullPrice =
+      promoCodeStatus.skipPayment || (promoCodeStatus.finalAmount ?? 0) <= 0;
+
+    if (isPromoCoveringFullPrice) {
+      // In partial payment flow, full promo coverage means user pays 0 now.
+      if (!isFullPricePayment) {
+        return 0;
+      }
+      return packageDetails.price;
+    }
+
+    return calculatePromoCodePayments.firstPayment;
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.skipPayment,
+    promoCodeStatus.finalAmount,
+    paymentAmount,
+    packageDetails.price,
+    isFullPricePayment,
+    calculatePromoCodePayments.firstPayment,
+  ]);
+
+  const footerCompareAmount = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return packageDetails.price;
+    }
+
+    const isPromoCoveringFullPrice =
+      promoCodeStatus.skipPayment || (promoCodeStatus.finalAmount ?? 0) <= 0;
+
+    if (isPromoCoveringFullPrice) {
+      return packageDetails.price;
+    }
+
+    // For partial payment with promo not fully covering full price,
+    // compare against the original partial amount user came with.
+    return paymentAmount || 0;
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.skipPayment,
+    promoCodeStatus.finalAmount,
+    packageDetails.price,
+    paymentAmount,
+  ]);
 
   const paymentDetailsItems = useMemo((): ListItemType[] => {
     const currentPaymentAmount = calculatePromoCodePayments.firstPayment;
@@ -393,28 +435,28 @@ export const PreviewDetailsView = ({
     const cards = isHotelPackage || isGroupTourPackage
       ? []
       : ([
-          (packageDetails as any).hotel?.id ? (
-            <SummaryCard key="hotel" iconName="bed" children={t`hotel`} />
-          ) : null,
-          (packageDetails as any).destinationFlight?.id &&
+        (packageDetails as any).hotel?.id ? (
+          <SummaryCard key="hotel" iconName="bed" children={t`hotel`} />
+        ) : null,
+        (packageDetails as any).destinationFlight?.id &&
           (packageDetails as any).returnFlight?.id ? (
-            <SummaryCard
-              key="flight"
-              iconName="airplanemode-active"
-              children={t`airTicket`}
-            />
-          ) : null,
-          packageDetails.foodType ? (
-            <SummaryCard key="food" iconName="restaurant" children={foodType} />
-          ) : null,
-          packageDetails.transferType ? (
-            <SummaryCard
-              key="transfer"
-              iconName="directions-car"
-              children={t`transportation`}
-            />
-          ) : null,
-        ].filter(Boolean) as React.ReactNode[]);
+          <SummaryCard
+            key="flight"
+            iconName="airplanemode-active"
+            children={t`airTicket`}
+          />
+        ) : null,
+        packageDetails.foodType ? (
+          <SummaryCard key="food" iconName="restaurant" children={foodType} />
+        ) : null,
+        packageDetails.transferType ? (
+          <SummaryCard
+            key="transfer"
+            iconName="directions-car"
+            children={t`transportation`}
+          />
+        ) : null,
+      ].filter(Boolean) as React.ReactNode[]);
 
     const chunkedCards = [];
 
@@ -445,7 +487,7 @@ export const PreviewDetailsView = ({
             base: 4,
             md: 4,
           }}
-          mb={{base: renderAsPage ? "180px": '80px', md: 0}}
+          mb={{ base: renderAsPage ? "180px" : '80px', md: 0 }}
         >
           <Flex direction="column">
             <Flex align="center" justify="space-between">
@@ -488,8 +530,8 @@ export const PreviewDetailsView = ({
                   ? [{ key: t("countries") || "Countries", value: groupTourRouteCountriesList.join(", "), isStrikethrough: false, isNewLine: true, isBorderless: true }]
                   : []),
                 ...(groupTourRouteSummary
-                    ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} />, isStrikethrough: false, isNewLine: true, isBorderless: true }]
-                    : []),
+                  ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} />, isStrikethrough: false, isNewLine: true, isBorderless: true }]
+                  : []),
               ].filter((item: ListItemType) => !!item.value) as ListItemType[]}
             />
           )}
@@ -552,13 +594,13 @@ export const PreviewDetailsView = ({
             listItems={[
               ...(packageDetails?.roomType != null || (isGroupTourPackage && (packageDetails as any).roomType != null)
                 ? [{
-                    key: t`room`,
-                    value: isGroupTourPackage && groupTourRoomTypeLabel
-                      ? groupTourRoomTypeLabel
-                      : roomTypes.find(
-                          ({ key }: any) => Number(key) === Number((packageDetails as any).roomType),
-                        )?.value || "",
-                  }]
+                  key: t`room`,
+                  value: isGroupTourPackage && groupTourRoomTypeLabel
+                    ? groupTourRoomTypeLabel
+                    : roomTypes.find(
+                      ({ key }: any) => Number(key) === Number((packageDetails as any).roomType),
+                    )?.value || "",
+                }]
                 : []),
               {
                 key: isGroupTourPackage ? t("departure") : t`checkIn`,
@@ -570,11 +612,11 @@ export const PreviewDetailsView = ({
               },
               ...(!isHotelPackage
                 ? [
-                    {
-                      key: t`lateCheckOut`,
-                      value: isLateCheckout ? t`included` : t`notIncluded`,
-                    },
-                  ]
+                  {
+                    key: t`lateCheckOut`,
+                    value: isLateCheckout ? t`included` : t`notIncluded`,
+                  },
+                ]
                 : []),
             ]}
           />
@@ -607,11 +649,11 @@ export const PreviewDetailsView = ({
         </Box>
 
         <Box
-          px={{base: "4", md: "0"}}
+          px={{ base: "4", md: "0" }}
           py="4"
           width="full"
-          borderTop={{base: "1px solid", md: "none"}} 
-          borderColor={{base: "gray.100", md: "transparent"}}
+          borderTop={{ base: "1px solid", md: "none" }}
+          borderColor={{ base: "gray.100", md: "transparent" }}
           backgroundColor="white"
           mt="auto"
           position={{ base: 'fixed', md: 'relative' }}
@@ -632,13 +674,11 @@ export const PreviewDetailsView = ({
                   textDecoration="line-through"
                   color="red.400"
                 >
-                  {formatNumber(promoCompareAmount)}֏
+                  {formatNumber(footerCompareAmount)}֏
                 </Text>
               )}
               <Text size="md" fontWeight="bold" color="black">
-                {promoCodeStatus.isApplied
-                  ? formatNumber(calculatePromoCodePayments.firstPayment) + "֏"
-                  : formatNumber(paymentAmount || 0) + "֏"}
+                {formatNumber(footerDisplayAmount) + "֏"}
               </Text>
             </Flex>
           </Flex>
@@ -717,7 +757,7 @@ const SectionLayout = ({
     <Box>
       {children}
 
-      {listItems?.length ? <SectionList listItems={listItems} mt={4}/> : null}
+      {listItems?.length ? <SectionList listItems={listItems} mt={4} /> : null}
     </Box>
   </Box>
 );
@@ -773,27 +813,27 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
             </>
           )}
           {value && isNewLine && (
-             <Text
-             textAlign="left"
-             fontWeight="normal"
-             size="sm"
-             sx={{
-              '& p': { color: 'gray.800', fontSize: 'sm', lineHeight: 'sm', fontWeight: '500' },
-              '& strong': { fontSize: 'sm', lineHeight: 'sm', fontWeight: '500', color: 'gray.800',  },
-             }}
-             textDecoration={isStrikethrough ? "line-through" : "none"}
-             color={
-               isDiscount
-                 ? "red.500"
-                 : isHighlighted
-                   ? "green.600"
-                   : isStrikethrough
-                     ? "gray.500"
-                     : "inherit"
-             }
-           >
-             {value}
-           </Text>
+            <Text
+              textAlign="left"
+              fontWeight="normal"
+              size="sm"
+              sx={{
+                '& p': { color: 'gray.800', fontSize: 'sm', lineHeight: 'sm', fontWeight: '500' },
+                '& strong': { fontSize: 'sm', lineHeight: 'sm', fontWeight: '500', color: 'gray.800', },
+              }}
+              textDecoration={isStrikethrough ? "line-through" : "none"}
+              color={
+                isDiscount
+                  ? "red.500"
+                  : isHighlighted
+                    ? "green.600"
+                    : isStrikethrough
+                      ? "gray.500"
+                      : "inherit"
+              }
+            >
+              {value}
+            </Text>
           )}
         </ListItem>
       ),

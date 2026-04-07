@@ -74,6 +74,22 @@ const isDepartureMatchesSelectedMonths = (
   );
 };
 
+const getDepartureToDisplay = (
+  groupTour: GroupTourEntity,
+  selectedMonthKeys: string[],
+) => {
+  const validDepartures = getValidDepartures(groupTour.departures ?? []);
+  const matchedDeparture = validDepartures.find((departure) =>
+    isDepartureMatchesSelectedMonths(
+      departure.startDate,
+      departure.endDate,
+      selectedMonthKeys,
+    ),
+  );
+
+  return matchedDeparture ?? validDepartures[0];
+};
+
 export const GroupTourList = () => {
   const [sortType, setSortType] = useState<GroupTourSortType>(GroupTourSortType.NEWEST);
   const [searchParams] = useSearchParams();
@@ -148,8 +164,8 @@ export const GroupTourList = () => {
 
     if (sortType === GroupTourSortType.CLOSEST_DATES) {
       tours.sort((a, b) => {
-        const aDate = getValidDepartures(a.departures ?? [])[0]?.startDate
-        const bDate = getValidDepartures(b.departures ?? [])[0]?.startDate
+        const aDate = getDepartureToDisplay(a, selectedMonthKeys)?.startDate
+        const bDate = getDepartureToDisplay(b, selectedMonthKeys)?.startDate
 
         if (!aDate && !bDate) return 0
         if (!aDate) return 1
@@ -167,7 +183,7 @@ export const GroupTourList = () => {
     })
 
     return tours
-  }, [filteredGroupTours, sortType])
+  }, [filteredGroupTours, sortType, selectedMonthKeys])
 
   const visibleSortedGroupTours = useMemo(
     () => sortedGroupTours.filter(isGroupTourVisible),
@@ -233,14 +249,7 @@ export const GroupTourList = () => {
                   matching selected month(s) instead of default first valid departure.
                 */}
                 {(() => {
-                  const validDepartures = getValidDepartures(groupTour.departures ?? []);
-                  const matchedDeparture = validDepartures.find((departure) =>
-                    isDepartureMatchesSelectedMonths(
-                      departure.startDate,
-                      departure.endDate,
-                      selectedMonthKeys,
-                    ),
-                  );
+                  const matchedDeparture = getDepartureToDisplay(groupTour, selectedMonthKeys);
 
                   return (
                     <GroupTourCard

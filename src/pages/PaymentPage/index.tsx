@@ -178,9 +178,11 @@ export const PaymentPage = () => {
             <RemainingPaymentStep
               packageDetails={effectivePackageDetails!}
               request={request!}
+              travelers={travelers}
               selectedMethod={selectedMethod}
               onMethodChange={setSelectedMethod}
               onBackClick={() => navigateBack()}
+              autoBookZero={!!state?.promoCode && discountedFullPrice <= 0}
             />
           ) : (
             <PaymentMethodStep
@@ -204,29 +206,133 @@ export const PaymentPage = () => {
 function RemainingPaymentStep({
   packageDetails,
   request,
+  travelers,
   selectedMethod,
   onMethodChange,
   onBackClick,
+  autoBookZero = false,
 }: {
   packageDetails: PackageEntity;
   request: NormalizedRequestEntity;
+  travelers: Travelers;
   selectedMethod: PaymentMethod | string;
   onMethodChange: (m: PaymentMethod | string) => void;
   onBackClick: () => void;
+  autoBookZero?: boolean;
 }) {
+  const { navigateToBookingResult } = useLanguageNavigate();
+  const { i18n } = useTranslation();
+  const { user } = useUserContext();
+  const location = useLocation();
+  const state = location.state as PaymentPageState | null;
+  const promoCodeFromState = state?.promoCode;
+  const { mutateAsync: bookPackageAsync, isPending: isLoadingBookingByBook } = useBookPackage();
   const { mutateAsync: payRemainingAmountAsync, isPending: isLoadingBooking } =
-    usePayRemainingAmount();
+    usePayRemainingAmount({
+      onSuccess: (res) => {
+        if (!res?.success) {
+          navigateToBookingResult({ error: true, replace: true });
+          return;
+        }
+        if (!res.bookingPaymentUrl || res.bookingPaymentUrl === "amount_is_zero") {
+          navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+          return;
+        }
+        if (selectedMethod === ("VPos" as PaymentSystem)) {
+          window.location.href =
+            res.bookingPaymentUrl +
+            `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`;
+        } else {
+          window.location.href = res.bookingPaymentUrl;
+        }
+      },
+      onError: () => {
+        navigateToBookingResult({ error: true, replace: true });
+      },
+    });
 
-  const handlePay = async () => {
+  const handlePay = async (amountToBePaid?: number) => {
     try {
       await payRemainingAmountAsync({
         requestId: request.id,
         paymentSystem: selectedMethod,
+        amountToBePaid,
       });
     } catch {
-      // usePayRemainingAmount redirects on success; on error we stay on page
+      // handled in hook callbacks
     }
   };
+
+  const handleBookWithZero = async () => {
+    const travelersList = [...travelers.adults, ...travelers.children];
+    const bookInput: any = {
+      requestId: request.id,
+      cityId: packageDetails.city.id,
+      price: packageDetails.price,
+      hotelId: packageDetails.hotel.id,
+      travelAgencyId: packageDetails.travelAgency.id,
+      offerId: packageDetails.offerId,
+      roomType: packageDetails.roomType,
+      email: user?.email ?? "",
+      notes: JSON.stringify(request.notes ?? {}),
+      phoneNumber: user?.phoneNumber ?? "",
+      amountToBePaid: 0,
+      usdRate: packageDetails.usdRate,
+      currency: packageDetails.currency,
+      rate: packageDetails.rate,
+      travelers: travelersList,
+      paymentSystem: selectedMethod as PaymentSystem,
+    };
+
+    if (promoCodeFromState) {
+      bookInput.promoCode = promoCodeFromState;
+    }
+
+    if (packageDetails.destinationFlight?.departureDate) {
+      bookInput.startDate = packageDetails.destinationFlight.departureDate;
+      bookInput.endDate = packageDetails.returnFlight.departureDate;
+      bookInput.destinationFlightId = packageDetails.destinationFlight.id;
+      bookInput.returnFlightId = packageDetails.returnFlight.id;
+      bookInput.bookingType = 1;
+    } else {
+      bookInput.startDate = packageDetails.checkin;
+      bookInput.endDate = packageDetails.checkout;
+      bookInput.bookingType = 2;
+      bookInput.foodType = packageDetails.foodType ?? 0;
+    }
+
+    try {
+      const res = await bookPackageAsync(bookInput);
+      if (!res.success) {
+        navigateToBookingResult({ error: true, replace: true });
+        return;
+      }
+      if (!res.bookingPaymentUrl || res.bookingPaymentUrl === "amount_is_zero") {
+        navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+        return;
+      }
+      if (selectedMethod === ("VPos" as PaymentSystem)) {
+        window.location.href =
+          res.bookingPaymentUrl +
+          `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`;
+      } else {
+        window.location.href = res.bookingPaymentUrl;
+      }
+    } catch {
+      navigateToBookingResult({ error: true, replace: true });
+    }
+  };
+
+  useEffect(() => {
+    if (!autoBookZero) return;
+    if (isLoadingBookingByBook) return;
+    handleBookWithZero();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoBookZero]);
+
+  if (autoBookZero) {
+    return null;
+  }
 
   return (
     <PaymentMethodView

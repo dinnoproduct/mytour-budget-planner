@@ -64,6 +64,26 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
     )
   }, [options, searchValue])
 
+  const filteredKeys = useMemo(
+    () => filteredOptions.map(option => option.key),
+    [filteredOptions]
+  )
+
+  const isSearchActive = searchValue.trim().length > 0
+  const hasAllFilteredSelection = useMemo(
+    () =>
+      filteredKeys.length > 0 &&
+      filteredKeys.every(key => pendingSelections.includes(key)),
+    [filteredKeys, pendingSelections]
+  )
+  const selectedCount = useMemo(
+    () =>
+      isSearchActive
+        ? pendingSelections.filter(key => filteredKeys.includes(key)).length
+        : pendingSelections.length,
+    [isSearchActive, pendingSelections, filteredKeys]
+  )
+
   const selectedLabels = useMemo(() => {
     const optionByKey = new Map(options.map(option => [option.key, option.label]))
     return selectedValues.map(value => optionByKey.get(value) ?? value)
@@ -130,16 +150,36 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
         />
 
         <SelectedSummaryRow
-          count={pendingSelections.length}
+          count={selectedCount}
           onClearAll={() => {
-            if (hasAllSelection) {
-              setPendingSelections([])
+            if (isSearchActive) {
+              if (filteredKeys.length === 0) return
+
+              if (hasAllFilteredSelection) {
+                setPendingSelections(prev =>
+                  prev.filter(key => !filteredKeys.includes(key))
+                )
+              } else {
+                setPendingSelections(prev => Array.from(new Set([...prev, ...filteredKeys])))
+              }
             } else {
-              setPendingSelections(allKeys)
+              if (hasAllSelection) {
+                setPendingSelections([])
+              } else {
+                setPendingSelections(allKeys)
+              }
             }
           }}
           selectedText={t`selected`}
-          clearAllText={hasAllSelection ? t`clearAll` : t`selectAll`}
+          clearAllText={
+            isSearchActive
+              ? hasAllFilteredSelection
+                ? t`clearAll`
+                : t`selectAll`
+              : hasAllSelection
+                ? t`clearAll`
+                : t`selectAll`
+          }
         />
 
         <Box height="320px" overflowY="auto" borderBottom="1px solid" borderColor="gray.200">
@@ -159,7 +199,16 @@ export const DestinationSelectMenu: React.FC<DestinationSelectMenuProps> = ({
           mt="3"
           size="lg"
           width="full"
-          onClick={() => onApply(pendingSelections)}
+          onClick={() => {
+            if (isSearchActive && filteredKeys.length > 0) {
+              const matchedSelections = pendingSelections.filter(key =>
+                filteredKeys.includes(key)
+              )
+              onApply(matchedSelections)
+              return
+            }
+            onApply(pendingSelections)
+          }}
           isDisabled={!hasAnySelection}
         >
           {t`confirm`}

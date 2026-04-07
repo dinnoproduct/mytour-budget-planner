@@ -10,6 +10,7 @@ import { CityOffersSection } from "@widgets/CityOffersSection/ui"
 import { PageLayout } from '@/shared/ui/layout/PageLayout'
 import { StoriesSection } from '@widgets/StoriesSection'
 import { GroupTourList } from '@widgets/GroupTourList'
+import { useTranslation } from 'react-i18next'
 
 const TAB_NAMES = ['hotels', 'packages', 'group-tours'] as const
 const TAB_NAME_TO_INDEX: Record<string, number> = {
@@ -23,6 +24,7 @@ const TAB_NAME_TO_INDEX: Record<string, number> = {
 let isReloadCleanupDone = false
 
 export const HomePage = () => {
+  const { i18n } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [tabIndex, setTabIndex] = useState(() => {
     const param = searchParams.get('tab')
@@ -63,13 +65,14 @@ export const HomePage = () => {
         activeTab.scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
-          inline: 'center',
+          // Keep active tab aligned to the left in mobile overflow scenarios.
+          inline: 'start',
         })
       }
     })
 
     return () => window.cancelAnimationFrame(frameId)
-  }, [tabIndex])
+  }, [tabIndex, i18n.language])
 
   useEffect(() => {
     if (isReloadCleanupDone) {
