@@ -25,6 +25,7 @@ import { PriceChangeSubscriptionForm } from "./PriceChangeSubscriptionForm";
 import { getPluralForm } from "@/shared/helpers/getPluralForm.ts";
 import { SectionLayout } from "./SectionLayout.tsx";
 import { DictionaryTypes, useDictionary } from "@entities/package";
+import { useUserContext } from "@entities/user";
 
 
 enum LayoutAreas {
@@ -43,6 +44,7 @@ export const PriceSummaryCard = ({
 }: PriceSummaryCardProps) => {
   const { t } = useTranslation();
   const { isMd } = useBreakpoint();
+  const { user } = useUserContext();
   const { data: foodTypes = [] } = useDictionary(
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
   );
@@ -212,7 +214,11 @@ export const PriceSummaryCard = ({
             <Icon name="close" size="24" color="white" cursor="pointer" onClick={onClose} />
           </ModalHeader>
           <ModalBody p={0}>
-            <PriceChangeSubscriptionForm />
+            <PriceChangeSubscriptionForm
+              initialFullName={[user?.firstName, user?.lastName].filter(Boolean).join(" ")}
+              initialEmail={user?.email}
+              initialPhone={user?.phoneNumber}
+            />
           </ModalBody>
         </ModalContent>
       </Modal >

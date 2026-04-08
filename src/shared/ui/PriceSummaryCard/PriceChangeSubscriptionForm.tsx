@@ -1,13 +1,48 @@
 import { Box, Button, FormControl, FormLabel, Input, Text, VStack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export const PriceChangeSubscriptionForm = () => {
+type PriceChangeSubscriptionFormProps = {
+  initialFullName?: string;
+  initialEmail?: string;
+  initialPhone?: string;
+};
+
+const normalizePhone = (value?: string) => {
+  if (!value) return "+374";
+  const sanitized = value.replace(/\s+/g, "");
+  if (sanitized.startsWith("+374")) {
+    return sanitized.slice(0, 12);
+  }
+  return `+374${sanitized.replace(/^\+/, "").slice(0, 8)}`;
+};
+
+export const PriceChangeSubscriptionForm = ({
+  initialFullName,
+  initialEmail,
+  initialPhone,
+}: PriceChangeSubscriptionFormProps) => {
   const { t } = useTranslation();
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("+374");
+  const [fullName, setFullName] = useState(initialFullName ?? "");
+  const [email, setEmail] = useState(initialEmail ?? "");
+  const [phone, setPhone] = useState(normalizePhone(initialPhone));
   const [phoneInvalid, setPhoneInvalid] = useState(false);
+
+  useEffect(() => {
+    if (!initialFullName || fullName) return;
+    setFullName(initialFullName);
+  }, [initialFullName, fullName]);
+
+  useEffect(() => {
+    if (!initialEmail || email) return;
+    setEmail(initialEmail);
+  }, [initialEmail, email]);
+
+  useEffect(() => {
+    if (!initialPhone || phone !== "+374") return;
+    setPhone(normalizePhone(initialPhone));
+  }, [initialPhone, phone]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!phone.match(/^\+374\d{8}$/)) {
