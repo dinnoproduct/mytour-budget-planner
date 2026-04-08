@@ -12,15 +12,23 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 import { bookingContextAtom, isLateCheckoutAtom } from "@/modules/packages/store/store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
-import { RequestStatus, transformRequestToPackage } from "@entities/package";
+import {
+  RequestStatus,
+  transformRequestToPackage,
+  useBookPackage,
+} from "@entities/package";
+import { useUserContext } from "@entities/user";
 
 export const UserPackages = () => {
   const { t } = useTranslation();
   const setIsLateCheckout = useSetRecoilState(isLateCheckoutAtom);
   const setBookingContext = useSetRecoilState(bookingContextAtom);
-  const { navigateToBooking, navigateToPayment } = useLanguageNavigate();
+  const { navigateToBooking, navigateToPayment, navigateToBookingResult } = useLanguageNavigate();
+  const { user } = useUserContext();
+  const { mutateAsync: bookPackageAsync } = useBookPackage();
+  const [bookingZeroRequestId, setBookingZeroRequestId] = useState<number | null>(null);
   const hasNavigatedRef = useRef(false);
   const {
     activeRequests,
@@ -163,6 +171,82 @@ export const UserPackages = () => {
     handleBookingFlowClose,
   ]);
 
+  const handleRemainingPaymentClick = async (
+    request: any,
+    promo?: { code: string; discountedFullPrice: number },
+  ) => {
+    const isNotPaidOrReserved =
+      request.status === RequestStatus.NotPaid ||
+      request.status === RequestStatus.Reserved;
+
+    if (promo?.code && (promo.discountedFullPrice ?? 0) <= 0) {
+      const packageDetails = transformRequestToPackage(request) as any;
+      const travelers = (request.travelers ?? []).map((traveler: any) => ({
+        firstName: traveler.firstName ?? "",
+        lastName: traveler.lastName ?? "",
+        dateOfBirth: traveler.dateOfBirth ?? "",
+      }));
+
+      const bookInput: any = {
+        requestId: request.id,
+        cityId: packageDetails.city.id,
+        price: packageDetails.price,
+        hotelId: packageDetails.hotel.id,
+        travelAgencyId: packageDetails.travelAgency.id,
+        offerId: packageDetails.offerId,
+        roomType: packageDetails.roomType,
+        email: user?.email ?? "",
+        notes: JSON.stringify(request.notes ?? {}),
+        phoneNumber: user?.phoneNumber ?? "",
+        amountToBePaid: 0,
+        usdRate: packageDetails.usdRate,
+        currency: packageDetails.currency,
+        rate: packageDetails.rate,
+        travelers,
+        paymentSystem: "VPos",
+        promoCode: promo.code,
+      };
+
+      if (packageDetails.destinationFlight?.departureDate) {
+        bookInput.startDate = packageDetails.destinationFlight.departureDate;
+        bookInput.endDate = packageDetails.returnFlight.departureDate;
+        bookInput.destinationFlightId = packageDetails.destinationFlight.id;
+        bookInput.returnFlightId = packageDetails.returnFlight.id;
+        bookInput.bookingType = 1;
+      } else {
+        bookInput.startDate = packageDetails.checkin;
+        bookInput.endDate = packageDetails.checkout;
+        bookInput.bookingType = 2;
+        bookInput.foodType = packageDetails.foodType ?? 0;
+      }
+
+      try {
+        setBookingZeroRequestId(request.id);
+        const res = await bookPackageAsync(bookInput);
+        if (!res?.success) {
+          navigateToBookingResult({ error: true, replace: true, fromPayment: true });
+          return;
+        }
+        navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+      } catch {
+        navigateToBookingResult({ error: true, replace: true, fromPayment: true });
+      } finally {
+        setBookingZeroRequestId(null);
+      }
+      return;
+    }
+
+    navigateToPayment({
+      state: {
+        mode: isNotPaidOrReserved ? undefined : "remainingOnly",
+        request,
+        packageDetails: transformRequestToPackage(request),
+        discountedFullPrice: promo?.discountedFullPrice,
+        promoCode: promo?.code,
+      },
+    });
+  };
+
   return (
     <Layout>
       <Heading size="sm-md">{t`myPackages`}</Heading>
@@ -184,22 +268,10 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                onRemainingPaymentClick={(request, promo) => {
-                  const isNotPaidOrReserved =
-                    request.status === RequestStatus.NotPaid ||
-                    request.status === RequestStatus.Reserved;
-                  navigateToPayment({
-                    state: {
-                      mode: isNotPaidOrReserved ? undefined : "remainingOnly",
-                      request,
-                      packageDetails: transformRequestToPackage(request),
-                      discountedFullPrice: promo?.discountedFullPrice,
-                      promoCode: promo?.code,
-                    },
-                  });
-                }}
+                onRemainingPaymentClick={handleRemainingPaymentClick}
                 isLoadingRemainingPayment={
-                  currentRequestId === request.id && isLoadingRemainingPayment
+                  (currentRequestId === request.id && isLoadingRemainingPayment) ||
+                  bookingZeroRequestId === request.id
                 }
                 onCancelClick={handleCancelClick}
                 status={RequestsGroupStatus.Upcoming}
@@ -222,16 +294,7 @@ export const UserPackages = () => {
               <RequestCard
                 request={request}
                 key={request.id}
-                onRemainingPaymentClick={(request, promo) =>
-                  navigateToPayment({
-                    state: {
-                      request,
-                      packageDetails: transformRequestToPackage(request),
-                      discountedFullPrice: promo?.discountedFullPrice,
-                      promoCode: promo?.code,
-                    },
-                  })
-                }
+                onRemainingPaymentClick={handleRemainingPaymentClick}
                 onCancelClick={handleCancelClick}
                 status={RequestsGroupStatus.Incomplete}
                 onContinueClick={handleContinueClick}
@@ -239,6 +302,7 @@ export const UserPackages = () => {
                   request.id === activeRequest?.id &&
                   isLoadingActiveRequestPackage
                 }
+                isLoadingRemainingPayment={bookingZeroRequestId === request.id}
                 cancellingRequestId={cancellingRequestId}
               />
             ))}
