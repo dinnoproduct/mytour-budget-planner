@@ -54,6 +54,7 @@ export const useBookingFlow = ({
     children: []
   })
   const notesJson = useRef<any>('')
+  const [promoDiscountedPrice, setPromoDiscountedPrice] = useState<number | null>(null)
 
   useEffect(() => {
     setRequest(initialRequest || null)
@@ -137,32 +138,32 @@ export const useBookingFlow = ({
 
         const bookInput: any = isGroupTour
           ? {
-              ...baseBookInput,
-              groupTourId: (packageDetails as any).id,
-              cityId: 0,
-              hotelId: 0,
-              offerId: 0,
-              roomType: (packageDetails as any).roomType ?? 0,
-              startDate: (packageDetails as any).checkin,
-              endDate: (packageDetails as any).checkout,
-              destinationFlightId: 0,
-              returnFlightId: 0
-            }
+            ...baseBookInput,
+            groupTourId: (packageDetails as any).id,
+            cityId: 0,
+            hotelId: 0,
+            offerId: 0,
+            roomType: (packageDetails as any).roomType ?? 0,
+            startDate: (packageDetails as any).checkin,
+            endDate: (packageDetails as any).checkout,
+            destinationFlightId: 0,
+            returnFlightId: 0
+          }
           : {
-              ...baseBookInput,
-              cityId: packageDetails.city?.id ?? 0,
-              hotelId: packageDetails.hotel?.id ?? 0,
-              offerId: packageDetails.offerId,
-              roomType: packageDetails.roomType,
-              destinationFlightId: packageDetails.destinationFlight?.id ?? 0,
-              returnFlightId: packageDetails.returnFlight?.id ?? 0,
-              startDate: packageDetails.destinationFlight?.departureDate
-                ? packageDetails.destinationFlight.departureDate
-                : packageDetails.checkin,
-              endDate: packageDetails.destinationFlight?.departureDate
-                ? packageDetails.returnFlight.departureDate
-                : packageDetails.checkout
-            }
+            ...baseBookInput,
+            cityId: packageDetails.city?.id ?? 0,
+            hotelId: packageDetails.hotel?.id ?? 0,
+            offerId: packageDetails.offerId,
+            roomType: packageDetails.roomType,
+            destinationFlightId: packageDetails.destinationFlight?.id ?? 0,
+            returnFlightId: packageDetails.returnFlight?.id ?? 0,
+            startDate: packageDetails.destinationFlight?.departureDate
+              ? packageDetails.destinationFlight.departureDate
+              : packageDetails.checkin,
+            endDate: packageDetails.destinationFlight?.departureDate
+              ? packageDetails.returnFlight.departureDate
+              : packageDetails.checkout
+          }
 
         if (promoCodeInfo?.promoCode) {
           bookInput.promoCode = promoCodeInfo.promoCode
@@ -219,6 +220,11 @@ export const useBookingFlow = ({
         } catch {
           // ignore
         }
+        if (bookResponse.bookingPaymentUrl === "amount_is_zero") {
+          navigateToBookingResult({ success: true, replace: true, fromPayment: false })
+          return
+        }
+
         if (paymentSystem === ('VPos' as PaymentSystem.VPos)) {
           window.location.href =
             bookResponse.bookingPaymentUrl +
@@ -256,10 +262,10 @@ export const useBookingFlow = ({
         adults:
           defaultTravelers.adults.length > 0 && user?.firstName
             ? defaultTravelers.adults.map((adult, i) =>
-                i === 0
-                  ? { ...adult, firstName: user.firstName, lastName: user.lastName }
-                  : adult
-              )
+              i === 0
+                ? { ...adult, firstName: user.firstName, lastName: user.lastName }
+                : adult
+            )
             : defaultTravelers.adults
       }
       setTravelers(merged)
@@ -343,8 +349,8 @@ export const useBookingFlow = ({
         totalTravelersCount: isGroupTour
           ? data.adults.length + data.children.length
           : packageDetails.adultTravelers +
-            packageDetails.childrenTravelers +
-            packageDetails.infantTravelers,
+          packageDetails.childrenTravelers +
+          packageDetails.infantTravelers,
         adultTravelersCount: isGroupTour
           ? data.adults.length
           : packageDetails.adultTravelers,
@@ -367,43 +373,43 @@ export const useBookingFlow = ({
 
       const requestInput: any = isGroupTour
         ? {
-            groupTourId: (packageDetails as any).id,
-            offerId: 0,
-            travelers: [...data.adults, ...data.children],
-            cityId: 0,
-            hotelId: 0,
-            price: packageDetails.price,
-            roomType: (packageDetails as any).roomType ?? 0,
-            travelAgencyId: packageDetails.travelAgency?.id ?? 0,
-            notes: newNotesJson,
-            currency: packageDetails.currency,
-            rate: packageDetails.rate,
-            startDate: (packageDetails as any).checkin,
-            endDate: (packageDetails as any).checkout,
-            destinationFlightId: 0,
-            returnFlightId: 0
-          }
+          groupTourId: (packageDetails as any).id,
+          offerId: 0,
+          travelers: [...data.adults, ...data.children],
+          cityId: 0,
+          hotelId: 0,
+          price: packageDetails.price,
+          roomType: (packageDetails as any).roomType ?? 0,
+          travelAgencyId: packageDetails.travelAgency?.id ?? 0,
+          notes: newNotesJson,
+          currency: packageDetails.currency,
+          rate: packageDetails.rate,
+          startDate: (packageDetails as any).checkin,
+          endDate: (packageDetails as any).checkout,
+          destinationFlightId: 0,
+          returnFlightId: 0
+        }
         : {
-            offerId: packageDetails.offerId,
-            travelers: [...data.adults, ...data.children],
-            cityId: packageDetails.city.id,
-            hotelId: packageDetails.hotel.id,
-            price: packageDetails.price,
-            roomType: packageDetails.roomType,
-            travelAgencyId: packageDetails.travelAgency.id,
-            foodType: packageDetails.foodType,
-            notes: newNotesJson,
-            currency: packageDetails.currency,
-            rate: packageDetails.rate,
-            startDate: packageDetails.destinationFlight?.departureDate
-              ? packageDetails.destinationFlight.departureDate
-              : packageDetails.checkin,
-            endDate: packageDetails.destinationFlight?.departureDate
-              ? packageDetails.returnFlight.departureDate
-              : packageDetails.checkout,
-            destinationFlightId: packageDetails.destinationFlight?.id,
-            returnFlightId: packageDetails.returnFlight?.id
-          }
+          offerId: packageDetails.offerId,
+          travelers: [...data.adults, ...data.children],
+          cityId: packageDetails.city.id,
+          hotelId: packageDetails.hotel.id,
+          price: packageDetails.price,
+          roomType: packageDetails.roomType,
+          travelAgencyId: packageDetails.travelAgency.id,
+          foodType: packageDetails.foodType,
+          notes: newNotesJson,
+          currency: packageDetails.currency,
+          rate: packageDetails.rate,
+          startDate: packageDetails.destinationFlight?.departureDate
+            ? packageDetails.destinationFlight.departureDate
+            : packageDetails.checkin,
+          endDate: packageDetails.destinationFlight?.departureDate
+            ? packageDetails.returnFlight.departureDate
+            : packageDetails.checkout,
+          destinationFlightId: packageDetails.destinationFlight?.id,
+          returnFlightId: packageDetails.returnFlight?.id
+        }
 
       isRequestInProgressRef.current = true
 
@@ -460,6 +466,15 @@ export const useBookingFlow = ({
     [initialRequest]
   )
 
+  // If backend or previous step stored a discounted full price in request notes,
+  // prefer that for prepayment calculation; otherwise fall back to package price.
+  const discountedFullPrice =
+    (initialRequest?.notes as any)?.discountedFullPrice ??
+    packageDetails?.price ??
+    0
+
+  const effectiveFullPrice = promoDiscountedPrice ?? discountedFullPrice
+
   const { data: prepaymentInfo = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
@@ -472,7 +487,7 @@ export const useBookingFlow = ({
             : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: (packageDetails as any)?.checkin ?? '',
-      fullPrice: packageDetails?.price ?? 0,
+      fullPrice: effectiveFullPrice,
       calculationSource: isDraftRequest ? 'search' : 'myBookings'
     },
     {
@@ -494,7 +509,8 @@ export const useBookingFlow = ({
     closeModal,
     handleTravelersChange,
     prepaymentInfo,
-    validatePromoCode
+    validatePromoCode,
+    setPromoDiscountedPrice
   }
 }
 

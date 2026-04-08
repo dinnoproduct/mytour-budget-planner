@@ -13,7 +13,7 @@ export const SectionLayout = ({
   listItems,
   ...props
 }: SectionLayoutProps) => (
-  <Box {...props} px={{ base: '4', md: '0' }}>
+  <Box {...props} px={0}>
     {title && <SectionHeading>{title}</SectionHeading>}
     {subtitle && <SectionSubtitle>{subtitle}</SectionSubtitle>}
 

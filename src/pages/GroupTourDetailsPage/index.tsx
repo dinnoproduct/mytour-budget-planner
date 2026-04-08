@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState, useRef } from "react";
-import {Loader} from "@/components/Loader/Loader";
+import { Loader } from "@/components/Loader/Loader";
 import { useGroupTourInfo } from "@entities/package";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
 import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
@@ -48,12 +48,12 @@ export const GroupTourDetailsPage = () => {
   }, [isFetched, tourId, navigateToHome]);
 
   useEffect(() => {
+
     if (isFetched && tourId && !groupTour) {
       // If tour cannot be fetched (e.g. 404), go to home with Group Tours tab selected
       navigateTo('/?tab=group-tours', { replace: true });
       return;
     }
-
     if (
       isFetched &&
       tourId &&
@@ -74,7 +74,7 @@ export const GroupTourDetailsPage = () => {
 
   return (
     <PageLayout
-    footerProps={{ mt: 0 }}
+      footerProps={{ mt: 0 }}
     >
       {/* <SharedHeader onBackClick={handleBackClick} title={t("homePage")} /> */}
       <PackageImagesGallery

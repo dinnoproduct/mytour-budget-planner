@@ -120,12 +120,14 @@ export class PackageUseCases {
   async payRemainingAmount(
     requestId: number,
     token: string,
-    paymentSystem?: string
+    paymentSystem?: string,
+    amountToBePaid?: number
   ) {
     return this.requestService.payRemainingAmount(
       requestId,
       token,
-      paymentSystem
+      paymentSystem,
+      amountToBePaid
     )
   }
 

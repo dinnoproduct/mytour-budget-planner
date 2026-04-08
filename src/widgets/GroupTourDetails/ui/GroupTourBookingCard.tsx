@@ -184,12 +184,12 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
 
   const offerPriceParams = selectedDeparture && resolvedRoomTypeId
     ? {
-        tourId: groupTour.id,
-        adult: adults,
-        child: children,
-        infant: infants,
-        roomType: resolvedRoomTypeId,
-      }
+      tourId: groupTour.id,
+      adult: adults,
+      child: children,
+      infant: infants,
+      roomType: resolvedRoomTypeId,
+    }
     : null
 
   const { data: offerPrice, isLoading: isLoadingOfferPrice } = useGroupTourOfferPrice(offerPriceParams)
@@ -327,22 +327,22 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
                 {t('total')}
               </Text>
               <Flex align="center" gap={2} sx={{
-                  filter: isLoadingOfferPrice ? 'blur(10px)' : 'none',
-                }}>
+                filter: isLoadingOfferPrice ? 'blur(10px)' : 'none',
+              }}>
                 <Text size="lg" fontWeight="bold" color="gray.800" >
                   {formatNumber(offerPrice?.price || groupTour.price)} ֏
                 </Text>
-          
-              {offerPrice?.price != null && (
-                <Flex align="center" sx={{
-                  filter: isLoadingOfferPrice ? 'blur(10px)' : 'none',
-                }}>
-                  <Icon name="approximate" size="12" color="gray.600" />
-                  <Text size="xs" color="gray.600">
-                    {formatNumber(offerPrice?.priceInCurrency || groupTour.priceInCurrency)} {currencyLabel}
-                  </Text>
-                </Flex>
-                )}  
+
+                {offerPrice?.price != null && (
+                  <Flex align="center" sx={{
+                    filter: isLoadingOfferPrice ? 'blur(10px)' : 'none',
+                  }}>
+                    <Icon name="approximate" size="12" color="gray.600" />
+                    <Text size="xs" color="gray.600">
+                      {formatNumber(offerPrice?.priceInCurrency || groupTour.priceInCurrency)} {currencyLabel}
+                    </Text>
+                  </Flex>
+                )}
               </Flex>
             </Flex>
 

@@ -37,7 +37,7 @@ export const PackageDetails = ({
   );
 
   return (
-    <Flex direction="column" mt={{ base: 5, md: 0 }} gap="6">
+    <Flex direction="column" mt={{ base: 2, md: 0 }} gap={{ base: "2", md: "6" }}>
       <CardSectionLayout>
         <SectionLayout title={t`included`}>
           <Grid
@@ -121,15 +121,15 @@ export const PackageDetails = ({
         <PackageDescription tourPackage={tourPackage} />
       </CardSectionLayout>
       <CardSectionLayout>
-          <iframe
-            width="100%"
-            height={"350"}
-            style={{ border: 0 }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+        <iframe
+          width="100%"
+          height={"350"}
+          style={{ border: 0 }}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
               &q=${encodeURIComponent(`${tourPackage.hotel?.name}, ${tourPackage.city.nameEng}, ${tourPackage.city.country.nameEng}`)}`}
-          />
+        />
       </CardSectionLayout>
     </Flex>
   );
