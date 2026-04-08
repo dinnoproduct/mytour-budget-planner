@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { LayoutFixed } from '../Layouts'
 import { PackageSearchMenu } from '../PackageSearchMenu'
 import { HotelSearchMenu } from '../HotelSearchMenu'
+import { GroupSearchMenu } from '../GroupSearchMenu'
 import {
   useHotelPackagesSearchContext,
   usePackagesSearchContext
@@ -60,6 +61,15 @@ export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
       )}
       {activeTab === 1 && (
         <HotelSearchMenu
+          onTabChange={handleTabChange}
+          onFormOpen={() => setFormOpen(true)}
+          onFormClose={() => setFormOpen(false)}
+          isFormOpen={isFormOpen}
+          showTabs={showTabs}
+        />
+      )}
+      {activeTab === 2 && (
+        <GroupSearchMenu
           onTabChange={handleTabChange}
           onFormOpen={() => setFormOpen(true)}
           onFormClose={() => setFormOpen(false)}

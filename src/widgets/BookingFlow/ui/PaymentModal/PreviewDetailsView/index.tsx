@@ -56,6 +56,7 @@ export const PreviewDetailsView = ({
   onBackClick,
   renderAsPage = false,
   isLateCheckout: isLateCheckoutProp,
+  onPromoDiscountedPriceChange,
 }: PreviewDetailsViewProps) => {
   const { t, i18n } = useTranslation();
   const [promoCodeValue, setPromoCodeValue] = useState("");
@@ -82,6 +83,9 @@ export const PreviewDetailsView = ({
         code: "",
         discount: 0,
         finalAmount: 0,
+        firstPayment: 0,
+        secondPayment: 0,
+        skipPayment: false,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,6 +93,22 @@ export const PreviewDetailsView = ({
 
   const handleUsePromocode = () => {
     onUsePromocode();
+  };
+
+  const handleRemovePromoCode = () => {
+    setPromoCodeStatus({
+      isApplied: false,
+      code: "",
+      discount: 0,
+      finalAmount: 0,
+      firstPayment: 0,
+      secondPayment: 0,
+      skipPayment: false,
+    });
+    setHasPromoCode(false);
+    setPromoCodeValue("");
+    setPromoCodeError(null);
+    onPromoDiscountedPriceChange?.(null);
   };
 
   const handlePromoCodeInputChange = (value: string) => {
@@ -119,17 +139,16 @@ export const PreviewDetailsView = ({
       {
         onSuccess: (data: any) => {
           if (data.success && data.isValid) {
-            console.log(
-              `Promo code applied! Discount: ${data.discount}, Final Amount: ${data.finalAmount}`,
-            );
-
-            // Update promo code status
             setPromoCodeStatus({
               isApplied: true,
               code: promoCodeValue.trim(),
               discount: data.discount,
               finalAmount: data.finalAmount,
+              firstPayment: data.firstPayment,
+              secondPayment: data.secondPayment,
+              skipPayment: data.skipPayment,
             });
+            onPromoDiscountedPriceChange?.(data.finalAmount);
           } else {
             console.log(`Promo code error: ${data.message}`);
 
@@ -163,15 +182,6 @@ export const PreviewDetailsView = ({
     return errorMessages[errorCode] || t`promoCodeInvalid`;
   };
 
-  /**
-   * Calculates promo code discount distribution based on user input and total price
-   *
-   * Rules:
-   * 1. If userInput == totalPrice: Discount applied to whole price (single payment)
-   * 2. If userInput != totalPrice:
-   *    - Case 1: Remainder <= discount / 2: Full discount to first payment (single payment)
-   *    - Case 2: Remainder > discount / 2: Half discount to first, half to second payment
-   */
   const calculatePromoCodePayments = useMemo(() => {
     if (!promoCodeStatus.isApplied) {
       return {
@@ -181,51 +191,81 @@ export const PreviewDetailsView = ({
       };
     }
 
-    const totalPrice = packageDetails.price;
-    const userInput = paymentAmount || 0;
-    const discount = promoCodeStatus.discount;
-    const finalAmount = promoCodeStatus.finalAmount;
-
-    // Case 1: User input equals total price (full payment)
-    if (userInput === totalPrice) {
-      return {
-        firstPayment: finalAmount,
-        secondPayment: 0,
-        isSinglePayment: true,
-      };
-    }
-
-    // Case 2: User input is different from total price (partial payment)
-    const remainder = totalPrice - userInput;
-
-    // Case 2a: Remainder <= discount / 2
-    // Apply full discount to first payment (single payment)
-    if (remainder <= discount / 2) {
-      return {
-        firstPayment: finalAmount,
-        secondPayment: 0,
-        isSinglePayment: true,
-      };
-    }
-
-    // Case 2b: Remainder > discount / 2
-    // Apply half discount to first payment, half to second payment
-    const halfDiscount = discount / 2;
-    const firstPayment = userInput - halfDiscount;
-    const secondPayment = remainder - halfDiscount;
-
+    // Use backend calculation for promo scenarios.
+    const firstPayment = promoCodeStatus.firstPayment ?? 0;
+    const secondPayment = promoCodeStatus.secondPayment ?? 0;
     return {
       firstPayment,
       secondPayment,
-      isSinglePayment: false,
+      isSinglePayment: promoCodeStatus.skipPayment || secondPayment <= 0,
     };
   }, [
     promoCodeStatus.isApplied,
-    promoCodeStatus.discount,
+    promoCodeStatus.firstPayment,
+    promoCodeStatus.secondPayment,
+    promoCodeStatus.skipPayment,
+    paymentAmount,
+    packageDetails.price,
+    isFullPricePayment,
+  ]);
+
+  // Old price display rule: when promo is applied, always show full package price.
+  const promoCompareAmount = useMemo(
+    () => (promoCodeStatus.isApplied ? packageDetails.price : packageDetails.price),
+    [
+      promoCodeStatus.isApplied,
+      packageDetails.price,
+    ],
+  );
+
+  const footerDisplayAmount = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return paymentAmount || 0;
+    }
+
+    const isPromoCoveringFullPrice =
+      promoCodeStatus.skipPayment || (promoCodeStatus.finalAmount ?? 0) <= 0;
+
+    if (isPromoCoveringFullPrice) {
+      // In partial payment flow, full promo coverage means user pays 0 now.
+      if (!isFullPricePayment) {
+        return 0;
+      }
+      return packageDetails.price;
+    }
+
+    return calculatePromoCodePayments.firstPayment;
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.skipPayment,
     promoCodeStatus.finalAmount,
     paymentAmount,
     packageDetails.price,
     isFullPricePayment,
+    calculatePromoCodePayments.firstPayment,
+  ]);
+
+  const footerCompareAmount = useMemo(() => {
+    if (!promoCodeStatus.isApplied) {
+      return packageDetails.price;
+    }
+
+    const isPromoCoveringFullPrice =
+      promoCodeStatus.skipPayment || (promoCodeStatus.finalAmount ?? 0) <= 0;
+
+    if (isPromoCoveringFullPrice) {
+      return packageDetails.price;
+    }
+
+    // For partial payment with promo not fully covering full price,
+    // compare against the original partial amount user came with.
+    return paymentAmount || 0;
+  }, [
+    promoCodeStatus.isApplied,
+    promoCodeStatus.skipPayment,
+    promoCodeStatus.finalAmount,
+    packageDetails.price,
+    paymentAmount,
   ]);
 
   const paymentDetailsItems = useMemo((): ListItemType[] => {
@@ -234,7 +274,7 @@ export const PreviewDetailsView = ({
     const items: ListItemType[] = [
       {
         key: t`price`,
-        value: formatNumber(packageDetails.price) + "֏",
+        value: formatNumber(promoCompareAmount) + "֏",
         isStrikethrough: promoCodeStatus.isApplied,
       },
     ];
@@ -279,8 +319,7 @@ export const PreviewDetailsView = ({
     return items;
   }, [
     isFullPricePayment,
-    packageDetails.price,
-    paymentAmount,
+    promoCompareAmount,
     promoCodeStatus,
     calculatePromoCodePayments,
     prepaymentInfo?.firstPaymentDate,
@@ -396,28 +435,28 @@ export const PreviewDetailsView = ({
     const cards = isHotelPackage || isGroupTourPackage
       ? []
       : ([
-          (packageDetails as any).hotel?.id ? (
-            <SummaryCard key="hotel" iconName="bed" children={t`hotel`} />
-          ) : null,
-          (packageDetails as any).destinationFlight?.id &&
+        (packageDetails as any).hotel?.id ? (
+          <SummaryCard key="hotel" iconName="bed" children={t`hotel`} />
+        ) : null,
+        (packageDetails as any).destinationFlight?.id &&
           (packageDetails as any).returnFlight?.id ? (
-            <SummaryCard
-              key="flight"
-              iconName="airplanemode-active"
-              children={t`airTicket`}
-            />
-          ) : null,
-          packageDetails.foodType ? (
-            <SummaryCard key="food" iconName="restaurant" children={foodType} />
-          ) : null,
-          packageDetails.transferType ? (
-            <SummaryCard
-              key="transfer"
-              iconName="directions-car"
-              children={t`transportation`}
-            />
-          ) : null,
-        ].filter(Boolean) as React.ReactNode[]);
+          <SummaryCard
+            key="flight"
+            iconName="airplanemode-active"
+            children={t`airTicket`}
+          />
+        ) : null,
+        packageDetails.foodType ? (
+          <SummaryCard key="food" iconName="restaurant" children={foodType} />
+        ) : null,
+        packageDetails.transferType ? (
+          <SummaryCard
+            key="transfer"
+            iconName="directions-car"
+            children={t`transportation`}
+          />
+        ) : null,
+      ].filter(Boolean) as React.ReactNode[]);
 
     const chunkedCards = [];
 
@@ -448,7 +487,7 @@ export const PreviewDetailsView = ({
             base: 4,
             md: 4,
           }}
-          mb={{base: renderAsPage ? "180px": '80px', md: 0}}
+          mb={{ base: renderAsPage ? "180px" : '80px', md: 0 }}
         >
           <Flex direction="column">
             <Flex align="center" justify="space-between">
@@ -491,8 +530,8 @@ export const PreviewDetailsView = ({
                   ? [{ key: t("countries") || "Countries", value: groupTourRouteCountriesList.join(", "), isStrikethrough: false, isNewLine: true, isBorderless: true }]
                   : []),
                 ...(groupTourRouteSummary
-                    ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} />, isStrikethrough: false, isNewLine: true, isBorderless: true }]
-                    : []),
+                  ? [{ key: t("routeSummary") || "Route summary", value: <Box dangerouslySetInnerHTML={{ __html: groupTourRouteSummary }} />, isStrikethrough: false, isNewLine: true, isBorderless: true }]
+                  : []),
               ].filter((item: ListItemType) => !!item.value) as ListItemType[]}
             />
           )}
@@ -555,13 +594,13 @@ export const PreviewDetailsView = ({
             listItems={[
               ...(packageDetails?.roomType != null || (isGroupTourPackage && (packageDetails as any).roomType != null)
                 ? [{
-                    key: t`room`,
-                    value: isGroupTourPackage && groupTourRoomTypeLabel
-                      ? groupTourRoomTypeLabel
-                      : roomTypes.find(
-                          ({ key }: any) => Number(key) === Number((packageDetails as any).roomType),
-                        )?.value || "",
-                  }]
+                  key: t`room`,
+                  value: isGroupTourPackage && groupTourRoomTypeLabel
+                    ? groupTourRoomTypeLabel
+                    : roomTypes.find(
+                      ({ key }: any) => Number(key) === Number((packageDetails as any).roomType),
+                    )?.value || "",
+                }]
                 : []),
               {
                 key: isGroupTourPackage ? t("departure") : t`checkIn`,
@@ -573,16 +612,16 @@ export const PreviewDetailsView = ({
               },
               ...(!isHotelPackage
                 ? [
-                    {
-                      key: t`lateCheckOut`,
-                      value: isLateCheckout ? t`included` : t`notIncluded`,
-                    },
-                  ]
+                  {
+                    key: t`lateCheckOut`,
+                    value: isLateCheckout ? t`included` : t`notIncluded`,
+                  },
+                ]
                 : []),
             ]}
           />
-          {/* PromoCode Section */}
-          {/* {paymentOption !== "noPrepayment" && (
+          {/* PromoCode Section (not available for group tours) */}
+          {!isGroupTourPackage && paymentOption !== "noPrepayment" && (
             <PromoCode
               isApplyButtonDisabled={isApplyButtonDisabled}
               handleApplyPromoCode={handleApplyPromoCode}
@@ -592,8 +631,9 @@ export const PreviewDetailsView = ({
               hasPromoCode={hasPromoCode}
               setHasPromoCode={setHasPromoCode}
               promoCodeStatus={promoCodeStatus}
+              onRemovePromo={handleRemovePromoCode}
             />
-          )} */}
+          )}
 
           {/* Terms and Conditions Section */}
           <TermsAndConditionsSection
@@ -609,11 +649,11 @@ export const PreviewDetailsView = ({
         </Box>
 
         <Box
-          px={{base: "4", md: "0"}}
+          px={{ base: "4", md: "0" }}
           py="4"
           width="full"
-          borderTop={{base: "1px solid", md: "none"}} 
-          borderColor={{base: "gray.100", md: "transparent"}}
+          borderTop={{ base: "1px solid", md: "none" }}
+          borderColor={{ base: "gray.100", md: "transparent" }}
           backgroundColor="white"
           mt="auto"
           position={{ base: 'fixed', md: 'relative' }}
@@ -634,13 +674,11 @@ export const PreviewDetailsView = ({
                   textDecoration="line-through"
                   color="red.400"
                 >
-                  {formatNumber(packageDetails.price)}֏
+                  {formatNumber(footerCompareAmount)}֏
                 </Text>
               )}
               <Text size="md" fontWeight="bold" color="black">
-                {promoCodeStatus.isApplied
-                  ? formatNumber(calculatePromoCodePayments.firstPayment) + "֏"
-                  : formatNumber(paymentAmount || 0) + "֏"}
+                {formatNumber(footerDisplayAmount) + "֏"}
               </Text>
             </Flex>
           </Flex>
@@ -719,7 +757,7 @@ const SectionLayout = ({
     <Box>
       {children}
 
-      {listItems?.length ? <SectionList listItems={listItems} mt={4}/> : null}
+      {listItems?.length ? <SectionList listItems={listItems} mt={4} /> : null}
     </Box>
   </Box>
 );
@@ -775,27 +813,27 @@ const SectionList = ({ listItems, ...props }: SectionListProps) => (
             </>
           )}
           {value && isNewLine && (
-             <Text
-             textAlign="left"
-             fontWeight="normal"
-             size="sm"
-             sx={{
-              '& p': { color: 'gray.800', fontSize: 'sm', lineHeight: 'sm', fontWeight: '500' },
-              '& strong': { fontSize: 'sm', lineHeight: 'sm', fontWeight: '500', color: 'gray.800',  },
-             }}
-             textDecoration={isStrikethrough ? "line-through" : "none"}
-             color={
-               isDiscount
-                 ? "red.500"
-                 : isHighlighted
-                   ? "green.600"
-                   : isStrikethrough
-                     ? "gray.500"
-                     : "inherit"
-             }
-           >
-             {value}
-           </Text>
+            <Text
+              textAlign="left"
+              fontWeight="normal"
+              size="sm"
+              sx={{
+                '& p': { color: 'gray.800', fontSize: 'sm', lineHeight: 'sm', fontWeight: '500' },
+                '& strong': { fontSize: 'sm', lineHeight: 'sm', fontWeight: '500', color: 'gray.800', },
+              }}
+              textDecoration={isStrikethrough ? "line-through" : "none"}
+              color={
+                isDiscount
+                  ? "red.500"
+                  : isHighlighted
+                    ? "green.600"
+                    : isStrikethrough
+                      ? "gray.500"
+                      : "inherit"
+              }
+            >
+              {value}
+            </Text>
           )}
         </ListItem>
       ),

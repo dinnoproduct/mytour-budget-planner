@@ -1,27 +1,32 @@
 import { Box, Flex, Image, Tag, type LinkProps } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import ImageSlider from "@features/PackageCard/ui/ImageSlider.tsx";
 import { type ReactNode, useMemo } from "react";
 import { CURRENCY_MAP, LANGUAGE_PREFIX } from "@shared/model";
 import { type Language } from "@widgets/Header/model";
-import { Icon, Text } from "@ui";
+import { Icon, Text, Tooltip } from "@ui";
 import { LanguageLink } from "@/components/LanguageLink/LanguageLink";
 import {
   type DictionaryTypes,
+  type GroupTourDeparture,
   type GroupTourEntity,
   useDictionary,
 } from "@entities/package";
 import { formatNumber } from "@shared/utils";
 import moment from "moment";
-import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 import { getValidDepartures } from "@/widgets/GroupTourDetails/lib/utils";
 
 type GroupTourCardProps = {
   groupTour: GroupTourEntity;
+  matchedDeparture?: GroupTourDeparture;
   link?: string;
 } & LinkProps;
 
-export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCardProps) => {
+export const GroupTourCard = ({
+  groupTour,
+  matchedDeparture,
+  link = "#",
+  ...props
+}: GroupTourCardProps) => {
   const { i18n, t } = useTranslation();
   const { data: roomTypes = [] } = useDictionary(
     "RoomTypeDictionary" as DictionaryTypes.RoomTypeDictionary,
@@ -54,9 +59,7 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
   const firstDeparture = useMemo(
     () => {
       const valid = getValidDepartures(groupTour.departures);
-      if (valid.length > 0) {
-        return valid[0];
-      }
+      if (valid.length > 0) return valid[0];
 
       return (
         groupTour.departures
@@ -70,13 +73,21 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
     [groupTour.departures],
   );
 
-  const duration = firstDeparture?.duration ?? 0;
+  const validDepartures = useMemo(
+    () => getValidDepartures(groupTour.departures),
+    [groupTour.departures],
+  );
 
-  const fromDate = firstDeparture?.startDate
-    ? moment(firstDeparture.startDate)
+  const departureToDisplay = matchedDeparture ?? firstDeparture;
+
+  const getDepartureKey = (departure: GroupTourDeparture) =>
+    `${departure.startDate ?? ""}-${departure.endDate ?? ""}-${departure.bookingDeadline ?? ""}`;
+
+  const fromDate = departureToDisplay?.startDate
+    ? moment(departureToDisplay.startDate)
     : null;
-  const toDate = firstDeparture?.endDate
-    ? moment(firstDeparture.endDate)
+  const toDate = departureToDisplay?.endDate
+    ? moment(departureToDisplay.endDate)
     : null;
 
   const formatDate = (date: moment.Moment) => {
@@ -94,13 +105,48 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
   const currencyLabel =
     CURRENCY_MAP[groupTour.currency as keyof typeof CURRENCY_MAP] ||
     groupTour.currency;
-    
+
+  const departuresInTooltip = useMemo(() => {
+    const departuresToShow =
+      validDepartures.length > 0 ? validDepartures : groupTour.departures;
+
+    if (!departureToDisplay) {
+      return departuresToShow;
+    }
+
+    const displayedDepartureKey = getDepartureKey(departureToDisplay);
+    return departuresToShow.filter(
+      (departure) => getDepartureKey(departure) !== displayedDepartureKey,
+    );
+  }, [validDepartures, groupTour.departures, departureToDisplay]);
+
+  const groupTourDeparturesTooltipText = useMemo(() => {
+    return (
+      <Box maxW={{ base: "240px", md: "320px" }} whiteSpace="normal">
+        <Text color="white" fontWeight="400" fontSize="sm" wordBreak="break-word">
+          {t('groupTourDeparturesTooltipText')}
+        </Text>
+        {departuresInTooltip.map((dep: GroupTourDeparture, index: number) => (
+          <Text
+            color="white"
+            fontWeight="400"
+            fontSize="sm"
+            wordBreak="break-word"
+            key={`${dep.startDate}-${dep.endDate}-${index}`}
+          >
+            {formatDate(moment(dep.startDate))} - {formatDate(moment(dep.endDate))}
+          </Text>
+        ))}
+      </Box>
+    )
+  }, [departuresInTooltip, t]);
+
   return (
     <Layout link={link} {...props}>
-      <Box p={3} pb={4} bg={'gray.50'}display="flex" flexDirection="column" height="100%">
+      <Box p={3} pb={4} bg={'gray.50'} display="flex" flexDirection="column" height="100%">
         {images.length > 0 && images[0].url !== "" && images[0].url !== null ? (
-          <Image 
-            src={images[0].url} 
+          <Image
+            src={images[0].url}
             maxWidth="full"
             height={170}
             width="full"
@@ -119,33 +165,33 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
           />
         )}
 
-            <Box pt="4">
+        <Box pt="4">
+          <Text
+            color="gray.800"
+            size="md"
+            fontWeight="bold"
+            noOfLines={1}
+            as="h3"
+            mb={2}
+          >
+            {groupName}
+          </Text>
+          {groupTour?.routeCities?.length > 0 || groupTour?.routeCountries?.length > 0 && (
+            <Box display="flex" alignItems="center" gap={1}>
+              <Icon name="location-pin" size="16" color="gray.500" />
               <Text
-                color="gray.800"
-                size="md"
-                fontWeight="bold"
+                size="xs"
+                color="gray.600"
+                fontWeight="medium"
                 noOfLines={1}
-                as="h3"
-                mb={2}
               >
-                {groupName}
+                {groupTour?.routeCities?.map((city) => city[languageSuffix as keyof typeof city] || city.eng).join(", ") || groupTour?.routeCountries?.map((c) => c[languageSuffix as keyof typeof c] || c.eng).join(", ")}
               </Text>
-              {groupTour?.routeCities?.length > 0 || groupTour?.routeCountries?.length > 0 && (
-                <Box display="flex" alignItems="center" gap={1}>
-                <Icon name="location-pin" size="16" color="gray.500" />
-                <Text
-                  size="xs"
-                  color="gray.600"
-                  fontWeight="medium"
-                  noOfLines={1}
-                >
-                  {groupTour?.routeCities?.map((city) => city[languageSuffix as keyof typeof city] || city.eng).join(", ") || groupTour?.routeCountries?.map((c) => c[languageSuffix as keyof typeof c] || c.eng).join(", ")}
-                </Text>
-              </Box>
-              )}
             </Box>
+          )}
+        </Box>
       </Box>
-        <Box px={3} py={4}>
+      <Box px={3} py={4}>
         <Box
           display="flex"
           alignItems="center"
@@ -172,34 +218,63 @@ export const GroupTourCard = ({ groupTour, link = "#", ...props }: GroupTourCard
               rounded="full"
               flexShrink={0}
               whiteSpace="nowrap"
+              alignItems="center"
+              gap={2}
             >
-              {formatDate(fromDate)} - {formatDate(toDate)}
+              {formatDate(fromDate)} - {formatDate(toDate)} {departuresInTooltip.length > 0 &&
+                <Tooltip
+                  label={groupTourDeparturesTooltipText}
+                  hasArrow
+                  shouldWrapChildren
+                >
+                  <Flex
+                    justify="center"
+                    align="center"
+                    borderRadius="full"
+                    cursor="pointer"
+                    tabIndex={0}
+                    role="button"
+                    onClick={e => {
+                      // Prevent navigation because the whole card is wrapped in a link.
+                      e.preventDefault()
+                      e.stopPropagation()
+                        ; (e.currentTarget as HTMLElement).focus()
+                    }}
+                    onTouchStart={e => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    <Icon name="info-outline" size="16" color={'green.500'} />
+                  </Flex>
+                </Tooltip>
+
+              }
             </Tag>
           )}
         </Box>
 
-          <Box display="flex" alignItems="center" justifyContent={'space-between'}>
-            <Text size="xs" color="gray.600" fontWeight="normal">
-              {t("startFrom")}
-            </Text>
-            <Box>
-              <Flex align="center" gap={2}>
-                <Text size="lg" fontWeight="bold" color="gray.800">
-                  {formatNumber(groupTour.price)} ֏
-                </Text>
-                {groupTour.priceInCurrency != null && (
-                  <Flex align="center">
-                    <Icon name="approximate" size="12" color="gray.600" />
-                    <Text size="xs" color="gray.600">
-                       {formatNumber(groupTour.priceInCurrency)} {currencyLabel}
-                    </Text>
-                  </Flex>
-                )}
+        <Box display="flex" alignItems="center" justifyContent={'space-between'}>
+          <Text size="xs" color="gray.600" fontWeight="normal">
+            {t("startFrom")}
+          </Text>
+          <Box>
+            <Flex align="center" gap={2}>
+              <Text size="lg" fontWeight="bold" color="gray.800">
+                {formatNumber(groupTour.price)} ֏
+              </Text>
+              {groupTour.priceInCurrency != null && (
+                <Flex align="center">
+                  <Icon name="approximate" size="12" color="gray.600" />
+                  <Text size="xs" color="gray.600">
+                    {formatNumber(groupTour.priceInCurrency)} {currencyLabel}
+                  </Text>
+                </Flex>
+              )}
             </Flex>
-            </Box>
           </Box>
         </Box>
-    </Layout>
+      </Box>
+    </Layout >
   );
 };
 
@@ -216,6 +291,8 @@ const Layout = ({
     _hover={{ textTransform: "none" }}
     width="full"
     height="100%"
+    target="_blank"
+    rel="noopener noreferrer"
     {...props}
   >
     <Box

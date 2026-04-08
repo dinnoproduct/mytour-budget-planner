@@ -28,6 +28,8 @@ export type PaymentPageState = {
   prepaymentInfo?: PrepaymentInfo | null;
   travelers?: Travelers;
   request?: NormalizedRequestEntity;
+  discountedFullPrice?: number;
+  promoCode?: string;
 };
 
 type Step = "paymentForm" | "paymentMethod";
@@ -57,6 +59,17 @@ export const PaymentPage = () => {
   useEffect(() => {
     localStorage.setItem('bookingResultSource', 'payment');
   }, []);
+  // Discounted full price and promo can come from navigation state (e.g. My Packages promo flow).
+  // Base "full price" depends on mode:
+  // - remainingOnly: remainingPaymentAmount of the request
+  // - full: original package price
+  const baseFullPriceForMode =
+    isRemainingOnly
+      ? request?.remainingPaymentAmount ?? 0
+      : packageDetails?.price ?? 0;
+
+  const discountedFullPrice =
+    state?.discountedFullPrice ?? baseFullPriceForMode;
 
   const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
@@ -64,13 +77,19 @@ export const PaymentPage = () => {
       bookingType: isHotelPackage ? 2 : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: packageDetails?.checkin ?? packageDetails?.destinationFlight?.departureDate ?? "",
-      fullPrice: packageDetails?.price ?? 0,
+      fullPrice: discountedFullPrice,
       calculationSource: "myBookings",
     },
     { enabled: !!packageDetails?.checkin || !!packageDetails?.destinationFlight?.departureDate },
   );
 
   const prepaymentInfo = state?.prepaymentInfo ?? prepaymentInfoFromApi;
+
+  // Use discounted full price consistently in the UI and logic on this page
+  // by overriding the price we pass down into payment components.
+  const effectivePackageDetails: PackageEntity | undefined = packageDetails
+    ? { ...packageDetails, price: discountedFullPrice }
+    : undefined;
 
   const travelers: Travelers = useMemo(
     () =>
@@ -86,12 +105,12 @@ export const PaymentPage = () => {
   );
 
   const hasValidState =
-    packageDetails &&
+    effectivePackageDetails &&
     (isRemainingOnly
       ? request
       : request
         ? true
-        : (packageDetails.offerId != null && packageDetails.offerId > 0));
+        : (effectivePackageDetails.offerId != null && effectivePackageDetails.offerId > 0));
 
   useEffect(() => {
     if (!hasValidState) {
@@ -111,7 +130,7 @@ export const PaymentPage = () => {
       prepaymentInfo?.paymentType === "FullPricePayment" &&
       step === "paymentForm"
     ) {
-      setPaymentAmount(packageDetails.price ?? 0);
+      setPaymentAmount(effectivePackageDetails!.price ?? 0);
       setPaymentOption("payFull");
       setStep("paymentMethod");
       setSkippedFormForFullPayment(true);
@@ -143,7 +162,7 @@ export const PaymentPage = () => {
 
         {step === "paymentForm" && (
           <PaymentFormView
-            packageDetails={packageDetails}
+            packageDetails={effectivePackageDetails!}
             prepaymentInfo={prepaymentInfo}
             initialPaymentOption="pay"
             onSubmit={handleFormSubmit}
@@ -157,15 +176,18 @@ export const PaymentPage = () => {
         {step === "paymentMethod" && (
           isRemainingOnly ? (
             <RemainingPaymentStep
-              packageDetails={packageDetails}
+              packageDetails={effectivePackageDetails!}
               request={request!}
+              travelers={travelers}
               selectedMethod={selectedMethod}
               onMethodChange={setSelectedMethod}
               onBackClick={() => navigateBack()}
+              autoBookZero={!!state?.promoCode && discountedFullPrice <= 0}
             />
           ) : (
             <PaymentMethodStep
-              packageDetails={packageDetails}
+              packageDetails={effectivePackageDetails!}
+              originalPrice={packageDetails!.price}
               request={request}
               travelers={travelers}
               paymentAmount={paymentAmount}
@@ -184,29 +206,133 @@ export const PaymentPage = () => {
 function RemainingPaymentStep({
   packageDetails,
   request,
+  travelers,
   selectedMethod,
   onMethodChange,
   onBackClick,
+  autoBookZero = false,
 }: {
   packageDetails: PackageEntity;
   request: NormalizedRequestEntity;
+  travelers: Travelers;
   selectedMethod: PaymentMethod | string;
   onMethodChange: (m: PaymentMethod | string) => void;
   onBackClick: () => void;
+  autoBookZero?: boolean;
 }) {
+  const { navigateToBookingResult } = useLanguageNavigate();
+  const { i18n } = useTranslation();
+  const { user } = useUserContext();
+  const location = useLocation();
+  const state = location.state as PaymentPageState | null;
+  const promoCodeFromState = state?.promoCode;
+  const { mutateAsync: bookPackageAsync, isPending: isLoadingBookingByBook } = useBookPackage();
   const { mutateAsync: payRemainingAmountAsync, isPending: isLoadingBooking } =
-    usePayRemainingAmount();
+    usePayRemainingAmount({
+      onSuccess: (res) => {
+        if (!res?.success) {
+          navigateToBookingResult({ error: true, replace: true });
+          return;
+        }
+        if (!res.bookingPaymentUrl || res.bookingPaymentUrl === "amount_is_zero") {
+          navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+          return;
+        }
+        if (selectedMethod === ("VPos" as PaymentSystem)) {
+          window.location.href =
+            res.bookingPaymentUrl +
+            `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`;
+        } else {
+          window.location.href = res.bookingPaymentUrl;
+        }
+      },
+      onError: () => {
+        navigateToBookingResult({ error: true, replace: true });
+      },
+    });
 
-  const handlePay = async () => {
+  const handlePay = async (amountToBePaid?: number) => {
     try {
       await payRemainingAmountAsync({
         requestId: request.id,
         paymentSystem: selectedMethod,
+        amountToBePaid,
       });
     } catch {
-      // usePayRemainingAmount redirects on success; on error we stay on page
+      // handled in hook callbacks
     }
   };
+
+  const handleBookWithZero = async () => {
+    const travelersList = [...travelers.adults, ...travelers.children];
+    const bookInput: any = {
+      requestId: request.id,
+      cityId: packageDetails.city.id,
+      price: packageDetails.price,
+      hotelId: packageDetails.hotel.id,
+      travelAgencyId: packageDetails.travelAgency.id,
+      offerId: packageDetails.offerId,
+      roomType: packageDetails.roomType,
+      email: user?.email ?? "",
+      notes: JSON.stringify(request.notes ?? {}),
+      phoneNumber: user?.phoneNumber ?? "",
+      amountToBePaid: 0,
+      usdRate: packageDetails.usdRate,
+      currency: packageDetails.currency,
+      rate: packageDetails.rate,
+      travelers: travelersList,
+      paymentSystem: selectedMethod as PaymentSystem,
+    };
+
+    if (promoCodeFromState) {
+      bookInput.promoCode = promoCodeFromState;
+    }
+
+    if (packageDetails.destinationFlight?.departureDate) {
+      bookInput.startDate = packageDetails.destinationFlight.departureDate;
+      bookInput.endDate = packageDetails.returnFlight.departureDate;
+      bookInput.destinationFlightId = packageDetails.destinationFlight.id;
+      bookInput.returnFlightId = packageDetails.returnFlight.id;
+      bookInput.bookingType = 1;
+    } else {
+      bookInput.startDate = packageDetails.checkin;
+      bookInput.endDate = packageDetails.checkout;
+      bookInput.bookingType = 2;
+      bookInput.foodType = packageDetails.foodType ?? 0;
+    }
+
+    try {
+      const res = await bookPackageAsync(bookInput);
+      if (!res.success) {
+        navigateToBookingResult({ error: true, replace: true });
+        return;
+      }
+      if (!res.bookingPaymentUrl || res.bookingPaymentUrl === "amount_is_zero") {
+        navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+        return;
+      }
+      if (selectedMethod === ("VPos" as PaymentSystem)) {
+        window.location.href =
+          res.bookingPaymentUrl +
+          `&lang=${LANGUAGE_NAME_MAP[i18n.language as LanguageName]}`;
+      } else {
+        window.location.href = res.bookingPaymentUrl;
+      }
+    } catch {
+      navigateToBookingResult({ error: true, replace: true });
+    }
+  };
+
+  useEffect(() => {
+    if (!autoBookZero) return;
+    if (isLoadingBookingByBook) return;
+    handleBookWithZero();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoBookZero]);
+
+  if (autoBookZero) {
+    return null;
+  }
 
   return (
     <PaymentMethodView
@@ -223,6 +349,7 @@ function RemainingPaymentStep({
 
 function PaymentMethodStep({
   packageDetails,
+  originalPrice,
   request,
   travelers,
   paymentAmount,
@@ -232,6 +359,7 @@ function PaymentMethodStep({
   onBackClick,
 }: {
   packageDetails: PackageEntity;
+  originalPrice: number;
   request?: NormalizedRequestEntity | null;
   travelers: Travelers;
   paymentAmount: number;
@@ -245,8 +373,15 @@ function PaymentMethodStep({
   const { navigateToBookingResult } = useLanguageNavigate();
   const { mutateAsync: bookPackageAsync, isPending: isLoadingBooking } = useBookPackage();
 
+  // Full payment comparison uses the (possibly discounted) price shown in UI.
   const isFullPricePayment =
     paymentOption === "payFull" || paymentAmount >= packageDetails.price;
+
+  // Promo information comes from navigation state (My Packages flow).
+  const location = useLocation();
+  const state = location.state as PaymentPageState | null;
+  const promoCodeFromState = state?.promoCode;
+  const discountedFullPriceFromState = state?.discountedFullPrice;
 
   const paymentSystem: PaymentSystem = selectedMethod as PaymentSystem;
 
@@ -256,13 +391,24 @@ function PaymentMethodStep({
       return;
     }
 
-    const amountToBePaid = isFullPricePayment ? packageDetails.price : paymentAmount;
+    // Backend should still see the original full package price,
+    // even if UI shows a discounted total.
+    const baseFullPrice = originalPrice;
+    const isPromoApplied =
+      !!promoCodeFromState && typeof discountedFullPriceFromState === "number";
+
+    // For full payment, if promo is applied, pay the discounted full price; otherwise original.
+    // For partial payment, respect the amount the user entered.
+    const amountToBePaid = isFullPricePayment
+      ? (isPromoApplied ? discountedFullPriceFromState! : baseFullPrice)
+      : paymentAmount;
     const travelersList = [...travelers.adults, ...travelers.children];
 
     const bookInput: any = {
       requestId: request.id,
       cityId: packageDetails.city.id,
-      price: packageDetails.price,
+      // Keep original (pre-discount) price so backend still knows full package price
+      price: baseFullPrice,
       hotelId: packageDetails.hotel.id,
       travelAgencyId: packageDetails.travelAgency.id,
       offerId: packageDetails.offerId,
@@ -277,6 +423,10 @@ function PaymentMethodStep({
       travelers: travelersList,
       paymentSystem,
     };
+
+    if (promoCodeFromState) {
+      bookInput.promoCode = promoCodeFromState;
+    }
 
     if (packageDetails.destinationFlight?.departureDate) {
       bookInput.startDate = packageDetails.destinationFlight.departureDate;
@@ -306,6 +456,11 @@ function PaymentMethodStep({
         localStorage.setItem('bookingResultSource', 'payment');
       } catch {
         // ignore
+      }
+
+      if (res.bookingPaymentUrl === "amount_is_zero") {
+        navigateToBookingResult({ success: true, replace: true, fromPayment: true });
+        return;
       }
       if (paymentSystem === ("VPos" as PaymentSystem.VPos)) {
         window.location.href =

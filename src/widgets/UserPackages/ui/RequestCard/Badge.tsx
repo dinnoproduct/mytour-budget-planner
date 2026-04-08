@@ -28,6 +28,7 @@ export const PaginationBadge = ({
   </Flex>
 )
 
+
 export const HotelStarBadge = ({
   starsCount,
   ...props
@@ -52,3 +53,4 @@ export const HotelStarBadge = ({
     </Text>
   </Flex>
 )
+

@@ -10,6 +10,7 @@ import { CityOffersSection } from "@widgets/CityOffersSection/ui"
 import { PageLayout } from '@/shared/ui/layout/PageLayout'
 import { StoriesSection } from '@widgets/StoriesSection'
 import { GroupTourList } from '@widgets/GroupTourList'
+import { useTranslation } from 'react-i18next'
 
 const TAB_NAMES = ['hotels', 'packages', 'group-tours'] as const
 const TAB_NAME_TO_INDEX: Record<string, number> = {
@@ -20,8 +21,10 @@ const TAB_NAME_TO_INDEX: Record<string, number> = {
   packages: 1,
   'group-tours': 2,
 }
+let isReloadCleanupDone = false
 
 export const HomePage = () => {
+  const { i18n } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [tabIndex, setTabIndex] = useState(() => {
     const param = searchParams.get('tab')
@@ -38,10 +41,14 @@ export const HomePage = () => {
         return
       }
       const name = TAB_NAMES[index] ?? 'hotels'
-      setSearchParams(prev => {
-        prev.set('tab', name)
-        return prev
-      }, { replace: true })
+      setSearchParams(
+        prev => {
+          const next = new URLSearchParams(prev)
+          next.set('tab', name)
+          return next
+        },
+        { replace: true }
+      )
     },
     [setSearchParams],
   )
@@ -58,13 +65,60 @@ export const HomePage = () => {
         activeTab.scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
-          inline: 'center',
+          // Keep active tab aligned to the left in mobile overflow scenarios.
+          inline: 'start',
         })
       }
     })
 
     return () => window.cancelAnimationFrame(frameId)
-  }, [tabIndex])
+  }, [tabIndex, i18n.language])
+
+  useEffect(() => {
+    if (isReloadCleanupDone) {
+      return
+    }
+
+    const navigationEntry = performance.getEntriesByType('navigation')[0] as
+      | PerformanceNavigationTiming
+      | undefined
+
+    if (navigationEntry?.type !== 'reload') {
+      return
+    }
+
+    isReloadCleanupDone = true
+
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev)
+        next.delete('groupTourMonths')
+        next.delete('groupTourRouteCountries')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
+
+  useEffect(() => {
+    if (tabIndex === 2) {
+      return
+    }
+
+    if (!searchParams.get('groupTourMonths') && !searchParams.get('groupTourRouteCountries')) {
+      return
+    }
+
+    setSearchParams(
+      prev => {
+        const next = new URLSearchParams(prev)
+        next.delete('groupTourMonths')
+        next.delete('groupTourRouteCountries')
+        return next
+      },
+      { replace: true }
+    )
+  }, [tabIndex, searchParams, setSearchParams])
 
   useEffect(() => {
     const scriptId = 'EmbedSocialHashtagScript'

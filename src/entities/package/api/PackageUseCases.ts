@@ -120,12 +120,14 @@ export class PackageUseCases {
   async payRemainingAmount(
     requestId: number,
     token: string,
-    paymentSystem?: string
+    paymentSystem?: string,
+    amountToBePaid?: number
   ) {
     return this.requestService.payRemainingAmount(
       requestId,
       token,
-      paymentSystem
+      paymentSystem,
+      amountToBePaid
     )
   }
 
@@ -198,8 +200,8 @@ export class PackageUseCases {
   }
 
   // group tour
-  async getGroupTours() {
-    return this.groupTourService.getGroupTours()
+  async getGroupTours(params: { page?: number | null; limit?: number | null } | undefined) {
+    return this.groupTourService.getGroupTours(params)
   }
 
   async getGroupTourInfo(tourId: string) {

@@ -8,6 +8,7 @@ import {
   usePackagesSearchContext,
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
+import { GroupTourSearchForm } from '../GroupTourSearchForm'
 
 interface CombinedSearchViewProps {
   containerProps?: any
@@ -44,7 +45,7 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
       navigateToDefaultHotelSearch()
     } else if (index === 0 && isPackageSearchView) {
       navigateToDefaultPackageSearch()
-    } 
+    }
   }
 
   useEffect(() => {
@@ -65,6 +66,7 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
       >
         <HotelSearchForm />
         <PackageSearchForm />
+        <GroupTourSearchForm />
       </Layout>
       {showTabs ? (
         <Box

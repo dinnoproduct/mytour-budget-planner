@@ -9,7 +9,6 @@ interface StoriesSectionProps {
 
 export const StoriesSection: React.FC<StoriesSectionProps> = ({ isHotel = 0 }) => {
   const { storyGroups, isLoading, error } = useStoriesData()
-  console.log('StoriesSection data:', { storyGroups, isLoading, error })
   const [isViewerOpen, setIsViewerOpen] = useState(false)
   const [activeGroupIndex, setActiveGroupIndex] = useState(0)
 

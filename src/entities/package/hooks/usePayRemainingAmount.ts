@@ -7,6 +7,7 @@ import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
 export type PayRemainingAmountParams = {
   requestId: number
   paymentSystem?: string
+  amountToBePaid?: number
 }
 
 export const usePayRemainingAmount = (
@@ -25,10 +26,13 @@ export const usePayRemainingAmount = (
         typeof params === 'number' ? params : params.requestId
       const paymentSystem =
         typeof params === 'number' ? undefined : params.paymentSystem
+      const amountToBePaid =
+        typeof params === 'number' ? undefined : params.amountToBePaid
       return packageUseCases.payRemainingAmount(
         requestId,
         userToken,
-        paymentSystem
+        paymentSystem,
+        amountToBePaid
       )
     },
     onSuccess: (data: BookPackageResponse) => {
