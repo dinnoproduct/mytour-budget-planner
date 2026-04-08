@@ -27,6 +27,7 @@ interface DatePickerMenuContentProps {
     days: number
   }) => void
   onTabChange: (index: number) => void
+  portalZIndex?: number
 }
 
 export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
@@ -39,7 +40,8 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
   onDayClick,
   onExactDateAccept,
   onApproximateAccept,
-  onTabChange
+  onTabChange,
+  portalZIndex
 }) => {
   const { t } = useTranslation()
   const { isMd } = useBreakpoint()
@@ -55,7 +57,13 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
         height="full"
         width="full"
         maxW={{ base: '100dvw', md: '392px' }}
-        rootProps={!isMd ? MENU_LIST_MOBILE_ROOT_PROPS : {}}
+        rootProps={
+          !isMd
+            ? MENU_LIST_MOBILE_ROOT_PROPS
+            : portalZIndex
+              ? { zIndex: portalZIndex }
+              : {}
+        }
       >
         <MobileHeader onClose={onClose} />
         <Tabs

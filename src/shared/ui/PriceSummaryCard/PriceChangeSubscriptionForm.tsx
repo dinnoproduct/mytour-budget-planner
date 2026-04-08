@@ -1,11 +1,17 @@
 import { Box, Button, FormControl, FormLabel, Input, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { DatePickerFlexibleSearch } from "@features/DatePickerFlexibleSearch";
+import { DatePickerFlights } from "@features/DatePickerFlights";
+import { usePackagesSearchContext } from "@entities/package";
 
 type PriceChangeSubscriptionFormProps = {
   initialFullName?: string;
   initialEmail?: string;
   initialPhone?: string;
+  contentType?: "hotel" | "package";
+  initialFromDate?: Date | null;
+  initialToDate?: Date | null;
 };
 
 const normalizePhone = (value?: string) => {
@@ -21,12 +27,25 @@ export const PriceChangeSubscriptionForm = ({
   initialFullName,
   initialEmail,
   initialPhone,
+  contentType = "hotel",
+  initialFromDate,
+  initialToDate,
 }: PriceChangeSubscriptionFormProps) => {
   const { t } = useTranslation();
   const [fullName, setFullName] = useState(initialFullName ?? "");
   const [email, setEmail] = useState(initialEmail ?? "");
   const [phone, setPhone] = useState(normalizePhone(initialPhone));
   const [phoneInvalid, setPhoneInvalid] = useState(false);
+  const [fromDate, setFromDate] = useState<Date | null>(initialFromDate ?? null);
+  const [toDate, setToDate] = useState<Date | null>(initialToDate ?? null);
+
+  const isPackage = contentType === "package";
+  const {
+    availableDepartureDates,
+    availableReturnDates,
+    isLoadingReturnDates,
+    handleFromDateClick,
+  } = usePackagesSearchContext();
 
   useEffect(() => {
     if (!initialFullName || fullName) return;
@@ -97,6 +116,47 @@ export const PriceChangeSubscriptionForm = ({
                 }}
                 placeholder={t("priceSummaryCard.phonePlaceholder")}
               />
+            </FormControl>
+
+            <FormControl>
+              <FormLabel color="gray.700" fontSize="sm" mb={2}>
+                {t("priceSummaryCard.travelDates")}
+              </FormLabel>
+              <Box
+                width="full"
+                sx={{
+                  "& > span, & > div, & [role='group']": {
+                    width: "100% !important",
+                    maxWidth: "100% !important",
+                  },
+                }}
+              >
+                {isPackage ? (
+                  <DatePickerFlights
+                    fromDate={fromDate}
+                    toDate={toDate}
+                    portalZIndex={1500}
+                    onAccept={(from, to) => {
+                      setFromDate(from);
+                      setToDate(to ?? null);
+                    }}
+                    onFromDateClick={handleFromDateClick}
+                    availableDepartureDates={availableDepartureDates}
+                    availableReturnDates={availableReturnDates}
+                    isLoadingReturnDates={isLoadingReturnDates}
+                  />
+                ) : (
+                  <DatePickerFlexibleSearch
+                    fromDate={fromDate}
+                    toDate={toDate}
+                    portalZIndex={1500}
+                    onAccept={(from, to) => {
+                      setFromDate(from);
+                      setToDate(to ?? null);
+                    }}
+                  />
+                )}
+              </Box>
             </FormControl>
 
             <Button type="submit" variant="solid-blue" mt={1} width="full" size="lg" isDisabled={!fullName || !email || !phone}>

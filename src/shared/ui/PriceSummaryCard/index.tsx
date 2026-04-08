@@ -1,40 +1,27 @@
 import {
-  Box,
   Flex,
-  Grid,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
+  Box,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, Text } from "@ui";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 import { useBreakpoint } from "@shared/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@shared/utils";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { type PriceSummaryCardProps, type LayoutProps } from "./types.ts";
+import { type PriceSummaryCardProps } from "./types.ts";
 import { metaEvents } from "@/shared/configs/metaEvents";
-import { PriceChangeSubscriptionForm } from "./PriceChangeSubscriptionForm";
 import { getPluralForm } from "@/shared/helpers/getPluralForm.ts";
 import { SectionLayout } from "./SectionLayout.tsx";
 import { DictionaryTypes, useDictionary } from "@entities/package";
 import { useUserContext } from "@entities/user";
+import { PriceSummaryCardLayout } from "./Layout";
+import { SubscribeCTAButton } from "./SubscribeCTAButton";
+import { SubscribeModal } from "./SubscribeModal";
 
-
-enum LayoutAreas {
-  CONFIG = "config",
-  AVAILABILITY = "availability",
-  LATE_CHECKOUT = "lateCheckout",
-  TOTAL_PRICE = "totalPrice",
-  SUBSCRIBE_CTA = "subscribeCTA",
-}
 
 export const PriceSummaryCard = ({
   tourPackage,
@@ -122,6 +109,21 @@ export const PriceSummaryCard = ({
   };
 
   const isHotelContent = contentType === "hotel";
+
+  const [initialFromDate, initialToDate] = useMemo(() => {
+    const rawFrom = isHotelContent
+      ? tourPackage.checkin
+      : (tourPackage.destinationFlight?.departureDate ?? tourPackage.checkin);
+    const rawTo = isHotelContent
+      ? tourPackage.checkout
+      : (tourPackage.returnFlight?.departureDate ?? tourPackage.checkout);
+    const from = rawFrom ? new Date(rawFrom) : null;
+    const to = rawTo ? new Date(rawTo) : null;
+    return [
+      from && !Number.isNaN(from.getTime()) ? from : null,
+      to && !Number.isNaN(to.getTime()) ? to : null,
+    ] as const;
+  }, [isHotelContent, tourPackage]);
   const durationDateRange = [
     formatShortLocalizedDate(
       isHotelContent
@@ -142,10 +144,10 @@ export const PriceSummaryCard = ({
 
   return (
     <>
-      <Layout isFixed={isFixed} {...props}>
+      <PriceSummaryCardLayout isFixed={isFixed} {...props}>
         <CardSectionLayout
           px="4"
-          gridArea={LayoutAreas.CONFIG}
+          gridArea="config"
           width="full"
           borderBottomRadius={{ base: "md !important", md: "0 !important" }}
           borderTopRadius={"md !important"}
@@ -160,7 +162,7 @@ export const PriceSummaryCard = ({
         </CardSectionLayout>
         <CardSectionLayout
           px="4"
-          gridArea={LayoutAreas.TOTAL_PRICE}
+          gridArea="totalPrice"
           position={{
             base: "fixed",
             md: "static",
@@ -198,100 +200,18 @@ export const PriceSummaryCard = ({
           </Button>
         </CardSectionLayout>
         <SubscribeCTAButton onOpen={onOpen} />
-      </Layout>
+      </PriceSummaryCardLayout>
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size={{ base: "full", md: "md" }} >
-        <ModalOverlay />
-        <ModalContent mx={{ base: 0, md: 4 }} sx={{ borderRadius: "2xl" }}>
-          <ModalHeader bgColor="blue.500" p={4} sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}>
-            <Text size="lg" fontWeight="bold" color="white" textAlign="left">
-              {t("priceSummaryCard.subscribeModalTitle")}
-            </Text>
-            <Icon name="close" size="24" color="white" cursor="pointer" onClick={onClose} />
-          </ModalHeader>
-          <ModalBody p={0}>
-            <PriceChangeSubscriptionForm
-              initialFullName={[user?.firstName, user?.lastName].filter(Boolean).join(" ")}
-              initialEmail={user?.email}
-              initialPhone={user?.phoneNumber}
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal >
+      <SubscribeModal
+        isOpen={isOpen}
+        onClose={onClose}
+        initialFullName={[user?.firstName, user?.lastName].filter(Boolean).join(" ")}
+        initialEmail={user?.email}
+        initialPhone={user?.phoneNumber}
+        contentType={contentType}
+        initialFromDate={initialFromDate}
+        initialToDate={initialToDate}
+      />
     </>
   );
 };
-
-
-const SubscribeCTAButton = ({ onOpen }: { onOpen: () => void }) => {
-  const { t } = useTranslation();
-  return (
-    <Box
-      gridArea={LayoutAreas.SUBSCRIBE_CTA}
-      mt={{ base: 2, md: 6 }}
-      width="full"
-      bgColor="gray.700"
-      color="white"
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      cursor="pointer"
-      transition="all 0.2s ease-in-out"
-      _hover={{ bgColor: "gray.800" }}
-      _active={{ bgColor: "gray.900" }}
-      borderRadius={'lg'}
-      p={4}
-      onClick={onOpen}
-    >
-      <Flex display="flex" alignItems="center" gap={2}>
-        <Box backgroundColor="green.500" borderRadius="full" display="flex" alignItems="center" p={1}>
-          <Icon name="fluent-alert" size="16" color="white" />
-        </Box>
-        <Text size="sm" fontWeight={'semibold'} color="white">{t("priceSummaryCard.subscribeCTA")}</Text>
-      </Flex>
-      <Icon name="chevron-right" size="16" color="white" />
-    </Box>
-  );
-};
-
-export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
-  <Box width={{ base: "full", md: "442px" }} {...props}>
-    <Grid
-      width={{ base: "full", md: "442px" }}
-      height="auto"
-      borderY="1px solid"
-      borderX={{
-        base: "none",
-        md: "none",
-      }}
-      borderColor="transparent"
-      rounded={{ base: "none", md: "md" }}
-      templateAreas={{
-        base: `
-        "${LayoutAreas.AVAILABILITY}"
-        "${LayoutAreas.CONFIG}"
-        "${LayoutAreas.LATE_CHECKOUT}"
-        "${LayoutAreas.TOTAL_PRICE}"
-        "${LayoutAreas.SUBSCRIBE_CTA}"
-        `,
-        md: `
-        "${LayoutAreas.CONFIG}"
-        "${LayoutAreas.AVAILABILITY}"
-        "${LayoutAreas.LATE_CHECKOUT}"
-        "${LayoutAreas.TOTAL_PRICE}"
-        "${LayoutAreas.SUBSCRIBE_CTA}"
-        `,
-      }}
-      gridTemplateRows="auto"
-      gridTemplateColumns="1fr"
-      position={isFixed ? "fixed" : "static"}
-      top={isFixed ? "90px" : "auto"}
-    >
-      {children}
-    </Grid>
-  </Box>
-);

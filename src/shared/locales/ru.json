@@ -357,6 +357,7 @@
   "priceSummaryCard.phone": "Номер телефона",
   "priceSummaryCard.phonePlaceholder": "Введите ваш номер телефона",
   "priceSummaryCard.subscribeModalTitle": "Получать уведомления об изменении цены",
+  "priceSummaryCard.travelDates": "Период",
   "priceSummaryCard.subscribeButton": "Подписаться",
   "priceSummaryCard.subscribeDisclaimer": "Подписываясь, вы соглашаетесь получать уведомления об изменении цены.",
   "priceSummaryCard.SuccessMessage": "Спасибо за подписку",

@@ -357,10 +357,10 @@
   "priceSummaryCard.phone": "Phone",
   "priceSummaryCard.phonePlaceholder": "Enter your phone number",
   "priceSummaryCard.subscribeModalTitle": "Get notified about price changes",
+  "priceSummaryCard.travelDates": "Duration",
   "priceSummaryCard.subscribeButton": "Subscribe",
   "priceSummaryCard.subscribeDisclaimer": "By subscribing, you agree to receive notifications about price changes.",
   "priceSummaryCard.SuccessMessage": "Thank you for subscribing.",
-
   "subscribeCTA": "Subscribe and be the first to know about our news",
   "subscribeSlogan": "We are working to offer you new destinations",
   "successDescription": "Thank you for booking. The request has been sent for hotel confirmation. You will receive booking confirmation by email",
