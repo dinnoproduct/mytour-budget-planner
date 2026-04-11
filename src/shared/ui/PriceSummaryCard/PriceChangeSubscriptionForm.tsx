@@ -64,6 +64,10 @@ export const PriceChangeSubscriptionForm = ({
   const [fullName, setFullName] = useState(initialFullName ?? "");
   const [email, setEmail] = useState(initialEmail ?? "");
   const [phone, setPhone] = useState(normalizePhone(initialPhone));
+
+  const isNameLocked = Boolean(initialFullName);
+  const isEmailLocked = Boolean(initialEmail);
+  const isPhoneLocked = Boolean(initialPhone);
   const [phoneInvalid, setPhoneInvalid] = useState(false);
   const [fromDate, setFromDate] = useState<Date | null>(
     initialFromDate ?? null,
@@ -197,6 +201,7 @@ export const PriceChangeSubscriptionForm = ({
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder={t("priceSummaryCard.fullNamePlaceholder")}
+                isDisabled={isNameLocked}
               />
             </FormControl>
 
@@ -209,6 +214,7 @@ export const PriceChangeSubscriptionForm = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("priceSummaryCard.emailPlaceholder")}
+                isDisabled={isEmailLocked}
               />
             </FormControl>
 
@@ -229,6 +235,7 @@ export const PriceChangeSubscriptionForm = ({
                   if (phoneInvalid) setPhoneInvalid(false);
                 }}
                 placeholder={t("priceSummaryCard.phonePlaceholder")}
+                isDisabled={isPhoneLocked}
               />
             </FormControl>
 
