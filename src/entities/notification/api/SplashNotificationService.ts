@@ -9,7 +9,7 @@ export class SplashNotificationService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/external`,
+      baseURL: `${import.meta.env.VITE_API_URL}/v2/external`,
     })
 
     this.api.interceptors.response.use(
@@ -18,10 +18,10 @@ export class SplashNotificationService {
     )
   }
 
-  getActive(language: string, token: string): Promise<SplashNotification[]> {
+  getActive(language: string, userId: string): Promise<SplashNotification[]> {
     return this.api.get('/SplashNotifications', {
+      params: { userId },
       headers: {
-        Authorization: `Bearer ${token}`,
         platform: 'web',
         'Content-Language': language,
         limit: 1,
@@ -31,11 +31,11 @@ export class SplashNotificationService {
 
   markViewed(
     payload: SplashNotificationViewedPayload,
-    token: string,
+    userId: string,
   ): Promise<void> {
     return this.api.post('/SplashNotificationViewed', payload, {
+      params: { userId },
       headers: {
-        Authorization: `Bearer ${token}`,
         platform: 'web',
       },
     })

@@ -5,6 +5,7 @@ import { type LanguageName } from '@shared/model'
 import { splashNotificationService } from '../api/index.ts'
 import { type SplashNotification } from '../api/types.ts'
 import { NOTIFICATION_LANGUAGE_MAP } from '../model/constants.ts'
+import { getGuestUserId } from '../model/guestId.ts'
 
 export const useSplashNotifications = (
   options?: Omit<
@@ -13,17 +14,18 @@ export const useSplashNotifications = (
   >,
 ) => {
   const { i18n } = useTranslation()
-  const { userToken } = useUserContext()
+  const { user } = useUserContext()
   const apiLanguage =
     NOTIFICATION_LANGUAGE_MAP[i18n.language as LanguageName] ?? 'en'
 
+  // Logged-in users send their numeric id; guests send a stable UUID from localStorage.
+  const userId = user?.id != null ? String(user.id) : getGuestUserId()
+
   return useQuery({
     ...options,
-    enabled: !!userToken,
     staleTime: 10 * 60 * 1000,
     refetchInterval: 10 * 60 * 1000,
-    queryKey: ['splash-notifications', apiLanguage, userToken],
-    queryFn: () =>
-      splashNotificationService.getActive(apiLanguage, userToken),
+    queryKey: ['splash-notifications', apiLanguage, userId],
+    queryFn: () => splashNotificationService.getActive(apiLanguage, userId),
   })
 }
