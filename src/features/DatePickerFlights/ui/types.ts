@@ -13,6 +13,7 @@ export interface DatePickerProps {
 
   menuProps?: Omit<MenuProps, 'children'>
   CustomButton?: ComponentType<DatePickerFlightsCustomButtonProps>
+  portalZIndex?: number
 }
 
 export interface DatePickerInputProps {

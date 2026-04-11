@@ -19,7 +19,8 @@ export const DatePickerFlights = ({
   isLoadingReturnDates,
   onFromDateClick,
   menuProps = {},
-  CustomButton
+  CustomButton,
+  portalZIndex
 }: DatePickerProps) => {
   const { t } = useTranslation()
   const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(null)
@@ -195,7 +196,9 @@ export const DatePickerFlights = ({
                   md: undefined
                 }
               }
-              : {}
+              : portalZIndex
+                ? { zIndex: portalZIndex }
+                : {}
           }
         >
           <Flex

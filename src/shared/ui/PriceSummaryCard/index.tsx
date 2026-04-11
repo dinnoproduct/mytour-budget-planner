@@ -1,18 +1,27 @@
-import { Box, Flex, Grid } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, Text } from "@ui";
 import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
 import { useBreakpoint } from "@shared/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@shared/utils";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { type PriceSummaryCardProps, type LayoutProps } from "./types.ts";
+import { type PriceSummaryCardProps } from "./types.ts";
 import { metaEvents } from "@/shared/configs/metaEvents";
 import { getPluralForm } from "@/shared/helpers/getPluralForm.ts";
 import { SectionLayout } from "./SectionLayout.tsx";
 import { DictionaryTypes, useDictionary } from "@entities/package";
+import { useUserContext } from "@entities/user";
+import { PriceSummaryCardLayout } from "./Layout";
+import { SubscribeCTAButton } from "./SubscribeCTAButton";
+import { SubscribeModal } from "./SubscribeModal";
+
 
 export const PriceSummaryCard = ({
   tourPackage,
@@ -22,25 +31,23 @@ export const PriceSummaryCard = ({
 }: PriceSummaryCardProps) => {
   const { t } = useTranslation();
   const { isMd } = useBreakpoint();
+  const { user } = useUserContext();
   const { data: foodTypes = [] } = useDictionary(
     "FoodTypeDictionary" as DictionaryTypes.FoodTypeDictionary,
   );
 
   const [isFixed, setIsFixed] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { openBookingDrawer } = useBookingDrawer();
 
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef?.current && isMd) {
-        const layoutTop = containerRef.current.getBoundingClientRect().top;
-
-        // When the content block scrolls past a certain point,
-        // fix the price card so the whole section stays visible,
-        // similar to the group tour booking card behavior.
-        if (layoutTop <= 100 && !isFixed) {
+        const layoutTop = containerRef.current.getBoundingClientRect().top
+        if (layoutTop <= 90 && !isFixed) {
           setIsFixed(true);
-        } else if (layoutTop > 100 && isFixed) {
+        } else if (layoutTop > 90 && isFixed) {
           setIsFixed(false);
         }
       }
@@ -102,6 +109,21 @@ export const PriceSummaryCard = ({
   };
 
   const isHotelContent = contentType === "hotel";
+
+  const [initialFromDate, initialToDate] = useMemo(() => {
+    const rawFrom = isHotelContent
+      ? tourPackage.checkin
+      : (tourPackage.destinationFlight?.departureDate ?? tourPackage.checkin);
+    const rawTo = isHotelContent
+      ? tourPackage.checkout
+      : (tourPackage.returnFlight?.departureDate ?? tourPackage.checkout);
+    const from = rawFrom ? new Date(rawFrom) : null;
+    const to = rawTo ? new Date(rawTo) : null;
+    return [
+      from && !Number.isNaN(from.getTime()) ? from : null,
+      to && !Number.isNaN(to.getTime()) ? to : null,
+    ] as const;
+  }, [isHotelContent, tourPackage]);
   const durationDateRange = [
     formatShortLocalizedDate(
       isHotelContent
@@ -121,103 +143,85 @@ export const PriceSummaryCard = ({
     String(tourPackage.foodType ?? "");
 
   return (
-    <Layout isFixed={isFixed} {...props}>
-      <CardSectionLayout
-        px="4"
-        gridArea="config"
-        width="full"
-        borderBottomRadius={{ base: "md !important", md: "0 !important" }}
-        borderTopRadius={"md !important"}
-      >
-        <SectionLayout
-          listItems={[
-            { key: t`travelers`, value: `${tourPackage.adultTravelers} ${t`adult`}${tourPackage.childrenTravelers > 0 ? `, ${tourPackage.childrenTravelers} ${t(getPluralForm(tourPackage.childrenTravelers, 'children')).toLowerCase()}` : ''}` },
-            { key: t`duration`, value: durationDateRange },
-            { key: t`mealType`, value: mealTypeLabel }
-          ]}
-        />
-      </CardSectionLayout>
-      <CardSectionLayout
-        px="4"
-        gridArea="totalPrice"
-        position={{
-          base: "fixed",
-          md: "static",
-        }}
-        bottom="0"
-        left="0"
-        right="0"
-        width="full"
-        borderBottomRadius={"md !important"}
-        borderTopRadius={{ base: "md !important", md: "0 !important" }}
-      >
-        <Flex width="full" justify="space-between" align="center" height="28px">
-          <Text size="sm">{t`total`} :</Text>
+    <>
+      <PriceSummaryCardLayout isFixed={isFixed} {...props}>
+        <CardSectionLayout
+          px="4"
+          gridArea="config"
+          width="full"
+          borderBottomRadius={{ base: "md !important", md: "0 !important" }}
+          borderTopRadius={"md !important"}
+        >
+          <SectionLayout
+            listItems={[
+              { key: t`travelers`, value: `${tourPackage.adultTravelers} ${t`adult`}${tourPackage.childrenTravelers > 0 ? `, ${tourPackage.childrenTravelers} ${t(getPluralForm(tourPackage.childrenTravelers, 'children')).toLowerCase()}` : ''}` },
+              { key: t`duration`, value: durationDateRange },
+              { key: t`mealType`, value: mealTypeLabel }
+            ]}
+          />
+        </CardSectionLayout>
+        <CardSectionLayout
+          px="4"
+          gridArea="totalPrice"
+          position={{
+            base: "fixed",
+            md: "static",
+          }}
+          bottom="0"
+          left="0"
+          right="0"
+          width="full"
+          borderBottomRadius={"md !important"}
+          borderTopRadius={{ base: "md !important", md: "0 !important" }}
+        >
+          <Flex width="full" justify="space-between" align="center" height="28px">
+            <Text size="sm">{t`total`} :</Text>
 
-          <Flex>
-            <Text size="lg" fontWeight="bold" ml="2">
-              {numberWithCommaNormalizer(tourPackage?.price)} ֏
-            </Text>
-            <Flex align="center" ml="2">
-              {tourPackage ? (
-                <>
-                  <Icon name="approximate" size="20" color="gray.500" />
+            <Flex>
+              <Text size="lg" fontWeight="bold" ml="2">
+                {numberWithCommaNormalizer(tourPackage?.price)} ֏
+              </Text>
+              <Flex align="center" ml="2">
+                {tourPackage ? (
+                  <>
+                    <Icon name="approximate" size="20" color="gray.500" />
 
-                  <Text size="sm" color="gray.500" ml="0.5">
-                    {CURRENCY_MAP[tourPackage.currency]}{" "}
-                    {formatNumber(parseFloat(tourPackage.priceInCurrency))}
-                  </Text>
-                </>
-              ) : null}
+                    <Text size="sm" color="gray.500" ml="0.5">
+                      {CURRENCY_MAP[tourPackage.currency]}{" "}
+                      {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+                    </Text>
+                  </>
+                ) : null}
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
+          <Button mt="4" width="full" onClick={handleBookClick} size="lg">
+            {t`selectRoomAndMealType`}
+          </Button>
+        </CardSectionLayout>
+        <SubscribeCTAButton onOpen={onOpen} />
+      </PriceSummaryCardLayout>
 
-        <Button mt="4" width="full" onClick={handleBookClick} size="lg">
-          {t`selectRoomAndMealType`}
-        </Button>
-      </CardSectionLayout>
-    </Layout >
+      <SubscribeModal
+        isOpen={isOpen}
+        onClose={onClose}
+        initialFullName={[user?.firstName, user?.lastName].filter(Boolean).join(" ")}
+        initialEmail={user?.email}
+        initialPhone={user?.phoneNumber}
+        contentType={contentType}
+        initialFromDate={initialFromDate}
+        initialToDate={initialToDate}
+        subscriptionData={{
+          hotelUrl: window.location.href,
+          hotelId: String(tourPackage.hotel.id),
+          cities: [tourPackage.city.id],
+          adults: tourPackage.adultTravelers,
+          childs: Array.from(
+            { length: tourPackage.childrenTravelers },
+            () => tourPackage.childMaxAge ?? 0,
+          ),
+        }}
+      />
+    </>
   );
 };
-
-export const Layout = ({ children, isFixed, ...props }: LayoutProps) => (
-  <Box width={{ base: "full", md: "442px" }} {...props}>
-    <Grid
-      width={{ base: "full", md: "442px" }}
-      height="auto"
-      borderY="1px solid"
-      borderX={{
-        base: "none",
-        md: "1px solid",
-      }}
-      bgColor="white"
-      overflow="hidden"
-      borderTopColor="gray.100"
-      borderLeftColor={{ base: "transparent", md: "gray.100" }}
-      borderRightColor={{ base: "transparent", md: "gray.100" }}
-      borderBottomColor="gray.100"
-      rounded={{ base: "none", md: "md" }}
-      templateAreas={{
-        base: `
-        "availability"
-        "config"
-        "lateCheckout"
-        "totalPrice"
-        `,
-        md: `
-        "config"
-        "availability"
-        "lateCheckout"
-        "totalPrice"
-        `,
-      }}
-      gridTemplateRows="auto"
-      gridTemplateColumns="1fr"
-      position={isFixed ? "fixed" : "static"}
-      top={isFixed ? "90px" : "auto"}
-    >
-      {children}
-    </Grid>
-  </Box>
-);

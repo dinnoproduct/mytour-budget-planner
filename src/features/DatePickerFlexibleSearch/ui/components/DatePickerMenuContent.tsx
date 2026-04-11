@@ -27,6 +27,8 @@ interface DatePickerMenuContentProps {
     days: number
   }) => void
   onTabChange: (index: number) => void
+  portalZIndex?: number
+  exactDatesOnly?: boolean
 }
 
 export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
@@ -39,7 +41,9 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
   onDayClick,
   onExactDateAccept,
   onApproximateAccept,
-  onTabChange
+  onTabChange,
+  portalZIndex,
+  exactDatesOnly
 }) => {
   const { t } = useTranslation()
   const { isMd } = useBreakpoint()
@@ -55,30 +59,45 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
         height="full"
         width="full"
         maxW={{ base: '100dvw', md: '392px' }}
-        rootProps={!isMd ? MENU_LIST_MOBILE_ROOT_PROPS : {}}
+        rootProps={
+          !isMd
+            ? MENU_LIST_MOBILE_ROOT_PROPS
+            : portalZIndex
+              ? { zIndex: portalZIndex }
+              : {}
+        }
       >
         <MobileHeader onClose={onClose} />
-        <Tabs
-          align="center"
-          variant="grey-segment"
-          labels={[t`fixedDates`, t`flexibleDates`]}
-          size="sm"
-          index={tabIndex}
-          onChange={onTabChange}
-        >
+        {exactDatesOnly ? (
           <ExactDatesTab
             selectedFromDate={selectedFromDate}
             selectedToDate={selectedToDate}
             onDayClick={onDayClick}
             onAccept={onExactDateAccept}
           />
+        ) : (
+          <Tabs
+            align="center"
+            variant="grey-segment"
+            labels={[t`fixedDates`, t`flexibleDates`]}
+            size="sm"
+            index={tabIndex}
+            onChange={onTabChange}
+          >
+            <ExactDatesTab
+              selectedFromDate={selectedFromDate}
+              selectedToDate={selectedToDate}
+              onDayClick={onDayClick}
+              onAccept={onExactDateAccept}
+            />
 
-          <ApproximateDatesTab
-            searchData={searchData}
-            isResetState={isOpen}
-            onConfirm={onApproximateAccept}
-          />
-        </Tabs>
+            <ApproximateDatesTab
+              searchData={searchData}
+              isResetState={isOpen}
+              onConfirm={onApproximateAccept}
+            />
+          </Tabs>
+        )}
       </MenuList>
     </Portal>
   )

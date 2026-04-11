@@ -8,6 +8,8 @@ export type DatePickerProps = {
   onAccept: (fromDate: Date, toDate?: Date | null, days?: number) => void
   CustomButton?: ComponentType<DatePickerCustomButtonProps>
   menuProps?: Omit<MenuProps, 'children'>
+  portalZIndex?: number
+  exactDatesOnly?: boolean
 }
 
 export type DatePickerInputProps = {

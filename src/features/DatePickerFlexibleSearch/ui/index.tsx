@@ -11,7 +11,9 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
   toDate,
   onAccept,
   CustomButton,
-  menuProps
+  menuProps,
+  portalZIndex,
+  exactDatesOnly
 }) => {
   const { isMd } = useBreakpoint()
 
@@ -65,6 +67,8 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
         onExactDateAccept={handleExactDateAccept}
         onApproximateAccept={handleApproximateAccept}
         onTabChange={handleTabChange}
+        portalZIndex={portalZIndex}
+        exactDatesOnly={exactDatesOnly}
       />
     </Menu>
   )
