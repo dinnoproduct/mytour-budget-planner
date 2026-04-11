@@ -10,7 +10,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { PriceChangeSubscriptionForm } from "./PriceChangeSubscriptionForm";
+import { PriceChangeSubscriptionForm, type PriceAlertSubscriptionData } from "./PriceChangeSubscriptionForm";
 
 type SubscribeModalProps = {
   isOpen: boolean;
@@ -21,6 +21,7 @@ type SubscribeModalProps = {
   contentType?: "hotel" | "package";
   initialFromDate?: Date | null;
   initialToDate?: Date | null;
+  subscriptionData?: PriceAlertSubscriptionData;
 };
 
 export const SubscribeModal = ({
@@ -32,6 +33,7 @@ export const SubscribeModal = ({
   contentType = "hotel",
   initialFromDate,
   initialToDate,
+  subscriptionData,
 }: SubscribeModalProps) => {
   const { t } = useTranslation();
 
@@ -61,6 +63,8 @@ export const SubscribeModal = ({
             contentType={contentType}
             initialFromDate={initialFromDate}
             initialToDate={initialToDate}
+            subscriptionData={subscriptionData}
+            onSuccess={onClose}
           />
         </ModalBody>
       </ModalContent>

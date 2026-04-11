@@ -9,6 +9,7 @@ export type DatePickerProps = {
   CustomButton?: ComponentType<DatePickerCustomButtonProps>
   menuProps?: Omit<MenuProps, 'children'>
   portalZIndex?: number
+  exactDatesOnly?: boolean
 }
 
 export type DatePickerInputProps = {

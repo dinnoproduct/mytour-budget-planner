@@ -361,7 +361,7 @@
   "priceSummaryCard.subscribeButton": "Подписаться",
   "priceSummaryCard.subscribeDisclaimer": "Подписываясь, вы соглашаетесь получать уведомления об изменении цены.",
   "priceSummaryCard.SuccessMessage": "Спасибо за подписку",
-
+  "priceSummaryCard.ErrorMessage": "Техническая ошибка, пожалуйста, попробуйте снова",
   "subscribeCTA": "Подпишитесь и узнавайте наши новости первыми",
   "subscribeSlogan": "Мы работаем, чтобы предложить вам новые направления",
   "successDescription": "Спасибо за бронирование. Запрос отправлен на подтверждение отеля. Вы получите подтверждение бронирования по электронной почте",

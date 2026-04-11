@@ -1,9 +1,27 @@
-import { Box, Button, FormControl, FormLabel, Input, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Image,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DatePickerFlexibleSearch } from "@features/DatePickerFlexibleSearch";
 import { DatePickerFlights } from "@features/DatePickerFlights";
 import { usePackagesSearchContext } from "@entities/package";
+import { usePriceAlertSubscribe } from "@entities/notification";
+
+export type PriceAlertSubscriptionData = {
+  hotelUrl?: string;
+  hotelId?: string;
+  cities?: number[];
+  adults?: number;
+  childs?: number[];
+};
 
 type PriceChangeSubscriptionFormProps = {
   initialFullName?: string;
@@ -12,6 +30,8 @@ type PriceChangeSubscriptionFormProps = {
   contentType?: "hotel" | "package";
   initialFromDate?: Date | null;
   initialToDate?: Date | null;
+  subscriptionData?: PriceAlertSubscriptionData;
+  onSuccess?: () => void;
 };
 
 const normalizePhone = (value?: string) => {
@@ -23,6 +43,13 @@ const normalizePhone = (value?: string) => {
   return `+374${sanitized.replace(/^\+/, "").slice(0, 8)}`;
 };
 
+const formatDate = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
 export const PriceChangeSubscriptionForm = ({
   initialFullName,
   initialEmail,
@@ -30,14 +57,20 @@ export const PriceChangeSubscriptionForm = ({
   contentType = "hotel",
   initialFromDate,
   initialToDate,
+  subscriptionData,
+  onSuccess,
 }: PriceChangeSubscriptionFormProps) => {
   const { t } = useTranslation();
   const [fullName, setFullName] = useState(initialFullName ?? "");
   const [email, setEmail] = useState(initialEmail ?? "");
   const [phone, setPhone] = useState(normalizePhone(initialPhone));
   const [phoneInvalid, setPhoneInvalid] = useState(false);
-  const [fromDate, setFromDate] = useState<Date | null>(initialFromDate ?? null);
+  const [fromDate, setFromDate] = useState<Date | null>(
+    initialFromDate ?? null,
+  );
   const [toDate, setToDate] = useState<Date | null>(initialToDate ?? null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const isPackage = contentType === "package";
   const {
@@ -46,6 +79,15 @@ export const PriceChangeSubscriptionForm = ({
     isLoadingReturnDates,
     handleFromDateClick,
   } = usePackagesSearchContext();
+
+  const { mutate: subscribe, isPending } = usePriceAlertSubscribe({
+    onSuccess: () => {
+      setIsSuccess(true);
+    },
+    onError: () => {
+      setIsError(true);
+    },
+  });
 
   useEffect(() => {
     if (!initialFullName || fullName) return;
@@ -68,8 +110,79 @@ export const PriceChangeSubscriptionForm = ({
       setPhoneInvalid(true);
       return;
     }
-    // UI-only form for now; wire API in next step.
+    setPhoneInvalid(false);
+
+    subscribe({
+      hotelUrl: subscriptionData?.hotelUrl ?? window.location.href,
+      fullName,
+      email,
+      phoneNumber: phone,
+      cities: subscriptionData?.cities ?? [],
+      adults: subscriptionData?.adults ?? 1,
+      childs: subscriptionData?.childs ?? [],
+      dateFrom: fromDate ? formatDate(fromDate) : "",
+      dateTo: toDate ? formatDate(toDate) : "",
+      hotelId: subscriptionData?.hotelId ?? "",
+    });
   };
+
+  if (isSuccess) {
+    return (
+      <Box
+        bg="white"
+        rounded={{ base: "none", md: "2xl" }}
+        overflow="hidden"
+        px={{ base: 4, md: 6 }}
+        py={{ base: 8, md: 10 }}
+      >
+        <VStack spacing={4}>
+          <Image
+            src="/assets/illustrations/success.png"
+            alt="Success"
+            w="160px"
+            h="auto"
+          />
+          <Text
+            textAlign="center"
+            color="gray.700"
+            fontSize="md"
+            fontWeight="600"
+          >
+            {t("priceSummaryCard.SuccessMessage")}
+          </Text>
+        </VStack>
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        bg="white"
+        rounded={{ base: "none", md: "2xl" }}
+        overflow="hidden"
+        px={{ base: 4, md: 6 }}
+        py={{ base: 8, md: 10 }}
+      >
+        <VStack spacing={4}>
+          <Image
+            src="/assets/illustrations/error.png"
+            alt="Error"
+            w="160px"
+            h="auto"
+          />
+          <Text
+            textAlign="center"
+            color="gray.700"
+            fontSize="md"
+            fontWeight="600"
+          >
+            {t("priceSummaryCard.ErrorMessage")}
+          </Text>
+        </VStack>
+      </Box>
+    );
+  }
 
   return (
     <Box bg="white" rounded={{ base: "none", md: "2xl" }} overflow="hidden">
@@ -99,7 +212,7 @@ export const PriceChangeSubscriptionForm = ({
               />
             </FormControl>
 
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={phoneInvalid}>
               <FormLabel color="gray.700" fontSize="sm" mb={2}>
                 {t("priceSummaryCard.phone")}
               </FormLabel>
@@ -113,6 +226,7 @@ export const PriceChangeSubscriptionForm = ({
                     sanitizedValue = sanitizedValue.slice(0, 12);
                   }
                   setPhone(sanitizedValue);
+                  if (phoneInvalid) setPhoneInvalid(false);
                 }}
                 placeholder={t("priceSummaryCard.phonePlaceholder")}
               />
@@ -150,6 +264,7 @@ export const PriceChangeSubscriptionForm = ({
                     fromDate={fromDate}
                     toDate={toDate}
                     portalZIndex={1500}
+                    exactDatesOnly
                     onAccept={(from, to) => {
                       setFromDate(from);
                       setToDate(to ?? null);
@@ -159,8 +274,16 @@ export const PriceChangeSubscriptionForm = ({
               </Box>
             </FormControl>
 
-            <Button type="submit" variant="solid-blue" mt={1} width="full" size="lg" isDisabled={!fullName || !email || !phone}>
-              {t("priceSummaryCard.subscribeButton")}
+            <Button
+              type="submit"
+              variant="solid-blue"
+              mt={1}
+              width="full"
+              size="lg"
+              isLoading={isPending}
+              isDisabled={!fullName || !email || !phone}
+            >
+              {!isPending && t("priceSummaryCard.subscribeButton")}
             </Button>
 
             <Text textAlign="center" color="gray.500" fontSize="xs">
@@ -172,4 +295,3 @@ export const PriceChangeSubscriptionForm = ({
     </Box>
   );
 };
-

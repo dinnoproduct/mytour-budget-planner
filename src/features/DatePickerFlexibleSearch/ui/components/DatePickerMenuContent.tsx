@@ -28,6 +28,7 @@ interface DatePickerMenuContentProps {
   }) => void
   onTabChange: (index: number) => void
   portalZIndex?: number
+  exactDatesOnly?: boolean
 }
 
 export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
@@ -41,7 +42,8 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
   onExactDateAccept,
   onApproximateAccept,
   onTabChange,
-  portalZIndex
+  portalZIndex,
+  exactDatesOnly
 }) => {
   const { t } = useTranslation()
   const { isMd } = useBreakpoint()
@@ -66,27 +68,36 @@ export const DatePickerMenuContent: React.FC<DatePickerMenuContentProps> = ({
         }
       >
         <MobileHeader onClose={onClose} />
-        <Tabs
-          align="center"
-          variant="grey-segment"
-          labels={[t`fixedDates`, t`flexibleDates`]}
-          size="sm"
-          index={tabIndex}
-          onChange={onTabChange}
-        >
+        {exactDatesOnly ? (
           <ExactDatesTab
             selectedFromDate={selectedFromDate}
             selectedToDate={selectedToDate}
             onDayClick={onDayClick}
             onAccept={onExactDateAccept}
           />
+        ) : (
+          <Tabs
+            align="center"
+            variant="grey-segment"
+            labels={[t`fixedDates`, t`flexibleDates`]}
+            size="sm"
+            index={tabIndex}
+            onChange={onTabChange}
+          >
+            <ExactDatesTab
+              selectedFromDate={selectedFromDate}
+              selectedToDate={selectedToDate}
+              onDayClick={onDayClick}
+              onAccept={onExactDateAccept}
+            />
 
-          <ApproximateDatesTab
-            searchData={searchData}
-            isResetState={isOpen}
-            onConfirm={onApproximateAccept}
-          />
-        </Tabs>
+            <ApproximateDatesTab
+              searchData={searchData}
+              isResetState={isOpen}
+              onConfirm={onApproximateAccept}
+            />
+          </Tabs>
+        )}
       </MenuList>
     </Portal>
   )

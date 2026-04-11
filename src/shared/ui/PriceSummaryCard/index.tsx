@@ -211,6 +211,16 @@ export const PriceSummaryCard = ({
         contentType={contentType}
         initialFromDate={initialFromDate}
         initialToDate={initialToDate}
+        subscriptionData={{
+          hotelUrl: window.location.href,
+          hotelId: String(tourPackage.hotel.id),
+          cities: [tourPackage.city.id],
+          adults: tourPackage.adultTravelers,
+          childs: Array.from(
+            { length: tourPackage.childrenTravelers },
+            () => tourPackage.childMaxAge ?? 0,
+          ),
+        }}
       />
     </>
   );

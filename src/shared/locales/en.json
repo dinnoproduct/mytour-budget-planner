@@ -361,6 +361,7 @@
   "priceSummaryCard.subscribeButton": "Subscribe",
   "priceSummaryCard.subscribeDisclaimer": "By subscribing, you agree to receive notifications about price changes.",
   "priceSummaryCard.SuccessMessage": "Thank you for subscribing.",
+  "priceSummaryCard.ErrorMessage": "Technical issue, please try again",
   "subscribeCTA": "Subscribe and be the first to know about our news",
   "subscribeSlogan": "We are working to offer you new destinations",
   "successDescription": "Thank you for booking. The request has been sent for hotel confirmation. You will receive booking confirmation by email",
