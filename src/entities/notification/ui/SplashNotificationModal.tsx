@@ -8,7 +8,7 @@ import {
   Image,
   VStack,
 } from '@chakra-ui/react'
-import { useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import { Button, Text } from '@ui'
 import { type SplashNotification } from '../api/types.ts'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate.ts'
@@ -28,6 +28,24 @@ export const SplashNotificationModal = ({
 }: SplashNotificationModalProps) => {
   const { title, description, cta, asset } = notification
   const { navigateTo } = useLanguageNavigate()
+  const descRef = useRef<HTMLDivElement>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isOverflowing, setIsOverflowing] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) setIsExpanded(false)
+  }, [isOpen])
+
+  // Only measure when collapsed so the flag is never cleared on expand
+  useEffect(() => {
+    if (!isOpen || isExpanded) return
+    const id = setTimeout(() => {
+      const el = descRef.current
+      if (!el) return
+      setIsOverflowing(el.scrollHeight > el.clientHeight + 1)
+    }, 0)
+    return () => clearTimeout(id)
+  }, [description, isOpen, isExpanded])
 
   const handleCta = useCallback(() => {
     if (cta?.url) {
@@ -64,10 +82,12 @@ export const SplashNotificationModal = ({
         flexDirection="column"
         overflow="hidden"
       >
-        {/* Fixed close button — stays in place while body scrolls */}
         <ModalCloseButton
           zIndex={10}
           bg="whiteAlpha.800"
+          position="absolute"
+          top={6}
+          right={6}
           borderRadius="full"
           _hover={{ bg: 'white' }}
         />
@@ -113,9 +133,36 @@ export const SplashNotificationModal = ({
             )}
 
             {description && (
-              <Text fontSize="sm" color="gray.700">
+              <Box
+                ref={descRef}
+                fontSize="sm"
+                color="gray.700"
+                sx={
+                  !isExpanded
+                    ? {
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }
+                    : {}
+                }
+              >
                 {description}
-              </Text>
+              </Box>
+            )}
+
+            {isOverflowing && (
+              <Box
+                as="span"
+                fontSize="sm"
+                fontWeight="700"
+                color="blue.500"
+                cursor="pointer"
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
+                {isExpanded ? 'Close' : 'More'}
+              </Box>
             )}
 
             {cta?.title && (
