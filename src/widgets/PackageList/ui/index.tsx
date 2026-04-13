@@ -130,7 +130,7 @@ export const PackageList = () => {
       : getNightsByDate(fromDate, toDate);
   };
 
-  if ( isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
+  if (isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
     return (
       <Layout >
         <LoaderWithText style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} loading={isLoadingPackages || false} title={t("loading.packages.title")} description={t("loading.packages.description")} />
@@ -141,7 +141,7 @@ export const PackageList = () => {
   return (
     <Layout>
       {!isLoadingPackages ? (
-        <Box ml={{ base: 0, md: !isLoadingPackages ? "326px" : undefined }}>
+        <Box ml={{ base: 0, md: !isLoadingPackages ? "326px" : undefined }} width={{ base: 'full', md: 'auto' }}>
           <PackageFilter
             isActive={isFilterActive}
             filterOptions={filterOptions}

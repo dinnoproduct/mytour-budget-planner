@@ -6,6 +6,7 @@ export type SearchTravelersProps = {
 	onChange?: (data: SearchTravelersData) => void
 	CustomButton?: ComponentType<SearchTravelersCustomButtonProps>
 	menuProps?: Omit<MenuProps, 'children'>
+	portalZIndex?: number
 }
 
 export type SearchTravelersCustomButtonProps = {

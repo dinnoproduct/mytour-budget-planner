@@ -8,23 +8,24 @@ import {
   useMediaQuery,
   VStack
 } from '@chakra-ui/react'
-import {AlertCardMessage, Button, Icon, Input, Text} from '@ui'
-import React, {useEffect, useMemo, useState} from 'react'
-import {useTranslation} from 'react-i18next'
-import {ChildAge, SearchTravelersProps} from './types.ts'
-import {getPluralForm} from '@shared/helpers'
-import {FormState} from '@components/Form'
-import {ChevronRightIcon} from "@chakra-ui/icons";
+import { AlertCardMessage, Button, Icon, Input, Text } from '@ui'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ChildAge, SearchTravelersProps } from './types.ts'
+import { getPluralForm } from '@shared/helpers'
+import { FormState } from '@components/Form'
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
 const MAX_TRAVELERS = 6
 
 export const SearchTravelers = ({
-                                  defaultData,
-                                  onChange,
-                                  CustomButton,
-                                  menuProps = {}
-                                }: SearchTravelersProps) => {
-  const {t} = useTranslation()
+  defaultData,
+  onChange,
+  CustomButton,
+  menuProps = {},
+  portalZIndex
+}: SearchTravelersProps) => {
+  const { t } = useTranslation()
 
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [tempAdultsCount, setTempAdultsCount] = useState(1)
@@ -51,7 +52,7 @@ export const SearchTravelers = ({
       if (!child.age) {
         setTempChildrenAges(prev => {
           const newAges = [...prev]
-          newAges[index] = {age: null, isRequiredError: true}
+          newAges[index] = { age: null, isRequiredError: true }
           return newAges
         })
         hasError = true
@@ -62,7 +63,7 @@ export const SearchTravelers = ({
 
     // Ensure childrenAges is empty when childrenCount is 0
     const finalChildrenAges = tempChildrenCount === 0 ? [] : newChildrenAges.map(item => item.age as number)
-    
+
     setChildrenAges(finalChildrenAges)
     setAdultsCount(tempAdultsCount)
     setChildrenCount(tempChildrenCount)
@@ -77,7 +78,7 @@ export const SearchTravelers = ({
 
   const handleAgeChange = (index: number, age: number) => {
     const newAges = [...tempChildrenAges]
-    newAges[index] = {age, isRequiredError: false}
+    newAges[index] = { age, isRequiredError: false }
     setTempChildrenAges(newAges)
   }
 
@@ -88,7 +89,7 @@ export const SearchTravelers = ({
       if (count > prev.length) {
         // Add new elements if count is increased
         for (let i = prev.length; i < count; i++) {
-          newAges.push({age: null, isRequiredError: false});
+          newAges.push({ age: null, isRequiredError: false });
         }
       } else {
         // Remove elements if count is decreased
@@ -210,7 +211,7 @@ export const SearchTravelers = ({
             top='14px'
             height='20px'
             width='20px'
-            style={{rotate: '90deg'}}
+            style={{ rotate: '90deg' }}
             transform={isDropdownOpen ? 'rotate(180deg)' : ''}
             color='gray.700'
           />
@@ -221,29 +222,30 @@ export const SearchTravelers = ({
         <MenuList
           p={0}
           minWidth="fit-content"
-          borderRadius={{base: '0', md: 'xl'}}
-          width={{base: 'full', md: '406px'}}
+          borderRadius={{ base: '0', md: 'xl' }}
+          width={{ base: 'full', md: '406px' }}
+          zIndex={portalZIndex || undefined}
           height="full"
           rootProps={isMobile ? {
-            position: {base: 'fixed !important' as any, md: undefined},
-            top: {base: '80px !important', md: undefined},
-            left: {base: '0 !important', md: undefined},
-            right: {base: '0 !important', md: undefined},
-            bottom: {base: '0 !important', md: undefined},
-            height: {base: 'calc(100dvh - 80px) !important', md: undefined},
-            zIndex: {base: '100000 !important', md: undefined},
-            overflowY: {base: 'auto !important' as any, md: undefined},
-            width: {base: '100dvw !important', md: undefined},
+            position: { base: 'fixed !important' as any, md: undefined },
+            top: { base: '80px !important', md: undefined },
+            left: { base: '0 !important', md: undefined },
+            right: { base: '0 !important', md: undefined },
+            bottom: { base: '0 !important', md: undefined },
+            height: { base: 'calc(100dvh - 80px) !important', md: undefined },
+            zIndex: { base: '100000 !important', md: undefined },
+            overflowY: { base: 'auto !important' as any, md: undefined },
+            width: { base: '100dvw !important', md: undefined },
             transform: {
               base: 'translate3d(0px, 0px, 0px) !important',
               md: undefined
             },
-            minWidth: {base: 'auto !important' as any, md: 'max-content'}
+            minWidth: { base: 'auto !important' as any, md: 'max-content' }
           } : {}}
         >
-          <Box pt={{base: 'none', md: 4}} height="full">
+          <Box pt={{ base: 'none', md: 4 }} height="full">
             <Flex
-              display={{base: 'flex', md: 'none'}}
+              display={{ base: 'flex', md: 'none' }}
               justify="space-between"
               px="4"
               height="64px"
@@ -265,10 +267,10 @@ export const SearchTravelers = ({
 
             <Box
               px="4"
-              overflowY={{base: 'scroll', md: 'unset'}}
-              height={{base: 'calc(100% - 138px)', md: 'auto'}}
-              pb={{base: 4, md: 0}}
-              pt={{base: 4, md: 0}}
+              overflowY={{ base: 'scroll', md: 'unset' }}
+              height={{ base: 'calc(100% - 138px)', md: 'auto' }}
+              pb={{ base: 4, md: 0 }}
+              pt={{ base: 4, md: 0 }}
             >
               <VStack
                 width="full"
@@ -293,7 +295,7 @@ export const SearchTravelers = ({
                   maxCount={maxTempChildrenCount}
                 />
 
-                {Array.from({length: tempChildrenCount}).map((_, index) => (
+                {Array.from({ length: tempChildrenCount }).map((_, index) => (
                   <ChildrenAgeSelect
                     key={index}
                     value={tempChildrenAges[index]?.age as number}
@@ -304,13 +306,13 @@ export const SearchTravelers = ({
                 ))}
               </VStack>
 
-              <AlertMessage show={isMaxTravelersReached} message={t('roomTravelersLimitExceeded', { maxTravelers: MAX_TRAVELERS })}/>
+              <AlertMessage show={isMaxTravelersReached} message={t('roomTravelersLimitExceeded', { maxTravelers: MAX_TRAVELERS })} />
             </Box>
 
             <Box
               p="4" borderTop="1px solid" borderColor="gray.100" mt="4"
-              position={{base: 'fixed', md: 'static'}}
-              bottom={{base: 0, md: undefined}}
+              position={{ base: 'fixed', md: 'static' }}
+              bottom={{ base: 0, md: undefined }}
               width="full"
             >
               <Button size='lg' width="full" onClick={handleConfirm}>{t`confirm`}</Button>
@@ -322,13 +324,13 @@ export const SearchTravelers = ({
   )
 }
 
-const ChildrenAgeSelect = ({value, onChange, childrenIndex, isRequiredError}: {
+const ChildrenAgeSelect = ({ value, onChange, childrenIndex, isRequiredError }: {
   value: number | null,
   onChange: (age: number) => void,
   childrenIndex: number,
   isRequiredError: boolean
 }) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [inputState, setInputState] = useState<FormState>('default')
   const [errorMessage, setErrorMessage] = useState('')
@@ -413,7 +415,7 @@ const ChildrenAgeSelect = ({value, onChange, childrenIndex, isRequiredError}: {
           <Text size="md">{t`under2`}</Text>
         </Flex>
 
-        {Array.from({length: 12}, (_, i) => i + 2).map((age) => (
+        {Array.from({ length: 12 }, (_, i) => i + 2).map((age) => (
           <Flex
             key={age}
             width="full"
@@ -449,7 +451,7 @@ const ChildrenAgeSelect = ({value, onChange, childrenIndex, isRequiredError}: {
   )
 }
 
-const AlertMessage = ({show = false, message}: { show?: boolean; message: string }) => {
+const AlertMessage = ({ show = false, message }: { show?: boolean; message: string }) => {
   return (
     <AlertCardMessage
       show={show}
@@ -460,7 +462,7 @@ const AlertMessage = ({show = false, message}: { show?: boolean; message: string
   )
 }
 
-const PeopleCounter = ({count, onChange, label, subLabel, minCount, maxCount}: {
+const PeopleCounter = ({ count, onChange, label, subLabel, minCount, maxCount }: {
   count: number,
   onChange: (count: number) => void,
   label: string,
@@ -498,12 +500,12 @@ const PeopleCounter = ({count, onChange, label, subLabel, minCount, maxCount}: {
   )
 }
 
-const SearchInput = ({travelersCount, isFocused, roomsCount}: {
+const SearchInput = ({ travelersCount, isFocused, roomsCount }: {
   travelersCount: number,
   roomsCount: number,
   isFocused?: boolean
 }) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   return (
     <Input
@@ -513,8 +515,8 @@ const SearchInput = ({travelersCount, isFocused, roomsCount}: {
       borderColor={isFocused ? 'blue.500' : undefined}
       px='36px'
       borderRadius='12px'
-      _groupHover={{bgColor: 'whiteAlpha.800 !important'}}
-      _focus={{bgColor: 'whiteAlpha.800 !important'}}
+      _groupHover={{ bgColor: 'whiteAlpha.800 !important' }}
+      _focus={{ bgColor: 'whiteAlpha.800 !important' }}
     />
   )
 }
