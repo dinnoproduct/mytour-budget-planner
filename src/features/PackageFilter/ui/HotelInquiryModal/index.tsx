@@ -9,6 +9,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Image,
   VStack,
   Flex,
   Text,
@@ -67,6 +68,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
     childrenAges: [],
   })
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [isError, setIsError] = useState(false)
   const isFullNamePrefilled = Boolean(
     `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim(),
   )
@@ -88,6 +91,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
       childrenAges: [],
     })
     setSubmitError(null)
+    setIsSuccess(false)
+    setIsError(false)
   }
 
   const handleCloseModal = () => {
@@ -97,9 +102,12 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
 
   const { mutate: submitInquiry, isPending } = useHotelInquiry({
     onSuccess: () => {
-      handleCloseModal()
+      setIsSuccess(true)
+      setIsError(false)
     },
     onError: () => {
+      setIsSuccess(false)
+      setIsError(true)
       setSubmitError(t('hotelInquiryModal.ErrorMessage'))
     },
   })
@@ -133,6 +141,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
       return
     }
     setPhoneInvalid(false)
+    setIsSuccess(false)
+    setIsError(false)
     setSubmitError(null)
     submitInquiry({
       phone,
@@ -151,128 +161,172 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
     <Modal isOpen={isOpen} onClose={handleCloseModal} size={{ base: 'full', md: 'md' }} isCentered scrollBehavior='inside'>
       <ModalOverlay />
       <ModalContent overflow='hidden' rounded={'lg'}>
-        <ModalHeader >
-          <Text fontSize="lg" fontWeight="semibold" color="gray.800">
-            {t('hotelInquiryModal.title')}
-          </Text>
-          <Text fontSize="sm" fontWeight="normal" color="gray.800">
-            {t('hotelInquiryModal.description')}
-          </Text>
-        </ModalHeader>
+        {!isSuccess && !isError && (
+          <ModalHeader >
+            <Text fontSize="lg" fontWeight="semibold" color="gray.800">
+              {t('hotelInquiryModal.title')}
+            </Text>
+            <Text fontSize="sm" fontWeight="normal" color="gray.800">
+              {t('hotelInquiryModal.description')}
+            </Text>
+          </ModalHeader>
+        )}
         <ModalCloseButton />
-        <ModalBody pb={6}>
-          <VStack spacing={4} align="stretch">
-            {!isFullNamePrefilled && (
-              <FormControl isRequired>
-                <FormLabel>{t('hotelInquiryModal.fullName')}</FormLabel>
-                <Input
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </FormControl>
-            )}
-            {!isEmailPrefilled && (
-              <FormControl isRequired>
-                <FormLabel>{t('hotelInquiryModal.email')}</FormLabel>
-                <Input
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </FormControl>
-            )}
-            {!isPhonePrefilled && (
-              <FormControl isRequired isInvalid={phoneInvalid}>
-                <FormLabel>{t('hotelInquiryModal.phone')}</FormLabel>
-                <Input
-                  type="tel"
-                  pattern="^\+374\d{8}$"
-                  value={phone}
-                  onChange={(e) => {
-                    let sanitizedValue = e.target.value.replace(/\s+/g, '')
-                    if (sanitizedValue.length > 12) {
-                      sanitizedValue = sanitizedValue.slice(0, 12)
-                    }
-                    setPhone(sanitizedValue)
-                    if (phoneInvalid) setPhoneInvalid(false)
-                  }}
-                />
-              </FormControl>
-            )}
-            <FormControl isRequired>
-              <FormLabel>{t('hotelInquiryModal.hotelName')}</FormLabel>
-              <Input
-                value={hotelName}
-                onChange={(e) => setHotelName(e.target.value)}
+        {isSuccess ? (
+          <ModalBody pb={6}>
+            <VStack spacing={4}>
+              <Image
+                src="/assets/illustrations/success.png"
+                alt="Success"
+                w="160px"
+                h="auto"
               />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>{t('hotelInquiryModal.cityName')}</FormLabel>
-              <Input
-                value={cityName}
-                onChange={(e) => setCityName(e.target.value)}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>{t('travelDates')}</FormLabel>
-              <Box
-                width="full"
-                sx={{
-                  "& > span, & > div, & [role='group']": {
-                    width: "100% !important",
-                    maxWidth: "100% !important",
-                  },
-                }}
+              <Text
+                textAlign="center"
+                color="gray.700"
+                fontSize="md"
+                fontWeight="600"
               >
-                {isPackage ? (
-                  <DatePickerFlights
-                    fromDate={fromDate}
-                    toDate={toDate}
-                    portalZIndex={1500}
-                    onAccept={(from, to) => {
-                      setFromDate(from);
-                      setToDate(to ?? null);
-                    }}
-                    onFromDateClick={handleFromDateClick}
-                    availableDepartureDates={availableDepartureDates}
-                    availableReturnDates={availableReturnDates}
-                    isLoadingReturnDates={isLoadingReturnDates}
-                  />
-                ) : (
-                  <DatePickerFlexibleSearch
-                    fromDate={fromDate}
-                    toDate={toDate}
-                    portalZIndex={1500}
-                    exactDatesOnly
-                    onAccept={(from, to) => {
-                      setFromDate(from);
-                      setToDate(to ?? null);
-                    }}
-                  />
-                )}
-              </Box>
-            </FormControl>
-            <FormControl>
-              <FormLabel>{t('travelers')}</FormLabel>
-              <TravelersSection
-                t={t}
-                travelersData={travelersData}
-                setTravelersData={setTravelersData}
-              />
-            </FormControl>
-            {submitError ? (
-              <Text color="red.500" fontSize="sm">
-                {submitError}
+                {t('hotelInquiryModal.SuccessMessage')}
               </Text>
-            ) : null}
-          </VStack>
-        </ModalBody>
-        <ModalFooter>
-          <Button width="full" onClick={onSubmitInquiry} isLoading={isPending} size="lg" isDisabled={
-            !fullName || !email || !phone || !hotelName || !cityName
-          }>
-            {t('hotelInquiryModal.submit')}
-          </Button>
-        </ModalFooter>
+            </VStack>
+          </ModalBody>
+        ) : isError ? (
+          <ModalBody pb={6}>
+            <VStack spacing={4}>
+              <Image
+                src="/assets/illustrations/error.png"
+                alt="Error"
+                w="160px"
+                h="auto"
+              />
+              <Text
+                textAlign="center"
+                color="gray.700"
+                fontSize="md"
+                fontWeight="600"
+              >
+                {t('hotelInquiryModal.ErrorMessage')}
+              </Text>
+            </VStack>
+          </ModalBody>
+        ) : (
+          <ModalBody pb={6}>
+            <VStack spacing={4} align="stretch">
+              {!isFullNamePrefilled && (
+                <FormControl isRequired>
+                  <FormLabel>{t('hotelInquiryModal.fullName')}</FormLabel>
+                  <Input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                </FormControl>
+              )}
+              {!isEmailPrefilled && (
+                <FormControl isRequired>
+                  <FormLabel>{t('hotelInquiryModal.email')}</FormLabel>
+                  <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </FormControl>
+              )}
+              {!isPhonePrefilled && (
+                <FormControl isRequired isInvalid={phoneInvalid}>
+                  <FormLabel>{t('hotelInquiryModal.phone')}</FormLabel>
+                  <Input
+                    type="tel"
+                    pattern="^\+374\d{8}$"
+                    value={phone}
+                    onChange={(e) => {
+                      let sanitizedValue = e.target.value.replace(/\s+/g, '')
+                      if (sanitizedValue.length > 12) {
+                        sanitizedValue = sanitizedValue.slice(0, 12)
+                      }
+                      setPhone(sanitizedValue)
+                      if (phoneInvalid) setPhoneInvalid(false)
+                    }}
+                  />
+                </FormControl>
+              )}
+              <FormControl isRequired>
+                <FormLabel>{t('hotelInquiryModal.hotelName')}</FormLabel>
+                <Input
+                  value={hotelName}
+                  onChange={(e) => setHotelName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>{t('hotelInquiryModal.cityName')}</FormLabel>
+                <Input
+                  value={cityName}
+                  onChange={(e) => setCityName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>{t('travelDates')}</FormLabel>
+                <Box
+                  width="full"
+                  sx={{
+                    "& > span, & > div, & [role='group']": {
+                      width: "100% !important",
+                      maxWidth: "100% !important",
+                    },
+                  }}
+                >
+                  {isPackage ? (
+                    <DatePickerFlights
+                      fromDate={fromDate}
+                      toDate={toDate}
+                      portalZIndex={1500}
+                      onAccept={(from, to) => {
+                        setFromDate(from);
+                        setToDate(to ?? null);
+                      }}
+                      onFromDateClick={handleFromDateClick}
+                      availableDepartureDates={availableDepartureDates}
+                      availableReturnDates={availableReturnDates}
+                      isLoadingReturnDates={isLoadingReturnDates}
+                    />
+                  ) : (
+                    <DatePickerFlexibleSearch
+                      fromDate={fromDate}
+                      toDate={toDate}
+                      portalZIndex={1500}
+                      exactDatesOnly
+                      onAccept={(from, to) => {
+                        setFromDate(from);
+                        setToDate(to ?? null);
+                      }}
+                    />
+                  )}
+                </Box>
+              </FormControl>
+              <FormControl>
+                <FormLabel>{t('travelers')}</FormLabel>
+                <TravelersSection
+                  t={t}
+                  travelersData={travelersData}
+                  setTravelersData={setTravelersData}
+                />
+              </FormControl>
+              {submitError ? (
+                <Text color="red.500" fontSize="sm">
+                  {submitError}
+                </Text>
+              ) : null}
+            </VStack>
+          </ModalBody>
+        )}
+        {!isSuccess && !isError && (
+          <ModalFooter>
+            <Button width="full" onClick={onSubmitInquiry} isLoading={isPending} size="lg" isDisabled={
+              !fullName || !email || !phone || !hotelName || !cityName
+            }>
+              {t('hotelInquiryModal.submit')}
+            </Button>
+          </ModalFooter>
+        )}
       </ModalContent>
     </Modal>
   )
