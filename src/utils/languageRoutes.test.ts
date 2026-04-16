@@ -20,6 +20,11 @@ describe("languageRoutes", () => {
       expect(hasUnsupportedLanguagePrefix("/en/tours")).toBe(false);
       expect(hasUnsupportedLanguagePrefix("/tour/france")).toBe(false);
     });
+
+    it("treats uppercase language-like prefixes as unsupported", () => {
+      expect(hasUnsupportedLanguagePrefix("/EN/about")).toBe(true);
+      expect(hasUnsupportedLanguagePrefix("/FR/about")).toBe(true);
+    });
   });
 
   describe("getLanguageFromPath", () => {
@@ -30,6 +35,8 @@ describe("languageRoutes", () => {
     it("falls back to hy when no supported prefix exists", () => {
       expect(getLanguageFromPath("/about")).toBe("hy");
       expect(getLanguageFromPath("/fr/about")).toBe("hy");
+      expect(getLanguageFromPath("/")).toBe("hy");
+      expect(getLanguageFromPath("")).toBe("hy");
     });
   });
 
@@ -46,6 +53,11 @@ describe("languageRoutes", () => {
     it("returns original path when first segment is not language-like", () => {
       expect(getPathWithoutLanguage("/tour/france")).toBe("/tour/france");
     });
+
+    it("returns root for empty and root-like paths", () => {
+      expect(getPathWithoutLanguage("/")).toBe("/");
+      expect(getPathWithoutLanguage("")).toBe("/");
+    });
   });
 
   describe("getPathWithLanguage and getLanguagePrefix", () => {
@@ -56,6 +68,8 @@ describe("languageRoutes", () => {
 
     it("adds prefix for non-default locales", () => {
       expect(getPathWithLanguage("/tours", "en")).toBe("/en/tours");
+      expect(getPathWithLanguage("tours", "ru")).toBe("/ru/tours");
+      expect(getPathWithLanguage("/", "en")).toBe("/en/");
       expect(getLanguagePrefix("ru")).toBe("/ru");
     });
   });
@@ -67,10 +81,15 @@ describe("languageRoutes", () => {
       );
     });
 
+    it("builds URL without query when search is empty", () => {
+      expect(getUrlWithLanguage("/en/tours", "", "hy")).toBe("/tours");
+    });
+
     it("marks routes invalid only for unsupported language-like prefixes", () => {
       expect(isValidLanguageRoute("/fr/tours")).toBe(false);
       expect(isValidLanguageRoute("/en/tours")).toBe(true);
       expect(isValidLanguageRoute("/tour/france")).toBe(true);
+      expect(isValidLanguageRoute("/")).toBe(true);
     });
   });
 });
