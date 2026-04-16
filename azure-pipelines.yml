@@ -37,7 +37,7 @@ stages:
               repository: $(imageRepository)
               dockerfile: $(dockerfilePath)
               containerRegistry: $(dockerRegistryServiceConnection)
-              tags: 'test'
+              tags: 'test_refactor'
 
 #  - stage: Deploy
 #    dependsOn: Build
