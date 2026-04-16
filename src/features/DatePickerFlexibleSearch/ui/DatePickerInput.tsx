@@ -1,5 +1,5 @@
 import React from 'react'
-import { type DatePickerInputProps } from './types.ts'
+import { type DatePickerInputProps } from './types'
 import { Input } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { getPluralForm } from '@/shared/helpers'

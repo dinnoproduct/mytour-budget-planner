@@ -6,9 +6,9 @@ import {
   type ResendOtpParams,
   type UpdateUserInput,
   type UserUseCaseParams
-} from './types.ts'
-import { type UserService } from './UserService.ts'
-import { type AuthService } from './AuthService.ts'
+} from './types'
+import { type UserService } from './UserService'
+import { type AuthService } from './AuthService'
 
 export class UserUseCases {
   private readonly userService: UserService

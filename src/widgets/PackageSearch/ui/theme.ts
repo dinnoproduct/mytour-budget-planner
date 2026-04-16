@@ -1,4 +1,4 @@
-import { type PackageSearchVariant } from './types.ts'
+import { type PackageSearchVariant } from './types'
 
 export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   centered: {

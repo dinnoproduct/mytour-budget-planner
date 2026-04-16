@@ -1,10 +1,10 @@
-export { SplashNotificationService } from './SplashNotificationService.ts'
-export type * from './types.ts'
-export { PriceAlertService, priceAlertService } from './PriceAlertService.ts'
-export type { PriceAlertSubscribePayload, PriceAlertSubscribeResponse } from './PriceAlertService.ts'
-export { HotelInquiriesService, hotelInquiriesService } from './HotelInquiriesService.ts'
-export type { HotelInquiryPayload, HotelInquiryResponse } from './HotelInquiriesService.ts'
+export { SplashNotificationService } from './SplashNotificationService'
+export type * from './types'
+export { PriceAlertService, priceAlertService } from './PriceAlertService'
+export type { PriceAlertSubscribePayload, PriceAlertSubscribeResponse } from './PriceAlertService'
+export { HotelInquiriesService, hotelInquiriesService } from './HotelInquiriesService'
+export type { HotelInquiryPayload, HotelInquiryResponse } from './HotelInquiriesService'
 
-import { SplashNotificationService } from './SplashNotificationService.ts'
+import { SplashNotificationService } from './SplashNotificationService'
 
 export const splashNotificationService = new SplashNotificationService()

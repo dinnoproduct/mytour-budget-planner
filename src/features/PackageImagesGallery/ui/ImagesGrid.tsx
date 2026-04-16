@@ -1,11 +1,13 @@
+"use client"
+
 import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Icon } from '@foundation/Iconography'
 import { ImagesGridProps } from './types'
-import { GalleryImage } from './GalleryImage.tsx'
+import { GalleryImage } from './GalleryImage'
 import { Skeleton } from '@shared/ui'
 import { Text } from '@ui'
-import { useParams } from 'react-router-dom'
+import { useParams } from '@shared/lib/router'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
 export const ImagesGrid = ({ imageUrls, onImageClick, isGroupTour }: ImagesGridProps) => {

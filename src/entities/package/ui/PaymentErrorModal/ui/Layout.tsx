@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useRef, type RefObject } from 'react'
+import type { FocusableElement } from '@chakra-ui/utils'
 import { LayoutProps } from './types'
 import {
 	Box, Flex,
@@ -25,7 +26,7 @@ export const Layout = (
 			onClose={closeModal}
 			isCentered
 			size="auth"
-			initialFocusRef={modalContentRef}
+			initialFocusRef={modalContentRef as RefObject<FocusableElement>}
 		>
 			<ModalOverlay/>
 

@@ -41,7 +41,7 @@ export const Layout = ({
       onClose={closeModal}
       isCentered
       size="travelers"
-      initialFocusRef={modalContentRef}
+      initialFocusRef={modalContentRef as any}
     >
       <ModalOverlay />
       <ModalContent ref={modalContentRef}>

@@ -7,10 +7,10 @@ import {
   type TCities,
   type TFlights,
   type TPackages,
-} from '../data/packagesTypes.ts';
-import { type TDictionary } from '../data/dictionaryTypes.ts';
-import { type DictionaryTypes } from '../data/dictionaryEnum.ts';
-import { type CustomFields } from '../data/packagesEnums.ts';
+} from '../data/packagesTypes';
+import { type TDictionary } from '../data/dictionaryTypes';
+import { type DictionaryTypes } from '../data/dictionaryEnum';
+import { type CustomFields } from '../data/packagesEnums';
 import {
   type PackageEntity,
   type NormalizedRequestEntity,

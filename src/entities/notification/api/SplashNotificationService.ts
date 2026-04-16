@@ -2,14 +2,14 @@ import axios, { type AxiosInstance } from 'axios'
 import {
   type SplashNotification,
   type SplashNotificationViewedPayload,
-} from './types.ts'
+} from './types'
 
 export class SplashNotificationService {
   private readonly api: AxiosInstance
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/v2/external`,
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/v2/external`,
     })
 
     this.api.interceptors.response.use(

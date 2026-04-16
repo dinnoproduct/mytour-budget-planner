@@ -1,5 +1,5 @@
 
-import { type SectionLayoutProps } from '@widgets/PackageDetails/ui/types.ts'
+import { type SectionLayoutProps } from '@widgets/PackageDetails/ui/types'
 import { Box } from '@chakra-ui/react'
 
 export const CardSectionLayout = ({ children, ...props }: SectionLayoutProps) => (

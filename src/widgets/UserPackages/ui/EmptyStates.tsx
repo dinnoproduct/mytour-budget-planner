@@ -1,6 +1,6 @@
 import { EmptyState } from '@ui'
 import { useTranslation } from 'react-i18next'
-import { type EmptyStateProps } from '@widgets/UserPackages/ui/types.ts'
+import { type EmptyStateProps } from '@widgets/UserPackages/ui/types'
 import { Grid, Spinner } from '@chakra-ui/react'
 import {Loader, LoaderWithText} from '@/components/Loader/Loader'
 

@@ -5,7 +5,7 @@ import { useCities } from '@entities/package'
 import { Button } from '@ui'
 import { SearchCities } from '@features/SearchCities'
 import { SearchTravelers } from '@features/SearchTravelers'
-import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
+import { Layouts } from '@widgets/PackageSearch/ui/Layouts'
 import { usePackageSearchLogic } from '../hooks/usePackageSearchLogic'
 
 export const PackageSearchForm = ({ onSearch }: { onSearch?: () => void }) => {

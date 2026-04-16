@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from 'react'
 import {
   Modal,
@@ -23,7 +25,7 @@ import { useHotelInquiry } from '@entities/notification'
 import { DatePickerFlexibleSearch } from '@features/DatePickerFlexibleSearch'
 import { DatePickerFlights } from '@/features/DatePickerFlights'
 import { usePackagesSearchContext } from '@entities/package'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from '@shared/lib/router'
 import {
   formatDate,
   normalizePhone,

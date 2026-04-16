@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { generateOfferService } from '../services/PackagesServices.ts';
-import { type IGeneratedOffer, type IGenerateOffer } from '../data/packagesTypes.ts';
+import { generateOfferService } from '../services/PackagesServices';
+import { type IGeneratedOffer, type IGenerateOffer } from '../data/packagesTypes';
 import { useRecoilState } from 'recoil';
-import { generatedOffersAtom } from '../store/store.ts';
+import { generatedOffersAtom } from '../store/store';
 
 const useOffer = () => {
   const [loading, setLoading] = useState(false);

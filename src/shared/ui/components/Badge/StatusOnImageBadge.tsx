@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import {
   type BadgeProps,
   type StatusOnImageBadgeProps
-} from '@components/Badge/types.ts'
+} from '@components/Badge/types'
 import { useTranslation } from 'react-i18next'
 import { type TextProps } from '@shared/ui/foundation/Typography/types'
 

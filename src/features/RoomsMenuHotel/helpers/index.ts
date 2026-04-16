@@ -1,1 +1,1 @@
-export * from './getRoomPricing.ts'
+export * from './getRoomPricing'

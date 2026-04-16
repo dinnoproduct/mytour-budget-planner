@@ -4,7 +4,7 @@ import { PaymentModal } from "./PaymentModal";
 import { TravelersModal } from "@widgets/TravelersModal";
 import { BookingProgressBar } from "./BookingProgressBar";
 import { AuthStepView } from "./AuthStepView";
-import type { BookingFlowProps } from "@widgets/BookingFlow/ui/types.ts";
+import type { BookingFlowProps } from "@widgets/BookingFlow/ui/types";
 import { useBookingFlow } from "../hooks";
 import { PaymentSuccessModal } from "@entities/package";
 import { useRecoilValue } from "recoil";

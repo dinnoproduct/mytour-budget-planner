@@ -1,6 +1,8 @@
+"use client"
+
 import { EmptyState } from '@ui'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from '@shared/lib/router'
 
 export const EmptyView = () => {
   const { t } = useTranslation()

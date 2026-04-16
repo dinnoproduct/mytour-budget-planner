@@ -1,7 +1,7 @@
-import { Layout } from './Layout.tsx'
+import { Layout } from './Layout'
 import { Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { type PaymentSuccessModalProps } from '@entities/package/ui/PaymentSuccessModal/ui/types.ts'
+import { type PaymentSuccessModalProps } from '@entities/package/ui/PaymentSuccessModal/ui/types'
 import { Illustration, Text } from '@ui'
 
 export const PaymentSuccessModal = ({

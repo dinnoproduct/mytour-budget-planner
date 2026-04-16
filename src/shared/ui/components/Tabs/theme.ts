@@ -18,8 +18,8 @@ export const tabsComponentTheme = {
           maxW: 'full',
           overflowX: 'auto',
           '&::-webkit-scrollbar': { display: 'none' },
-          '-ms-overflow-style': 'none',
-          'scrollbar-width': 'none'
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
         },
         tabpanel: {
           p: 0,

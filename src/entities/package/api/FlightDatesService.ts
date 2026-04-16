@@ -6,7 +6,7 @@ export class FlightDatesService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/${this.apiVersion}/Flight/`
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/${this.apiVersion}/Flight/`
     })
 
     this.api.interceptors.response.use(

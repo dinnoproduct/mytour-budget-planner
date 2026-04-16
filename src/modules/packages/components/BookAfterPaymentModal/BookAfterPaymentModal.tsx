@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from 'react-modal';
-import { useQueryParams } from '../../../../hooks/useQueryParams.ts';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import './index.scss';
 
 const BookAfterPaymentModal = () => {

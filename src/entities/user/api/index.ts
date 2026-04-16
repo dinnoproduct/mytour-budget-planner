@@ -1,6 +1,6 @@
-import { UserUseCases } from './UserUseCases.ts'
-import { UserService } from './UserService.ts'
-import { AuthService } from './AuthService.ts'
+import { UserUseCases } from './UserUseCases'
+import { UserService } from './UserService'
+import { AuthService } from './AuthService'
 
 
 export const userUseCases = new UserUseCases({

@@ -8,7 +8,7 @@ import {
   IncompleteTabEmptyState,
   PastTabEmptyState,
   UpcomingTabEmptyState,
-} from "@widgets/UserPackages/ui/EmptyStates.tsx";
+} from "@widgets/UserPackages/ui/EmptyStates";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 import { bookingContextAtom, isLateCheckoutAtom } from "@/modules/packages/store/store";

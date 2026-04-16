@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { type ProfileDetailsModalProps, type ProfileFormData } from './types.ts'
-import { Layout } from './Layout.tsx'
+import { type ProfileDetailsModalProps, type ProfileFormData } from './types'
+import { Layout } from './Layout'
 import { useUpdateUser, useUserContext } from '@entities/user'
-import { SuccessView } from '@widgets/ProfileDetailsModal/ui/SuccessView.tsx'
-import { ProfileDetailsForm } from './ProfileDetailsForm.tsx'
+import { SuccessView } from '@widgets/ProfileDetailsModal/ui/SuccessView'
+import { ProfileDetailsForm } from './ProfileDetailsForm'
 
 export const ProfileDetailsModal = ({
   closeModal,

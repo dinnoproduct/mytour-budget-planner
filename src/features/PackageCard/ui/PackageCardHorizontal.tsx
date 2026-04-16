@@ -1,6 +1,6 @@
 import { Box, type LinkProps, Flex, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import ImageSlider from "./ImageSlider.tsx";
+import ImageSlider from "./ImageSlider";
 import { type ReactNode, useMemo } from "react";
 import { LANGUAGE_PREFIX } from "@shared/model";
 import { type Language } from "@widgets/Header/model";
@@ -14,8 +14,8 @@ import {
   useDictionary,
 } from "@entities/package";
 import { getPluralForm } from "@shared/helpers";
-import { type PackageCardHorizontalProps } from "./types.ts";
-import { PackageCardHorizontalDetail } from "./PackageCardHorizontalDetail.tsx";
+import { type PackageCardHorizontalProps } from "./types";
+import { PackageCardHorizontalDetail } from "./PackageCardHorizontalDetail";
 
 export const PackageCardHorizontal = ({
   tourPackage = {},

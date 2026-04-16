@@ -1,8 +1,8 @@
-import { type IPackage } from '../../data/packagesTypes.ts';
+import { type IPackage } from '../../data/packagesTypes';
 import { useTranslation } from 'react-i18next';
-import { PackagesFields, PackagesNestedFields } from '../../data/packagesEnums.ts';
-import { langKeyAdapter, numberWithCommaNormalizer } from '../../../../utils/normalizers.ts';
-import ImageSlider from '../../../../components/ImageSlider/ImageSlider.tsx';
+import { PackagesFields, PackagesNestedFields } from '../../data/packagesEnums';
+import { langKeyAdapter, numberWithCommaNormalizer } from '../../../../utils/normalizers';
+import ImageSlider from '../../../../components/ImageSlider/ImageSlider';
 
 const Package = ({ tourPackage }: { tourPackage: IPackage }) => {
   const { i18n, t } = useTranslation();

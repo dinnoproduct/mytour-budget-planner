@@ -1,7 +1,7 @@
 import { Box, Button, ListItem, UnorderedList } from '@chakra-ui/react'
 import { Text } from '@ui'
 import { DictionaryTypes, PACKAGE_FACILITY_ICON_MAP, PackageEntity, useDictionary } from '@entities/package'
-import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
+import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard'
 import { useMemo, useState } from 'react'
 import { LANGUAGE_PREFIX, LanguageName } from '@shared/model'
 import { useTranslation } from 'react-i18next'

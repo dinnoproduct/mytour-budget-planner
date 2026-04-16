@@ -134,8 +134,10 @@ export const PackageImagesSliderModal = ({
 
 const ArrowButton = ({
   isPrev,
+  currentSlide: _currentSlide,
+  slideCount: _slideCount,
   ...props
-}: { isPrev: boolean } & ButtonProps) => {
+}: { isPrev: boolean; currentSlide?: number; slideCount?: number } & ButtonProps) => {
   return (
     <Button
       position="absolute"

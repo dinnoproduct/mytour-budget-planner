@@ -1,3 +1,5 @@
+"use client"
+
 import { type LayoutProps } from "./types";
 import { Box, Flex, Grid, GridItem } from "@chakra-ui/react";
 import {
@@ -6,10 +8,10 @@ import {
   type GroupTourEntity,
 } from "@entities/package";
 
-import { EmptyView, EmptyViewWithAfterSearch } from "@widgets/GroupTourList/ui/EmptyView.tsx";
+import { EmptyView, EmptyViewWithAfterSearch } from "@widgets/GroupTourList/ui/EmptyView";
 import { Skeleton } from "@shared/ui";
 import { GroupTourCard } from "./GroupTourCard";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "@shared/lib/router";
 import { getValidDepartures } from "@/widgets/GroupTourDetails/lib/utils";
 import { Actions, GroupTourSortType } from "./Actions";
 import { useMemo, useState } from "react";

@@ -1,22 +1,18 @@
-import React, { forwardRef, type LegacyRef } from 'react'
-import { Img, type ImgProps } from '@chakra-ui/react'
+import React, { forwardRef } from 'react'
+import { Image, type ImageProps } from '@chakra-ui/next-js'
 import LogoImage from './logos/logo.svg'
 import SymbolImage from './logos/symbol.svg'
 
 export type LogoProps = {
   type?: 'logo' | 'symbol'
-} & ImgProps
+} & Omit<ImageProps, 'src' | 'alt'>
 
-export const Logo = forwardRef(
-  (
-    { type = 'logo', ...props }: LogoProps,
-    ref: LegacyRef<HTMLImageElement>
-  ) => (
-    <Img
+export const Logo = forwardRef<HTMLImageElement, LogoProps>(
+  ({ type = 'logo', ...props }, ref) => (
+    <Image
       ref={ref}
       src={type === 'logo' ? LogoImage : SymbolImage}
       alt="My Tour"
-      height="auto"
       {...props}
     />
   )

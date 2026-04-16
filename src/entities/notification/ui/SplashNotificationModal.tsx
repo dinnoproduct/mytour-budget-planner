@@ -10,8 +10,8 @@ import {
 } from '@chakra-ui/react'
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { Button, Text } from '@ui'
-import { type SplashNotification } from '../api/types.ts'
-import { useLanguageNavigate } from '@/hooks/useLanguageNavigate.ts'
+import { type SplashNotification } from '../api/types'
+import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
 interface SplashNotificationModalProps {
   notification: SplashNotification

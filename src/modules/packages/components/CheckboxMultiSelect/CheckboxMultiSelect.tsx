@@ -1,6 +1,6 @@
 import { type Dispatch, type ReactElement, type SetStateAction } from 'react';
 import Select, { type DropdownIndicatorProps, type GroupBase, type OptionProps } from 'react-select';
-import { type TOption } from '../../data/packagesTypes.ts';
+import { type TOption } from '../../data/packagesTypes';
 import { useTranslation } from 'react-i18next';
 
 import './index.scss';

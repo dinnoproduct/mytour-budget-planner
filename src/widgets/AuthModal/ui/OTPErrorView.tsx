@@ -1,5 +1,5 @@
 import { Button, Illustration, Text } from '@ui'
-import { LayoutVariant } from '@widgets/AuthModal/ui/types.ts'
+import { LayoutVariant } from '@widgets/AuthModal/ui/types'
 import { useTranslation } from 'react-i18next'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 

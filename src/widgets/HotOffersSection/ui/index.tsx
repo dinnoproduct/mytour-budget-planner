@@ -1,6 +1,6 @@
 import { Box, type BoxProps } from '@chakra-ui/react'
 import { type ReactNode, useMemo } from 'react'
-import { OffersSection } from './OffersSection.tsx'
+import { OffersSection } from './OffersSection'
 import { usePackageList, usePackagesSearchContext } from '@entities/package'
 
 export const HotOffersSection = (props: BoxProps) => {

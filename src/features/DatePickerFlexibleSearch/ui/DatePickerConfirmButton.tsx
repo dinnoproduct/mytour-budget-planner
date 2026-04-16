@@ -1,4 +1,4 @@
-import { type DatePickerConfirmButtonProps } from './types.ts'
+import { type DatePickerConfirmButtonProps } from './types'
 import React from 'react'
 import { Button } from '@ui'
 import { useTranslation } from 'react-i18next'

@@ -1,9 +1,9 @@
 import { Input } from "@ui";
 import { useForm } from "react-hook-form";
-import { type SignUpViewProps } from "@widgets/AuthModal/ui/types.ts";
+import { type SignUpViewProps } from "@widgets/AuthModal/ui/types";
 import { useRegister } from "@entities/user/hooks/useRegister";
 import { useTranslation } from "react-i18next";
-import { ContentLayout } from "@widgets/AuthModal/ui/ContentLayout.tsx";
+import { ContentLayout } from "@widgets/AuthModal/ui/ContentLayout";
 
 export const SignUpView = ({
   onSuccess,

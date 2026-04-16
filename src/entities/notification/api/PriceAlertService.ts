@@ -22,7 +22,7 @@ export class PriceAlertService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}`,
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
     })
 
     this.api.interceptors.response.use(

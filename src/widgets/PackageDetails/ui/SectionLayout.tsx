@@ -1,9 +1,9 @@
-import { type TextProps } from '@foundation/Typography/types.ts'
+import { type TextProps } from '@foundation/Typography/types'
 import { Text } from '@ui'
 import {
   type SectionLayoutProps,
   type SectionListProps
-} from '@widgets/PackageDetails/ui/types.ts'
+} from '@widgets/PackageDetails/ui/types'
 import { Box, UnorderedList, ListItem, HStack } from '@chakra-ui/react'
 
 export const SectionLayout = ({

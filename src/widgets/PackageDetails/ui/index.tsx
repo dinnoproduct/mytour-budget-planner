@@ -1,13 +1,13 @@
-import { type PackageDetailsProps } from "./types.ts";
+import { type PackageDetailsProps } from "./types";
 import { Flex, Grid } from "@chakra-ui/react";
-import { SectionLayout } from "@widgets/PackageDetails/ui/SectionLayout.tsx";
-import { SummaryCard } from "@widgets/PackageDetails/ui/SummaryCard.tsx";
+import { SectionLayout } from "@widgets/PackageDetails/ui/SectionLayout";
+import { SummaryCard } from "@widgets/PackageDetails/ui/SummaryCard";
 import { formatDate } from "@widgets/PackageDetails/utils";
 import { useTranslation } from "react-i18next";
-import { PackageDescription } from "@widgets/PackageDetails/ui/PackageDescription.tsx";
+import { PackageDescription } from "@widgets/PackageDetails/ui/PackageDescription";
 import { type DictionaryTypes, useDictionary } from "@entities/package";
 import { useMemo } from "react";
-import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
+import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout";
 
 export const PackageDetails = ({
   tourPackage,
@@ -127,7 +127,7 @@ export const PackageDetails = ({
           style={{ border: 0 }}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+          src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
               &q=${encodeURIComponent(`${tourPackage.hotel?.name}, ${tourPackage.city.nameEng}, ${tourPackage.city.country.nameEng}`)}`}
         />
       </CardSectionLayout>

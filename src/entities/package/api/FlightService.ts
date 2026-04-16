@@ -6,14 +6,14 @@ import {
 import {
   type GetAvailableFlightsParams,
   type GetReturnFlightsParams,
-} from "@entities/package/api/types.ts";
+} from "@entities/package/api/types";
 
 export class FlightService {
   private readonly api: AxiosInstance;
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/flight`,
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/flight`,
     });
 
     this.api.interceptors.response.use(
@@ -26,7 +26,7 @@ export class FlightService {
     destinationId,
   }: GetAvailableFlightsParams): Promise<FlightEntity[]> {
     return this.api("getAvailableFlights", {
-      baseURL: `${import.meta.env.VITE_API_URL}/V2/flight`,
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/V2/flight`,
       params: {
         destinationId,
       },
@@ -38,7 +38,7 @@ export class FlightService {
     { destinationId }: GetReturnFlightsParams,
   ): Promise<FlightEntity[]> {
     return this.api("getReturnAirTicketsDates", {
-      baseURL: `${import.meta.env.VITE_API_URL}/V2/flight`,
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/V2/flight`,
       params: {
         destinationId,
       },

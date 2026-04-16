@@ -1,6 +1,6 @@
 import { Input, Text } from '@ui'
 import { useForm } from 'react-hook-form'
-import { SignInViewProps } from '@widgets/AuthModal/ui/types.ts'
+import { SignInViewProps } from '@widgets/AuthModal/ui/types'
 import { useLogin } from '@entities/user/hooks/useLogin'
 import { useTranslation } from 'react-i18next'
 import { ContentLayout } from './ContentLayout'

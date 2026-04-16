@@ -7,14 +7,14 @@ import {
 import { useTranslation } from 'react-i18next'
 import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
-import { HotelSearchForm } from '@widgets/PackageSearch/ui/HotelSearchForm.tsx'
+import { HotelSearchForm } from '@widgets/PackageSearch/ui/HotelSearchForm'
 import {
   HotelTabItem,
   GroupTabItem,
   PackageTabItem
-} from '@widgets/PackageSearch/ui/TabItem.tsx'
+} from '@widgets/PackageSearch/ui/TabItem'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
-import { getPluralForm } from '@shared/helpers/index.ts'
+import { getPluralForm } from '@shared/helpers/index'
 
 export const HotelSearchMenu = ({
   onTabChange,

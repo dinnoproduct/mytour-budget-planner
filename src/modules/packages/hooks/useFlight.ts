@@ -3,9 +3,9 @@ import {
   getAvailableFlightsService,
   getFlightsByDateService,
   getReturnFlightsService,
-} from '../services/PackagesServices.ts';
+} from '../services/PackagesServices';
 import { useRecoilState } from 'recoil';
-import { availableFlightsAtom, flightByDateAtom, returnFlightsAtom } from '../store/store.ts';
+import { availableFlightsAtom, flightByDateAtom, returnFlightsAtom } from '../store/store';
 
 const useFlight = () => {
   const [loading, setLoading] = useState(false);

@@ -1,13 +1,13 @@
 import { Box, Flex, Stack, type StackProps } from '@chakra-ui/react'
-import type { LayoutProps } from '@widgets/PackageSearch/ui/types.ts'
-import { packageSearchVariants } from '@widgets/PackageSearch/ui/theme.ts'
+import type { LayoutProps } from '@widgets/PackageSearch/ui/types'
+import { packageSearchVariants } from '@widgets/PackageSearch/ui/theme'
 import {Tabs, Text} from '@ui'
 import React from 'react'
 import {
   GroupTabItem,
   HotelTabItem,
   PackageTabItem
-} from '@widgets/PackageSearch/ui/TabItem.tsx'
+} from '@widgets/PackageSearch/ui/TabItem'
 import {useTranslation} from "react-i18next";
 
 export const Layout = ({

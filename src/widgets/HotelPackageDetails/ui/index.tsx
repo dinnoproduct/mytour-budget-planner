@@ -1,10 +1,10 @@
-import { type PackageDetailsProps } from './types.ts'
+import { type PackageDetailsProps } from './types'
 import { Flex } from '@chakra-ui/react'
-import { SectionLayout } from './SectionLayout.tsx'
+import { SectionLayout } from './SectionLayout'
 import { formatDate } from '../utils'
 import { useTranslation } from 'react-i18next'
-import { HotelPackageDescription } from './HotelPackageDescription.tsx'
-import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
+import { HotelPackageDescription } from './HotelPackageDescription'
+import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout'
 
 export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
   const { t } = useTranslation()
@@ -37,11 +37,11 @@ export const HotelPackageDetails = ({ tourPackage }: PackageDetailsProps) => {
           style={{ border: 0 }}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=${mapQuery}`}
+          src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${mapQuery}`}
         />
       </CardSectionLayout>
     </Flex>
   )
 }
 
-export { HotelPackageDetailsHeader } from './HotelPackageDetailsHeader.tsx'
+export { HotelPackageDetailsHeader } from './HotelPackageDetailsHeader'

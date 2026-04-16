@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
-import {SearchMultiCitiesProps} from "@features/SearchMultiCities/ui/types.ts";
+import {SearchMultiCitiesProps} from "@features/SearchMultiCities/ui/types";
 import {ChevronRightIcon} from "@chakra-ui/icons";
 
 export const SearchMultiCities = ({

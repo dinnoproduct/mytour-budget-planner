@@ -1,22 +1,30 @@
-import { Link, LinkProps as ReactLinkProps } from 'react-router-dom';
-import { Box, LinkProps as ChakraLinkProps } from '@chakra-ui/react';
-import { useLanguageRouting } from '../../hooks/useLanguageRouting';
-import { appendStoredUTMsToPath } from '@/utils/utmParams';
+"use client";
 
-interface LanguageLinkProps extends Omit<ReactLinkProps, 'to' | 'color'>, Omit<ChakraLinkProps, 'as' | 'color'> {
+import NextLink from "next/link";
+import { forwardRef } from "react";
+import type { LinkProps as ChakraLinkProps } from "@chakra-ui/react";
+import { Link as ChakraLink } from "@chakra-ui/react";
+import { useLanguageRouting } from "../../hooks/useLanguageRouting";
+import { appendStoredUTMsToPath } from "@/utils/utmParams";
+
+interface LanguageLinkProps extends Omit<ChakraLinkProps, "href"> {
   to: string;
-  // Accept both React Router and Chakra UI color types
-  color?: string | ChakraLinkProps['color'];
 }
 
-export const LanguageLink = ({ to, color, ...props }: LanguageLinkProps) => {
-  const { getPathWithLanguage } = useLanguageRouting();
-  const pathWithUtm = appendStoredUTMsToPath(getPathWithLanguage(to));
+export const LanguageLink = forwardRef<HTMLAnchorElement, LanguageLinkProps>(
+  ({ to, ...props }, ref) => {
+    const { getPathWithLanguage } = useLanguageRouting();
+    const href = appendStoredUTMsToPath(getPathWithLanguage(to));
 
-  // Convert Chakra UI color to string if needed
-  const reactRouterColor = typeof color === 'string' ? color : undefined;
+    return (
+      <ChakraLink
+        ref={ref}
+        as={NextLink}
+        href={href}
+        {...props}
+      />
+    );
+  }
+);
 
-  return (
-    <Box as={Link} to={pathWithUtm} color={reactRouterColor} {...props} />
-  );
-};
+LanguageLink.displayName = "LanguageLink";
