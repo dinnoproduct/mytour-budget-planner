@@ -1,23 +1,26 @@
-# Use the official Node.js image from Docker Hub
-FROM node:latest
+# ---- Build stage ----
+FROM node:20-alpine AS builder
 
-# Set the working directory for your app inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
+RUN npm install --legacy-peer-deps
 
-# Install project dependencies
-RUN npm install
-
-# Copy the rest of the application code to the container
 COPY . .
-
-# Expose the port the app will run on (default for Next.js is 3000)
-EXPOSE 3000
-
-# Build the React app for production
 RUN npm run build
 
-# Start app
-CMD ["npm", "start"]
+# ---- Production stage ----
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copy only what Next.js needs to run
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
