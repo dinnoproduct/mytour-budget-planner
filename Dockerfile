@@ -1,35 +1,24 @@
 # ---- Build stage ----
 FROM node:20-alpine AS builder
 
+# Set the working directory for your app inside the container
 WORKDIR /app
 
+# Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
 
+# Install project dependencies
+RUN npm install
+
+# Copy the rest of the application code to the container
 COPY . .
-RUN npm run build
 
-# ---- Production stage ----
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-# Azure App Service injects PORT at runtime; default to 3000 for local runs
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
-
-# Run as non-root for Azure security compliance
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-
-# Azure App Service reads EXPOSE to detect the listening port
+# Expose the port the app will run on (default for Next.js is 3000)
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Build the React app for production
+RUN npm run build
+
+# Start app
+CMD ["npm", "start"]
+
