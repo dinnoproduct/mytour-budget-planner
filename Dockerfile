@@ -15,12 +15,21 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+# Azure App Service injects PORT at runtime; default to 3000 for local runs
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-# Copy only what Next.js needs to run
+# Run as non-root for Azure security compliance
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+USER nextjs
+
+# Azure App Service reads EXPOSE to detect the listening port
 EXPOSE 3000
 
 CMD ["node", "server.js"]
