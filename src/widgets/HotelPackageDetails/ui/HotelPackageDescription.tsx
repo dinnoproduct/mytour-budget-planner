@@ -17,18 +17,9 @@ export const HotelPackageDescription = ({
   tourPackage: PackageEntity
 }) => {
   const { i18n, t } = useTranslation()
-  const { data: facilities = [] } = useDictionary(
-    'FacilityDictionary' as DictionaryTypes.FacilityDictionary
-  )
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const hotelFacilities = useMemo(() => {
-    if (!facilities.length || !tourPackage.hotel?.facilities) {
-      return []
-    }
 
-    return facilities.filter(({ key }) => tourPackage.hotel?.facilities & key)
-  }, [facilities, tourPackage.hotel?.facilities])
 
   const hotelDescription = useMemo(() => {
     const key =
@@ -40,30 +31,19 @@ export const HotelPackageDescription = ({
   const shouldShowToggle = hotelDescription.trim().length > 220
 
   return (
-    <Box mt="8" px={0}>
+    <Box mt="4" px={0}>
       <Text noOfLines={isExpanded ? undefined : 4}>{hotelDescription}</Text>
       {shouldShowToggle && (
         <Button
           onClick={() => setIsExpanded((v) => !v)}
           variant="link"
           mt="2"
-          color="primary.500"
+          color="blue.500"
           alignSelf="flex-start"
         >
           {isExpanded ? t('readLess') : t('readMore')}
         </Button>
       )}
-
-      <UnorderedList listStyleType="none" spacing="4" mx="0" mt="4">
-        {hotelFacilities?.map(({ key, value }) => (
-          <ListItem key={key}>
-            <SummaryCard
-              iconName={PACKAGE_FACILITY_ICON_MAP[key]}
-              children={value}
-            />
-          </ListItem>
-        ))}
-      </UnorderedList>
     </Box>
   )
 }
