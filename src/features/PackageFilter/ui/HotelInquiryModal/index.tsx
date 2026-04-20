@@ -70,6 +70,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isError, setIsError] = useState(false)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
   const isFullNamePrefilled = Boolean(
     `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim(),
   )
@@ -93,6 +94,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
     setSubmitError(null)
     setIsSuccess(false)
     setIsError(false)
+    setIsDatePickerOpen(false)
   }
 
   const handleCloseModal = () => {
@@ -136,6 +138,16 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
   }, [searchParams, fromDate, toDate])
 
   const onSubmitInquiry = () => {
+    const trimmedFullName = fullName.trim()
+    const trimmedEmail = email.trim()
+    const trimmedHotelName = hotelName.trim()
+    const trimmedCityName = cityName.trim()
+
+    if (!trimmedFullName || !trimmedEmail || !trimmedHotelName || !trimmedCityName) {
+      setSubmitError(t('requiredField'))
+      return
+    }
+
     if (!phone.match(/^\+374\d{8}$/)) {
       setPhoneInvalid(true)
       return
@@ -146,10 +158,10 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
     setSubmitError(null)
     submitInquiry({
       phone,
-      fullName,
-      email,
-      hotelName,
-      cityName,
+      fullName: trimmedFullName,
+      email: trimmedEmail,
+      hotelName: trimmedHotelName,
+      cityName: trimmedCityName,
       dateFrom: fromDate ? formatDate(fromDate) : '',
       dateTo: toDate ? formatDate(toDate) : '',
       adults: travelersData.adultsCount,
@@ -157,10 +169,28 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
     })
   }
 
+  const isResultScreen = isSuccess || isError
+  const isSubmitDisabled =
+    !fullName.trim() ||
+    !email.trim() ||
+    !phone ||
+    !hotelName.trim() ||
+    !cityName.trim()
+
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} size={{ base: 'full', md: 'md' }} isCentered scrollBehavior='inside'>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleCloseModal}
+      size={{ base: isResultScreen ? 'sm' : 'full', md: 'md' }}
+      isCentered
+      scrollBehavior='inside'
+    >
       <ModalOverlay />
-      <ModalContent overflow='hidden' rounded={'lg'}>
+      <ModalContent
+        overflow='hidden'
+        rounded={'lg'}
+        mx={{ base: isResultScreen ? 4 : 0, md: 0 }}
+      >
         {!isSuccess && !isError && (
           <ModalHeader >
             <Text fontSize="lg" fontWeight="semibold" color="gray.800">
@@ -171,7 +201,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
             </Text>
           </ModalHeader>
         )}
-        <ModalCloseButton />
+        {!isDatePickerOpen && <ModalCloseButton />}
         {isSuccess ? (
           <ModalBody pb={6}>
             <VStack spacing={4}>
@@ -250,21 +280,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                 </FormControl>
               )}
               <FormControl isRequired>
-                <FormLabel>{t('hotelInquiryModal.hotelName')}</FormLabel>
-                <Input
-                  value={hotelName}
-                  onChange={(e) => setHotelName(e.target.value)}
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>{t('hotelInquiryModal.cityName')}</FormLabel>
-                <Input
-                  value={cityName}
-                  onChange={(e) => setCityName(e.target.value)}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>{t('travelDates')}</FormLabel>
+                <FormLabel >{t('travelDates')}</FormLabel>
                 <Box
                   width="full"
                   sx={{
@@ -279,6 +295,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                       fromDate={fromDate}
                       toDate={toDate}
                       portalZIndex={1500}
+                      menuProps={{ strategy: 'fixed', placement: user ? 'bottom-start' : 'auto-start' }}
+                      onOpenChange={setIsDatePickerOpen}
                       onAccept={(from, to) => {
                         setFromDate(from);
                         setToDate(to ?? null);
@@ -293,6 +311,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                       fromDate={fromDate}
                       toDate={toDate}
                       portalZIndex={1500}
+                      menuProps={{ strategy: 'fixed', placement: 'bottom-start' }}
+                      onOpenChange={setIsDatePickerOpen}
                       exactDatesOnly
                       onAccept={(from, to) => {
                         setFromDate(from);
@@ -301,6 +321,20 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                     />
                   )}
                 </Box>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>{t('hotelInquiryModal.hotelName')}</FormLabel>
+                <Input
+                  value={hotelName}
+                  onChange={(e) => setHotelName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>{t('hotelInquiryModal.cityName')}</FormLabel>
+                <Input
+                  value={cityName}
+                  onChange={(e) => setCityName(e.target.value)}
+                />
               </FormControl>
               <FormControl>
                 <FormLabel>{t('travelers')}</FormLabel>
@@ -320,9 +354,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
         )}
         {!isSuccess && !isError && (
           <ModalFooter>
-            <Button width="full" onClick={onSubmitInquiry} isLoading={isPending} size="lg" isDisabled={
-              !fullName || !email || !phone || !hotelName || !cityName
-            }>
+            <Button width="full" onClick={onSubmitInquiry} isLoading={isPending} size="lg" isDisabled={isSubmitDisabled}>
               {t('hotelInquiryModal.submit')}
             </Button>
           </ModalFooter>
