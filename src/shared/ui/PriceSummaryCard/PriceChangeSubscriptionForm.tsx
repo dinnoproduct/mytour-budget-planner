@@ -17,6 +17,7 @@ import { usePackagesSearchContext } from "@entities/package";
 import { usePriceAlertSubscribe } from "@entities/notification";
 
 export type PriceAlertSubscriptionData = {
+  initialPrice?: number;
   hotelUrl?: string;
   hotelId?: string;
   cities?: number[];
@@ -77,6 +78,9 @@ export const PriceChangeSubscriptionForm = ({
   const [toDate, setToDate] = useState<Date | null>(initialToDate ?? null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [errorMessageKey, setErrorMessageKey] = useState(
+    "priceSummaryCard.ErrorMessage",
+  );
 
   const isPackage = contentType === "package";
   const {
@@ -90,7 +94,14 @@ export const PriceChangeSubscriptionForm = ({
     onSuccess: () => {
       setIsSuccess(true);
     },
-    onError: () => {
+    onError: (error) => {
+      const status = (error as { response?: { status?: number } })?.response
+        ?.status;
+      setErrorMessageKey(
+        status === 409
+          ? "priceSummaryCard.duplicatedErrorMessage"
+          : "priceSummaryCard.ErrorMessage",
+      );
       setIsError(true);
     },
   });
@@ -125,6 +136,8 @@ export const PriceChangeSubscriptionForm = ({
     }
     setEmailInvalid(false);
     setPhoneInvalid(false);
+    setIsError(false);
+    setErrorMessageKey("priceSummaryCard.ErrorMessage");
 
     subscribe({
       hotelUrl: subscriptionData?.hotelUrl ?? window.location.href,
@@ -137,6 +150,7 @@ export const PriceChangeSubscriptionForm = ({
       dateFrom: fromDate ? formatDate(fromDate) : "",
       dateTo: toDate ? formatDate(toDate) : "",
       hotelId: subscriptionData?.hotelId ?? "",
+      initialPrice: subscriptionData?.initialPrice ?? 0,
     });
   };
 
@@ -191,7 +205,7 @@ export const PriceChangeSubscriptionForm = ({
             fontSize="sm"
             fontWeight="600"
           >
-            {t("priceSummaryCard.ErrorMessage")}
+            {t(errorMessageKey)}
           </Text>
         </VStack>
       </Box>

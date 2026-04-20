@@ -212,6 +212,7 @@ export const PriceSummaryCard = ({
         initialFromDate={initialFromDate}
         initialToDate={initialToDate}
         subscriptionData={{
+          initialPrice: Number(tourPackage.price) || 0,
           hotelUrl: window.location.href,
           hotelId: String(tourPackage.hotel.id),
           cities: [tourPackage.city.id],

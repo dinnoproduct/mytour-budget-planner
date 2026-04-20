@@ -362,6 +362,7 @@
   "priceSummaryCard.subscribeDisclaimer": "Բաժանորդագրվելով՝ դուք համաձայնում եք ստանալ գնի փոփոխությունների վերաբերյալ ծանուցումներ։",
   "priceSummaryCard.SuccessMessage": "Շնորհակալություն բաժանորդագրվելու համար",
   "priceSummaryCard.ErrorMessage": "Տեխնիկական խնդիր, խնդրում ենք կրկին փորձել",
+  "priceSummaryCard.duplicatedErrorMessage": "Այս էլ. փոստի հասցեի համար արդեն գոյություն ունի բաժանորդագրություն տվյալ հյուրանոցի համար, խնդրում ենք փորձել կրկին 24 ժամ հետո",
   "hotelInquiryModal.title": "Չե՞ս գտնում հյուրանոցը",
   "hotelInquiryModal.description": "Ստացի՛ր առաջարկ քեզ անհրաժեշտ հյուրանոցի համար",
   "hotelInquiryModal.hotelName": "Հյուրանոցի անունը",
