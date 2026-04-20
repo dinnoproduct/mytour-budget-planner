@@ -8,10 +8,17 @@ import { PackageDescription } from "@widgets/PackageDetails/ui/PackageDescriptio
 import { type DictionaryTypes, useDictionary } from "@entities/package";
 import { useMemo } from "react";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
+import { GuestReviews } from "@/widgets/GuestReviews/GuestReviews.tsx";
+import {
+  PackageDetailsSectionNav,
+  PACKAGE_DETAILS_SECTION_IDS,
+} from "./PackageDetailsSectionNav.tsx";
 
 export const PackageDetails = ({
   tourPackage,
   isLateCheckout,
+  containerRef,
+  detailsColumnRef,
 }: PackageDetailsProps) => {
   const { t } = useTranslation();
 
@@ -36,9 +43,20 @@ export const PackageDetails = ({
     [ticketClasses, tourPackage.destinationFlight.ticketClass],
   );
 
+  const sectionScrollMargin = { base: "96px", md: "120px" } as const;
+
   return (
-    <Flex direction="column" mt={{ base: 2, md: 0 }} gap={{ base: "2", md: "6" }}>
-      <CardSectionLayout>
+    <Flex direction="column" mt={{ base: 2, md: 0 }} gap={{ base: "4", md: "6" }}>
+      <CardSectionLayout
+        id={PACKAGE_DETAILS_SECTION_IDS.included}
+        scrollMarginTop={sectionScrollMargin}
+        beforeTitle={
+          <PackageDetailsSectionNav
+            containerRef={containerRef}
+            detailsColumnRef={detailsColumnRef}
+          />
+        }
+      >
         <SectionLayout title={t`included`}>
           <Grid
             templateColumns={{
@@ -70,7 +88,10 @@ export const PackageDetails = ({
         </SectionLayout>
       </CardSectionLayout>
 
-      <CardSectionLayout>
+      <CardSectionLayout
+        id={PACKAGE_DETAILS_SECTION_IDS.flight}
+        scrollMarginTop={sectionScrollMargin}
+      >
         <SectionLayout
           title={t`flightDetails`}
           listItems={[
@@ -93,7 +114,10 @@ export const PackageDetails = ({
         />
       </CardSectionLayout>
 
-      <CardSectionLayout>
+      <CardSectionLayout
+        id={PACKAGE_DETAILS_SECTION_IDS.hotel}
+        scrollMarginTop={sectionScrollMargin}
+      >
         <SectionLayout
           title={t`hotelDetails`}
           listItems={[
@@ -105,26 +129,25 @@ export const PackageDetails = ({
             },
           ]}
         />
-
-        <SectionLayout
-          mt="8"
-          subtitle={t`reviewsAccordingToBooking`}
-          listItems={[
-            {
-              key: t`guestsReviews`,
-              value: tourPackage.hotel?.travellersRating,
-            },
-            { key: t`cleanliness`, value: tourPackage.hotel?.cleanliness },
-          ]}
-        />
-
         <PackageDescription tourPackage={tourPackage} />
       </CardSectionLayout>
-      <CardSectionLayout>
+      <CardSectionLayout
+        id={PACKAGE_DETAILS_SECTION_IDS.ratings}
+        scrollMarginTop={sectionScrollMargin}
+      >
+        <GuestReviews
+          travellersRating={tourPackage.hotel?.travellersRating}
+          cleanliness={tourPackage.hotel?.cleanliness}
+        />
+      </CardSectionLayout>
+      <CardSectionLayout
+        id={PACKAGE_DETAILS_SECTION_IDS.map}
+        scrollMarginTop={sectionScrollMargin}
+      >
         <iframe
           width="100%"
           height={"350"}
-          style={{ border: 0 }}
+          style={{ border: 0, borderRadius: '12px', overflow: 'hidden' }}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}

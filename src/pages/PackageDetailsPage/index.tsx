@@ -44,6 +44,7 @@ export const PackageDetailsPage = () => {
   } = usePackage();
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
+  const detailsColumnRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
   const { uniqueImageUrls } = usePackageImages(packageDetails);
@@ -162,10 +163,19 @@ export const PackageDetailsPage = () => {
           ref={containerRef}
           gap={{ base: "0", md: "6" }}
         >
-          <PackageDetails
-            tourPackage={packageDetails}
-            isLateCheckout={isLateCheckout}
-          />
+          <Box
+            ref={detailsColumnRef}
+            width={{ base: "full", md: "auto" }}
+            flex="1"
+            minW={0}
+          >
+            <PackageDetails
+              tourPackage={packageDetails}
+              isLateCheckout={isLateCheckout}
+              containerRef={containerRef}
+              detailsColumnRef={detailsColumnRef}
+            />
+          </Box>
           <PriceSummaryCard
             tourPackage={packageDetails}
             mt={{ base: "5", md: "0" }}

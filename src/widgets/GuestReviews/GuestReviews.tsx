@@ -2,7 +2,6 @@ import { Box, Flex, HStack, ListItem, UnorderedList } from "@chakra-ui/react";
 import { Button, Text } from "@ui";
 import { useTranslation } from "react-i18next";
 import { useUserContext } from "@entities/user";
-import { SectionLayout } from "./SectionLayout.tsx";
 
 type GuestReviewsProps = {
     travellersRating?: number;
@@ -49,11 +48,11 @@ export const GuestReviews = ({
                     <Text size="4xl" fontWeight="bold" color="green.500">
                         {formatRate(((travellersRating ?? 0) + (cleanliness ?? 0)) / 2)}
                     </Text>
-                    <Text size="sm" color="gray.700">
+                    {/* <Text size="sm" color="gray.700">
                         {t('reviews', { count: Math.floor(Math.random() * 100) })}
-                    </Text>
+                    </Text> */}
                 </Flex>
-                {
+                {/* {
                     user && (
                         <Flex bg="white" p="3" w="full" alignItems="center" justifyContent="center" borderTop="1px solid" borderColor="gray.100">
                             <Button
@@ -65,7 +64,7 @@ export const GuestReviews = ({
                                 {t('writeReview')}
                             </Button>
                         </Flex>
-                    )}
+                    )} */}
             </Flex>
 
             <UnorderedList

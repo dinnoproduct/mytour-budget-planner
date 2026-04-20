@@ -6,7 +6,7 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout.tsx'
 import { type DictionaryTypes, PACKAGE_FACILITY_ICON_MAP, useDictionary } from '@entities/package'
 import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
 import { useMemo } from 'react'
-import { GuestReviews } from './GuestReviews.tsx'
+import { GuestReviews } from '@/widgets/GuestReviews/GuestReviews.tsx'
 import {
   HotelDetailsSectionNav,
   HOTEL_DETAILS_SECTION_IDS,
@@ -37,8 +37,7 @@ export const HotelPackageDetails = ({
 
 
   return (
-    <Flex direction="column" mt={{ base: 2, md: 0 }} gap={{ base: "2", md: "6" }}>
-
+    <Flex direction="column" mt={{ base: 2, md: 0 }} gap={{ base: "4", md: "6" }}>
       <CardSectionLayout
         id={HOTEL_DETAILS_SECTION_IDS.overview}
         scrollMarginTop={sectionScrollMargin}

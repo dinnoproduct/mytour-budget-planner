@@ -1,10 +1,12 @@
 import { PackageEntity } from '@entities/package'
-import { ReactNode } from 'react'
+import { ReactNode, RefObject } from 'react'
 import { BoxProps, ListProps } from '@chakra-ui/react'
 
 export type PackageDetailsProps = {
 	tourPackage: PackageEntity
 	isLateCheckout: boolean
+	containerRef?: RefObject<HTMLDivElement | null>
+	detailsColumnRef?: RefObject<HTMLDivElement | null>
 }
 
 export type LayoutProps = {
