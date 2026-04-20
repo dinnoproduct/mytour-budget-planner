@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance } from 'axios'
 
 export interface PriceAlertSubscribePayload {
+  initialPrice: number
   hotelUrl: string
   fullName: string
   email: string

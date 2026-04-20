@@ -366,6 +366,7 @@
   "priceSummaryCard.subscribeDisclaimer": "By subscribing, you agree to receive notifications about price changes.",
   "priceSummaryCard.SuccessMessage": "Thank you for subscribing.",
   "priceSummaryCard.ErrorMessage": "Technical issue, please try again",
+  "priceSummaryCard.duplicatedErrorMessage": "A subscription for this hotel already exists for this email address, please try again in 24 hours.",
   "hotelInquiryModal.title": "Can’t find the hotel?",
   "hotelInquiryModal.description": "Get an offer for the hotel you need",
   "hotelInquiryModal.hotelName": "Hotel name",

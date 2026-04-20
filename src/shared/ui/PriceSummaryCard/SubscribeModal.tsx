@@ -50,7 +50,7 @@ export const SubscribeModal = ({
             alignItems: "center",
           }}
         >
-          <Text size="lg" fontWeight="bold" color="white" textAlign="left">
+          <Text size="lg" fontWeight="bold" color="white" textAlign="left" fontSize="md">
             {t("priceSummaryCard.subscribeModalTitle")}
           </Text>
           <Icon name="close" size="24" color="white" cursor="pointer" onClick={onClose} />

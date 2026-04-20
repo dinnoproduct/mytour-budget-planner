@@ -366,6 +366,7 @@
   "priceSummaryCard.subscribeDisclaimer": "Подписываясь, вы соглашаетесь получать уведомления об изменении цены.",
   "priceSummaryCard.SuccessMessage": "Спасибо за подписку",
   "priceSummaryCard.ErrorMessage": "Техническая ошибка, пожалуйста, попробуйте снова",
+  "priceSummaryCard.duplicatedErrorMessage": "Для этого адреса электронной почты уже существует подписка на данный отель, пожалуйста, попробуйте снова через 24 часа.",
   "hotelInquiryModal.title": "Не находите отель?",
   "hotelInquiryModal.description": "Получите предложение для нужного вам отеля",
   "hotelInquiryModal.hotelName": "Название отеля",
