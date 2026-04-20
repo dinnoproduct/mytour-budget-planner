@@ -167,22 +167,22 @@ export const PriceSummaryCard = ({
             listItems={[
               { key: t`travelers`, value: `${tourPackage.adultTravelers} ${t`adult`}${tourPackage.childrenTravelers > 0 ? `, ${tourPackage.childrenTravelers} ${t(getPluralForm(tourPackage.childrenTravelers, 'children')).toLowerCase()}` : ''}` },
               { key: t`duration`, value: durationDateRange },
-              {
-                key: t`checkIn`,
-                value: formatDetailedLocalizedDateTime(
-                  isHotelContent
-                    ? tourPackage.checkin
-                    : (tourPackage.destinationFlight?.departureDate ?? tourPackage.checkin),
-                ),
-              },
-              {
-                key: t`checkOut`,
-                value: formatDetailedLocalizedDateTime(
-                  isHotelContent
-                    ? tourPackage.checkout
-                    : (tourPackage.returnFlight?.departureDate ?? tourPackage.checkout),
-                ),
-              },
+              ...(isHotelContent
+                ? [
+                  {
+                    key: t`checkIn`,
+                    value: formatDetailedLocalizedDateTime(
+                      tourPackage.checkin,
+                    ),
+                  },
+                  {
+                    key: t`checkOut`,
+                    value: formatDetailedLocalizedDateTime(
+                      tourPackage.checkout,
+                    ),
+                  },
+                ]
+                : []),
               { key: t`mealType`, value: mealTypeLabel }
             ]}
           />

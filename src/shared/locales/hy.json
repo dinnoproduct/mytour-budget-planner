@@ -151,6 +151,9 @@
   "hotel": "Հյուրանոց",
   "hotels": "Հյուրանոցներ",
   "hotelDetails": "Հյուրանոցի մանրամասներ",
+  "hotelDetailsNavAmenities": "Հարմարություններ",
+  "hotelDetailsNavGeneral": "Ընդհանուր",
+  "hotelDetailsNavMap": "Քարտեզ",
   "hotelOffers": "Հյուրանոցների առաջարկներ այլ ուղղությունների համար",
   "otherOffers": "Այլ ուղղություններ",
   "hotelPackagesNotFoundText": "Ձեր ընտրված պարամետրերով հյուրանոցներ չեն գտնվել: Խնդրում ենք փորձել այլ պարամետրերով",
@@ -461,5 +464,7 @@
   "groupToursSort.closestDates": "ամսաթվի",
   "groupToursSort.newest": "թարմացման",
   "groupToursSort.cheapest": "գնի",
-  "groupToursSort.title": "Դասավորել ըստ"
+  "groupToursSort.title": "Դասավորել ըստ",
+  "reviews": "{{count}} գնահատական",
+  "writeReview": "Թողնել գնահատական"
 }

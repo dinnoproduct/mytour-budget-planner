@@ -13,6 +13,8 @@ export type LayoutProps = {
 
 export type SectionLayoutProps = {
 	children?: ReactNode
+	/** Renders above the section title (same card) */
+	beforeTitle?: ReactNode
 	title?: ReactNode
 	subtitle?: ReactNode
 	listItems?: ListItem[]

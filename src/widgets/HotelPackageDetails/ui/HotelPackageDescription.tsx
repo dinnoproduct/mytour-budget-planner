@@ -31,7 +31,7 @@ export const HotelPackageDescription = ({
   const shouldShowToggle = hotelDescription.trim().length > 220
 
   return (
-    <Box mt="4" px={0}>
+    <Box px={0}>
       <Text noOfLines={isExpanded ? undefined : 4}>{hotelDescription}</Text>
       {shouldShowToggle && (
         <Button

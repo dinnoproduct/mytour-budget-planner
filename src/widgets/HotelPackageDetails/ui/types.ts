@@ -1,9 +1,11 @@
 import { type PackageEntity } from '@entities/package'
-import { type ReactNode } from 'react'
+import { type ReactNode, type RefObject } from 'react'
 import { type BoxProps, type ListProps } from '@chakra-ui/react'
 
 export type PackageDetailsProps = {
   tourPackage: PackageEntity
+  containerRef?: RefObject<HTMLDivElement | null>
+  detailsColumnRef?: RefObject<HTMLDivElement | null>
 }
 
 export type LayoutProps = {
