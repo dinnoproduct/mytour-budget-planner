@@ -145,6 +145,7 @@ export const PackageList = () => {
           <PackageFilter
             isActive={isFilterActive}
             filterOptions={filterOptions}
+            contentType={isPackagesSearchView ? "package" : "hotel"}
             onFilter={onFilter}
           />
         </Box>

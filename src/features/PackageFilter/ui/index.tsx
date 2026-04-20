@@ -23,6 +23,7 @@ import {
 export type PackageFilterProps = {
   filterOptions: FilterOptions
   isActive: boolean
+  contentType?: 'hotel' | 'package'
   onFilter: (filterParams: FilterParams) => void
 }
 
@@ -260,6 +261,7 @@ const PackageFilterMobileContent = ({
 export const PackageFilter = ({
   filterOptions,
   isActive,
+  contentType = 'hotel',
   onFilter
 }: PackageFilterProps) => {
   const [filterParams, setFilterParams] = useState<FilterParams>(
@@ -316,7 +318,11 @@ export const PackageFilter = ({
           selectedFilters={filterParams}
         />
       </Hide >
-      <HotelInquiryModal isOpen={isHotelInquiryModalOpen} onClose={handleCloseHotelInquiryModal} />
+      <HotelInquiryModal
+        isOpen={isHotelInquiryModalOpen}
+        onClose={handleCloseHotelInquiryModal}
+        contentType={contentType}
+      />
     </>
   )
 }
