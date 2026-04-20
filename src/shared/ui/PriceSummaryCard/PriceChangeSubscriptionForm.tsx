@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Image,
   Input,
@@ -69,6 +70,7 @@ export const PriceChangeSubscriptionForm = ({
   const isEmailLocked = Boolean(initialEmail);
   const isPhoneLocked = Boolean(initialPhone);
   const [phoneInvalid, setPhoneInvalid] = useState(false);
+  const [emailInvalid, setEmailInvalid] = useState(false);
   const [fromDate, setFromDate] = useState<Date | null>(
     initialFromDate ?? null,
   );
@@ -110,16 +112,24 @@ export const PriceChangeSubscriptionForm = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      setEmailInvalid(true);
+      return;
+    }
+
     if (!phone.match(/^\+374\d{8}$/)) {
       setPhoneInvalid(true);
       return;
     }
+    setEmailInvalid(false);
     setPhoneInvalid(false);
 
     subscribe({
       hotelUrl: subscriptionData?.hotelUrl ?? window.location.href,
       fullName,
-      email,
+      email: trimmedEmail,
       phoneNumber: phone,
       cities: subscriptionData?.cities ?? [],
       adults: subscriptionData?.adults ?? 1,
@@ -149,7 +159,7 @@ export const PriceChangeSubscriptionForm = ({
           <Text
             textAlign="center"
             color="gray.700"
-            fontSize="md"
+            fontSize="sm"
             fontWeight="600"
           >
             {t("priceSummaryCard.SuccessMessage")}
@@ -178,7 +188,7 @@ export const PriceChangeSubscriptionForm = ({
           <Text
             textAlign="center"
             color="gray.700"
-            fontSize="md"
+            fontSize="sm"
             fontWeight="600"
           >
             {t("priceSummaryCard.ErrorMessage")}
@@ -191,7 +201,7 @@ export const PriceChangeSubscriptionForm = ({
   return (
     <Box bg="white" rounded={{ base: "none", md: "2xl" }} overflow="hidden">
       <Box px={{ base: 4, md: 6 }} py={{ base: 5, md: 6 }}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <VStack align="stretch" spacing={4}>
             <FormControl isRequired>
               <FormLabel color="gray.700" fontSize="sm" mb={2}>
@@ -205,17 +215,23 @@ export const PriceChangeSubscriptionForm = ({
               />
             </FormControl>
 
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={emailInvalid}>
               <FormLabel color="gray.700" fontSize="sm" mb={2}>
                 {t("priceSummaryCard.email")}
               </FormLabel>
               <Input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailInvalid) setEmailInvalid(false);
+                }}
                 placeholder={t("priceSummaryCard.emailPlaceholder")}
                 isDisabled={isEmailLocked}
               />
+              {emailInvalid ? (
+                <FormErrorMessage>{t("invalidFormatErrorMessage")}</FormErrorMessage>
+              ) : null}
             </FormControl>
 
             <FormControl isRequired isInvalid={phoneInvalid}>
