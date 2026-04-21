@@ -9,12 +9,112 @@ import Toaster from "@/components/Toaster/Toaster";
 export const metadata: Metadata = {
   title: "My Tour",
   description: "Start planning your trip here",
+  image: "https://dinnotravel.blob.core.windows.net/marketing/MyTour%20-%20avatar.png",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
     apple: "/favicon.svg",
   },
+  keywords: ["travel", "group tours"],
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "My Tour",
+    description: "Start planning your trip here",
+    siteName: "My Tour",
+    images: [{ url: "https://dinnotravel.blob.core.windows.net/marketing/MyTour%20-%20avatar.png", width: 1200, height: 630 }]
+  },
+  assets: ["/assets"],
+  category: "travel",
+  classification: "tourism",
 };
+
+//  Metadata = {
+//   metadataBase: new URL("https://example.com"),
+//   title: {
+//     default: "My Tour",
+//     template: "%s | My Tour",
+//     // absolute: "Some page title" // optional, bypasses parent template
+//   },
+//   description: "Site description",
+//   applicationName: "My Tour",
+//   authors: [{ name: "Team", url: "https://example.com" }],
+//   generator: "Next.js",
+//   keywords: ["travel", "group tours"],
+//   referrer: "origin-when-cross-origin",
+//   creator: "My Tour",
+//   publisher: "My Tour",
+//   robots: {
+//     index: true,
+//     follow: true,
+//     googleBot: { index: true, follow: true }
+//   },
+//   alternates: {
+//     canonical: "/",
+//     languages: {
+//       "en-US": "/en",
+//       "hy-AM": "/hy",
+//       "ru-RU": "/ru"
+//     }
+//   },
+//   icons: {
+//     icon: "/favicon.svg",
+//     shortcut: "/favicon.svg",
+//     apple: "/apple-touch-icon.png"
+//   },
+//   manifest: "/site.webmanifest",
+//   openGraph: {
+//     type: "website",
+//     url: "/",
+//     title: "My Tour",
+//     description: "Best tours",
+//     siteName: "My Tour",
+//     images: [{ url: "/og.png", width: 1200, height: 630 }]
+//   },
+//   twitter: {
+//     card: "summary_large_image",
+//     title: "My Tour",
+//     description: "Best tours",
+//     images: ["/og.png"]
+//   },
+//   facebook: { appId: "1234567890" }, // or admins: ["..."]
+//   verification: {
+//     google: "google-verification-token",
+//     yandex: "yandex-token"
+//   },
+//   appleWebApp: {
+//     capable: true,
+//     title: "My Tour",
+//     statusBarStyle: "black-translucent"
+//   },
+//   formatDetection: {
+//     telephone: false,
+//     email: false,
+//     address: false
+//   },
+//   itunes: {
+//     appId: "123456789",
+//     appArgument: "https://example.com"
+//   },
+//   appLinks: {
+//     ios: { url: "https://example.com", app_store_id: "123" },
+//     android: { package: "com.example.app", url: "https://example.com" }
+//   },
+//   archives: ["/archive"],
+//   assets: ["/assets"],
+//   bookmarks: ["/bookmarks"],
+//   pagination: {
+//     previous: "/page/1",
+//     next: "/page/3"
+//   },
+//   category: "travel",
+//   classification: "tourism",
+//   other: {
+//     "custom-meta": "value"
+//   },
+// };
+
+
 
 export default function RootLayout({
   children,
