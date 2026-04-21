@@ -23,6 +23,7 @@ import {
 export type PackageFilterProps = {
   filterOptions: FilterOptions
   isActive: boolean
+  contentType?: 'hotel' | 'package'
   onFilter: (filterParams: FilterParams) => void
 }
 
@@ -123,9 +124,7 @@ export const PackageFilterDesktop: React.FC<PackageFilterDesktopProps> = ({
 
   return (
     <Layout>
-      <Flex direction="column" align="center" mb={8}>
-        <HotelInquiryModalTrigger onClick={onOpenHotelInquiryModal} />
-      </Flex>
+
       <Flex justify="space-between" align="center" mb={8}>
         <Text fontWeight="bold" fontSize={20}>
           {t`filters`}
@@ -139,6 +138,9 @@ export const PackageFilterDesktop: React.FC<PackageFilterDesktopProps> = ({
         selectedFilters={selectedFilters}
         handleChange={handleChange}
       />
+      <Flex direction="column" align="center" mt={8}>
+        <HotelInquiryModalTrigger onClick={onOpenHotelInquiryModal} />
+      </Flex>
     </Layout>
   )
 }
@@ -260,6 +262,7 @@ const PackageFilterMobileContent = ({
 export const PackageFilter = ({
   filterOptions,
   isActive,
+  contentType = 'hotel',
   onFilter
 }: PackageFilterProps) => {
   const [filterParams, setFilterParams] = useState<FilterParams>(
@@ -316,7 +319,11 @@ export const PackageFilter = ({
           selectedFilters={filterParams}
         />
       </Hide >
-      <HotelInquiryModal isOpen={isHotelInquiryModalOpen} onClose={handleCloseHotelInquiryModal} />
+      <HotelInquiryModal
+        isOpen={isHotelInquiryModalOpen}
+        onClose={handleCloseHotelInquiryModal}
+        contentType={contentType}
+      />
     </>
   )
 }
