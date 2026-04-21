@@ -56,8 +56,9 @@ export const PackageDetails = ({
             detailsColumnRef={detailsColumnRef}
           />
         }
+        title={t`included`}
       >
-        <SectionLayout title={t`included`}>
+        <SectionLayout >
           <Grid
             templateColumns={{
               base: "repeat(2, minmax(0, 1fr))",
@@ -91,9 +92,9 @@ export const PackageDetails = ({
       <CardSectionLayout
         id={PACKAGE_DETAILS_SECTION_IDS.flight}
         scrollMarginTop={sectionScrollMargin}
+        title={t`flightDetails`}
       >
         <SectionLayout
-          title={t`flightDetails`}
           listItems={[
             {
               key: t`airCompany`,
@@ -117,9 +118,9 @@ export const PackageDetails = ({
       <CardSectionLayout
         id={PACKAGE_DETAILS_SECTION_IDS.hotel}
         scrollMarginTop={sectionScrollMargin}
+        title={t`hotelDetails`}
       >
         <SectionLayout
-          title={t`hotelDetails`}
           listItems={[
             { key: t`checkIn`, value: formatDate(tourPackage.checkin) },
             { key: t`checkOut`, value: formatDate(tourPackage.checkout) },
@@ -134,6 +135,7 @@ export const PackageDetails = ({
       <CardSectionLayout
         id={PACKAGE_DETAILS_SECTION_IDS.ratings}
         scrollMarginTop={sectionScrollMargin}
+        title={t`grades`}
       >
         <GuestReviews
           travellersRating={tourPackage.hotel?.travellersRating}
