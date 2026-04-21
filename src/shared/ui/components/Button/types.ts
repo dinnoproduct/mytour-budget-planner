@@ -30,6 +30,7 @@ export type ButtonVariant =
   | 'solid-red'
   | 'outline-blue'
   | 'outline-red'
+  | 'outline-gray'
   | 'text-blue'
 
 export type ButtonSize = 'lg' | 'md' | 'sm' | 'xs' | 'xl'

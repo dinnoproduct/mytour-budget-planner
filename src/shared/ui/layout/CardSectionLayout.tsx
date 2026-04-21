@@ -1,14 +1,24 @@
-
+import { Box, Text, TextProps } from '@chakra-ui/react'
 import { type SectionLayoutProps } from '@widgets/PackageDetails/ui/types'
-import { Box } from '@chakra-ui/react'
 
-export const CardSectionLayout = ({ children, ...props }: SectionLayoutProps) => (
+export const CardSectionLayout = ({
+  children,
+  title,
+  beforeTitle,
+  ...props
+}: SectionLayoutProps) => (
     <Box {...props}
         border="1px solid"
         borderColor={'gray.100'}
         bgColor={'white'}
-        borderRadius="lg"
+        borderRadius="2xl"
         p={props.padding || 4}>
+        {beforeTitle}
+        {title && <SectionHeading mb="4">{title}</SectionHeading>}
         {children}
     </Box>
+)
+
+const SectionHeading = (props: TextProps) => (
+    <Text size={{ base: 'md', md: 'lg' }} fontWeight="bold" {...props} as="h2" />
 )

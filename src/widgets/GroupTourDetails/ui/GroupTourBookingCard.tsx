@@ -258,7 +258,7 @@ export const GroupTourBookingCard = ({ groupTour, containerRef }: GroupTourBooki
       <Box
         width={{ base: 'full', md: '400px' }}
         bgColor="white"
-        rounded={{ base: 'none', md: 'md' }}
+        rounded={{ base: 'none', md: '2xl' }}
         overflow="hidden"
         position={isFixed ? 'fixed' : 'static'}
         top={isFixed ? '90px' : 'auto'}

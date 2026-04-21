@@ -57,6 +57,7 @@ export const HotelPackageDetailsPage = () => {
 
   const { filteredHotelPackages } = useHotelPackagesSearchContext();
   const containerRef = useRef<HTMLDivElement>(null);
+  const detailsColumnRef = useRef<HTMLDivElement>(null);
   const [imageModalActiveIndex, setImageModalActiveIndex] = useState(0);
 
   const [isLateCheckout, setIsLateCheckout] =
@@ -175,7 +176,18 @@ export const HotelPackageDetailsPage = () => {
           ref={containerRef}
           gap={{ base: "0", md: "6" }}
         >
-          <HotelPackageDetails tourPackage={packageDetails} />
+          <Box
+            ref={detailsColumnRef}
+            width={{ base: "full", md: "auto" }}
+            flex="1"
+            minW={0}
+          >
+            <HotelPackageDetails
+              tourPackage={packageDetails}
+              containerRef={containerRef}
+              detailsColumnRef={detailsColumnRef}
+            />
+          </Box>
           <PriceSummaryCard
             tourPackage={packageDetails}
             mt={{ base: "5", md: "0" }}

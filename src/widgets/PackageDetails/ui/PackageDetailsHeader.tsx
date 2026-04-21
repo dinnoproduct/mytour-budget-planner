@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 import { useMemo } from 'react'
 import { LANGUAGE_PREFIX, LanguageName } from '@shared/model'
 
-export const PackageDetailsHeader = ({ tourPackage, onMoreImagesClick }: {tourPackage: PackageEntity, onMoreImagesClick: () => void}) => {
-	const {t, i18n} = useTranslation()
+export const PackageDetailsHeader = ({ tourPackage, onMoreImagesClick }: { tourPackage: PackageEntity, onMoreImagesClick: () => void }) => {
+	const { t, i18n } = useTranslation()
 
 	const countryName = useMemo(() => {
 		const key = `name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageEntity['city']['country']
@@ -19,17 +19,17 @@ export const PackageDetailsHeader = ({ tourPackage, onMoreImagesClick }: {tourPa
 	}, [i18n.language, tourPackage?.city.nameArm])
 
 	return (
-		<Flex px={{base: '4', md: '0'}}>
+		<Flex px={{ base: '4', md: '0' }}>
 			<Flex direction="column">
 				<Flex align="center">
 					<Heading
 						as="h1"
-						size={{base: 'sm-sm', md: 'lg'}}
+						size={{ base: 'sm-sm', md: 'lg' }}
 						color="gray.800"
 						display="inline-block"
 					>{tourPackage.nameEng}</Heading>
 
-					<HotelStarBadge starsCount={tourPackage.hotel.stars} ml="2"/>
+					<HotelStarBadge starsCount={tourPackage.hotel.stars} ml="2" />
 				</Flex>
 
 				<Text
@@ -40,9 +40,7 @@ export const PackageDetailsHeader = ({ tourPackage, onMoreImagesClick }: {tourPa
 				>{countryName}, {cityName}</Text>
 			</Flex>
 
-			<Button variant="text-blue" onClick={onMoreImagesClick} ml="auto" display={{base: 'none', md: 'inline-flex'}}>
-				{t`viewAllPhotos`}
-			</Button>
+
 		</Flex>
 	)
 }

@@ -151,6 +151,10 @@
   "hotel": "Hotel",
   "hotels": "Hotels",
   "hotelDetails": "Hotel details",
+  "hotelDetailsNavAmenities": "Amenities",
+  "hotelDetailsNavGeneral": "Overview",
+  "hotelDetailsNavMap": "Map",
+  "packageDetailsNavMap": "Map",
   "hotelOffers": "Hotel offers for other destinations",
   "otherOffers":"Other destinations",
   "hotelPackagesNotFoundText": "No available hotels were found for your selected criteria. Please adjust your search and try again",
@@ -462,5 +466,7 @@
   "groupToursSort.closestDates": "date",
   "groupToursSort.newest": "newest",
   "groupToursSort.cheapest": "price",
-  "groupToursSort.title": "Sort by"
+  "groupToursSort.title": "Sort by",
+  "reviews": "{{count}} reviews",
+  "writeReview": "Write a review"
 }

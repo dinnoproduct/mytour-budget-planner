@@ -1,10 +1,12 @@
 import { PackageEntity } from '@entities/package'
-import { ReactNode } from 'react'
+import { ReactNode, RefObject } from 'react'
 import { BoxProps, ListProps } from '@chakra-ui/react'
 
 export type PackageDetailsProps = {
 	tourPackage: PackageEntity
 	isLateCheckout: boolean
+	containerRef?: RefObject<HTMLDivElement | null>
+	detailsColumnRef?: RefObject<HTMLDivElement | null>
 }
 
 export type LayoutProps = {
@@ -13,6 +15,8 @@ export type LayoutProps = {
 
 export type SectionLayoutProps = {
 	children?: ReactNode
+	/** Renders above the section title (same card) */
+	beforeTitle?: ReactNode
 	title?: ReactNode
 	subtitle?: ReactNode
 	listItems?: ListItem[]

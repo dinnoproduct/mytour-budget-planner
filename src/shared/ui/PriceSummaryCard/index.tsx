@@ -8,6 +8,7 @@ import { Button, Icon, Text } from "@ui";
 import { numberWithCommaNormalizer } from "@/utils/normalizers";
 import { useBreakpoint } from "@shared/hooks";
 import { useEffect, useMemo, useState } from "react";
+import moment from "moment";
 import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@shared/utils";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout";
@@ -108,6 +109,16 @@ export const PriceSummaryCard = ({
     return `${shortMonthName} ${date.getDate()}`;
   };
 
+  const formatDetailedLocalizedDateTime = (rawDate?: string) => {
+    if (!rawDate) return "";
+    const formattedDate = moment(rawDate).format("YYYY, HH:mm");
+    const longMonthName = moment(rawDate).locale("en").format("MMMM").toLowerCase();
+    const shortMonthName = t(`${longMonthName}Short`);
+    const day = moment(rawDate).format("DD");
+
+    return `${shortMonthName} ${day} ${formattedDate}`;
+  };
+
   const isHotelContent = contentType === "hotel";
 
   const [initialFromDate, initialToDate] = useMemo(() => {
@@ -149,13 +160,29 @@ export const PriceSummaryCard = ({
           px="4"
           gridArea="config"
           width="full"
-          borderBottomRadius={{ base: "md !important", md: "0 !important" }}
-          borderTopRadius={"md !important"}
+          borderBottomRadius={{ base: "2xl !important", md: "0 !important" }}
+          borderTopRadius={"2xl !important"}
         >
           <SectionLayout
             listItems={[
               { key: t`travelers`, value: `${tourPackage.adultTravelers} ${t`adult`}${tourPackage.childrenTravelers > 0 ? `, ${tourPackage.childrenTravelers} ${t(getPluralForm(tourPackage.childrenTravelers, 'children')).toLowerCase()}` : ''}` },
               { key: t`duration`, value: durationDateRange },
+              ...(isHotelContent
+                ? [
+                  {
+                    key: t`checkIn`,
+                    value: formatDetailedLocalizedDateTime(
+                      tourPackage.checkin,
+                    ),
+                  },
+                  {
+                    key: t`checkOut`,
+                    value: formatDetailedLocalizedDateTime(
+                      tourPackage.checkout,
+                    ),
+                  },
+                ]
+                : []),
               { key: t`mealType`, value: mealTypeLabel }
             ]}
           />
@@ -171,8 +198,8 @@ export const PriceSummaryCard = ({
           left="0"
           right="0"
           width="full"
-          borderBottomRadius={"md !important"}
-          borderTopRadius={{ base: "md !important", md: "0 !important" }}
+          borderBottomRadius={"2xl !important"}
+          borderTopRadius={{ base: "2xl !important", md: "0 !important" }}
         >
           <Flex width="full" justify="space-between" align="center" height="28px">
             <Text size="sm">{t`total`} :</Text>

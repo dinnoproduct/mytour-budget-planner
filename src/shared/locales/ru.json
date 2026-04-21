@@ -151,6 +151,10 @@
   "hotel": "Отель",
   "hotels": "Отели",
   "hotelDetails": "Детали отеля",
+  "hotelDetailsNavAmenities": "Удобства",
+  "hotelDetailsNavGeneral": "Общее",
+  "hotelDetailsNavMap": "Карта",
+  "packageDetailsNavMap": "Карта",
   "hotelOffers": "Отели в других направлениях",
   "otherOffers":"Другие направления",
   "hotelPackagesNotFoundText": "По выбранным критериям не найдено доступных отелей. Пожалуйста, измените поиск и повторите попытку",
@@ -462,5 +466,7 @@
   "groupToursSort.closestDates": "дате",
   "groupToursSort.newest": "обновлению",
   "groupToursSort.cheapest": "цене",
-  "groupToursSort.title": "Сортировать по"
+  "groupToursSort.title": "Сортировать по",
+  "reviews": "{{count}} отзывов",
+  "writeReview": "Написать отзыв"
 }

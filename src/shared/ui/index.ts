@@ -18,6 +18,7 @@ export { Illustration } from '@components/Illustration'
 export { EmptyState } from '@components/EmptyState'
 export { Tabs } from '@components/Tabs'
 export { RadioCard } from '@components/RadioCard'
+export { StickySectionNav } from '@components/StickySectionNav'
 
 export * from '@components/Badge'
 export * from '@components/SnackBar'
