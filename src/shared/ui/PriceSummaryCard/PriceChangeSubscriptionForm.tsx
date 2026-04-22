@@ -16,6 +16,9 @@ import { DatePickerFlights } from "@features/DatePickerFlights";
 import { usePackagesSearchContext } from "@entities/package";
 import { usePriceAlertSubscribe } from "@entities/notification";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ARMENIA_PHONE_REGEX = /^\+374\d{8}$/;
+
 export type PriceAlertSubscriptionData = {
   initialPrice?: number;
   hotelUrl?: string;
@@ -43,6 +46,14 @@ const normalizePhone = (value?: string) => {
     return sanitized.slice(0, 12);
   }
   return `+374${sanitized.replace(/^\+/, "").slice(0, 8)}`;
+};
+
+const normalizePhoneInput = (value: string) => {
+  const digitsOnly = value.replace(/[^\d]/g, "");
+  const localPart = digitsOnly.startsWith("374")
+    ? digitsOnly.slice(3, 11)
+    : digitsOnly.slice(0, 8);
+  return `+374${localPart}`;
 };
 
 const formatDate = (date: Date): string => {
@@ -125,12 +136,12 @@ export const PriceChangeSubscriptionForm = ({
     e.preventDefault();
     const trimmedEmail = email.trim();
 
-    if (!trimmedEmail.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    if (!trimmedEmail.match(EMAIL_REGEX)) {
       setEmailInvalid(true);
       return;
     }
 
-    if (!phone.match(/^\+374\d{8}$/)) {
+    if (!phone.match(ARMENIA_PHONE_REGEX)) {
       setPhoneInvalid(true);
       return;
     }
@@ -257,16 +268,15 @@ export const PriceChangeSubscriptionForm = ({
                 pattern="^\+374\d{8}$"
                 value={phone}
                 onChange={(e) => {
-                  let sanitizedValue = e.target.value.replace(/\s+/g, "");
-                  if (sanitizedValue.length > 12) {
-                    sanitizedValue = sanitizedValue.slice(0, 12);
-                  }
-                  setPhone(sanitizedValue);
+                  setPhone(normalizePhoneInput(e.target.value));
                   if (phoneInvalid) setPhoneInvalid(false);
                 }}
                 placeholder={t("priceSummaryCard.phonePlaceholder")}
                 isDisabled={isPhoneLocked}
               />
+              {phoneInvalid ? (
+                <FormErrorMessage>{t("invalidFormatErrorMessage")}</FormErrorMessage>
+              ) : null}
             </FormControl>
 
             <FormControl>
@@ -318,7 +328,7 @@ export const PriceChangeSubscriptionForm = ({
               width="full"
               size="lg"
               isLoading={isPending}
-              isDisabled={!fullName || !email || !phone}
+              isDisabled={!fullName || !email.match(EMAIL_REGEX) || !phone.match(ARMENIA_PHONE_REGEX)}
             >
               {!isPending && t("priceSummaryCard.subscribeButton")}
             </Button>
@@ -326,6 +336,7 @@ export const PriceChangeSubscriptionForm = ({
             <Text textAlign="center" color="gray.500" fontSize="xs">
               {t("priceSummaryCard.subscribeDisclaimer")}
             </Text>
+          
           </VStack>
         </form>
       </Box>

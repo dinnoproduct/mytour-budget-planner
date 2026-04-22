@@ -95,6 +95,7 @@ export const PriceSummaryCard = ({
     handeInitiateCheckoutEventLog();
     openBookingDrawer();
   };
+  const queryParams = new URLSearchParams(window.location.search);
 
   const formatShortLocalizedDate = (rawDate?: string) => {
     if (!rawDate) return "";
@@ -217,10 +218,7 @@ export const PriceSummaryCard = ({
           hotelId: String(tourPackage.hotel.id),
           cities: [tourPackage.city.id],
           adults: tourPackage.adultTravelers,
-          childs: Array.from(
-            { length: tourPackage.childrenTravelers },
-            () => tourPackage.childMaxAge ?? 0,
-          ),
+          childs: queryParams.get('childrenAges')?.split(',').filter(Boolean).map(Number) || [],
         }}
       />
     </>
