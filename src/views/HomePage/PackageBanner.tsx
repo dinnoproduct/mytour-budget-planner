@@ -1,16 +1,16 @@
 import {
   Box,
-  Flex,
+  Image,
   LinkBox,
   type LinkBoxProps
 } from '@chakra-ui/react'
-import { Button, Heading, Text } from '@ui'
 import { useTranslation } from 'react-i18next'
-import React from "react";
+import React, { useCallback } from "react";
 import { useFlightDates } from "@entities/package/hooks/useFlightDates";
 import { fmt } from "@/utils/methods";
 import { useLanguageRouting } from '@/hooks/useLanguageRouting';
 import { useExternalBanners } from '@entities/notification';
+import { useLanguageNavigate } from '@/hooks/useLanguageNavigate';
 
 
 export const PackageBanner: React.FC<LinkBoxProps> = ({ ...props }) => {
@@ -20,6 +20,7 @@ export const PackageBanner: React.FC<LinkBoxProps> = ({ ...props }) => {
   const lastOfTarget = new Date(date.getFullYear(), date.getMonth() + 3, 0);
   const { data: data = { flightStartDate: '', flightReturnDate: '', returnFlightId: '', startFlightId: '' } } = useFlightDates()
   const { getPathWithLanguage } = useLanguageRouting()
+  const { navigateTo } = useLanguageNavigate()
   const { data: banners } = useExternalBanners()
   const isHotel = true
   const dateFrom = fmt(!isHotel ? firstOfTarget : new Date(data?.flightStartDate));
@@ -31,128 +32,64 @@ export const PackageBanner: React.FC<LinkBoxProps> = ({ ...props }) => {
   const selectedBanner = banners?.[bannerType]
     ?.slice()
     .sort((a, b) => a.displayOrder - b.displayOrder)[0]
-  const bannerHref = selectedBanner?.cta?.link
-    ? selectedBanner.cta.linkType === 'INTERNAL'
-      ? getPathWithLanguage(selectedBanner.cta.link)
-      : selectedBanner.cta.link
-    : defaultHref
-  const isExternalCta = selectedBanner?.cta?.linkType === 'EXTERNAL'
-  const title = selectedBanner?.title
-    ?? (isHotel ? t`packageBanner.title.package` : t`packageBanner.title.hotel`)
-  const description = selectedBanner?.description
-    ?? (isHotel ? t`packageBanner.subtitle1.package` : t`packageBanner.subtitle1.hotel`)
-  const ctaTitle = selectedBanner?.cta?.title
-    ?? (isHotel ? t`packageBanner.buttonLabel.package` : t`packageBanner.buttonLabel.hotel`)
-  const visualImage = selectedBanner?.imageUrl
+  const desktopImage = selectedBanner?.imageUrl
     ?? `/assets/package-banner/${!isHotel ? '4' : ''}0.png`
+  const mobileImage = selectedBanner?.mobileImageUrl ?? desktopImage
+
+  const handleBannerClick = useCallback(() => {
+    const ctaLink = selectedBanner?.cta?.link
+    const ctaType = selectedBanner?.cta?.linkType
+
+    if (ctaLink) {
+      if (ctaType === 'INTERNAL') {
+        try {
+          navigateTo(ctaLink)
+        } catch {
+          window.location.href = ctaLink
+        }
+      } else {
+        window.location.href = ctaLink
+      }
+      return
+    }
+
+    try {
+      navigateTo(defaultHref)
+    } catch {
+      window.location.href = defaultHref
+    }
+  }, [selectedBanner, navigateTo, defaultHref])
+
   return (
     <LinkBox
-      as="a"
-      href={bannerHref}
-      target={isExternalCta ? '_blank' : undefined}
-      rel={isExternalCta ? 'noopener noreferrer' : undefined}
+      as="button"
+      type="button"
+      onClick={handleBannerClick}
       textDecoration='none'
       _hover={{ textDecoration: 'none' }}
-      height={{
-        base: '440px',
-        sm: !isHotel ? '330px' : '270px'
-      }}
-      width="auto"
+      width="full"
       rounded="40px"
-      bgImage={!isHotel ? `linear-gradient(90deg, rgba(38,231,139,.8), rgba(80,148,255,.8))` : 'linear-gradient(90deg, #FF9A3D 0%, #FF4E00 100%)'}
-      bgBlendMode="overlay"
-      bgRepeat="no-repeat"
-      bgSize={{ base: 'cover' }}
-      bgPosition={{ base: '50%' }}
-      position="relative"
+      overflow="hidden"
       display="block"
+      p={0}
       {...props}
     >
-      <Box
-        height="full"
-        display='flex'
-        alignItems={{ base: 'start', sm: "center" }}
-      >
-        <Flex
-          align='start'
-          direction="column"
-          px={{ base: 5, sm: 10 }}
-          pt={{ base: 5, sm: 0 }}
-          maxWidth={{
-            base: 'full',
-            sm: '70%',
-            lg: '900px'
-          }}
-          width="full"
-        >
-          <Heading
-            color='white'
-            fontSize={{
-              base: '30px',
-              sm: '48px'
-            }}
-            lineHeight={{
-              base: '36px',
-              sm: '48px'
-            }}
-            as="h2"
-          >
-            {title}
-          </Heading>
-
-          <Text color='white'
-            fontSize={{
-              base: '16px',
-              sm: '24px'
-            }}
-            lineHeight={{
-              base: '24px',
-              sm: '32px'
-            }} mt="11px">
-            {description}
-          </Text>
-
-          <Box
-            background='white'
-            borderRadius='100px'
-            color={!isHotel ? 'green.500' : 'orange.500'}
-            p='12px 24px'
-            mt="4"
-            width="fit-content"
-            zIndex="0 !important"
-            fontSize={{
-              base: '14px',
-              sm: '16px'
-            }}
-            lineHeight={{
-              base: '20px',
-              sm: '24px'
-            }}
-          >
-            {ctaTitle}
-          </Box>
-        </Flex>
-      </Box>
-      <Box
-        height={{
-          base: '200px',
-          sm: '400px'
-        }}
-        width={{
-          base: '330px',
-          sm: !isHotel ? '610px' : '640px'
-        }}
-        bottom={0}
-        top={{ base: '240px', sm: !isHotel ? '-8px' : '-130px' }}
-        right={!isHotel ? 0 : '30px'}
-        zIndex={0}
-        position='absolute'
-        bgImage={`url('${visualImage}')`}
-        bgBlendMode="overlay"
-        bgRepeat="no-repeat"
-        bgSize='cover'
-        bgPosition={{ base: '40%', md: 'center' }}>
-      </Box>
+      <Image
+        src={mobileImage}
+        alt={selectedBanner?.title ?? t('packageBanner.title.package')}
+        display={{ base: 'block', md: 'none' }}
+        w="full"
+        h="auto"
+        objectFit="contain"
+      />
+      <Image
+        src={desktopImage}
+        alt={selectedBanner?.title ?? t('packageBanner.title.package')}
+        display={{ base: 'none', md: 'block' }}
+        w="full"
+        h="auto"
+        objectFit="contain"
+      />
 
     </LinkBox>
   )

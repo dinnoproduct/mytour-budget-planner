@@ -38,6 +38,7 @@ export interface ExternalBanner {
   title: string
   description: string
   imageUrl: string | null
+  mobileImageUrl: string | null
   videoUrl: string | null
   cta: ExternalBannerCta | null
   displayOrder: number
