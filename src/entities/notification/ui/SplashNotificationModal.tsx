@@ -71,6 +71,7 @@ export const SplashNotificationModal = ({
       onClose={onClose}
       isCentered
       scrollBehavior="inside"
+      autoFocus={false}
     >
       <ModalOverlay />
       <ModalContent
