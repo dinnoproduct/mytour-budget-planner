@@ -134,7 +134,12 @@ export const PriceChangeSubscriptionForm = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const trimmedFullName = fullName.trim();
     const trimmedEmail = email.trim();
+
+    if (!trimmedFullName) {
+      return;
+    }
 
     if (!trimmedEmail.match(EMAIL_REGEX)) {
       setEmailInvalid(true);
@@ -152,7 +157,7 @@ export const PriceChangeSubscriptionForm = ({
 
     subscribe({
       hotelUrl: subscriptionData?.hotelUrl ?? window.location.href,
-      fullName,
+      fullName: trimmedFullName,
       email: trimmedEmail,
       phoneNumber: phone,
       cities: subscriptionData?.cities ?? [],
@@ -226,120 +231,117 @@ export const PriceChangeSubscriptionForm = ({
   return (
     <Box bg="white" rounded={{ base: "none", md: "2xl" }} overflow="hidden">
       <Box px={{ base: 4, md: 6 }} py={{ base: 5, md: 6 }}>
-        <form onSubmit={handleSubmit} noValidate>
-          <VStack align="stretch" spacing={4}>
-            <FormControl isRequired>
-              <FormLabel color="gray.700" fontSize="sm" mb={2}>
-                {t("priceSummaryCard.fullName")}
-              </FormLabel>
-              <Input
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder={t("priceSummaryCard.fullNamePlaceholder")}
-                isDisabled={isNameLocked}
-              />
-            </FormControl>
+        <VStack align="stretch" spacing={4}>
+          <FormControl isRequired>
+            <FormLabel color="gray.700" fontSize="sm" mb={2}>
+              {t("priceSummaryCard.fullName")}
+            </FormLabel>
+            <Input
+              value={fullName}
+                onChange={(e) => setFullName(e.target.value.replace(/^\s+/, ""))}
+              placeholder={t("priceSummaryCard.fullNamePlaceholder")}
+              isDisabled={isNameLocked}
+            />
+          </FormControl>
 
-            <FormControl isRequired isInvalid={emailInvalid}>
-              <FormLabel color="gray.700" fontSize="sm" mb={2}>
-                {t("priceSummaryCard.email")}
-              </FormLabel>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (emailInvalid) setEmailInvalid(false);
-                }}
-                placeholder={t("priceSummaryCard.emailPlaceholder")}
-                isDisabled={isEmailLocked}
-              />
-              {emailInvalid ? (
-                <FormErrorMessage>{t("invalidFormatErrorMessage")}</FormErrorMessage>
-              ) : null}
-            </FormControl>
+          <FormControl isRequired isInvalid={emailInvalid}>
+            <FormLabel color="gray.700" fontSize="sm" mb={2}>
+              {t("priceSummaryCard.email")}
+            </FormLabel>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value.replace(/^\s+/, ""));
+                if (emailInvalid) setEmailInvalid(false);
+              }}
+              placeholder={t("priceSummaryCard.emailPlaceholder")}
+              isDisabled={isEmailLocked}
+            />
+            {emailInvalid ? (
+              <FormErrorMessage>{t("invalidFormatErrorMessage")}</FormErrorMessage>
+            ) : null}
+          </FormControl>
 
-            <FormControl isRequired isInvalid={phoneInvalid}>
-              <FormLabel color="gray.700" fontSize="sm" mb={2}>
-                {t("priceSummaryCard.phone")}
-              </FormLabel>
-              <Input
-                type="tel"
-                pattern="^\+374\d{8}$"
-                value={phone}
-                onChange={(e) => {
-                  setPhone(normalizePhoneInput(e.target.value));
-                  if (phoneInvalid) setPhoneInvalid(false);
-                }}
-                placeholder={t("priceSummaryCard.phonePlaceholder")}
-                isDisabled={isPhoneLocked}
-              />
-              {phoneInvalid ? (
-                <FormErrorMessage>{t("invalidFormatErrorMessage")}</FormErrorMessage>
-              ) : null}
-            </FormControl>
+          <FormControl isRequired isInvalid={phoneInvalid}>
+            <FormLabel color="gray.700" fontSize="sm" mb={2}>
+              {t("priceSummaryCard.phone")}
+            </FormLabel>
+            <Input
+              type="tel"
+              pattern="^\+374\d{8}$"
+              value={phone}
+              onChange={(e) => {
+                setPhone(normalizePhoneInput(e.target.value));
+                if (phoneInvalid) setPhoneInvalid(false);
+              }}
+              placeholder={t("priceSummaryCard.phonePlaceholder")}
+              isDisabled={isPhoneLocked}
+            />
+            {phoneInvalid ? (
+              <FormErrorMessage>{t("invalidFormatErrorMessage")}</FormErrorMessage>
+            ) : null}
+          </FormControl>
 
-            <FormControl>
-              <FormLabel color="gray.700" fontSize="sm" mb={2}>
-                {t("priceSummaryCard.travelDates")}
-              </FormLabel>
-              <Box
-                width="full"
-                sx={{
-                  "& > span, & > div, & [role='group']": {
-                    width: "100% !important",
-                    maxWidth: "100% !important",
-                  },
-                }}
-              >
-                {isPackage ? (
-                  <DatePickerFlights
-                    fromDate={fromDate}
-                    toDate={toDate}
-                    portalZIndex={1500}
-                    onAccept={(from, to) => {
-                      setFromDate(from);
-                      setToDate(to ?? null);
-                    }}
-                    onFromDateClick={handleFromDateClick}
-                    availableDepartureDates={availableDepartureDates}
-                    availableReturnDates={availableReturnDates}
-                    isLoadingReturnDates={isLoadingReturnDates}
-                  />
-                ) : (
-                  <DatePickerFlexibleSearch
-                    fromDate={fromDate}
-                    toDate={toDate}
-                    portalZIndex={1500}
-                    exactDatesOnly
-                    onAccept={(from, to) => {
-                      setFromDate(from);
-                      setToDate(to ?? null);
-                    }}
-                  />
-                )}
-              </Box>
-            </FormControl>
-
-            <Button
-              type="submit"
-              variant="solid-blue"
-              mt={1}
+          <FormControl>
+            <FormLabel color="gray.700" fontSize="sm" mb={2}>
+              {t("priceSummaryCard.travelDates")}
+            </FormLabel>
+            <Box
               width="full"
-              size="lg"
-              isLoading={isPending}
-              isDisabled={!fullName || !email.match(EMAIL_REGEX) || !phone.match(ARMENIA_PHONE_REGEX)}
+              sx={{
+                "& > span, & > div, & [role='group']": {
+                  width: "100% !important",
+                  maxWidth: "100% !important",
+                },
+              }}
             >
-              {!isPending && t("priceSummaryCard.subscribeButton")}
-            </Button>
+              {isPackage ? (
+                <DatePickerFlights
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  portalZIndex={1500}
+                  onAccept={(from, to) => {
+                    setFromDate(from);
+                    setToDate(to ?? null);
+                  }}
+                  onFromDateClick={handleFromDateClick}
+                  availableDepartureDates={availableDepartureDates}
+                  availableReturnDates={availableReturnDates}
+                  isLoadingReturnDates={isLoadingReturnDates}
+                />
+              ) : (
+                <DatePickerFlexibleSearch
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  portalZIndex={1500}
+                  exactDatesOnly
+                  onAccept={(from, to) => {
+                    setFromDate(from);
+                    setToDate(to ?? null);
+                  }}
+                />
+              )}
+            </Box>
+          </FormControl>
 
-            <Text textAlign="center" color="gray.500" fontSize="xs">
-              {t("priceSummaryCard.subscribeDisclaimer")}
-            </Text>
-          
-          </VStack>
-        </form>
+          <Button
+            type="submit"
+            variant="solid-blue"
+            mt={1}
+            width="full"
+            size="lg"
+            isLoading={isPending}
+            isDisabled={!fullName.trim() || !email.match(EMAIL_REGEX) || !phone.match(ARMENIA_PHONE_REGEX)}
+          >
+            {!isPending && t("priceSummaryCard.subscribeButton")}
+          </Button>
+
+          <Text textAlign="center" color="gray.500" fontSize="xs">
+            {t("priceSummaryCard.subscribeDisclaimer")}
+          </Text>
+        </VStack>
       </Box>
-    </Box>
+    </Box >
   );
 };
