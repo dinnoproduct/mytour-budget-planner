@@ -30,7 +30,7 @@ export const HomePage = () => {
   const { i18n } = useTranslation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [tabIndex, setTabIndex] = useState(() => {
-    const param = searchParams.get('tab')
+    const param = searchParams?.get('tab') ?? null
     return param ? (TAB_NAME_TO_INDEX[param] ?? 0) : 0
   })
 
@@ -108,7 +108,7 @@ export const HomePage = () => {
       return
     }
 
-    if (!searchParams.get('groupTourMonths') && !searchParams.get('groupTourRouteCountries')) {
+    if (!searchParams?.get('groupTourMonths') && !searchParams?.get('groupTourRouteCountries')) {
       return
     }
 
@@ -154,7 +154,7 @@ export const HomePage = () => {
       {tabIndex === 2 && <GroupTourList />}
       <StoriesSection isHotel={tabIndex} />
       {
-        tabIndex !== 2 && <PackageBanner mx={{ base: 4, md: 10 }} mt={10} isHotel={0} />
+        tabIndex !== 2 && <PackageBanner mx={{ base: 4, md: 10 }} mt={10} />
       }
       <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex} />
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}

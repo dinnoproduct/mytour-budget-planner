@@ -143,8 +143,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
   useEffect(() => {
     if (fromDate || toDate) return
 
-    const fromParam = searchParams.get('from') ?? searchParams.get('dateFrom')
-    const toParam = searchParams.get('to') ?? searchParams.get('dateTo')
+    const fromParam = searchParams?.get('from') ?? searchParams?.get('dateFrom') ?? null
+    const toParam = searchParams?.get('to') ?? searchParams?.get('dateTo') ?? null
     const queryFromDate = parseQueryDate(fromParam)
     const queryToDate = parseQueryDate(toParam)
 

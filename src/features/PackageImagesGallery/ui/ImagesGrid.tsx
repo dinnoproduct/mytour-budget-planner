@@ -11,7 +11,8 @@ import { useParams } from '@shared/lib/router'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
 
 export const ImagesGrid = ({ imageUrls, onImageClick, isGroupTour }: ImagesGridProps) => {
-	const { id: tourId } = useParams<{ id: string }>()
+	const params = useParams<{ id: string }>()
+	const tourId = params?.id
 	const { navigateToGroupTourGallery } = useLanguageNavigate()
 	const [loadedImages, setLoadedImages] = useState<boolean[]>(new Array(imageUrls.length).fill(false))
 
