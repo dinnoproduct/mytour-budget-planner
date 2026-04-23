@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
   ModalBody,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Image,
@@ -33,6 +34,20 @@ import {
   type TravelersData,
 } from './helpers'
 import { TravelersSection } from './TravelersSection'
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const ARMENIA_PHONE_REGEX = /^\+374\d{8}$/
+const MAX_FULL_NAME_LENGTH = 40
+const MAX_HOTEL_NAME_LENGTH = 60
+const MAX_CITY_NAME_LENGTH = 40
+
+const normalizePhoneInput = (value: string) => {
+  const digitsOnly = value.replace(/[^\d]/g, '')
+  const localPart = digitsOnly.startsWith('374')
+    ? digitsOnly.slice(3, 11)
+    : digitsOnly.slice(0, 8)
+  return `+374${localPart}`
+}
 
 type HotelInquiryModalProps = {
   isOpen: boolean
@@ -60,6 +75,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
   const [email, setEmail] = useState(user?.email ?? '')
   const [phone, setPhone] = useState(normalizePhone(user?.phoneNumber))
   const [phoneInvalid, setPhoneInvalid] = useState(false)
+  const [emailInvalid, setEmailInvalid] = useState(false)
   const [hotelName, setHotelName] = useState('')
   const [cityName, setCityName] = useState('')
   const [fromDate, setFromDate] = useState<Date | null>(null)
@@ -84,6 +100,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
     setEmail(user?.email ?? '')
     setPhone(normalizePhone(user?.phoneNumber))
     setPhoneInvalid(false)
+    setEmailInvalid(false)
     setHotelName('')
     setCityName('')
     setFromDate(null)
@@ -150,10 +167,25 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
       return
     }
 
-    if (!phone.match(/^\+374\d{8}$/)) {
+    if (
+      trimmedFullName.length > MAX_FULL_NAME_LENGTH ||
+      trimmedHotelName.length > MAX_HOTEL_NAME_LENGTH ||
+      trimmedCityName.length > MAX_CITY_NAME_LENGTH
+    ) {
+      setSubmitError(t('invalidFormatErrorMessage'))
+      return
+    }
+
+    if (!trimmedEmail.match(EMAIL_REGEX)) {
+      setEmailInvalid(true)
+      return
+    }
+
+    if (!phone.match(ARMENIA_PHONE_REGEX)) {
       setPhoneInvalid(true)
       return
     }
+    setEmailInvalid(false)
     setPhoneInvalid(false)
     setIsSuccess(false)
     setIsError(false)
@@ -174,8 +206,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
   const isResultScreen = isSuccess || isError
   const isSubmitDisabled =
     !fullName.trim() ||
-    !email.trim() ||
-    !phone ||
+    !email.match(EMAIL_REGEX) ||
+    !phone.match(ARMENIA_PHONE_REGEX) ||
     !hotelName.trim() ||
     !cityName.trim()
 
@@ -186,6 +218,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
       size={{ base: isResultScreen ? 'sm' : 'full', md: 'md' }}
       isCentered
       scrollBehavior='inside'
+      autoFocus={false}
     >
       <ModalOverlay />
       <ModalContent
@@ -250,17 +283,28 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                   <FormLabel>{t('hotelInquiryModal.fullName')}</FormLabel>
                   <Input
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    maxLength={MAX_FULL_NAME_LENGTH}
+                    onChange={(e) =>
+                      setFullName(
+                        e.target.value.replace(/^\s+/, '').slice(0, MAX_FULL_NAME_LENGTH),
+                      )
+                    }
                   />
                 </FormControl>
               )}
               {!isEmailPrefilled && (
-                <FormControl isRequired>
+                <FormControl isRequired isInvalid={emailInvalid}>
                   <FormLabel>{t('hotelInquiryModal.email')}</FormLabel>
                   <Input
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value.replace(/^\s+/, ''))
+                      if (emailInvalid) setEmailInvalid(false)
+                    }}
                   />
+                  {emailInvalid ? (
+                    <FormErrorMessage>{t('invalidFormatErrorMessage')}</FormErrorMessage>
+                  ) : null}
                 </FormControl>
               )}
               {!isPhonePrefilled && (
@@ -271,14 +315,13 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                     pattern="^\+374\d{8}$"
                     value={phone}
                     onChange={(e) => {
-                      let sanitizedValue = e.target.value.replace(/\s+/g, '')
-                      if (sanitizedValue.length > 12) {
-                        sanitizedValue = sanitizedValue.slice(0, 12)
-                      }
-                      setPhone(sanitizedValue)
+                      setPhone(normalizePhoneInput(e.target.value))
                       if (phoneInvalid) setPhoneInvalid(false)
                     }}
                   />
+                  {phoneInvalid ? (
+                    <FormErrorMessage>{t('invalidFormatErrorMessage')}</FormErrorMessage>
+                  ) : null}
                 </FormControl>
               )}
               <FormControl isRequired>
@@ -328,14 +371,16 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                 <FormLabel>{t('hotelInquiryModal.hotelName')}</FormLabel>
                 <Input
                   value={hotelName}
-                  onChange={(e) => setHotelName(e.target.value)}
+                  maxLength={MAX_HOTEL_NAME_LENGTH}
+                  onChange={(e) => setHotelName(e.target.value.slice(0, MAX_HOTEL_NAME_LENGTH))}
                 />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>{t('hotelInquiryModal.cityName')}</FormLabel>
                 <Input
                   value={cityName}
-                  onChange={(e) => setCityName(e.target.value)}
+                  maxLength={MAX_CITY_NAME_LENGTH}
+                  onChange={(e) => setCityName(e.target.value.slice(0, MAX_CITY_NAME_LENGTH))}
                 />
               </FormControl>
               <FormControl>

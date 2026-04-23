@@ -154,9 +154,9 @@ export const HomePage = () => {
       {tabIndex === 2 && <GroupTourList />}
       <StoriesSection isHotel={tabIndex} />
       {
-        tabIndex !== 2 && <PackageBanner mx={{base: 4, md: 10 }} mt={10} isHotel={tabIndex}/>
+        tabIndex !== 2 && <PackageBanner mx={{ base: 4, md: 10 }} mt={10} isHotel={0} />
       }
-      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex}/>
+      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex} />
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}
       {/*<AppSection />*/}
