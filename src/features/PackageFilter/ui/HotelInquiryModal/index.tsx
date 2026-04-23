@@ -281,7 +281,11 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                   <Input
                     value={fullName}
                     maxLength={MAX_FULL_NAME_LENGTH}
-                    onChange={(e) => setFullName(e.target.value.slice(0, MAX_FULL_NAME_LENGTH))}
+                    onChange={(e) =>
+                      setFullName(
+                        e.target.value.replace(/^\s+/, '').slice(0, MAX_FULL_NAME_LENGTH),
+                      )
+                    }
                   />
                 </FormControl>
               )}
@@ -291,7 +295,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
                   <Input
                     value={email}
                     onChange={(e) => {
-                      setEmail(e.target.value)
+                      setEmail(e.target.value.replace(/^\s+/, ''))
                       if (emailInvalid) setEmailInvalid(false)
                     }}
                   />
