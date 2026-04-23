@@ -216,6 +216,7 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
       size={{ base: isResultScreen ? 'sm' : 'full', md: 'md' }}
       isCentered
       scrollBehavior='inside'
+      autoFocus={false}
     >
       <ModalOverlay />
       <ModalContent
