@@ -29,12 +29,37 @@ export const SplashNotificationModal = ({
   const { title, description, cta, asset } = notification
   const { navigateTo } = useLanguageNavigate()
   const descRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
+  const [hasBodyOverflow, setHasBodyOverflow] = useState(false)
+  const imageUrl = asset?.assets?.[0]
+  const isVideo = asset?.type === 'VIDEO'
 
   useEffect(() => {
     if (!isOpen) setIsExpanded(false)
   }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) {
+      setHasBodyOverflow(false)
+      return
+    }
+
+    const measureOverflow = () => {
+      const el = bodyRef.current
+      if (!el) return
+      setHasBodyOverflow(el.scrollHeight > el.clientHeight + 1)
+    }
+
+    const id = window.requestAnimationFrame(measureOverflow)
+    window.addEventListener('resize', measureOverflow)
+
+    return () => {
+      window.cancelAnimationFrame(id)
+      window.removeEventListener('resize', measureOverflow)
+    }
+  }, [isOpen, title, description, imageUrl, isVideo, cta?.title, isExpanded])
 
   // Only measure when collapsed so the flag is never cleared on expand
   useEffect(() => {
@@ -61,9 +86,6 @@ export const SplashNotificationModal = ({
     }
     onCtaClick()
   }, [cta, navigateTo, onCtaClick])
-
-  const imageUrl = asset?.assets?.[0]
-  const isVideo = asset?.type === 'VIDEO'
 
   return (
     <Modal
@@ -94,10 +116,11 @@ export const SplashNotificationModal = ({
         />
 
         <ModalBody
+          ref={bodyRef}
           p={4}
           flex="1"
           minH={0}
-          overflowY="auto"
+          overflowY={hasBodyOverflow ? 'auto' : 'hidden'}
           overflowX="hidden"
         >
           <VStack align="stretch" spacing={3}>
