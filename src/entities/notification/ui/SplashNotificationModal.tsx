@@ -7,11 +7,13 @@ import {
   Box,
   Image,
   VStack,
+  ModalFooter,
 } from '@chakra-ui/react'
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { Button, Text } from '@ui'
 import { type SplashNotification } from '../api/types.ts'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate.ts'
+import { useTranslation } from 'react-i18next'
 
 interface SplashNotificationModalProps {
   notification: SplashNotification
@@ -27,6 +29,7 @@ export const SplashNotificationModal = ({
   onCtaClick,
 }: SplashNotificationModalProps) => {
   const { title, description, cta, asset } = notification
+  const { t } = useTranslation()
   const { navigateTo } = useLanguageNavigate()
   const descRef = useRef<HTMLDivElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -185,23 +188,30 @@ export const SplashNotificationModal = ({
                 cursor="pointer"
                 onClick={() => setIsExpanded((prev) => !prev)}
               >
-                {isExpanded ? 'Close' : 'More'}
+                {isExpanded ? t`close` : t`more`}
               </Box>
             )}
-
-            {cta?.title && (
+          </VStack>
+        </ModalBody>
+        {
+          cta?.title && (
+            <ModalFooter sx={{
+              position: 'sticky',
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}>
               <Button
                 variant="solid-blue"
                 width="full"
                 size="md"
                 onClick={handleCta}
-                mt={1}
               >
                 {cta.title}
               </Button>
-            )}
-          </VStack>
-        </ModalBody>
+            </ModalFooter>
+          )
+        }
       </ModalContent>
     </Modal>
   )
