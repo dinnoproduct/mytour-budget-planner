@@ -231,7 +231,8 @@ export const PriceChangeSubscriptionForm = ({
   return (
     <Box bg="white" rounded={{ base: "none", md: "2xl" }} overflow="hidden">
       <Box px={{ base: 4, md: 6 }} py={{ base: 5, md: 6 }}>
-        <VStack align="stretch" spacing={4}>
+        <form onSubmit={handleSubmit} noValidate>
+          <VStack align="stretch" spacing={4}>
           <FormControl isRequired>
             <FormLabel color="gray.700" fontSize="sm" mb={2}>
               {t("priceSummaryCard.fullName")}
@@ -340,8 +341,9 @@ export const PriceChangeSubscriptionForm = ({
           <Text textAlign="center" color="gray.500" fontSize="xs">
             {t("priceSummaryCard.subscribeDisclaimer")}
           </Text>
-        </VStack>
+          </VStack>
+        </form>
       </Box>
-    </Box >
+    </Box>
   );
 };
