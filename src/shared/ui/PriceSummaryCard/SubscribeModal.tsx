@@ -38,7 +38,7 @@ export const SubscribeModal = ({
   const { t } = useTranslation();
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size={{ base: "full", md: "md" }}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered autoFocus={false} size={{ base: "full", md: "md" }}>
       <ModalOverlay />
       <ModalContent mx={{ base: 0, md: 4 }} sx={{ borderRadius: "2xl" }}>
         <ModalHeader

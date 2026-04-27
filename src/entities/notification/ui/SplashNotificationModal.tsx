@@ -7,11 +7,13 @@ import {
   Box,
   Image,
   VStack,
+  ModalFooter,
 } from '@chakra-ui/react'
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { Button, Text } from '@ui'
 import { type SplashNotification } from '../api/types'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'
+import { useTranslation } from 'react-i18next'
 
 interface SplashNotificationModalProps {
   notification: SplashNotification
@@ -27,14 +29,50 @@ export const SplashNotificationModal = ({
   onCtaClick,
 }: SplashNotificationModalProps) => {
   const { title, description, cta, asset } = notification
+  const { t } = useTranslation()
   const { navigateTo } = useLanguageNavigate()
   const descRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
+  const [hasBodyOverflow, setHasBodyOverflow] = useState(false)
+  const [mediaMeasureKey, setMediaMeasureKey] = useState(0)
+  const imageUrl = asset?.assets?.[0]
+  const isVideo = asset?.type === 'VIDEO'
 
   useEffect(() => {
     if (!isOpen) setIsExpanded(false)
   }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) {
+      setHasBodyOverflow(false)
+      return
+    }
+
+    const measureOverflow = () => {
+      const el = bodyRef.current
+      if (!el) return
+      setHasBodyOverflow(el.scrollHeight > el.clientHeight + 1)
+    }
+
+    const id = window.requestAnimationFrame(measureOverflow)
+    window.addEventListener('resize', measureOverflow)
+
+    return () => {
+      window.cancelAnimationFrame(id)
+      window.removeEventListener('resize', measureOverflow)
+    }
+  }, [
+    isOpen,
+    title,
+    description,
+    imageUrl,
+    isVideo,
+    cta?.title,
+    isExpanded,
+    mediaMeasureKey,
+  ])
 
   // Only measure when collapsed so the flag is never cleared on expand
   useEffect(() => {
@@ -62,15 +100,13 @@ export const SplashNotificationModal = ({
     onCtaClick()
   }, [cta, navigateTo, onCtaClick])
 
-  const imageUrl = asset?.assets?.[0]
-  const isVideo = asset?.type === 'VIDEO'
-
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       isCentered
       scrollBehavior="inside"
+      autoFocus={false}
     >
       <ModalOverlay />
       <ModalContent
@@ -93,10 +129,11 @@ export const SplashNotificationModal = ({
         />
 
         <ModalBody
+          ref={bodyRef}
           p={4}
           flex="1"
           minH={0}
-          overflowY="auto"
+          overflowY={hasBodyOverflow ? 'auto' : 'hidden'}
           overflowX="hidden"
         >
           <VStack align="stretch" spacing={3}>
@@ -108,6 +145,7 @@ export const SplashNotificationModal = ({
                 w="full"
                 h="auto"
                 borderRadius="20px"
+                onLoad={() => setMediaMeasureKey((prev) => prev + 1)}
               />
             )}
 
@@ -123,6 +161,8 @@ export const SplashNotificationModal = ({
                 playsInline
                 w="full"
                 h="auto"
+                pointerEvents="none"
+                onLoadedMetadata={() => setMediaMeasureKey((prev) => prev + 1)}
               />
             )}
 
@@ -161,23 +201,30 @@ export const SplashNotificationModal = ({
                 cursor="pointer"
                 onClick={() => setIsExpanded((prev) => !prev)}
               >
-                {isExpanded ? 'Close' : 'More'}
+                {isExpanded ? t`close` : t`more`}
               </Box>
             )}
-
-            {cta?.title && (
+          </VStack>
+        </ModalBody>
+        {
+          cta?.title && (
+            <ModalFooter sx={{
+              position: 'sticky',
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}>
               <Button
                 variant="solid-blue"
                 width="full"
                 size="md"
                 onClick={handleCta}
-                mt={1}
               >
                 {cta.title}
               </Button>
-            )}
-          </VStack>
-        </ModalBody>
+            </ModalFooter>
+          )
+        }
       </ModalContent>
     </Modal>
   )

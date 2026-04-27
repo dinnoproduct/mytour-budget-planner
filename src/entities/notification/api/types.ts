@@ -24,3 +24,24 @@ export interface SplashNotification {
 export interface SplashNotificationViewedPayload {
   notificationId: number
 }
+
+export type ExternalBannerLinkType = 'INTERNAL' | 'EXTERNAL'
+
+export interface ExternalBannerCta {
+  title: string
+  link: string
+  linkType: ExternalBannerLinkType
+}
+
+export interface ExternalBanner {
+  id: number
+  title: string
+  description: string
+  imageUrl: string | null
+  mobileImageUrl: string | null
+  videoUrl: string | null
+  cta: ExternalBannerCta | null
+  displayOrder: number
+}
+
+export type ExternalBannersResponse = Record<string, ExternalBanner[]>
