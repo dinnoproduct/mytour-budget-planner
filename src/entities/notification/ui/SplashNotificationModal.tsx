@@ -36,6 +36,7 @@ export const SplashNotificationModal = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
   const [hasBodyOverflow, setHasBodyOverflow] = useState(false)
+  const [mediaMeasureKey, setMediaMeasureKey] = useState(0)
   const imageUrl = asset?.assets?.[0]
   const isVideo = asset?.type === 'VIDEO'
 
@@ -62,7 +63,16 @@ export const SplashNotificationModal = ({
       window.cancelAnimationFrame(id)
       window.removeEventListener('resize', measureOverflow)
     }
-  }, [isOpen, title, description, imageUrl, isVideo, cta?.title, isExpanded])
+  }, [
+    isOpen,
+    title,
+    description,
+    imageUrl,
+    isVideo,
+    cta?.title,
+    isExpanded,
+    mediaMeasureKey,
+  ])
 
   // Only measure when collapsed so the flag is never cleared on expand
   useEffect(() => {
@@ -135,6 +145,7 @@ export const SplashNotificationModal = ({
                 w="full"
                 h="auto"
                 borderRadius="20px"
+                onLoad={() => setMediaMeasureKey((prev) => prev + 1)}
               />
             )}
 
@@ -150,6 +161,8 @@ export const SplashNotificationModal = ({
                 playsInline
                 w="full"
                 h="auto"
+                pointerEvents="none"
+                onLoadedMetadata={() => setMediaMeasureKey((prev) => prev + 1)}
               />
             )}
 
