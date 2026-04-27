@@ -6,10 +6,18 @@ import { Providers } from "./providers";
 import { RouteTracker } from "@app/RouteTracker";
 import Toaster from "@/components/Toaster/Toaster";
 
+const STAGING_ENV_VALUES = new Set(["stage", "staging", "test", "qa"]);
+const appEnv = process.env.NEXT_PUBLIC_APP_ENV?.toLowerCase();
+const apiUrl = process.env.NEXT_PUBLIC_API_URL?.toLowerCase();
+const isStaging =
+  process.env.VERCEL_ENV === "preview" ||
+  (appEnv !== undefined && STAGING_ENV_VALUES.has(appEnv)) ||
+  (apiUrl !== undefined &&
+    (apiUrl.includes(".test.") || apiUrl.includes("staging")));
+
 export const metadata: Metadata = {
   title: "My Tour",
   description: "Start planning your trip here",
-  image: "https://dinnotravel.blob.core.windows.net/marketing/MyTour%20-%20avatar.png",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -27,6 +35,15 @@ export const metadata: Metadata = {
   assets: ["/assets"],
   category: "travel",
   classification: "tourism",
+  robots: {
+    index: !isStaging,
+    follow: !isStaging,
+    googleBot: {
+      index: !isStaging,
+      follow: !isStaging,
+      noimageindex: isStaging,
+    },
+  },
 };
 
 //  Metadata = {
