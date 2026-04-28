@@ -25,7 +25,8 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({ children }) => (
     borderRadius="xl"
     position="fixed"
     left="32px"
-    height="full"
+    maxHeight="calc(100dvh - 32px)"
+    overflowY="auto"
   >
     {children}
   </Box>

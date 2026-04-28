@@ -37,6 +37,7 @@ export const PackageList = () => {
     searchData: packagesSearchData,
     isSearchError,
     isAllowedSearchRoute: isPackagesSearchView,
+    cities: packageCities,
   } = usePackagesSearchContext();
 
   const {
@@ -44,6 +45,7 @@ export const PackageList = () => {
     isLoadingFilteredHotelPackages,
     isAllowedSearchRoute: isHotelSearchView,
     searchData: hotelSearchData,
+    cities: hotelCities,
   } = useHotelPackagesSearchContext();
 
   const generateLink = (tourPackage: PackageEntity) => {
@@ -102,12 +104,31 @@ export const PackageList = () => {
     () => (isHotelSearchView ? filteredHotelPackages : filteredPackages),
     [isHotelSearchView, filteredPackages, filteredHotelPackages],
   );
+  const selectedCityIds = useMemo(
+    () =>
+      isHotelSearchView
+        ? Array.isArray(hotelSearchData.selectedCity)
+          ? hotelSearchData.selectedCity
+          : [hotelSearchData.selectedCity]
+        : [packagesSearchData.selectedCity],
+    [isHotelSearchView, hotelSearchData.selectedCity, packagesSearchData.selectedCity],
+  );
+
+  const activeCities = useMemo(
+    () => (isHotelSearchView ? hotelCities : packageCities),
+    [isHotelSearchView, hotelCities, packageCities],
+  );
+
   const {
     filterOptions,
     filteredPackages: filteredActivePackages,
     isFilterActive,
     onFilter,
-  }: ReturnType<typeof useFilterPackage> = useFilterPackage(activePackages);
+  }: ReturnType<typeof useFilterPackage> = useFilterPackage(
+    activePackages,
+    activeCities,
+    selectedCityIds,
+  );
 
   const isLoadingPackages = useMemo(
     () =>

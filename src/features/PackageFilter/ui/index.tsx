@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Divider,
   Flex,
@@ -14,6 +14,7 @@ import { Button, Icon } from '@/shared/ui'
 import { FilterItem } from './FilterItem'
 import { getPluralForm } from '@/shared/helpers'
 import { HotelInquiryModal, HotelInquiryModalTrigger } from './HotelInquiryModal'
+import { usePackageFilterUrlState } from './usePackageFilterUrlState'
 import {
   type FilterParams,
   type FilterOptions,
@@ -56,6 +57,19 @@ const CommonFilterItems: React.FC<CommonFilterItemsProps> = ({
 
   const rangeOptions = filterOptions.price
   const divider = isRemoveDivider ? undefined : <Divider />
+  const cityFilterItems = useMemo(
+    () =>
+      filterOptions.cityFilters.map(filter => ({
+        id: filter.id,
+        label: filter.title,
+        options: filter.values.map(value => ({
+          key: `${filter.id}-${value.id}`,
+          label: value.label,
+          value: String(value.id)
+        }))
+      })),
+    [filterOptions.cityFilters]
+  )
 
   return (
     <VStack divider={divider} spacing={6}>
@@ -89,6 +103,23 @@ const CommonFilterItems: React.FC<CommonFilterItemsProps> = ({
         value={selectedFilters.hotelRatingSelect}
         onChange={value => handleChange('hotelRatingSelect', value)}
       />
+      {cityFilterItems.map(filter => (
+        <FilterItem
+          key={filter.id}
+          type="select"
+          label={filter.label}
+          options={filter.options}
+          value={(
+            selectedFilters.cityFilterValues[String(filter.id)] || []
+          ).map(String)}
+          onChange={value =>
+            handleChange('cityFilterValues', {
+              ...selectedFilters.cityFilterValues,
+              [String(filter.id)]: value.map(Number)
+            })
+          }
+        />
+      ))}
       {/* <FilterItem
         type="checkboxList"
         label="Տեղադիրքը"
@@ -269,6 +300,8 @@ export const PackageFilter = ({
     FILTER_PARAMS_DEFAULT_VALUE
   )
 
+  usePackageFilterUrlState({ filterParams, setFilterParams })
+
   const [isHotelInquiryModalOpen, setIsHotelInquiryModalOpen] = useState(false)
 
   const handleChange = (key: keyof typeof filterParams, value: any) => {
@@ -293,6 +326,51 @@ export const PackageFilter = ({
   const handleCloseHotelInquiryModal = () => {
     setIsHotelInquiryModalOpen(false)
   }
+
+  useEffect(() => {
+    setFilterParams(prev => {
+      // Keep URL-hydrated selections until dynamic city filters are loaded.
+      if (filterOptions.cityFilters.length === 0) {
+        return prev
+      }
+
+      const allowedFilterIds = new Set(
+        filterOptions.cityFilters.map(filter => String(filter.id))
+      )
+      const nextCityFilterValues: Record<string, number[]> = {}
+
+      filterOptions.cityFilters.forEach(filter => {
+        const selectedValues = prev.cityFilterValues[String(filter.id)] || []
+        const allowedValues = new Set(filter.values.map(value => value.id))
+        nextCityFilterValues[String(filter.id)] = selectedValues.filter(value =>
+          allowedValues.has(value)
+        )
+      })
+
+      const hasAnyChange =
+        Object.keys(prev.cityFilterValues).some(key => !allowedFilterIds.has(key)) ||
+        filterOptions.cityFilters.some(filter => {
+          const key = String(filter.id)
+          const prevValues = prev.cityFilterValues[key] || []
+          const nextValues = nextCityFilterValues[key] || []
+
+          if (prevValues.length !== nextValues.length) {
+            return true
+          }
+
+          return prevValues.some(value => !nextValues.includes(value))
+        })
+
+      if (!hasAnyChange) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        cityFilterValues: nextCityFilterValues
+      }
+    })
+  }, [filterOptions.cityFilters])
 
   return (
     <>
