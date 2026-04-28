@@ -11,6 +11,7 @@ import { PageLayout } from '@/shared/ui/layout/PageLayout'
 import { StoriesSection } from '@widgets/StoriesSection'
 import { GroupTourList } from '@widgets/GroupTourList'
 import { useTranslation } from 'react-i18next'
+import { SplashNotificationsManager } from '@entities/notification'
 
 const TAB_NAMES = ['hotels', 'packages', 'group-tours'] as const
 const TAB_NAME_TO_INDEX: Record<string, number> = {
@@ -135,6 +136,7 @@ export const HomePage = () => {
 
   return (
     <PageLayout background='white'>
+      <SplashNotificationsManager />
       <PackageSearch
         variant={
           tabIndex === 1
@@ -150,9 +152,9 @@ export const HomePage = () => {
       {tabIndex === 2 && <GroupTourList />}
       <StoriesSection isHotel={tabIndex} />
       {
-        tabIndex !== 2 && <PackageBanner mx={{base: 4, md: 10 }} mt={10} isHotel={tabIndex}/>
+        tabIndex !== 2 && <PackageBanner mx={{ base: 4, md: 10 }} mt={10} isHotel={0} />
       }
-      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex}/>
+      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex} />
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}
       {/*<AppSection />*/}

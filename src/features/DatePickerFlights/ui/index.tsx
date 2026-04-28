@@ -14,12 +14,14 @@ export const DatePickerFlights = ({
   fromDate,
   toDate,
   onAccept,
+  onOpenChange,
   availableDepartureDates,
   availableReturnDates,
   isLoadingReturnDates,
   onFromDateClick,
   menuProps = {},
-  CustomButton
+  CustomButton,
+  portalZIndex
 }: DatePickerProps) => {
   const { t } = useTranslation()
   const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(null)
@@ -55,7 +57,9 @@ export const DatePickerFlights = ({
     } else {
       document.body.style.overflow = ''
     }
-  }, [isCalendarOpen, inputFromDate, inputToDate, isMd])
+
+    onOpenChange?.(isCalendarOpen)
+  }, [isCalendarOpen, inputFromDate, inputToDate, isMd, onOpenChange])
 
   // Memoize availableDates to avoid recreating on every render
   // Only update when dateSelectState changes or when the actual date arrays change
@@ -173,7 +177,9 @@ export const DatePickerFlights = ({
           borderRadius={{ base: '0', md: 'xl' }}
           border="none"
           minWidth="fit-content"
-          height="full"
+          height={{ base: 'full', md: 'auto' }}
+          maxH={{ md: 'calc(100dvh - 120px)' }}
+          overflowY={{ md: 'auto' }}
           width="full"
           rootProps={
             !isMd
@@ -195,7 +201,9 @@ export const DatePickerFlights = ({
                   md: undefined
                 }
               }
-              : {}
+              : portalZIndex
+                ? { zIndex: portalZIndex }
+                : {}
           }
         >
           <Flex

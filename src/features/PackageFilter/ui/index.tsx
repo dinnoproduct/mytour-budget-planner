@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react'
-import { Divider, Flex, Text, VStack, Box, Show, Hide } from '@chakra-ui/react'
+import {
+  Divider,
+  Flex,
+  Text,
+  VStack,
+  Box,
+  Show,
+  Hide,
+} from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { Layout } from './Layout'
-import { Button } from '@/shared/ui'
+import { Button, Icon } from '@/shared/ui'
 import { FilterItem } from './FilterItem'
 import { getPluralForm } from '@/shared/helpers'
+import { HotelInquiryModal, HotelInquiryModalTrigger } from './HotelInquiryModal'
 import {
   type FilterParams,
   type FilterOptions,
@@ -14,6 +23,7 @@ import {
 export type PackageFilterProps = {
   filterOptions: FilterOptions
   isActive: boolean
+  contentType?: 'hotel' | 'package'
   onFilter: (filterParams: FilterParams) => void
 }
 
@@ -95,6 +105,7 @@ type PackageFilterDesktopProps = Omit<
 > & {
   onFilter: (filterParams: FilterParams) => void
   onReset: () => void
+  onOpenHotelInquiryModal: () => void
 }
 
 export const PackageFilterDesktop: React.FC<PackageFilterDesktopProps> = ({
@@ -102,7 +113,8 @@ export const PackageFilterDesktop: React.FC<PackageFilterDesktopProps> = ({
   selectedFilters,
   handleChange,
   onReset,
-  onFilter
+  onFilter,
+  onOpenHotelInquiryModal,
 }) => {
   const { t } = useTranslation()
 
@@ -112,6 +124,7 @@ export const PackageFilterDesktop: React.FC<PackageFilterDesktopProps> = ({
 
   return (
     <Layout>
+
       <Flex justify="space-between" align="center" mb={8}>
         <Text fontWeight="bold" fontSize={20}>
           {t`filters`}
@@ -125,6 +138,9 @@ export const PackageFilterDesktop: React.FC<PackageFilterDesktopProps> = ({
         selectedFilters={selectedFilters}
         handleChange={handleChange}
       />
+      <Flex direction="column" align="center" mt={8}>
+        <HotelInquiryModalTrigger onClick={onOpenHotelInquiryModal} />
+      </Flex>
     </Layout>
   )
 }
@@ -246,11 +262,14 @@ const PackageFilterMobileContent = ({
 export const PackageFilter = ({
   filterOptions,
   isActive,
+  contentType = 'hotel',
   onFilter
 }: PackageFilterProps) => {
   const [filterParams, setFilterParams] = useState<FilterParams>(
     FILTER_PARAMS_DEFAULT_VALUE
   )
+
+  const [isHotelInquiryModalOpen, setIsHotelInquiryModalOpen] = useState(false)
 
   const handleChange = (key: keyof typeof filterParams, value: any) => {
     setFilterParams(prev => ({
@@ -267,6 +286,14 @@ export const PackageFilter = ({
     setFilterParams(params)
   }
 
+  const handleOpenHotelInquiryModal = () => {
+    setIsHotelInquiryModalOpen(true)
+  }
+
+  const handleCloseHotelInquiryModal = () => {
+    setIsHotelInquiryModalOpen(false)
+  }
+
   return (
     <>
       <Show above="md">
@@ -276,18 +303,27 @@ export const PackageFilter = ({
           onFilter={onFilter}
           onReset={onReset}
           selectedFilters={filterParams}
+          onOpenHotelInquiryModal={handleOpenHotelInquiryModal}
         />
       </Show>
       <Hide above="md">
+        <Flex direction="column" align="center" mb={8}>
+          <HotelInquiryModalTrigger onClick={handleOpenHotelInquiryModal} />
+        </Flex>
         <PackageFilterMobile
           filterOptions={filterOptions}
           isActive={isActive}
           onFilter={onFilter}
           onConfirm={onConfirm}
-          onCloseMenu={() => {}}
+          onCloseMenu={() => { }}
           selectedFilters={filterParams}
         />
-      </Hide>
+      </Hide >
+      <HotelInquiryModal
+        isOpen={isHotelInquiryModalOpen}
+        onClose={handleCloseHotelInquiryModal}
+        contentType={contentType}
+      />
     </>
   )
 }

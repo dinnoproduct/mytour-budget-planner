@@ -4,7 +4,7 @@ import {
   PackageImagesSliderModal,
 } from "@features/PackageImagesGallery";
 import { PackageDetails, PackageDetailsHeader } from "@widgets/PackageDetails";
-import {Loader, LoaderWithText} from "@/components/Loader/Loader.tsx";
+import { Loader, LoaderWithText } from "@/components/Loader/Loader.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguageNavigate } from "../../hooks/useLanguageNavigate";
@@ -115,10 +115,10 @@ export const PackageDetailsPage = () => {
     const searchParams = new URLSearchParams(location.search);
     const childrenCountParam = searchParams.get('childrenCount');
     const childrenAgesParam = searchParams.get('childrenAges');
-    
+
     const childrenCount = parseInt(childrenCountParam || '0', 10);
     const hasChildrenAges = childrenAgesParam && childrenAgesParam.trim() !== '';
-    
+
     // If childrenCount is 0 but childrenAges exists and is not empty, set it to empty string
     if (childrenCount === 0 && hasChildrenAges) {
       searchParams.set('childrenAges', '');
@@ -135,7 +135,7 @@ export const PackageDetailsPage = () => {
   }
 
   return (
-    <PageLayout 
+    <PageLayout
       mb={{ base: "117px", md: "0" }}
       footerProps={{ mt: { base: "100px", md: "0px" } }}
     >
@@ -160,6 +160,7 @@ export const PackageDetailsPage = () => {
           direction={{ base: "column-reverse", md: "row" }}
           mt={{ md: "10" }}
           ref={containerRef}
+          gap={{ base: "0", md: "6" }}
         >
           <PackageDetails
             tourPackage={packageDetails}
@@ -167,7 +168,6 @@ export const PackageDetailsPage = () => {
           />
           <PriceSummaryCard
             tourPackage={packageDetails}
-            ml={{ md: "20" }}
             mt={{ base: "5", md: "0" }}
             flexShrink={0}
             containerRef={containerRef}

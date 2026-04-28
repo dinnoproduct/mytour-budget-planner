@@ -10,8 +10,11 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
   fromDate,
   toDate,
   onAccept,
+  onOpenChange,
   CustomButton,
-  menuProps
+  menuProps,
+  portalZIndex,
+  exactDatesOnly
 }) => {
   const { isMd } = useBreakpoint()
 
@@ -37,6 +40,10 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
   })
 
   useDisablePageScroll(isCalendarOpen && !isMd)
+
+  React.useEffect(() => {
+    onOpenChange?.(isCalendarOpen)
+  }, [isCalendarOpen, onOpenChange])
 
   return (
     <Menu
@@ -65,6 +72,8 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
         onExactDateAccept={handleExactDateAccept}
         onApproximateAccept={handleApproximateAccept}
         onTabChange={handleTabChange}
+        portalZIndex={portalZIndex}
+        exactDatesOnly={exactDatesOnly}
       />
     </Menu>
   )

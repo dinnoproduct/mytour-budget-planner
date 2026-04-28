@@ -6,6 +6,7 @@ export interface DatePickerProps {
   fromDate?: Date | null
   toDate?: Date | null
   onAccept: (fromDate: Date, toDate?: Date | null) => void
+  onOpenChange?: (isOpen: boolean) => void
   onFromDateClick: (date: Date) => void
   isLoadingReturnDates?: boolean
   availableDepartureDates: Date[]
@@ -13,6 +14,7 @@ export interface DatePickerProps {
 
   menuProps?: Omit<MenuProps, 'children'>
   CustomButton?: ComponentType<DatePickerFlightsCustomButtonProps>
+  portalZIndex?: number
 }
 
 export interface DatePickerInputProps {

@@ -61,7 +61,7 @@ export const PreviewDetailsView = ({
   const { t, i18n } = useTranslation();
   const [promoCodeValue, setPromoCodeValue] = useState("");
   const [hasPromoCode, setHasPromoCode] = useState(promoCodeStatus.isApplied);
-  const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
+  const [promoCodeErrorCode, setPromoCodeErrorCode] = useState<string | null>(null);
   const [isBookingRulesModalOpen, setIsBookingRulesModalOpen] = useState(false);
   const [isCancellationPolicyModalOpen, setIsCancellationPolicyModalOpen] =
     useState(false);
@@ -107,15 +107,15 @@ export const PreviewDetailsView = ({
     });
     setHasPromoCode(false);
     setPromoCodeValue("");
-    setPromoCodeError(null);
+    setPromoCodeErrorCode(null);
     onPromoDiscountedPriceChange?.(null);
   };
 
   const handlePromoCodeInputChange = (value: string) => {
     setPromoCodeValue(value);
     // Clear error when user starts typing
-    if (promoCodeError) {
-      setPromoCodeError(null);
+    if (promoCodeErrorCode) {
+      setPromoCodeErrorCode(null);
     }
   };
 
@@ -152,16 +152,12 @@ export const PreviewDetailsView = ({
           } else {
             console.log(`Promo code error: ${data.message}`);
 
-            // Set inline error message based on error code
-            const errorMessage = getPromoCodeErrorMessage(
-              data.errorCode || "INVALID_CODE",
-            );
-            setPromoCodeError(errorMessage);
+            setPromoCodeErrorCode(data.errorCode || "INVALID_CODE");
           }
         },
         onError: (error: any) => {
           console.error("Failed to validate promo code:", error);
-          setPromoCodeError(t`promoCodeValidationFailed`);
+          setPromoCodeErrorCode("VALIDATION_FAILED");
         },
       },
     );
@@ -169,18 +165,21 @@ export const PreviewDetailsView = ({
 
   const isApplyButtonDisabled = promoCodeValue.trim().length < 3;
 
-  const getPromoCodeErrorMessage = (errorCode: string): string => {
-    const errorMessages: Record<string, string> = {
+  const promoCodeErrorMessages = useMemo<Record<string, string>>(() => {
+    return {
       "Invalid-Expired-Code": t`promoCodeInvalid`,
       "Usage-Limit-Reached": t`promoCodeExpired`,
       "Minimum-Value-Not-Met": t`promoCodeMinimumValue`,
       "Scope-Mismatch": t`promoCodeScopeMismatch`,
       "New-User-Code-by-Existing-User": t`promoCodeNewUserOnly`,
       INVALID_CODE: t`promoCodeInvalid`,
+      VALIDATION_FAILED: t`promoCodeValidationFailed`,
     };
+  }, [t]);
 
-    return errorMessages[errorCode] || t`promoCodeInvalid`;
-  };
+  const promoCodeError = promoCodeErrorCode
+    ? (promoCodeErrorMessages[promoCodeErrorCode] ?? t`promoCodeInvalid`)
+    : null;
 
   const calculatePromoCodePayments = useMemo(() => {
     if (!promoCodeStatus.isApplied) {
