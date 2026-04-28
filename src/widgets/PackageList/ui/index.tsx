@@ -169,7 +169,7 @@ export const PackageList = () => {
   if (isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
     return (
       <Layout >
-        <LoaderWithText style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} loading={isLoadingPackages || false} title={t("loading.packages.title")} description={t("loading.packages.description")} />
+        <LoaderWithText style={{ backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} loading={isLoadingPackages || false} title={t("loading.packages.title")} description={t("loading.packages.description")} />
       </Layout>
     );
   }
@@ -177,7 +177,7 @@ export const PackageList = () => {
   return (
     <Layout>
       {!isLoadingPackages ? (
-        <Box ml={{ base: 0, md: !isLoadingPackages ? "326px" : undefined }} width={{ base: 'full', md: 'auto' }}>
+        <Box ml={0} width={{ base: 'full', md: 'auto' }}>
           <PackageFilter
             isActive={isFilterActive}
             filterOptions={filterOptions}
@@ -213,7 +213,7 @@ export const PackageList = () => {
 
 
 const Layout = ({ children }: LayoutProps) => (
-  <Box py={{ base: 6, md: 10 }} width="100%">
+  <Box py={{ base: 6, md: 10 }} width="100%" background="white">
     <Box px={{ base: 4, md: 6, lg: 8 }}>
       <Flex
         gap={6}
