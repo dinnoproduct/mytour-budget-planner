@@ -65,7 +65,7 @@ const CommonFilterItems: React.FC<CommonFilterItemsProps> = ({
         options: filter.values.map(value => ({
           key: `${filter.id}-${value.id}`,
           label: value.label,
-          value: String(value.id)
+          value: value.id
         }))
       })),
     [filterOptions.cityFilters]
@@ -106,16 +106,14 @@ const CommonFilterItems: React.FC<CommonFilterItemsProps> = ({
       {cityFilterItems.map(filter => (
         <FilterItem
           key={filter.id}
-          type="select"
+          type="checkboxList"
           label={filter.label}
           options={filter.options}
-          value={(
-            selectedFilters.cityFilterValues[String(filter.id)] || []
-          ).map(String)}
+          value={selectedFilters.cityFilterValues[String(filter.id)] || []}
           onChange={value =>
             handleChange('cityFilterValues', {
               ...selectedFilters.cityFilterValues,
-              [String(filter.id)]: value.map(Number)
+              [String(filter.id)]: value
             })
           }
         />
