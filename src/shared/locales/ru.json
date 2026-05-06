@@ -471,5 +471,15 @@
   "groupToursSort.cheapest": "цене",
   "groupToursSort.title": "Сортировать по",
   "reviews": "{{count}} отзывов",
-  "writeReview": "Написать отзыв"
+  "writeReview": "Написать отзыв",
+  "reviewUploadTitle": "Загрузка медиа",
+  "reviewUploadLimitHelp": "Вы можете загрузить до {{images}} изображений и {{videos}} видео.",
+  "reviewUploadLimitError": "Достигнут лимит: максимум {{images}} изображений и {{videos}} видео.",
+  "reviewSelectFiles": "Выбрать файлы",
+  "reviewUserNameLabel": "Имя пользователя",
+  "reviewSignInToPost": "Войдите, чтобы оставить отзыв",
+  "reviewDescriptionLabel": "Описание",
+  "reviewDescriptionPlaceholder": "Поделитесь своим опытом...",
+  "reviewUploadProgressLabel": "Загружено {{uploaded}} / {{total}}",
+  "reviewSubmit": "Опубликовать отзыв"
 }

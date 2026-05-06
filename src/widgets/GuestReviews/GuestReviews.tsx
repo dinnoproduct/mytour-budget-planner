@@ -8,8 +8,8 @@ import {
     Flex,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { useUserContext } from "@entities/user";
 import { useHotelReviews } from "@/entities/notification";
+import { useUserContext } from "@entities/user";
 import { useModalContext } from "@app/providers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { formatRate } from "./helpers";
@@ -19,13 +19,17 @@ import { ReviewSummary } from "./components/ReviewSummary";
 import { HorizontalScrollButtons } from "./components/HorizontalScrollButtons";
 import { ReviewMediaModal } from "./components/ReviewMediaModal";
 import { Text } from "@ui";
+import { useLanguageRouting } from "@/hooks/useLanguageRouting";
 
-type GuestReviewsProps = { hotelId?: number };
+type GuestReviewsProps = {
+    hotelId?: number;
+};
 
 export const GuestReviews = ({
     hotelId,
 }: GuestReviewsProps) => {
     const { t } = useTranslation();
+    const { getPathWithLanguage } = useLanguageRouting();
     const { user } = useUserContext();
     const { dispatchModal } = useModalContext();
     const { data: hotelReviews } = useHotelReviews(hotelId ?? 0);
@@ -42,6 +46,9 @@ export const GuestReviews = ({
     const [isAllReviewsDrawerOpen, setIsAllReviewsDrawerOpen] = useState(false);
 
     const handleWriteReviewClick = () => {
+        if (!hotelId) {
+            return;
+        }
         if (!user) {
             dispatchModal({
                 type: "open",
@@ -51,7 +58,10 @@ export const GuestReviews = ({
             return;
         }
 
-        // Logged-in review flow will be connected here.
+
+
+        const localizedPath = getPathWithLanguage(`/review/${hotelId}`);
+        window.open(localizedPath, "_blank", "noopener,noreferrer");
     };
 
     const allMedias = hotelReviews?.reviews?.flatMap((review) => review.mediaFiles) ?? [];
