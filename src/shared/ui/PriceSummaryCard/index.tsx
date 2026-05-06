@@ -216,7 +216,7 @@ export const PriceSummaryCard = ({
 
                     <Text size="sm" color="gray.500" ml="0.5">
                       {CURRENCY_MAP[tourPackage.currency]}{" "}
-                      {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+                      {formatNumber(tourPackage.priceInCurrency)}
                     </Text>
                   </>
                 ) : null}

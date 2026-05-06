@@ -138,8 +138,7 @@ export const PackageDetails = ({
         title={t`grades`}
       >
         <GuestReviews
-          travellersRating={tourPackage.hotel?.travellersRating}
-          cleanliness={tourPackage.hotel?.cleanliness}
+          hotelId={tourPackage.hotel?.id}
         />
       </CardSectionLayout>
       <CardSectionLayout
