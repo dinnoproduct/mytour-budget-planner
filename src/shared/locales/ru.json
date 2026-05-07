@@ -481,5 +481,13 @@
   "reviewDescriptionLabel": "Описание",
   "reviewDescriptionPlaceholder": "Поделитесь своим опытом...",
   "reviewUploadProgressLabel": "Загружено {{uploaded}} / {{total}}",
-  "reviewSubmit": "Опубликовать отзыв"
+  "reviewSubmit": "Опубликовать отзыв",
+  "video": "Видео",
+  "reviewUploadVideosTitle": "Загрузка видео",
+  "reviewVideoUploadLimitHelp": "Максимум {{videos}} видео.",
+  "reviewPhotosUploaded": "Загружено {{count}} фото (максимум {{max}})",
+  "reviewSuccessTitle": "Ваш отзыв отправлен на модерацию.",
+  "reviewSuccessDescription": "Пожалуйста, подождите, после проверки мы вас уведомим.",
+  "reviewUploadFailedError": "Некоторые файлы не загрузились. Пожалуйста, попробуйте еще раз или удалите неудачные файлы.",
+  "reviewSubmitFailedError": "Не удалось опубликовать отзыв. Пожалуйста, попробуйте еще раз."
 }

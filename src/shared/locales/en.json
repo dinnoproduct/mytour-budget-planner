@@ -481,5 +481,13 @@
   "reviewDescriptionLabel": "Description",
   "reviewDescriptionPlaceholder": "Share your experience...",
   "reviewUploadProgressLabel": "Uploaded {{uploaded}} / {{total}}",
-  "reviewSubmit": "Post review"
+  "reviewSubmit": "Post review",
+  "video": "Video",
+  "reviewUploadVideosTitle": "Upload videos",
+  "reviewVideoUploadLimitHelp": "Max {{videos}} videos.",
+  "reviewPhotosUploaded": "{{count}} photos uploaded (max {{max}})",
+  "reviewSuccessTitle": "Your review is under review.",
+  "reviewSuccessDescription": "Please wait, you will be notified after review.",
+  "reviewUploadFailedError": "Some files failed to upload. Please try again or remove failed files.",
+  "reviewSubmitFailedError": "Failed to submit review. Please try again."
 }
