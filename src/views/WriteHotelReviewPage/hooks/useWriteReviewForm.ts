@@ -20,9 +20,10 @@ const toBase64 = (file: File) =>
 
 type UseWriteReviewFormArgs = {
   hotelIdNumber: number;
+  hotelName?: string;
 };
 
-export const useWriteReviewForm = ({ hotelIdNumber }: UseWriteReviewFormArgs) => {
+export const useWriteReviewForm = ({ hotelIdNumber, hotelName }: UseWriteReviewFormArgs) => {
   const { t } = useTranslation();
   const { user, userToken } = useUserContext();
   const { dispatchModal } = useModalContext();
@@ -189,12 +190,41 @@ export const useWriteReviewForm = ({ hotelIdNumber }: UseWriteReviewFormArgs) =>
     setMediaUploadErrors({});
 
     try {
+      const safeHotelName = (hotelName ?? "hotel")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z0-9-_]/g, "")
+        .toLowerCase();
+      const safeUserName = `${user?.firstName ?? ""}-${user?.lastName ?? ""}`
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z0-9-_]/g, "")
+        .toLowerCase();
+      const videoUploadFileName =
+        [safeHotelName, safeUserName].filter(Boolean).join("-") || "hotel-user";
+
       const uploadedMediaResults = await Promise.allSettled(
         draftMedias.map(async (item) => {
           const result = await uploadMediaMutation.mutateAsync({
             hotelId: hotelIdNumber,
             mediaType: item.mediaType,
             file: item.file,
+            fileName:
+              item.mediaType === USER_REVIEW_MEDIA_TYPE.VIDEO
+                ? videoUploadFileName
+                : undefined,
+            contentType:
+              item.mediaType === USER_REVIEW_MEDIA_TYPE.VIDEO
+                ? item.file.type
+                : undefined,
+            totalSize:
+              item.mediaType === USER_REVIEW_MEDIA_TYPE.VIDEO
+                ? item.file.size
+                : undefined,
+            totalChunks:
+              item.mediaType === USER_REVIEW_MEDIA_TYPE.VIDEO
+                ? 1
+                : undefined,
           });
 
           setUploadedCount((prev) => prev + 1);

@@ -54,7 +54,7 @@ export const WriteHotelReviewPage = () => {
     handlePickFiles,
     handleRemoveMedia,
     handleSubmit,
-  } = useWriteReviewForm({ hotelIdNumber });
+  } = useWriteReviewForm({ hotelIdNumber, hotelName: hotelMeta?.hotelName });
 
   return (
     <PageLayout bg="gray.50" footerProps={{ mt: 0 }}>
