@@ -1,6 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { SnackBar } from './index'
-import { type EmitSnackBarProps } from '@components/SnackBar/types.ts'
+import { type EmitSnackBarProps } from '@components/SnackBar/types'
 
 const useSnackBar = () => {
   const toast = useToast()

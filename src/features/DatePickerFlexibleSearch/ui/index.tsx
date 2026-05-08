@@ -1,6 +1,6 @@
 import React from 'react'
 import { Menu } from '@chakra-ui/react'
-import { type DatePickerProps } from './types.ts'
+import { type DatePickerProps } from './types'
 import { useDatePickerState } from './hooks/useDatePickerState'
 import { useBreakpoint, useDisablePageScroll } from '@shared/hooks'
 import { MenuButtonTrigger } from './components/MenuButtonTrigger'

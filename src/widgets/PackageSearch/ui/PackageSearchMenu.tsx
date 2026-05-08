@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
-import { PackageSearchForm } from './PackageSearchForm.tsx'
+import { PackageSearchForm } from './PackageSearchForm'
 import { type PackageCity, usePackagesSearchContext } from '@entities/package'
 import { useTranslation } from 'react-i18next'
 import { Icon, Tabs, Text } from '@ui'
@@ -9,7 +9,7 @@ import {
   HotelTabItem,
   GroupTabItem,
   PackageTabItem
-} from '@widgets/PackageSearch/ui/TabItem.tsx'
+} from '@widgets/PackageSearch/ui/TabItem'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
 export const PackageSearchMenu = ({

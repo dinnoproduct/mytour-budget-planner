@@ -1,5 +1,5 @@
 // prod
-export const BASE_URL = import.meta.env.VITE_API_URL_OLD
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL_OLD
 
 export enum AppPaths {
   packages = 'packages',

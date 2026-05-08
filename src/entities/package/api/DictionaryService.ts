@@ -6,7 +6,7 @@ export class DictionaryService {
 
 	constructor() {
 		this.api = axios.create({
-			baseURL: `${import.meta.env.VITE_API_URL}/common`
+			baseURL: `${process.env.NEXT_PUBLIC_API_URL}/common`
 		})
 
 		this.api.interceptors.response.use(

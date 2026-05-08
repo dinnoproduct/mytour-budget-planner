@@ -1,7 +1,7 @@
-import Pagination from '../../../../components/Pagination/Pagination.tsx';
+import Pagination from '../../../../components/Pagination/Pagination';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { filteredPackagesAtom, packagesCurrentPageAtom, screenBreakpointAtom } from '../../store/store.ts';
-import { useQueryParams } from '../../../../hooks/useQueryParams.ts';
+import { filteredPackagesAtom, packagesCurrentPageAtom, screenBreakpointAtom } from '../../store/store';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import { useEffect } from 'react';
 
 const PackagesPagination = () => {

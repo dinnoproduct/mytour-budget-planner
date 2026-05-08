@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
+import { Layouts } from '@widgets/PackageSearch/ui/Layouts'
 import { HotelSearchFormField } from './HotelSearchFormField'
 import { SearchButton } from './SearchButton'
 import { useHotelSearchLogic } from '../hooks/useHotelSearchLogic'

@@ -1,5 +1,5 @@
-import { type DictionaryTypes } from './dictionaryEnum.ts';
-import { type DictionaryFields } from './packagesEnums.ts';
+import { type DictionaryTypes } from './dictionaryEnum';
+import { type DictionaryFields } from './packagesEnums';
 
 export interface IDictionary {
   [DictionaryFields.key]: number;

@@ -1,8 +1,8 @@
 import './index.scss';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
-import usePolicy from '../../hooks/usePolicy.ts';
+import { packageDetailsAtom } from '../../store/store';
+import usePolicy from '../../hooks/usePolicy';
 
 const Organization = () => {
   const { t } = useTranslation();

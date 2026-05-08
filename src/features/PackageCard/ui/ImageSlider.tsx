@@ -139,12 +139,12 @@ const Layout = ({ children, ...props }: BoxProps) => (
         backgroundImage: '/assets/icons/slider-arrow-next.svg'
       },
       '.slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus':
-        {
-          outline: 'none !important',
-          backgroundColor: 'white',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        },
+      {
+        outline: 'none !important',
+        backgroundColor: 'white',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center'
+      },
       '.slick-prev:before, .slick-next:before': {
         display: 'none'
       }

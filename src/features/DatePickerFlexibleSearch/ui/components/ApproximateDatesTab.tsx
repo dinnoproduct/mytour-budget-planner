@@ -1,6 +1,6 @@
 import React from 'react'
-import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePicker/index.tsx'
-import { MONTHS } from '@/shared/model/index.ts'
+import { ApproximateDatePicker } from '@/entities/package/ui/ApproximateDatePicker/index'
+import { MONTHS } from '@/shared/model/index'
 import moment from 'moment'
 
 interface ApproximateDatesTabProps {

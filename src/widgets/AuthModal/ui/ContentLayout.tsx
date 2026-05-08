@@ -1,6 +1,6 @@
 import { Button } from "@ui";
 import { Box, Flex, VStack } from "@chakra-ui/react";
-import { ContentLayoutProps } from "@widgets/AuthModal/ui/types.ts";
+import { ContentLayoutProps } from "@widgets/AuthModal/ui/types";
 
 export const ContentLayout = ({
   contentContainerProps,

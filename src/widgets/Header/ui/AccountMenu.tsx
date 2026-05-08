@@ -10,7 +10,7 @@ import { Menu, MenuList } from './Menu'
 import { useTranslation } from 'react-i18next'
 import { useModalContext } from '@app/providers'
 import { useUserContext } from '@entities/user'
-import { Link as RouterLink } from 'react-router-dom'
+import NextLink from 'next/link'
 import { useLanguageRouting } from '@/hooks/useLanguageRouting'
 import { appendStoredUTMsToPath } from '@/utils/utmParams'
 
@@ -104,8 +104,8 @@ const MenuItem = ({ children, ...props }: any) => {
   const linkProps = useMemo(() => {
     if (props.to) {
       return {
-        as: RouterLink,
-        to: props.to
+        as: NextLink,
+        href: props.to,
       }
     }
 

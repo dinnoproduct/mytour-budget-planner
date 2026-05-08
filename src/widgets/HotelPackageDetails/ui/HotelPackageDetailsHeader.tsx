@@ -53,15 +53,6 @@ export const HotelPackageDetailsHeader = ({
           {countryName}, {cityName}
         </Text>
       </Flex>
-
-      <Button
-        variant="text-blue"
-        onClick={onMoreImagesClick}
-        ml="auto"
-        display={{ base: 'none', md: 'inline-flex' }}
-      >
-        {t`viewAllPhotos`}
-      </Button>
     </Flex>
   )
 }

@@ -5,7 +5,7 @@ import {
 } from './types'
 import { useBreakpoint } from '@/shared/hooks'
 import { Box, VStack, Flex, Tag, TagRightIcon, Show } from '@chakra-ui/react'
-import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
+import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import { CURRENCY_MAP } from '@shared/model'
 import { Button, Icon, Text, Tooltip } from '@ui'
 import { getPluralForm } from '@shared/helpers'

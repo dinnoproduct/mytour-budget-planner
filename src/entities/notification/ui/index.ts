@@ -1,2 +1,2 @@
-export * from './SplashNotificationModal.tsx'
-export * from './SplashNotificationsManager.tsx'
+export * from './SplashNotificationModal'
+export * from './SplashNotificationsManager'

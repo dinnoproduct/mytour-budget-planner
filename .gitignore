@@ -33,3 +33,5 @@ dist-ssr
 ./azure-pipelines.yml
 .autopilot.json
 .cursor
+.next
+coverage

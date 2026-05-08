@@ -7,7 +7,7 @@ import {
   PaymentMethod,
   type PaymentMethodCardProps,
   type PaymentMethodViewProps,
-} from "@widgets/BookingFlow/ui/PaymentModal/types.ts";
+} from "@widgets/BookingFlow/ui/PaymentModal/types";
 import { usePaymentSystems } from "@entities/package";
 import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 

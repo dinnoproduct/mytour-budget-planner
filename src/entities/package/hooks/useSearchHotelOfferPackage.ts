@@ -11,18 +11,34 @@ export const useSearchHotelOfferPackage = (
   searchData: SearchData,
   options?: Options
 ) => {
+  const checkinMoment = useMemo(
+    () => moment(searchData.from, moment.ISO_8601, true),
+    [searchData.from]
+  )
+  const checkoutMoment = useMemo(
+    () => moment(searchData.to, moment.ISO_8601, true),
+    [searchData.to]
+  )
+  const hasValidDates = checkinMoment.isValid() && checkoutMoment.isValid()
+
   const { data: offers = [], isLoading: isLoadingGenerateOffers } =
     useGenerateHotelOffers(
       {
-        checkin: moment(searchData.from).set({ hour: 14 }).format(),
-        checkout: moment(searchData.to).set({ hour: 12 }).format(),
+        checkin: hasValidDates
+          ? checkinMoment.clone().set({ hour: 14 }).format()
+          : '',
+        checkout: hasValidDates
+          ? checkoutMoment.clone().set({ hour: 12 }).format()
+          : '',
         adults: searchData.adultsCount,
         childs: searchData.childrenAges,
         hotelId: searchData.hotelId,
         travelAgency: searchData.travelAgency
       },
       {
-        enabled: typeof options?.enabled === 'boolean' ? options.enabled : true
+        enabled:
+          hasValidDates &&
+          (typeof options?.enabled === 'boolean' ? options.enabled : true)
       }
     )
 

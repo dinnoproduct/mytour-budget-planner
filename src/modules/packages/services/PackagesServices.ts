@@ -1,5 +1,5 @@
-import { request } from '../../../services/RequestService.ts';
-import { ApiUrls, Methods } from '../../../constants/constants.ts';
+import { request } from '../../../services/RequestService';
+import { ApiUrls, Methods } from '../../../constants/constants';
 import {
   IGeneratedMultivendorOffer,
   IGenerateMultivendorOffer,
@@ -11,10 +11,10 @@ import {
   type TCities,
   type TFlights,
   type TPackages,
-} from '../data/packagesTypes.ts';
-import { type IDictionary } from '../data/dictionaryTypes.ts';
-import { type DictionaryTypes } from '../data/dictionaryEnum.ts';
-import { type CustomFields } from '../data/packagesEnums.ts';
+} from '../data/packagesTypes';
+import { type IDictionary } from '../data/dictionaryTypes';
+import { type DictionaryTypes } from '../data/dictionaryEnum';
+import { type CustomFields } from '../data/packagesEnums';
 
 export const getPackagesService = (): Promise<{ data: TPackages }> =>
   request(Methods.GET, `/${ApiUrls.api}/${ApiUrls.package}/${ApiUrls.V2}/${ApiUrls.getPackages}`);
@@ -67,7 +67,7 @@ export const generateOfferService = (data: IGenerateOffer): Promise<{ data: IGen
 
 export const generateMultivendorOfferService = (data: IGenerateMultivendorOffer): Promise<{ data: IGeneratedMultivendorOffer[] }> => {
   // todo: remove this
-  const baseUrl = import.meta.env.VITE_API_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   return request(Methods.POST, `${baseUrl}/${ApiUrls.V2}/${ApiUrls.package}/${ApiUrls.generateMultivendorOffers}`, {
     headers: { 'Content-Type': 'application/json-patch+json' },
     data,

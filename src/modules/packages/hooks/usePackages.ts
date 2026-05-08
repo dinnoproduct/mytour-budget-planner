@@ -3,8 +3,8 @@ import {
   filteredPackagesAtom,
   packageDetailsAtom,
   packagesAtom
-} from '../store/store.ts'
-import { type IPackage, type TPackages } from '../data/packagesTypes.ts'
+} from '../store/store'
+import { type IPackage, type TPackages } from '../data/packagesTypes'
 import { useEffect } from 'react'
 import { useSearchPackage } from '@entities/package'
 

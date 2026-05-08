@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { type LayoutProps } from './types.ts'
+import { type LayoutProps } from './types'
 import {
   Box,
   Flex,
@@ -42,7 +42,7 @@ export const Layout = ({
       onClose={closeModal}
       isCentered
       size="payment"
-      initialFocusRef={modalContentRef}
+      initialFocusRef={modalContentRef as any}
     >
       <ModalOverlay />
       <ModalContent ref={modalContentRef}>

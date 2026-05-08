@@ -3,12 +3,12 @@ import React, { useMemo, useRef, useState } from 'react'
 import { Box, type BoxProps, Image } from '@chakra-ui/react'
 import classnames from 'classnames'
 import { StatusOnImageBadge } from '@ui'
-import { HotelStarBadge, PaginationBadge } from './Badge.tsx'
+import { HotelStarBadge, PaginationBadge } from './Badge'
 import { RequestStatus } from '@entities/package'
 import {
   type ImagesSliderProps,
   type RequestCardStatus
-} from '@widgets/UserPackages/ui/RequestCard/types.ts'
+} from '@widgets/UserPackages/ui/RequestCard/types'
 
 const slideTime = 300
 
@@ -60,7 +60,7 @@ export const ImagesSlider = ({
         })}
       >
         {sliderImages?.map(({ url }: { url: string }) => (
-          <Box outline="none">
+          <Box outline="none" key={url}>
             <Image
               src={url}
               maxWidth="full"
@@ -145,12 +145,12 @@ const Layout = ({ children, ...props }: BoxProps) => (
         backgroundImage: '/assets/icons/slider-arrow-next.svg'
       },
       '.slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus':
-        {
-          outline: 'none !important',
-          backgroundColor: 'white',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        },
+      {
+        outline: 'none !important',
+        backgroundColor: 'white',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center'
+      },
       '.slick-prev:before, .slick-next:before': {
         display: 'none'
       }

@@ -46,7 +46,7 @@ export const BlogsSlider = () => {
         modules={[Navigation, EffectFade]}
         effect="fade"
         slidesPerView={1}
-        loop
+        loop={blogs.length > 1}
         onSlideChange={handleSlideChange}
       >
         {blogs?.map((blog, index) => (

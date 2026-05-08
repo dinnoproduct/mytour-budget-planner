@@ -1,7 +1,7 @@
 import { Box, type LinkProps, Link, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
-import ImageSlider from './ImageSlider.tsx'
+import { numberWithCommaNormalizer } from '@/utils/normalizers'
+import ImageSlider from './ImageSlider'
 import { type ReactNode, useMemo } from 'react'
 import { CURRENCY_MAP, LANGUAGE_PREFIX } from '@shared/model'
 import { type Language } from '@widgets/Header/model'
@@ -15,9 +15,9 @@ import {
   useDictionary
 } from '@entities/package'
 import { getPluralForm } from '@shared/helpers'
-import { type PackageCardBasicProps } from './types.ts'
+import { type PackageCardBasicProps } from './types'
 import { formatNumber } from '@shared/utils'
-import { useSelectedPackage } from '@/modules/packages/hooks/useSelectedPackage.ts'
+import { useSelectedPackage } from '@/modules/packages/hooks/useSelectedPackage'
 import { type EmptyObject } from 'global'
 
 export const PackageCardBasic = ({

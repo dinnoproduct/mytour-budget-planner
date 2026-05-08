@@ -1,5 +1,7 @@
+"use client"
+
 import { type UseQueryOptions } from '@tanstack/react-query'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from '@shared/lib/router'
 import { type PackageEntity, useSearch } from '@entities/package'
 import { PACKAGE_REQUEST_REFETCH_INTERVAL } from '@shared/configs'
 import { type EmptyObject } from 'react-hook-form'

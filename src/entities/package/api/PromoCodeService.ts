@@ -2,7 +2,7 @@ import axios, { type AxiosInstance } from 'axios'
 import {
   type PromoCodeValidationParams,
   type PromoCodeValidationResponse
-} from './types.ts'
+} from './types'
 
 export class PromoCodeService {
   private readonly apiVersion = 'V2'
@@ -10,7 +10,7 @@ export class PromoCodeService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/${this.apiVersion}/PromoCode/`
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/${this.apiVersion}/PromoCode/`
     })
 
     this.api.interceptors.response.use(

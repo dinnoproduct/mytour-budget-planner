@@ -2,7 +2,7 @@ import { Box, Flex, Menu, MenuButton, MenuList, VStack } from '@chakra-ui/react'
 import { Icon, Input, Text } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type SearchCitiesProps } from './types.ts'
+import { type SearchCitiesProps } from './types'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import type { PackageCity } from '@entities/package'
 import {ChevronRightIcon} from "@chakra-ui/icons";

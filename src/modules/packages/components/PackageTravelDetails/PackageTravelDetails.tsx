@@ -1,18 +1,18 @@
 import { useState, type FC } from 'react'
 import Modal from 'react-modal'
 import { GoogleLogin } from '@react-oauth/google'
-import { dateFormatter, numberWithCommaNormalizer } from '../../../../utils/normalizers.ts'
-import { PackagesFields } from '../../data/packagesEnums.ts'
+import { dateFormatter, numberWithCommaNormalizer } from '../../../../utils/normalizers'
+import { PackagesFields } from '../../data/packagesEnums'
 import { useTranslation } from 'react-i18next'
-import useDictionary from '../../hooks/useDictionary.ts'
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts'
-import useDictionaryByKey from '../../hooks/useDictionaryByKey.ts'
+import useDictionary from '../../hooks/useDictionary'
+import { DictionaryTypes } from '../../data/dictionaryEnum'
+import useDictionaryByKey from '../../hooks/useDictionaryByKey'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { isBookModalOpenAtom, packageDetailsAtom, userTokenAtom } from '../../store/store.ts'
+import { isBookModalOpenAtom, packageDetailsAtom, userTokenAtom } from '../../store/store'
 import './index.scss'
-import useUser from '../../hooks/useUser.ts'
+import useUser from '../../hooks/useUser'
 import { Loader } from '@/components/Loader/Loader'
-import { overDaysFromNow } from '../../../../utils/methods.ts'
+import { overDaysFromNow } from '../../../../utils/methods'
 import { Button } from '@ui'
 import { HStack, Img } from '@chakra-ui/react'
 
@@ -48,7 +48,7 @@ const PackageTravelDetails: FC<IPackageTravelDetails> = ({ onEditModalOpen, onBo
 
 	return (
 		<div className="travel-details-wrapper">
-			<Loader loading={loading}/>
+			<Loader loading={loading} />
 			<Modal
 				isOpen={paymentInfoModalIsOpen}
 				onRequestClose={() => setPaymentInfoModalIsOpen(false)}
@@ -57,7 +57,7 @@ const PackageTravelDetails: FC<IPackageTravelDetails> = ({ onEditModalOpen, onBo
 				<div className="flex space-between m-b-16">
 					<div className="modal-title font-bold">{t('book')}</div>
 					<button onClick={() => setPaymentInfoModalIsOpen(false)}>
-						<img src="/images/close.svg" alt=""/>
+						<img src="/images/close.svg" alt="" />
 					</button>
 				</div>
 				<div className="payment-info-modal">
@@ -85,9 +85,9 @@ const PackageTravelDetails: FC<IPackageTravelDetails> = ({ onEditModalOpen, onBo
 					{/*  </div>*/}
 					{/*) : null}*/}
 					<HStack mt="2" spacing="2">
-						<img src="/images/visa.svg" alt=""/>
-						<img src="/images/arca.svg" alt=""/>
-						<img src="/images/master.svg" alt=""/>
+						<img src="/images/visa.svg" alt="" />
+						<img src="/images/arca.svg" alt="" />
+						<img src="/images/master.svg" alt="" />
 					</HStack>
 				</div>
 				<div className="modal-buttons text-right p-t-16">
@@ -106,7 +106,7 @@ const PackageTravelDetails: FC<IPackageTravelDetails> = ({ onEditModalOpen, onBo
 				<div className="flex space-between m-b-16">
 					<div className="modal-title font-bold">{t('register')}</div>
 					<button onClick={() => setRegisterModalIsOpen(false)} className="close_signup">
-						<img src="/images/close.svg" alt=""/>
+						<img src="/images/close.svg" alt="" />
 					</button>
 				</div>
 				<div className="register-wrapper p-t-32 p-b-16">
@@ -123,7 +123,7 @@ const PackageTravelDetails: FC<IPackageTravelDetails> = ({ onEditModalOpen, onBo
 							setUserToken('')
 						}}
 						containerProps={{ className: 'sign_in_button' }}
-						// containerProps={{ style: { width: '100%' } }}
+					// containerProps={{ style: { width: '100%' } }}
 					/>
 				</div>
 			</Modal>
@@ -157,7 +157,7 @@ const PackageTravelDetails: FC<IPackageTravelDetails> = ({ onEditModalOpen, onBo
 			</div>
 			<div className="details-buttons">
 				<button className="btn-edit edit_description" onClick={onEditModalOpen}>
-					<Img src="/images/edit.svg" alt="" mr="2"/> <span>{t('edit')}</span>
+					<Img src="/images/edit.svg" alt="" mr="2" /> <span>{t('edit')}</span>
 				</button>
 				<button className="btn-book book_description" onClick={() => setPaymentInfoModalIsOpen(true)}>
 					{t('reserve')}

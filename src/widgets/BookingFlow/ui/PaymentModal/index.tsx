@@ -1,25 +1,25 @@
-import { Layout } from "./Layout.tsx";
+import { Layout } from "./Layout";
 import {
   PaymentMethod,
   type PaymentModalProps,
   type PaymentModalView,
   type PaymentOption,
   VIEW_CONTENT_MAP,
-} from "./types.ts";
+} from "./types";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { PaymentFormView } from "./PaymentFormView/index.tsx";
-import { PaymentErrorView } from "./PaymentErrorView.tsx";
-import { PaymentMethodView } from "./PaymentMethodView.tsx";
-import { AmeriaPayView } from "./AmeriaPayView.tsx";
+import { PaymentFormView } from "./PaymentFormView/index";
+import { PaymentErrorView } from "./PaymentErrorView";
+import { PaymentMethodView } from "./PaymentMethodView";
+import { AmeriaPayView } from "./AmeriaPayView";
 import {
   DictionaryTypes,
   PaymentSuccessModal,
   useDictionary,
   type PaymentSystem,
 } from "@entities/package";
-import { PreviewDetailsView } from "@/widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView/index.tsx";
-import { BookingStep, metaEvents } from "@/shared/configs/metaEvents.ts";
+import { PreviewDetailsView } from "@/widgets/BookingFlow/ui/PaymentModal/PreviewDetailsView/index";
+import { BookingStep, metaEvents } from "@/shared/configs/metaEvents";
 import { Button, Illustration, Text } from "@ui";
 import { Flex } from "@chakra-ui/react";
 

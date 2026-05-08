@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getCitiesService } from '../services/PackagesServices.ts';
+import { getCitiesService } from '../services/PackagesServices';
 import { useRecoilState } from 'recoil';
-import { citiesAtom } from '../store/store.ts';
+import { citiesAtom } from '../store/store';
 
 const useCities = () => {
   const [cities, setCities] = useRecoilState(citiesAtom);

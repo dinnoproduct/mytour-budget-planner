@@ -6,7 +6,7 @@ export class CityService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/city`
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/city`
     })
 
     this.api.interceptors.response.use(

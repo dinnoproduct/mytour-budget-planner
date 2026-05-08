@@ -1,4 +1,6 @@
-import { useLocation } from 'react-router-dom'
+"use client"
+
+import { useLocation } from '@shared/lib/router'
 import {
   type PackageEntity,
   type OfferEntity,

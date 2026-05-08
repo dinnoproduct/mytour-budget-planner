@@ -1,3 +1,5 @@
+"use client"
+
 import {
   type PackageEntity,
   type RequestEntity,
@@ -17,7 +19,7 @@ import moment from 'moment'
 import { useModalContext } from '@app/providers'
 import { useSnackBar } from '@ui'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from '@shared/lib/router'
 import { type EmptyObject } from 'global'
 
 export const useUserRequestsManager = () => {

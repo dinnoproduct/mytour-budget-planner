@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { Icon, Tabs, Text } from '@ui'
@@ -5,11 +7,11 @@ import {
   GroupTabItem,
   HotelTabItem,
   PackageTabItem
-} from '@widgets/PackageSearch/ui/TabItem.tsx'
+} from '@widgets/PackageSearch/ui/TabItem'
 import { GroupTourSearchForm } from './GroupTourSearchForm'
 import { useTranslation } from 'react-i18next'
 import type { MonthSelection } from '@features/MonthSelectMenu'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from '@shared/lib/router'
 import { useGroupToursList } from '@entities/package'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 

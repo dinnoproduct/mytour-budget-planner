@@ -1,12 +1,12 @@
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import './index.scss';
-import MInput from '../../../../components/FormControls/MInput/MInput.tsx';
+import MInput from '../../../../components/FormControls/MInput/MInput';
 import { useForm, FormProvider, type FieldValues } from 'react-hook-form';
-import { CustomFields } from '../../data/packagesEnums.ts';
+import { CustomFields } from '../../data/packagesEnums';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { subscribeScheme } from '../../scheme/scheme.ts';
-import useSubscribe from '../../hooks/useSubscribe.ts';
+import { subscribeScheme } from '../../scheme/scheme';
+import useSubscribe from '../../hooks/useSubscribe';
 import { Loader } from '@/components/Loader/Loader';
 import classnames from 'classnames';
 

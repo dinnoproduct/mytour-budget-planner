@@ -1,7 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react'
 import React from 'react'
 import { Icon, Text } from '@ui'
-import { type SnackBarProps } from '@components/SnackBar/types.ts'
+import { type SnackBarProps } from '@components/SnackBar/types'
 
 export const SnackBar = ({ title, status }: SnackBarProps) => (
   <Box
@@ -39,4 +39,4 @@ const STATUS_MAP = {
 }
 
 export { toastStylesTheme } from './theme'
-export { useSnackBar } from './useSnackBar.tsx'
+export { useSnackBar } from './useSnackBar'

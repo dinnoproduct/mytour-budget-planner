@@ -5,7 +5,7 @@ import { DatePickerMonth } from './DatePickerMonth'
 import { Text, Button } from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
-import { LoadingView } from '@features/DatePickerFlights/ui/LoadingView.tsx'
+import { LoadingView } from '@features/DatePickerFlights/ui/LoadingView'
 import moment from 'moment'
 
 const MAX_MONTHS = 8

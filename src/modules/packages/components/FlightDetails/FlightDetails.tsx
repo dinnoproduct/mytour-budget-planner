@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
-import { PackagesFields } from '../../data/packagesEnums.ts';
-import useDictionary from '../../hooks/useDictionary.ts';
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
-import useDictionaryByKey from '../../hooks/useDictionaryByKey.ts';
-import { dateFormatter, formatDateAndTime } from '../../../../utils/normalizers.ts';
+import { packageDetailsAtom } from '../../store/store';
+import { PackagesFields } from '../../data/packagesEnums';
+import useDictionary from '../../hooks/useDictionary';
+import { DictionaryTypes } from '../../data/dictionaryEnum';
+import useDictionaryByKey from '../../hooks/useDictionaryByKey';
+import { dateFormatter, formatDateAndTime } from '../../../../utils/normalizers';
 import './index.scss';
 
 const FlightDetails = () => {

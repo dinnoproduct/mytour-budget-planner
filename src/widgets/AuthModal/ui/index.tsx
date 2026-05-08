@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react'
-import { AuthModalProps, VerifyType, ViewType } from './types.ts'
-import { Layout } from './Layout.tsx'
-import { SignUpView } from '@widgets/AuthModal/ui/SignUpView.tsx'
-import { VerifyView } from '@widgets/AuthModal/ui/VerifyView.tsx'
-import { SignInView } from '@widgets/AuthModal/ui/SignInView.tsx'
+import { AuthModalProps, VerifyType, ViewType } from './types'
+import { Layout } from './Layout'
+import { SignUpView } from '@widgets/AuthModal/ui/SignUpView'
+import { VerifyView } from '@widgets/AuthModal/ui/VerifyView'
+import { SignInView } from '@widgets/AuthModal/ui/SignInView'
 import { useTranslation } from 'react-i18next'
 import { VIEW_CONTENT_MAP } from '@widgets/AuthModal/model'
-import { SignInErrorView } from './SignInErrorView.tsx'
-import { OTPErrorView } from '@widgets/AuthModal/ui/OTPErrorView.tsx'
+import { SignInErrorView } from './SignInErrorView'
+import { OTPErrorView } from '@widgets/AuthModal/ui/OTPErrorView'
 
 export const AuthModal = ({ view, closeModal, onSuccess, isCloseOnSuccess = true }: AuthModalProps) => {
 	const {t} = useTranslation()

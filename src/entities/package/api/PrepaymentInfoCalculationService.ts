@@ -3,7 +3,7 @@ import {
   PaymentSystemInfo,
   type PrepaymentCalculationParams,
   type PrepaymentInfo
-} from './types.ts'
+} from './types'
 
 export class PrepaymentInfoCalculationService {
   private readonly apiVersion = 'V2'
@@ -12,7 +12,7 @@ export class PrepaymentInfoCalculationService {
   constructor() {
     this.api = axios.create({
       baseURL: `${
-        import.meta.env.VITE_API_URL
+        process.env.NEXT_PUBLIC_API_URL
       }/${this.apiVersion}/PrepaymentInfoCalculation/`
     })
 

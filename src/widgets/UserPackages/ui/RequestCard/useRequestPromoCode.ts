@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { TFunction } from 'i18next'
-import type { RequestCardProps } from '@widgets/UserPackages/ui/RequestCard/types.ts'
+import type { RequestCardProps } from '@widgets/UserPackages/ui/RequestCard/types'
 import { useValidatePromoCode } from '@entities/package'
 
 export const useRequestPromoCode = (

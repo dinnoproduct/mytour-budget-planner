@@ -1,9 +1,9 @@
-import { Currency } from "@/entities/package/index.ts";
+import { Currency } from "@/entities/package/index";
 import {
   type CustomFields,
   type PackagesFields,
   type PackagesNestedFields,
-} from "./packagesEnums.ts";
+} from "./packagesEnums";
 
 export interface IPackage {
   [PackagesFields.nameArm]: string;

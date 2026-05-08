@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig } from 'axios';
-import { BASE_URL, type Methods } from '../constants/constants.ts';
+import { BASE_URL, type Methods } from '../constants/constants';
 
 type TRequestConfig = Omit<AxiosRequestConfig, 'url' | 'method'>;
 

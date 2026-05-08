@@ -1,10 +1,10 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
-import { type LayoutProps } from './types.ts'
+import { type LayoutProps } from './types'
 import { Logo } from '@ui'
-import { LanguageMenu } from './LanguageMenu.tsx'
+import { LanguageMenu } from './LanguageMenu'
 import { useTranslation } from 'react-i18next'
 import { type LanguageName } from 'shared/model'
-import { AccountMenu } from './AccountMenu.tsx'
+import { AccountMenu } from './AccountMenu'
 import { LanguageLink } from '../../../components/LanguageLink/LanguageLink'
 import { useLanguageRouting } from '../../../hooks/useLanguageRouting'
 
@@ -19,7 +19,7 @@ export const Header = () => {
   return (
     <Layout>
       <LanguageLink to="/">
-        <Logo width={{ base: '120px', md: '150px' }} />
+        <Logo />
       </LanguageLink>
 
       <HStack spacing="2">

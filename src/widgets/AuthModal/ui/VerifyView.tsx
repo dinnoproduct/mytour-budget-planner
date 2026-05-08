@@ -1,10 +1,10 @@
 import { Flex, HStack, VStack } from '@chakra-ui/react'
 import { Button, Input, Text, Illustration, AlertCardMessage } from '@ui'
 import { useEffect, useRef, useState } from 'react'
-import { VerifyViewProps } from '@widgets/AuthModal/ui/types.ts'
+import { VerifyViewProps } from '@widgets/AuthModal/ui/types'
 import { useConfirmLogin, useConfirmRegistration, useResendOTP, useUserContext } from '@entities/user'
 import { useTranslation } from 'react-i18next'
-import { ContentLayout } from '@widgets/AuthModal/ui/ContentLayout.tsx'
+import { ContentLayout } from '@widgets/AuthModal/ui/ContentLayout'
 
 const FIELD_COUNT = 4
 

@@ -25,7 +25,7 @@ export const Layout = (
 			onClose={closeModal}
 			isCentered
 			size="auth"
-			initialFocusRef={modalContentRef}
+			initialFocusRef={modalContentRef as any}
 		>
 			<ModalOverlay/>
 

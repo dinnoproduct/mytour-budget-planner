@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
-import { dateFormatter, formatDateAndTime } from '../../../../utils/normalizers.ts';
-import { PackagesFields } from '../../data/packagesEnums.ts';
+import { packageDetailsAtom } from '../../store/store';
+import { dateFormatter, formatDateAndTime } from '../../../../utils/normalizers';
+import { PackagesFields } from '../../data/packagesEnums';
 import './index.scss';
 
 const HotelDetails = () => {

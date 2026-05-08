@@ -29,7 +29,7 @@ export const PriceSummaryCardLayout = ({
         md: "none",
       }}
       borderColor="transparent"
-      rounded={{ base: "none", md: "md" }}
+      rounded={{ base: "none", md: "2xl" }}
       templateAreas={{
         base: `
         "${LayoutAreas.AVAILABILITY}"

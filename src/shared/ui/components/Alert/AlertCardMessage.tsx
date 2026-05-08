@@ -5,7 +5,7 @@ import {
   CardAlertMultipleMessagesProps,
   type CardAlertMessageProps,
   type CardAlertMessageStatus
-} from '@components/Alert/types.ts'
+} from '@components/Alert/types'
 import { type IconName } from '@foundation/Iconography'
 
 export const AlertCardMessage = ({

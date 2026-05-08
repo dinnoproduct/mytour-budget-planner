@@ -9,7 +9,7 @@ export class RequestServiceV2 {
   private readonly api: AxiosInstance
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/${API_VERSION}/request`
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/${API_VERSION}/request`
     })
 
     this.api.interceptors.response.use(

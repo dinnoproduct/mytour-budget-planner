@@ -1,1 +1,1 @@
-export const STORIES_ENDPOINT = `${import.meta.env.VITE_API_URL}/External/Stories`
+export const STORIES_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/External/Stories`

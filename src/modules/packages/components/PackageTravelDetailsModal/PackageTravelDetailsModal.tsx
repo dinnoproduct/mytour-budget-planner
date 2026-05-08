@@ -1,10 +1,10 @@
 import { type FC, type MutableRefObject, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import MDatePicker from '../../../../components/FormControls/MDatePicker/MDatePicker.tsx';
+import MDatePicker from '../../../../components/FormControls/MDatePicker/MDatePicker';
 import { type FieldValues, FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { CustomFields, DictionaryFields, PackagesFields } from '../../data/packagesEnums.ts';
+import { CustomFields, DictionaryFields, PackagesFields } from '../../data/packagesEnums';
 import 'react-datepicker/dist/react-datepicker.css';
-import useFlight from '../../hooks/useFlight.ts';
+import useFlight from '../../hooks/useFlight';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   dictionaryAtom,
@@ -13,19 +13,19 @@ import {
   packageTravelDetailsAtom,
   packageTravelDetailsModalShowAtom,
   screenBreakpointAtom,
-} from '../../store/store.ts';
-import MSelect from '../../../../components/FormControls/MSelect/MSelect.tsx';
-import { formatDateAndTime, numberWithCommaNormalizer } from '../../../../utils/normalizers.ts';
-import { type IFlight, type IGeneratedOffer, type IPackageTravelDetails } from '../../data/packagesTypes.ts';
-import MCheckbox from '../../../../components/FormControls/MCheckbox/MCheckbox.tsx';
-import MNumberSpinner from '../../../../components/FormControls/MNumberSpinner/MNumberSpinner.tsx';
+} from '../../store/store';
+import MSelect from '../../../../components/FormControls/MSelect/MSelect';
+import { formatDateAndTime, numberWithCommaNormalizer } from '../../../../utils/normalizers';
+import { type IFlight, type IGeneratedOffer, type IPackageTravelDetails } from '../../data/packagesTypes';
+import MCheckbox from '../../../../components/FormControls/MCheckbox/MCheckbox';
+import MNumberSpinner from '../../../../components/FormControls/MNumberSpinner/MNumberSpinner';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { packageEditScheme } from '../../scheme/scheme.ts';
-import useOffer from '../../hooks/useOffer.ts';
+import { packageEditScheme } from '../../scheme/scheme';
+import useOffer from '../../hooks/useOffer';
 import './index.scss';
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
+import { DictionaryTypes } from '../../data/dictionaryEnum';
 import { Loader } from '@/components/Loader/Loader';
-import { calculateAge } from '../../../../utils/methods.ts';
+import { calculateAge } from '../../../../utils/methods';
 import { toast } from 'react-toastify';
 
 const PackageTravelDetailsModal: FC<{ onClose: () => void; modalRef?: MutableRefObject<HTMLElement> }> = ({

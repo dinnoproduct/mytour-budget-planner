@@ -1,9 +1,9 @@
 import Modal from 'react-modal';
 import { type FC } from 'react';
-import usePolicy from '../../hooks/usePolicy.ts';
-import { TermsAndConditionTypes } from '../../data/dictionaryEnum.ts';
+import usePolicy from '../../hooks/usePolicy';
+import { TermsAndConditionTypes } from '../../data/dictionaryEnum';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
+import { packageDetailsAtom } from '../../store/store';
 
 interface ITermsAndConditionsModal {
   termsAndConditionType: TermsAndConditionTypes;

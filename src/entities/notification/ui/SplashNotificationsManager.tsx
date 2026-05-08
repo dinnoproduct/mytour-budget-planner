@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSplashNotifications } from '../hooks/useSplashNotifications.ts'
-import { useSplashNotificationViewed } from '../hooks/useSplashNotificationViewed.ts'
-import { SplashNotificationModal } from './SplashNotificationModal.tsx'
-import { type SplashNotification } from '../api/types.ts'
+import { useSplashNotifications } from '../hooks/useSplashNotifications'
+import { useSplashNotificationViewed } from '../hooks/useSplashNotificationViewed'
+import { SplashNotificationModal } from './SplashNotificationModal'
+import { type SplashNotification } from '../api/types'
 
 export const SplashNotificationsManager = () => {
   const queryClient = useQueryClient()

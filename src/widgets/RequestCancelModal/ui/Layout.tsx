@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { LayoutProps } from './types.ts'
+import { LayoutProps } from './types'
 import {
 	Box, Flex,
 	Modal as ChakraModal,
@@ -27,7 +27,7 @@ export const Layout = (
 			onClose={closeModal}
 			isCentered
 			size="auth"
-			initialFocusRef={modalContentRef}
+			initialFocusRef={modalContentRef as any}
 		>
 			<ModalOverlay/>
 

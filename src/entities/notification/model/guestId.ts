@@ -9,6 +9,7 @@ function uuidV4(): string {
 }
 
 export function getGuestUserId(): string {
+  if (typeof window === 'undefined') return ''
   const existing = localStorage.getItem(GUEST_ID_KEY)
   if (existing) return existing
   const id = uuidV4()

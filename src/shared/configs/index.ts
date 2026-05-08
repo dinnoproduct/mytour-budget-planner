@@ -1,2 +1,2 @@
-export * from './request-config.ts'
-export * from './i18next.ts'
+export * from './request-config'
+export * from './i18next'
