@@ -135,7 +135,7 @@ export const PackageDetails = ({
       <CardSectionLayout
         id={PACKAGE_DETAILS_SECTION_IDS.ratings}
         scrollMarginTop={sectionScrollMargin}
-        title={t`grades`}
+        title={t`review`}
       >
         <GuestReviews
           hotelId={tourPackage.hotel?.id}
