@@ -9,7 +9,10 @@ import {
   type NormalizedRequestEntity,
   useCalculatePrepayment,
   RequestStatus,
-  useValidatePromoCode
+  useValidatePromoCode,
+  resolveGroupTourPackageTourId,
+  shouldSkipGroupTourForcedPartialPrepaymentOverride,
+  withGroupTourForcedPartialPrepayment,
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types.ts'
@@ -475,7 +478,7 @@ export const useBookingFlow = ({
 
   const effectiveFullPrice = promoDiscountedPrice ?? discountedFullPrice
 
-  const { data: prepaymentInfo = null } = useCalculatePrepayment(
+  const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
       bookingType: initialRequest?.bookingType
@@ -494,6 +497,30 @@ export const useBookingFlow = ({
       enabled: !!packageDetails && isOpen
     }
   )
+
+  const paidTowardRequest = Math.max(
+    initialRequest?.prePaymentAmount ?? 0,
+    request?.prePaymentAmount ?? 0,
+  )
+  const skipGroupTourPrepaymentHotfix =
+    shouldSkipGroupTourForcedPartialPrepaymentOverride({
+      paidTowardRequest,
+    })
+
+  const prepaymentInfo = useMemo(() => {
+    if (skipGroupTourPrepaymentHotfix) {
+      return prepaymentInfoFromApi
+    }
+    const tourId = resolveGroupTourPackageTourId(packageDetails ?? null)
+    return withGroupTourForcedPartialPrepayment(
+      prepaymentInfoFromApi,
+      tourId,
+    )
+  }, [
+    packageDetails,
+    prepaymentInfoFromApi,
+    skipGroupTourPrepaymentHotfix,
+  ])
 
   return {
     openTravelersModal,

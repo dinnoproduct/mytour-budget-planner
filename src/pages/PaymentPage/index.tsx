@@ -12,6 +12,9 @@ import {
   useCalculatePrepayment,
   usePayRemainingAmount,
   type PaymentSystem,
+  resolveGroupTourPackageTourId,
+  shouldSkipGroupTourForcedPartialPrepaymentOverride,
+  withGroupTourForcedPartialPrepayment,
 } from "@entities/package";
 import { useUserContext } from "@entities/user";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
@@ -83,7 +86,26 @@ export const PaymentPage = () => {
     { enabled: !!packageDetails?.checkin || !!packageDetails?.destinationFlight?.departureDate },
   );
 
-  const prepaymentInfo = state?.prepaymentInfo ?? prepaymentInfoFromApi;
+  const prepaymentInfoRaw = state?.prepaymentInfo ?? prepaymentInfoFromApi;
+  const skipGroupTourPrepaymentHotfix =
+    shouldSkipGroupTourForcedPartialPrepaymentOverride({
+      isRemainingBalancePayment: isRemainingOnly,
+      paidTowardRequest: request?.prePaymentAmount,
+    });
+  const prepaymentInfo = useMemo(
+    () =>
+      skipGroupTourPrepaymentHotfix
+        ? prepaymentInfoRaw
+        : withGroupTourForcedPartialPrepayment(
+            prepaymentInfoRaw,
+            resolveGroupTourPackageTourId(packageDetails ?? null),
+          ),
+    [
+      prepaymentInfoRaw,
+      packageDetails,
+      skipGroupTourPrepaymentHotfix,
+    ],
+  );
 
   // Use discounted full price consistently in the UI and logic on this page
   // by overriding the price we pass down into payment components.
