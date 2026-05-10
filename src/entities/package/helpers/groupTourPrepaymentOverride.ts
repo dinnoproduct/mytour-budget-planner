@@ -9,7 +9,6 @@ import type { PrepaymentInfo } from '../api/types'
  */
 const GROUP_TOUR_IDS_FORCE_PARTIAL_PREPAYMENT = new Set<string>([
   'f640cb08-54d6-45da-a129-4c31fbd57904',
-  '8f329d4a-d0be-43be-840e-30a40c61d1db',
 ])
 
 /**
