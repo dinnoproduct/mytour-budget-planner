@@ -11,6 +11,7 @@ import {
   RequestStatus,
   useValidatePromoCode,
   resolveGroupTourPackageTourId,
+  isGroupTourSpecialBookingId,
   shouldSkipGroupTourForcedPartialPrepaymentOverride,
   withGroupTourForcedPartialPrepayment,
 } from '@entities/package'
@@ -183,6 +184,15 @@ export const useBookingFlow = ({
           bookInput.endDate = packageDetails.checkout
           bookInput.bookingType = 2
           bookInput.foodType = packageDetails.foodType || 0
+        }
+
+        const specialTourId = resolveGroupTourPackageTourId(packageDetails)
+        if (
+          isGroupTour &&
+          paymentOption !== 'noPrepayment' &&
+          isGroupTourSpecialBookingId(specialTourId)
+        ) {
+          bookInput.price = amountToBePaid
         }
 
         if (paymentOption === 'noPrepayment') {
