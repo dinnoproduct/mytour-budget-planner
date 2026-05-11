@@ -1,4 +1,6 @@
 import type { PrepaymentInfo } from '../api/types'
+import { RequestStatus } from '../model/entities'
+import moment from 'moment'
 
 /**
  * TEMPORARY — remove this module’s usage (and delete or empty the set) once the
@@ -14,12 +16,35 @@ const GROUP_TOUR_IDS_FORCE_PARTIAL_PREPAYMENT = new Set<string>([
 
 /**
  * TEMPORARY — same ids as prepayment workaround.
- * Also: hide matching requests in My Packages; align book `price` with payment.
+ * Also: My Packages visibility + book `price` alignment (see
+ * {@link isSpecialGroupTourRequestVisibleInMyPackages}).
  */
 export function isGroupTourSpecialBookingId(
   tourId: string | null | undefined,
 ): boolean {
   return !!tourId && GROUP_TOUR_IDS_FORCE_PARTIAL_PREPAYMENT.has(tourId)
+}
+
+/**
+ * TEMPORARY — My Packages: for special tour ids only, show the request when
+ * status is Booked (4), Purchased (5), overdue Draft (UI maps to 10), or raw 10.
+ * All other statuses stay hidden so the list is not cluttered by these tours.
+ */
+export function isSpecialGroupTourRequestVisibleInMyPackages(request: {
+  groupTourId?: string
+  status: number
+  startDate: string
+}): boolean {
+  if (!isGroupTourSpecialBookingId(request.groupTourId)) {
+    return true
+  }
+  if (request.status === RequestStatus.Booked) return true
+  if (request.status === RequestStatus.Purchased) return true
+  if (request.status === 10) return true
+  if (request.status !== RequestStatus.Draft) {
+    return false
+  }
+  return moment(request.startDate).isBefore(moment())
 }
 
 export type GroupTourPackageLike = {
@@ -51,7 +76,8 @@ export function resolveGroupTourPackageTourId(
 /**
  * Do not override prepayment when paying an outstanding balance or any
  * installment after money has already been recorded on the request — use API
- * rules only.
+ * rules only. Ensures second / remaining payments for TEMP tour ids follow
+ * backend prepayment rules.
  */
 export function shouldSkipGroupTourForcedPartialPrepaymentOverride(params: {
   /** e.g. PaymentPage when `mode === "remainingOnly"` */

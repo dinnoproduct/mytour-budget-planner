@@ -11,7 +11,7 @@ import {
   type NormalizedRequestEntity,
   useRequestCancellationMessageAsync,
   useGroupTourPackageFromRequest,
-  isGroupTourSpecialBookingId
+  isSpecialGroupTourRequestVisibleInMyPackages
 } from '@entities/package'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
@@ -54,12 +54,8 @@ export const useUserRequestsManager = () => {
 
       const normalUserRequests = userRequests.map(normalizeRequest)
 
-      const hideSpecialGroupTourFromMyPackages = (
-        request: NormalizedRequestEntity,
-      ) => isGroupTourSpecialBookingId(request.groupTourId)
-
       const visibleRequests = normalUserRequests.filter(
-        (request) => !hideSpecialGroupTourFromMyPackages(request),
+        (request) => isSpecialGroupTourRequestVisibleInMyPackages(request),
       )
 
       const active = visibleRequests.filter(

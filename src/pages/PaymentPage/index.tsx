@@ -60,6 +60,13 @@ export const PaymentPage = () => {
     [packageDetails?.destinationFlight?.id],
   );
 
+  const isSpecialGroupTourFromRequest = useMemo(
+    () =>
+      !!request?.groupTourId &&
+      isGroupTourSpecialBookingId(request.groupTourId),
+    [request?.groupTourId],
+  );
+
   useEffect(() => {
     localStorage.setItem('bookingResultSource', 'payment');
   }, []);
@@ -78,7 +85,11 @@ export const PaymentPage = () => {
   const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
-      bookingType: isHotelPackage ? 2 : 1,
+      bookingType: isSpecialGroupTourFromRequest
+        ? 3
+        : isHotelPackage
+          ? 2
+          : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: packageDetails?.checkin ?? packageDetails?.destinationFlight?.departureDate ?? "",
       fullPrice: discountedFullPrice,
