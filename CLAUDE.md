@@ -5,96 +5,255 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm install           # install dependencies (Node 20+ required, use package-lock.json)
-npm run dev           # dev server on port 5173 (webpack mode)
-npm run build         # production build (type errors do NOT fail — see config notes)
-npm run lint          # ESLint across project
-npm run test          # Vitest test suite (one-shot)
-npm run test:coverage # Vitest with V8 coverage report
+npm run dev            # Dev server on port 5173 (webpack bundler)
+npm run build          # Production build (webpack)
+npm run lint           # ESLint
+npm run test           # Vitest (node env)
+npm run test:coverage  # V8 coverage → lcov report
 ```
 
-Run a single test file:
-```bash
-npx vitest run src/path/to/file.test.ts
+TypeScript build errors are **intentionally ignored** (`typescript.ignoreBuildErrors: true` in `next.config.ts`). ESLint uses Prettier: no semicolons, single quotes, no trailing commas.
+
+---
+
+## Architecture
+
+Travel booking platform built with Next.js 16 + React 19, deployed to Azure Container Registry.
+
+### Layer Order (strict — import only downward)
+
+```
+entities  →  features  →  widgets  →  views  →  app/[locale]
+                   ↑ all layers can import from shared ↑
 ```
 
-## Architecture Overview
+| Layer | Path | Role |
+|---|---|---|
+| `entities/` | `src/entities/` | Domain business logic: `package`, `user`, `blog`, `notification` |
+| `features/` | `src/features/` | Reusable UI feature components (DatePicker, PackageCard, PackageFilter…) |
+| `widgets/` | `src/widgets/` | Composed page sections (Header, BookingFlow, PackageDetails…) |
+| `views/` | `src/views/` | Page-level containers (one per route) |
+| `shared/` | `src/shared/` | UI foundation, utilities, configs, translations |
+| `components/` | `src/components/` | Legacy global components (Modal, Loader, etc.) |
+| `modules/` | `src/modules/` | Package-search orchestration + Recoil store |
 
-**Stack**: Next.js 16 (App Router) · React 19 · TypeScript · Chakra UI v2 + Emotion · TanStack Query + Recoil · Axios · Sass · i18next · Vitest
+### Path Aliases (tsconfig)
 
-### Layer Structure
+| Alias | Resolves to |
+|---|---|
+| `@/*` | `src/*` |
+| `@entities/*` | `src/entities/*` |
+| `@features/*` | `src/features/*` |
+| `@widgets/*` | `src/widgets/*` |
+| `@shared/*` | `src/shared/*` |
+| `@components/*` | `src/components/*` |
+| `@pages/*` | `src/views/*` |
+| `@app/*` | `src/app-legacy/*` |
+| `@ui` | `src/shared/ui` |
+| `@foundation/*` | `src/shared/ui/foundation/*` |
+
+---
+
+## Routing & Localization
+
+All routes live under `src/app/[locale]/` supporting `hy` (Armenian, default), `en`, `ru`.
+
+- **Middleware** (`src/proxy.ts`): rewrites bare paths → `/hy/…`; 301-redirects legacy prefixes `/arm`, `/eng`, `/rus`
+- **Locale validation**: `src/app/[locale]/layout.tsx` falls back to `hy` for unknown locales
+- **i18n config**: `src/shared/configs/i18next.ts` — custom path-based detector, merges main + faq + terms namespaces
+- **Translations**: JSON files in `src/shared/locales/` (`hy.json`, `en.json`, `ru.json`, plus `faq-*.json`, `terms-*.json`)
+- **Navigation**: always use `LanguageLink` (wraps Next.js `Link`) and `useLanguageNavigate` hook to preserve locale prefix
+
+---
+
+## UI System (Chakra UI)
+
+### Theme
+
+**Entry point**: `src/shared/ui/foundation/ThemeProvider/theme.ts` — calls `extendTheme()` merging colors, typography, and 14+ component overrides.
+
+**Breakpoints** (custom, non-standard names):
+
+| Token | px |
+|---|---|
+| `base` | 0 |
+| `xs` | 576 |
+| `sm` | 768 |
+| `smd` | 1024 |
+| `md` | 1280 |
+| `lg` | 1440 |
+
+**Colors** (`src/shared/ui/foundation/Colors/theme.ts`):
+- Gray scale: `gray.50` – `gray.900`
+- Brand: `blue.50` – `blue.900`, `red.500/700`, `green.500/600`, `orange.50/500`
+- Card gradients: `gr_Packages`, `gr_Hotel`, `gr_GroupTours` (linear-gradient tokens used on card backgrounds)
+
+**Typography** (`src/shared/ui/foundation/Typography/theme.ts`):
+- Font: `"Noto Sans Armenian"` globally
+- Text variants: `text-xs` through `text-6xl`
+- Heading variants: `heading-sm-xs` through `heading-lg-4xl` — all responsive (base / lg breakpoints)
+- `<Text>` defaults: `color="gray.800"`, normal weight; `<Heading>` defaults: `color="gray.800"`, bold
+
+**Icon** (`src/shared/ui/foundation/Iconography/index.tsx`): wraps `react-icomoon` in a Chakra `Box`, accepts `color` (via `themeColor()` helper) and `size` props.
+
+### Shared UI Components (`src/shared/ui/components/`)
+
+25 components — always import from `@ui` barrel or `@shared/ui`:
+
+| Component | Key props / notes |
+|---|---|
+| **Button** | `variant`: `solid-blue`, `solid-gray`, `solid-red`, `outline-blue`, `outline-red`, `text-blue` · `size`: `lg/md/sm/xs` · `icon`, `iconBefore`, `iconAfter` · `href` (native) or `to` (Next.js Link) |
+| **Input** | Wraps `InputGroup` + `FormControl` · `state`: `default`, `disabled`, `error`, `success` · `leftIconName`, `rightIconName`, `prefix`, `suffix`, `label`, `helperText` |
+| **Alert** | `status`: `success/error/warning/info` → maps to `green/red/orange/blue` border + icon |
+| **Badge** | 7 variants: `HotelStarBadge`, `StatusOnImageBadge`, `StartDateBadge`, `SearchTabBadge`, `DotBadge`, `GroupTourTagBadge`, `GroupTourDayBadge` |
+| **Container** | `variant="brand"` → max-width 1440px with responsive padding |
+| **SnackBar** | Toast notification; `success` / `error` status with icon |
+| **Modal** | Chakra Modal with custom theme override |
+| **Tabs** | Responsive variant styling |
+| **Skeleton / SkeletonCircle / SkeletonText** | Loading states |
+| **Radio / RadioCard** | `RadioCard` for card-style selection |
+| **StickySectionNav** | Section navigation with sticky positioning |
+| **Form** | `FormControl` wrapper with label, helper text, state styling |
+
+**Component conventions**:
+- Use `forwardRef` for DOM exposure (Button, Input)
+- Spread `{...props}` to allow Chakra prop passthrough
+- Responsive values: `{ base: '…', md: '…', lg: '…' }` syntax
+- Avoid `sx` for simple spacing — prefer direct Chakra props
+
+### Layout Components (`src/shared/ui/layout/`)
+
+| Component | Purpose |
+|---|---|
+| `PageLayout` | Full-page `Flex` column · optional Header/Footer · `minHeight="100dvh"` |
+| `CardSectionLayout` | White card with border, rounded corners, title slot, before-title slot for nav |
+| `PackageDetailsLayout` | Outer wrapper for package details page |
+| `PackageDetailsHeader` | Sticky header for package details with section anchors |
+
+**Layout tips**: always set `minH={0}` on flex children that scroll; use `scrollMarginTop` on anchor sections to offset sticky header height.
+
+---
+
+## State Management
+
+### Provider Composition (`src/app/providers.tsx`)
 
 ```
-src/
-├── app/[locale]/        # App Router — localized route segments (hy/en/ru)
-├── app-legacy/          # Legacy providers/styles still in use (@app/* alias)
-├── entities/            # Domain layer: API services + use-case orchestrators
-│   ├── package/         # PackageUseCases aggregates 10+ services
-│   ├── user/            # UserUseCases (auth + profile)
-│   ├── blog/            # BlogUseCases
-│   └── notification/    # Splash, price-alert, hotel-inquiry services
-├── features/            # Reusable product features (DatePicker, SearchCities…)
-├── widgets/             # Large UI blocks composed from features/entities
-├── views/ & modules/    # Page-level containers and view composition
-└── shared/              # Configs, UI primitives, hooks, utilities, locale JSONs
+CacheProvider (Chakra/Next.js SSR)
+  └─ ChakraProvider (custom theme)
+       └─ QueryClientProvider (staleTime: 60 000ms, no refetchOnWindowFocus)
+            └─ RecoilRoot (+ React 19 compat patch)
+                 └─ UserProvider (auth context)
+                      └─ ModalProvider (modal registry context)
+                           └─ PackagesSearchProvider
+                                └─ HotelPackagesSearchProvider
 ```
 
-### Provider Composition
+**React 19 + Recoil**: `src/shared/lib/recoilReact19Compat.ts` patches Recoil by exposing React internals through a proxy — must be imported before RecoilRoot.
 
-All providers are composed in [src/app/providers.tsx](src/app/providers.tsx): Chakra UI → TanStack Query → Recoil → UserContext → ModalProvider. When adding a new provider, wire it here.
+### Recoil Atoms (`src/modules/packages/store/store.ts`)
 
-### Data / API Pattern
+Key atoms (use `useRecoilValue`, `useSetRecoilState`, `useRecoilState`):
 
-Each entity domain exposes:
-1. **Service classes** — thin Axios wrappers; each creates an Axios instance with `NEXT_PUBLIC_API_URL` as base URL; response interceptors unwrap `response.data`
-2. **Use-case classes** — compose multiple services into higher-level methods (e.g., `PackageUseCases`)
-3. **Custom hooks** — TanStack Query hooks that call use-case methods; live in `entities/<domain>/model/`
+| Atom | Type | Purpose |
+|---|---|---|
+| `packagesAtom` | `TPackages[]` | Full package list |
+| `filteredPackagesAtom` | `TPackages[]` | Post-filter results |
+| `packageDetailsAtom` | `IPackage` | Currently viewed package |
+| `packageTravelDetailsAtom` | `IPackageTravelDetails` | Selected dates/travelers |
+| `citiesAtom` | `TCities[]` | Available cities |
+| `availableFlightsAtom` | `TFlights[]` | Outbound flights |
+| `returnFlightsAtom` | `TFlights[]` | Return flights |
+| `flightByDateAtom` | `TFlights[]` | Flights filtered by date |
+| `dictionaryAtom` | `atomFamily<DictionaryTypes>` | Food types, ticket classes, etc. |
+| `generatedOffersAtom` | `IGeneratedOffer[]` | Search-generated offers |
+| `generatedMultivendorOffersAtom` | `IGeneratedMultivendorOffer[]` | Hotel multi-vendor offers |
+| `userTokenAtom` | `string` | Auth Bearer token |
+| `bookingContextAtom` | `BookingContext \| null` | Booking flow state |
+| `selectedPackageAtom` | `PackageEntity \| null` | Package selected for booking |
+| `bookingDrawerAtom` | `{ isOpen, selectedMealPlan, selectedRoomOffer }` | Hotel booking drawer |
+| `preventSideModalCloseAtom` | `boolean` | Prevent modal close from outside click |
+| `isLateCheckoutAtom` | `boolean` | Late checkout option |
+| `groupsAtom` | `GroupTourEntity[]` | Group tour list |
 
-Do not call services directly from components — go through use-case hooks.
+---
 
-### State Management
+## Data Fetching
 
-| Concern | Tool |
-|---------|------|
-| Server / async data | TanStack Query (staleTime 60s, no refetch-on-focus) |
-| Global client UI state | Recoil atoms |
-| Auth / user session | `UserContext` + localStorage token |
-| Modal state | Reducer in `app-legacy/providers/ModalProvider/` |
-| Forms | React Hook Form + Yup |
+### Service Class Pattern
 
-Recoil requires a React 19 compat shim at [src/shared/lib/recoilReact19Compat.ts](src/shared/lib/recoilReact19Compat.ts).
+Each entity domain has Axios-based service classes under `entity/api/`:
 
-### Routing & Localization
+```ts
+class PackageService {
+  private request<T>(config): Promise<T> {
+    const instance = axios.create({ baseURL })
+    instance.interceptors.response.use(r => r.data)  // unwrap response
+    return instance(config)
+  }
+  getPackageList() { … }
+  generateOffers(input, params) { … }   // POST /V2/package/generateOffers
+}
+```
 
-- Supported locales: `hy` (Armenian, default), `en`, `ru`
-- [src/proxy.ts](src/proxy.ts) (Next.js middleware): rewrites bare paths → `/hy/*`, issues 301s for legacy prefixes (`/arm`, `/eng`, `/rus`)
-- [next.config.ts](next.config.ts): mirrors those redirects and configures Sass include paths rooted at `src`
-- [src/app/[locale]/layout.tsx](src/app/[locale]/layout.tsx): validates locale, falls back to `hy`
-- Translation keys live in `src/shared/locales/{hy,en,ru}.json`; add keys to all three files when adding copy
+- API versioning: `/V2/` (current), `/v1/` (legacy)
+- Auth: `Authorization: Bearer <token>` header on protected endpoints
+- Base URL: `NEXT_PUBLIC_API_URL` env var
+- Each service creates its Axios instance (no shared singleton)
 
-### TypeScript Path Aliases (tsconfig.json)
+### Use-Case Orchestrators
 
-`@components`, `@foundation`, `@ui`, `@widgets`, `@features`, `@shared`, `@entities`, `@app`, `@pages` — prefer these over relative paths.
+`PackageUseCases` (`src/entities/package/api/PackageUseCases.ts`) composes multiple services for complex flows (e.g., search → generate offers → select flight). Call use-cases from hooks, not directly from components.
 
-## Configuration Notes
+### TanStack Query Hooks
 
-- `next.config.ts` sets `typescript.ignoreBuildErrors: true` — type errors won't block `npm run build`. Always run `npm run lint` and `npm run test` explicitly to catch issues.
-- `.lottie` files are handled as webpack asset resources; no extra setup needed.
-- `images.remotePatterns` is broadly open — tighten when adding new image domains.
+Custom hooks under each entity's `hooks/` folder wrap service calls:
+
+```ts
+// entities/package/hooks/useSearchPackage.ts
+export function useSearchPackage(params) {
+  return useQuery({ queryKey: ['search', params], queryFn: () => PackageService.search(params) })
+}
+```
+
+Global config: `staleTime: 60_000`, `refetchOnWindowFocus: false`.
+
+---
+
+## Modal System
+
+**ModalProvider** (`src/app-legacy/providers/ModalProvider/index.tsx`): context + `useReducer` pattern.
+
+- **Registry**: `auth`, `travelers`, `payment`, `paymentSuccess`, `requestCancel`, `profileDetails`, `paymentError` → mapped to their widget components
+- **Actions**: `'open'`, `'update'`, `'close'`
+- **Chakra integration**: uses `useDisclosure` for `isOpen/onOpen/onClose`
+
+**Legacy custom Modal** (`src/components/Modal/Modal.tsx`): SCSS-based (`.edit-wrapper`, `.edit-inner`), handles outside-click via `useOtsideClick` hook, reads `preventSideModalCloseAtom` before closing.
+
+---
+
+## Key Environment Variables
+
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Primary API base (V2 endpoints) |
+| `NEXT_PUBLIC_API_URL_OLD` | Legacy API endpoint |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Maps embed in package details |
+| `NEXT_PUBLIC_APP_ENV` | Environment flag: `stage`, `staging`, `test`, `qa` |
+
+---
+
+## Global Styles
+
+- **`src/app/globals.css`**: font (`"Noto Sans Armenian"`), button/input reset, `.container` max-width 1170px (responsive padding 32px → 16px), Slick carousel import
+- **`src/styles/`**: SCSS utilities — `common.scss` (`.pointer`, `.ellipsis`, ReactModal overrides), `helper.scss`, spacing/display utilities
+- **Sass include paths** rooted at `src/` — import SCSS as `@use 'styles/variables'` without the full path
+
+---
 
 ## Testing
 
-- Test files: `src/**/*.test.ts` and `src/**/*.test.tsx`, environment: `node`
-- Coverage is tracked only for `src/shared/utils/**/*.ts` (excludes `index.ts`)
-- Tests also exist for services (`entities/*/api/`) and middleware (`src/proxy.ts`) but are outside the coverage scope
-
-## Environment Variables
-
-```
-NEXT_PUBLIC_API_URL              # primary API base URL
-NEXT_PUBLIC_API_URL_OLD          # legacy API base URL (constants only)
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY  # Google Maps embed key
-NEXT_PUBLIC_APP_ENV              # staging detection (stage/staging/test/qa)
-```
-
-Set these in `.env.local`.
+- **Framework**: Vitest (node environment)
+- **Coverage scope**: `src/shared/utils/**/*.ts` only (V8 provider → lcov)
+- **Test files**: `**/*.test.ts` / `**/*.test.tsx`
+- Existing tests: `PromoCodeService`, `SearchService`, `RequestServiceV2`, `useLanguageRouting`
