@@ -7,7 +7,7 @@ import { useBreakpoint } from '@/shared/hooks'
 import { Box, VStack, Flex, Tag, TagRightIcon, Show } from '@chakra-ui/react'
 import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import { CURRENCY_MAP } from '@shared/model'
-import { Button, Icon, Text, Tooltip } from '@ui'
+import { Button, Checkbox, Icon, Text, Tooltip } from '@ui'
 import { getPluralForm } from '@shared/helpers'
 import { formatNumber } from '@shared/utils'
 import moment, { type Moment } from 'moment'
@@ -16,7 +16,10 @@ export const PackageCardHorizontalDetail = ({
   tourPackage,
   nights,
   isHotelPackage,
-  childrenTravelers
+  childrenTravelers,
+  isCompareSelected = false,
+  isCompareDisabled = false,
+  onCompareToggle,
 }: PackageCardHorizontalDetailProps) => {
   const { t } = useTranslation()
   const { isMd } = useBreakpoint()
@@ -32,9 +35,14 @@ export const PackageCardHorizontalDetail = ({
 
   return (
     <Box width={{ base: 'auto', md: '254px' }} p="4">
-      <VStack align={{ base: 'start', md: 'end' }}>
+      <VStack align={{ base: 'start', md: 'start' }}>
         {isMd && (
           <>
+            <CompareButton
+              isChecked={isCompareSelected}
+              isDisabled={isCompareDisabled}
+              onToggle={onCompareToggle}
+            />
             <DateTag
               fromDate={fromDate}
               toDate={toDate}
@@ -45,8 +53,8 @@ export const PackageCardHorizontalDetail = ({
               tourPackage={tourPackage}
               childrenTravelers={childrenTravelers}
             />
-            <PriceDisplay tourPackage={tourPackage} />
-            <Flex height="28px" align="center">
+            <Flex justify="flex-start" align="center" width="full" flexDirection="row" gap={2}>
+              <PriceDisplay tourPackage={tourPackage} />
               <ApproximatePriceDisplay tourPackage={tourPackage} />
             </Flex>
           </>
@@ -66,8 +74,7 @@ export const PackageCardHorizontalDetail = ({
                 tourPackage={tourPackage}
               />
             </Flex>
-
-            <Flex justify="space-between" align="center" width="full">
+            <Flex justify="space-between" align="center" width="full" >
               <Text size="xs" color="gray.600">
                 {t`startFrom`}
               </Text>
@@ -83,7 +90,6 @@ export const PackageCardHorizontalDetail = ({
             </Flex>
           </>
         )}
-
         <Button
           hidden={!isMd}
           width="full"
@@ -153,6 +159,43 @@ const DateTag = ({ tourPackage, fromDate, toDate, nights }: DateTagProps) => {
   )
 }
 
+
+const CompareButton = ({
+  isChecked,
+  isDisabled,
+  onToggle,
+}: {
+  isChecked: boolean
+  isDisabled: boolean
+  onToggle?: (isChecked: boolean) => void
+}) => {
+  const { t } = useTranslation()
+
+  return (
+    <Flex
+      alignItems="center"
+      gap={2}
+      cursor={isDisabled ? "not-allowed" : "pointer"}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (isDisabled) return
+        onToggle?.(!isChecked)
+      }}
+    >
+      <Checkbox
+        isChecked={isChecked}
+        isDisabled={isDisabled}
+        pointerEvents="none"
+        onChange={() => undefined}
+      />
+      <Text size="xs" color="gray.600">
+        {t`compare`}
+      </Text>
+    </Flex>
+  )
+}
+
 const PriceDisplay = ({
   tourPackage
 }: Pick<PackageCardHorizontalDetailProps, 'tourPackage'>) => {
@@ -173,11 +216,11 @@ const PriceDisplay = ({
 const ApproximatePriceDisplay = ({
   tourPackage
 }: Pick<PackageCardHorizontalDetailProps, 'tourPackage'>) => (
-  <>
+  <Flex alignItems="center">
     <Icon name="approximate" size="12" color="gray.600" />
-    <Text size="xs" color="gray.600" ml="0.5">
-      {formatNumber(parseFloat(tourPackage.priceInCurrency))}{' '}
+    <Text size="xs" color="gray.600">
+      {formatNumber(tourPackage.priceInCurrency)}{' '}
       {CURRENCY_MAP[tourPackage.currency]}
     </Text>
-  </>
+  </Flex>
 )

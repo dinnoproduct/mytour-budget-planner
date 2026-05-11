@@ -468,5 +468,7 @@
   "groupToursSort.cheapest": "цене",
   "groupToursSort.title": "Сортировать по",
   "reviews": "{{count}} отзывов",
-  "writeReview": "Написать отзыв"
+  "writeReview": "Написать отзыв",
+  "compare": "Сравнить",
+  "compareFooterBar.selected": "для сравнения"
 }

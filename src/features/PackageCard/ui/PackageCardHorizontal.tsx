@@ -21,6 +21,9 @@ export const PackageCardHorizontal = ({
   tourPackage = {},
   link,
   nights,
+  isCompareSelected = false,
+  isCompareDisabled = false,
+  onCompareToggle,
   ...props
 }: PackageCardHorizontalProps) => {
   const { i18n, t } = useTranslation();
@@ -37,7 +40,7 @@ export const PackageCardHorizontal = ({
   const cityLabel = useMemo(
     () =>
       tourPackage.city[
-        ("name" + languageSuffix) as keyof PackageCity
+      ("name" + languageSuffix) as keyof PackageCity
       ] as string,
     [tourPackage.city, languageSuffix],
   );
@@ -45,7 +48,7 @@ export const PackageCardHorizontal = ({
   const countryLabel = useMemo(
     () =>
       tourPackage.city.country[
-        ("name" + languageSuffix) as keyof PackageCountry
+      ("name" + languageSuffix) as keyof PackageCountry
       ] as string,
     [tourPackage.city.country, languageSuffix],
   );
@@ -136,6 +139,9 @@ export const PackageCardHorizontal = ({
           nights={nights}
           isHotelPackage={isHotelPackage}
           childrenTravelers={childrenTravelers}
+          isCompareSelected={isCompareSelected}
+          isCompareDisabled={isCompareDisabled}
+          onCompareToggle={onCompareToggle}
         />
       </Flex>
     </Layout>

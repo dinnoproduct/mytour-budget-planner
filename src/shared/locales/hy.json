@@ -468,5 +468,7 @@
   "groupToursSort.cheapest": "գնի",
   "groupToursSort.title": "Դասավորել ըստ",
   "reviews": "{{count}} գնահատական",
-  "writeReview": "Թողնել գնահատական"
+  "writeReview": "Թողնել գնահատական",
+  "compare": "Համեմատել",
+  "compareFooterBar.selected": "Համեմատելու համար"
 }

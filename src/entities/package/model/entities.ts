@@ -35,7 +35,7 @@ export interface PackageEntity {
   returnFlight: PackageFlight
   childMaxAge: number
   usdRate: number
-  priceInCurrency: string
+  priceInCurrency: number
   currency: Currency
   rate: number
   checkin: string
@@ -44,6 +44,9 @@ export interface PackageEntity {
   remainingDays: number
   remainingHours: number
   lateCheckout: boolean
+  prepaymentInfo?: PackagePrepaymentInfo
+  partnerPrice?: number
+  filters?: PackageFilter[]
 }
 
 export type Currency = 'USD' | 'EUR' | 'AMD' | 'RUB'
@@ -55,6 +58,27 @@ export interface PackageCity {
   nameRus: string
   countryId: number
   country: PackageCountry
+  filters?: PackageFilter[]
+}
+
+export interface PackageFilterValue {
+  id: number
+  name: {
+    en: string
+    ru: string
+    hy: string
+  }
+  cityIds: number[]
+}
+
+export interface PackageFilter {
+  id: number
+  name: {
+    en: string
+    ru: string
+    hy: string
+  }
+  values: PackageFilterValue[]
 }
 
 export interface PackageCountry {
@@ -75,6 +99,7 @@ export interface PackageTravelAgency {
   telegram: null | string
   establishmentDate: string
   contactPersonDetails: string
+  externalId?: string
 }
 
 export interface PackageHotel {
@@ -89,6 +114,19 @@ export interface PackageHotel {
   descriptionEng: string
   descriptionRus: string
   images: PackageImage[]
+  city?: PackageCity
+}
+
+export interface PackagePrepaymentInfo {
+  travelAgencyId: number
+  bookingType: number
+  paymentType: string
+  fullPrice: number
+  minimumAcceptablePayment: number
+  minimumAcceptablePaymentPercentage: number
+  firstPaymentDate: string | null
+  secondPaymentDate: string | null
+  minimumAcceptableDaysCount: number | null
 }
 
 export interface PackageImage {
