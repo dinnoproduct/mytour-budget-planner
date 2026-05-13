@@ -470,5 +470,8 @@
   "reviews": "{{count}} reviews",
   "writeReview": "Write a review",
   "compare": "Compare",
-  "compareFooterBar.selected": "for comparison"
+  "compareFooterBar.selected": "for comparison",
+  "compare.addMore": "Add more {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Go to search page",
+  "compare.title": "Comparing"
 }

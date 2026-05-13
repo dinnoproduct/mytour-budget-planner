@@ -73,6 +73,7 @@ export interface PackageFilterValue {
 
 export interface PackageFilter {
   id: number
+  comparisonIncluded: boolean,
   name: {
     en: string
     ru: string

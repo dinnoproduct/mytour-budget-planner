@@ -15,6 +15,7 @@ type CompareFooterBarProps = {
   getCompareKey: (packageEntity: PackageEntity) => string;
   onRemove: (key: string) => void;
   onClear: () => void;
+  onCompare: () => void;
 };
 
 export const CompareFooterBar = ({
@@ -23,6 +24,7 @@ export const CompareFooterBar = ({
   getCompareKey,
   onRemove,
   onClear,
+  onCompare,
 }: CompareFooterBarProps) => {
   const { t } = useTranslation();
   const isVisible = selectedPackages.length > 1;
@@ -74,7 +76,11 @@ export const CompareFooterBar = ({
             >
               {t("clear")}
             </Button>
-            <Button variant="solid-blue" width={{ base: "full", md: "auto" }}>
+            <Button
+              variant="solid-blue"
+              width={{ base: "full", md: "auto" }}
+              onClick={onCompare}
+            >
               {t("compare")}
             </Button>
           </HStack>

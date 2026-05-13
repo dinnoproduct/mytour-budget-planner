@@ -23,6 +23,7 @@ import { Skeleton } from "@shared/ui";
 import { LoaderWithText } from "@/components/Loader/Loader";
 import { useTranslation } from "react-i18next";
 import { CompareFooterBar } from "./Compare/CompareFooterBar";
+import { CompareModal } from "./Compare/CompareModal";
 
 const MAX_COMPARE_ITEMS = 5;
 
@@ -155,10 +156,12 @@ export const PackageList = () => {
   const [selectedComparePackages, setSelectedComparePackages] = useState<
     PackageEntity[]
   >([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
   useEffect(() => {
     if (!filteredActivePackages?.length) {
       setSelectedComparePackages([]);
+      setIsCompareModalOpen(false);
       return;
     }
 
@@ -170,6 +173,12 @@ export const PackageList = () => {
       prev.filter((item) => activeKeys.has(getCompareKey(item))),
     );
   }, [filteredActivePackages]);
+
+  useEffect(() => {
+    if (selectedComparePackages.length < 2 && isCompareModalOpen) {
+      setIsCompareModalOpen(false);
+    }
+  }, [selectedComparePackages.length, isCompareModalOpen]);
 
   const selectedCompareKeys = useMemo(
     () => new Set(selectedComparePackages.map((item) => getCompareKey(item))),
@@ -282,6 +291,22 @@ export const PackageList = () => {
           )
         }
         onClear={() => setSelectedComparePackages([])}
+        onCompare={() => setIsCompareModalOpen(true)}
+      />
+      <CompareModal
+        isOpen={isCompareModalOpen}
+        onClose={() => setIsCompareModalOpen(false)}
+        packages={selectedComparePackages}
+        cities={activeCities}
+        selectedCityIds={selectedCityIds}
+        maxCompareItems={MAX_COMPARE_ITEMS}
+        itemTypeLabel={t(isPackagesSearchView ? 'package' : 'hotel')}
+        onRemove={(packageEntity) =>
+          setSelectedComparePackages((prev) =>
+            prev.filter((item) => getCompareKey(item) !== getCompareKey(packageEntity)),
+          )
+        }
+        getLink={generateLink}
       />
     </Layout>
   );

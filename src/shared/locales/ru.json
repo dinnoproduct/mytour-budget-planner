@@ -470,5 +470,8 @@
   "reviews": "{{count}} отзывов",
   "writeReview": "Написать отзыв",
   "compare": "Сравнить",
-  "compareFooterBar.selected": "для сравнения"
+  "compareFooterBar.selected": "для сравнения",
+  "compare.addMore": "Добавить ещё {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Перейти к поиску",
+  "compare.title": "Сравнение"
 }
