@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
+import { readNavigationState } from "./_navigationState";
 
 /**
  * react-router-dom `useLocation` compat for next/navigation.
@@ -9,13 +10,14 @@ import { usePathname, useSearchParams } from "next/navigation";
 export function useLocation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const search = searchParams.size > 0 ? `?${searchParams.toString()}` : "";
+  const search = searchParams && searchParams.size > 0 ? `?${searchParams.toString()}` : "";
+  const state = readNavigationState(`${pathname}${search}`);
 
   return {
     pathname,
     search,
     hash: "",
-    state: null as unknown,
+    state,
     key: "default",
   };
 }
