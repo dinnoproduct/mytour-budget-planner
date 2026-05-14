@@ -1,12 +1,16 @@
 import { Box, Flex, VStack } from '@chakra-ui/react'
-import { type PackageEntity } from '@entities/package'
-import { Button, Icon, Text } from '@ui'
+import {
+  type DictionaryTypes,
+  type PackageEntity,
+  useDictionary,
+} from '@entities/package'
+import { Button, Icon, StatusOnImageBadge, Text } from '@ui'
 import { CURRENCY_MAP } from '@shared/model'
 import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import ImageSlider from '@features/PackageCard/ui/ImageSlider'
 import { formatNumber } from '@shared/utils'
+import { useMemo } from 'react'
 import {
-  getDateRange,
   hasComparedValue,
 } from './helpers'
 import { type CompareFilterGroup } from './types'
@@ -28,13 +32,25 @@ export const ComparePackageCard = ({
   getLink,
   t
 }: ComparePackageCardProps) => {
+  const { data: foodTypes = [] } = useDictionary(
+    'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
+  )
+  const foodType = useMemo(
+    () =>
+      foodTypes.find(({ key }) => key === pack.foodType)?.value ??
+      String(pack.foodType ?? ''),
+    [foodTypes, pack.foodType]
+  )
+
   return (
     <Box
       border="1px solid"
       borderColor="gray.100"
       overflow="hidden"
       bg="white"
-      minW="20%"
+      minW={{ base: '340px', md: '20%' }}
+      w={{ base: '340px', md: 'auto' }}
+      flexShrink={0}
     >
       <Box bg="gray.50" p={4}>
         <ImageSlider
@@ -54,6 +70,23 @@ export const ComparePackageCard = ({
               {cityLabel}
             </Text>
           </Flex>
+          {!!pack.foodType && (
+            <Flex alignItems="center" gap={1}>
+              <Icon name="status-success-outlined" size="16" />
+              <StatusOnImageBadge
+                status="foodType"
+                position="static"
+                backgroundColor="transparent"
+                p={0}
+                textProps={{
+                  color: "gray.600",
+                }}
+                rounded="24px"
+              >
+                {foodType}
+              </StatusOnImageBadge>
+            </Flex>
+          )}
         </Box>
 
         <Flex justify="space-between" align="center" px={4}>

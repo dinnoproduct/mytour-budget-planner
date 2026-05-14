@@ -19,8 +19,10 @@ export const SelectedCompareItem = ({
 
   return (
     <Flex
-      w={"full"}
-      maxW={'20%'}
+      w={{ base: "240px", md: "full" }}
+      minW={{ base: "240px", md: "0" }}
+      maxW={{ base: "240px", md: "20%" }}
+      flexShrink={0}
       align="stretch"
       border="1px solid"
       borderColor="gray.200"

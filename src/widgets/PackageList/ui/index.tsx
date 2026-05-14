@@ -185,7 +185,8 @@ export const PackageList = () => {
     [selectedComparePackages],
   );
 
-  const showCompareFooter = selectedComparePackages.length > 1;
+  const showCompareFooter =
+    selectedComparePackages.length > 1 && !isCompareModalOpen;
 
   const handleCompareToggle = (
     packageEntity: PackageEntity,
@@ -292,6 +293,7 @@ export const PackageList = () => {
         }
         onClear={() => setSelectedComparePackages([])}
         onCompare={() => setIsCompareModalOpen(true)}
+        isHidden={isCompareModalOpen}
       />
       <CompareModal
         isOpen={isCompareModalOpen}

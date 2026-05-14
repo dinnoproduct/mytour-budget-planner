@@ -56,16 +56,19 @@ export const CompareModal = ({
     <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside">
       <ModalOverlay bg="blackAlpha.600" />
       <ModalContent
-        mx="4"
-        my={{ base: '8', md: '12' }}
-        rounded="2xl"
+        mx={{ base: 0, md: '4' }}
+        my={{ base: 0, md: '12' }}
+        rounded={{ base: 'none', md: '2xl' }}
         overflow="hidden"
         boxShadow="0 24px 64px rgba(15, 23, 42, 0.18)"
-        maxW={modalMaxWidth}
+        width={{ base: '100vw', md: 'auto' }}
+        maxW={{ base: '100vw', md: modalMaxWidth }}
+        height={{ base: '100dvh', md: 'auto' }}
+        maxH={{ base: '100dvh', md: 'calc(100dvh - 96px)' }}
       >
         <ModalHeader py="4" px="5" borderBottom="1px solid" borderColor="gray.100">
-          <Text size="2xl" fontWeight="600" color="gray.800">
-            {t('compare')}
+          <Text size="2xl" fontWeight="600" color="gray.800" mb="2">
+            {t('compare.title')}
           </Text>
           <Flex>
             <GroupTourTagBadge>{compareSummary}</GroupTourTagBadge>
@@ -78,10 +81,17 @@ export const CompareModal = ({
           _hover={{ bg: 'transparent' }}
           _active={{ bg: 'transparent' }}
         />
-        <ModalBody p="0">
+        <ModalBody
+          p={'0'}
+          overflowX={{ base: 'auto', md: 'visible' }}
+          overflowY="auto"
+        >
           <SimpleGrid
             columns={{ base: 1, md: gridColumnCount > 1 ? gridColumnCount : 1 }}
-            width="100%"
+            display={{ base: 'flex', md: 'grid' }}
+            gap={0}
+            width={{ base: 'max-content', md: '100%' }}
+            minWidth={{ base: 'max-content', md: '100%' }}
           >
             {packages.map(pack => {
               const cityLabel = pack.city[

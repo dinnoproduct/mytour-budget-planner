@@ -57,6 +57,7 @@ export const PackageCardHorizontalDetail = ({
               <PriceDisplay tourPackage={tourPackage} />
               <ApproximatePriceDisplay tourPackage={tourPackage} />
             </Flex>
+
           </>
         )}
         {!isMd && (
@@ -66,7 +67,6 @@ export const PackageCardHorizontalDetail = ({
                 tourPackage={tourPackage}
                 childrenTravelers={childrenTravelers}
               />
-
               <DateTag
                 fromDate={fromDate}
                 toDate={toDate}
@@ -88,6 +88,11 @@ export const PackageCardHorizontalDetail = ({
                 </Flex>
               </Flex>
             </Flex>
+            <CompareButton
+              isChecked={isCompareSelected}
+              isDisabled={isCompareDisabled}
+              onToggle={onCompareToggle}
+            />
           </>
         )}
         <Button
@@ -175,6 +180,12 @@ const CompareButton = ({
     <Flex
       alignItems="center"
       gap={2}
+      borderBottom={{ base: "0px solid", md: "1px solid" }}
+      borderTop={{ base: "1px solid", md: "0px solid" }}
+      borderColor={{ base: "gray.100", md: "gray.100" }}
+      width="full"
+      pt={{ base: 4, md: 0 }}
+      pb={{ base: 0, md: 4 }}
       cursor={isDisabled ? "not-allowed" : "pointer"}
       onClick={(e) => {
         e.preventDefault()
@@ -192,7 +203,7 @@ const CompareButton = ({
       <Text size="xs" color="gray.600">
         {t`compare`}
       </Text>
-    </Flex>
+    </Flex >
   )
 }
 
