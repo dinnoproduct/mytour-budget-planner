@@ -8,7 +8,7 @@ import { PackageDescription } from "@widgets/PackageDetails/ui/PackageDescriptio
 import { type DictionaryTypes, useDictionary } from "@entities/package";
 import { useMemo } from "react";
 import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout";
-import { GuestReviews } from "@/widgets/GuestReviews/GuestReviews";
+import { GuestReviews } from "@widgets/GuestReviews";
 import {
   PackageDetailsSectionNav,
   PACKAGE_DETAILS_SECTION_IDS,

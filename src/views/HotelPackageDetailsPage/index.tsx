@@ -24,7 +24,6 @@ import {
   isLateCheckoutAtom,
 } from "@/modules/packages/store/store";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { PackageDetailsHeader as SharedHeader } from "@/shared/ui/layout/PackageDetailsHeader";
 import { PackageDetailsLayout } from "@/shared/ui/layout/PackageDetailsLayout";
 import { usePackageImages } from "@/hooks/usePackageImages";
 import { metaEvents } from "@/shared/configs/metaEvents";

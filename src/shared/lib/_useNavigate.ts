@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { persistNavigationState } from "./_navigationState";
 
 type NavigateOptions = {
   replace?: boolean;
@@ -23,6 +24,10 @@ export function useNavigate() {
         router.forward();
       }
       return;
+    }
+
+    if (options?.state !== undefined) {
+      persistNavigationState(to, options.state);
     }
 
     if (options?.replace) {
