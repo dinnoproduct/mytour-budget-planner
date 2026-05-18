@@ -73,6 +73,8 @@ export const PackageList = () => {
     queryParams.set("adultsCount", tourPackage.adultTravelers.toString());
     queryParams.set("childrenCount", childrenTravelers.toString());
     queryParams.set("hotelId", tourPackage.hotel.id.toString());
+    queryParams.set("offerId", tourPackage.offerId.toString());
+    queryParams.set("agencyId", tourPackage.travelAgency.id.toString());
     queryParams.set("roomId", tourPackage.roomType.toString());
 
     if (isPackagesSearchView) {
