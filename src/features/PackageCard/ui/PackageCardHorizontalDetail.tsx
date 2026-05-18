@@ -88,6 +88,7 @@ export const PackageCardHorizontalDetail = ({
                 </Flex>
               </Flex>
             </Flex>
+
             <CompareButton
               isChecked={isCompareSelected}
               isDisabled={isCompareDisabled}

@@ -1,14 +1,14 @@
 import { Box, Flex, Stack, type StackProps } from '@chakra-ui/react'
 import type { LayoutProps } from '@widgets/PackageSearch/ui/types'
 import { packageSearchVariants } from '@widgets/PackageSearch/ui/theme'
-import {Tabs, Text} from '@ui'
+import { Tabs, Text } from '@ui'
 import React from 'react'
 import {
   GroupTabItem,
   HotelTabItem,
   PackageTabItem
 } from '@widgets/PackageSearch/ui/TabItem'
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 export const Layout = ({
   className,
@@ -23,51 +23,52 @@ export const Layout = ({
 
   const { t } = useTranslation()
   return (
-  <Box
-    className={className}
-    position="relative"
-    width="full"
-    display='flex'
-    {...packageSearchVariants[variant].wrapper}
-  >
     <Box
-      bgSize="cover"
-      bgPosition="center"
-      bgRepeat="no-repeat"
+      className={className}
+      position="relative"
       width="full"
-      bgColor="white"
-      {...containerProps}
-      {...packageSearchVariants[variant].container}
+      display='flex'
+      {...packageSearchVariants[variant].wrapper}
     >
-      <Flex height="full" {...packageSearchVariants[variant].contentWrapper}>
-        <Box
-          rounded="xl"
-          w={{base: 'full', md: 'auto'}}
-          {...packageSearchVariants[variant].content}
-          {...contentProps}
-        >
-          {showTabs ? <Text fontSize={{base: '24px', sm: '30px'}} py={{base: '6', sm: '10'}} color='white' textAlign='center' fontWeight='bold'>
-            {t`planTrip`}
-          </Text> : null}
-          <Tabs
-            labels={[
-              <HotelTabItem key="hotel-tab"/>,
-              <PackageTabItem key="package-tab"/>,
-              <GroupTabItem key="group-tab"/>
-            ]}
-            variant="line"
-            align="center"
-            defaultIndex={defaultTabIndex}
-            onChange={onTabChange}
-            showTabs={showTabs}
+      <Box
+        bgSize="cover"
+        bgPosition="center"
+        bgRepeat="no-repeat"
+        width="full"
+        bgColor="white"
+        {...containerProps}
+        {...packageSearchVariants[variant].container}
+      >
+        <Flex height="full" {...packageSearchVariants[variant].contentWrapper}>
+          <Box
+            rounded="xl"
+            w={{ base: 'full', md: 'auto' }}
+            {...packageSearchVariants[variant].content}
+            {...contentProps}
           >
-            {children}
-          </Tabs>
-        </Box>
-      </Flex>
+            {showTabs ? <Text fontSize={{ base: '24px', sm: '30px' }} py={{ base: '6', sm: '10' }} color='white' textAlign='center' fontWeight='bold'>
+              {t`planTrip`}
+            </Text> : null}
+            <Tabs
+              labels={[
+                <HotelTabItem key="hotel-tab" />,
+                <PackageTabItem key="package-tab" />,
+                <GroupTabItem key="group-tab" />
+              ]}
+              variant="line"
+              align="center"
+              defaultIndex={defaultTabIndex}
+              onChange={onTabChange}
+              showTabs={showTabs}
+            >
+              {children}
+            </Tabs>
+          </Box>
+        </Flex>
+      </Box>
     </Box>
-  </Box>
-)}
+  )
+}
 
 export const LayoutFixed = ({
   children,

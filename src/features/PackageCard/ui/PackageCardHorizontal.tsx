@@ -90,7 +90,7 @@ export const PackageCardHorizontal = ({
           grow={1}
           flexDirection={{ base: "column", md: "row" }}
         >
-          <Box width="326px">
+          <Box width={{ base: "full", md: "326px" }}>
             <ImageSlider
               images={tourPackage.hotel.images}
               starsCount={tourPackage.hotel.stars}
@@ -161,8 +161,8 @@ const Layout = ({
     <LanguageLink
       to={link}
       _hover={{ textTransform: "none" }}
-      maxWidth={{ base: "362px", md: "full" }}
-      width={{ base: "auto", md: "full" }}
+      maxWidth={{ base: "full", md: "full" }}
+      width={{ base: "full", md: "full" }}
       target="_blank"
       {...props}
     >

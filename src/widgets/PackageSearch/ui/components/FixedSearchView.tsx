@@ -8,6 +8,7 @@ import {
   usePackagesSearchContext
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
+import { packageSearchVariants } from '../theme'
 
 interface FixedSearchViewProps {
   containerProps?: any
@@ -44,9 +45,21 @@ export const FixedSearchView: React.FC<FixedSearchViewProps> = ({
     setHotel?.(index)
   }
 
+  const fixedWithoutTabsGradientProps =
+    variant === 'fixedWithoutTabs'
+      ? activeTab === 1
+        ? packageSearchVariants.fixedWithoutTabs.hotelContainer
+        : activeTab === 2
+          ? packageSearchVariants.fixedWithoutTabs.groupToursContainer
+          : packageSearchVariants.fixedWithoutTabs.packagesContainer
+      : {}
+
   return (
     <LayoutFixed
-      containerProps={containerProps}
+      containerProps={{
+        ...containerProps,
+        ...fixedWithoutTabsGradientProps
+      }}
       contentProps={contentProps}
       variant={variant}
     >
