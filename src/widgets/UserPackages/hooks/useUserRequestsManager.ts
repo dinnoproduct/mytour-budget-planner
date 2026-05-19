@@ -12,7 +12,8 @@ import {
   useUserRequests,
   type NormalizedRequestEntity,
   useRequestCancellationMessageAsync,
-  useGroupTourPackageFromRequest
+  useGroupTourPackageFromRequest,
+  isSpecialGroupTourRequestVisibleInMyPackages
 } from '@entities/package'
 import { useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
@@ -55,7 +56,11 @@ export const useUserRequestsManager = () => {
 
       const normalUserRequests = userRequests.map(normalizeRequest)
 
-      const active = normalUserRequests.filter(
+      const visibleRequests = normalUserRequests.filter(
+        (request) => isSpecialGroupTourRequestVisibleInMyPackages(request),
+      )
+
+      const active = visibleRequests.filter(
         request =>
           [
             RequestStatus.InProcess,
@@ -68,7 +73,7 @@ export const useUserRequestsManager = () => {
             moment(request.endDate).isAfter(today))
       )
 
-      const pending = normalUserRequests
+      const pending = visibleRequests
         .filter(request =>
           [RequestStatus.Draft, RequestStatus.NotPaid].includes(request.status)
         )
@@ -87,13 +92,13 @@ export const useUserRequestsManager = () => {
           return request
         })
 
-      const passed = normalUserRequests.filter(
+      const passed = visibleRequests.filter(
         request =>
           request.status === RequestStatus.Purchased &&
           moment(request.endDate).isBefore(today)
       )
 
-      const cancelled = normalUserRequests.filter(
+      const cancelled = visibleRequests.filter(
         request => request.status === RequestStatus.Cancelled
       )
 
