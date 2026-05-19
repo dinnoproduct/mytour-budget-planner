@@ -7,7 +7,7 @@ import { DatePickerHeader } from './DatePickerHeader'
 import {Button, Icon, Text} from '@ui'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@shared/hooks'
-import { DatePickerFooter } from '@features/DatePickerFlights/ui/DatePickerFooter.tsx'
+import { DatePickerFooter } from '@features/DatePickerFlights/ui/DatePickerFooter'
 import {ChevronRightIcon} from "@chakra-ui/icons";
 
 export const DatePickerFlights = ({

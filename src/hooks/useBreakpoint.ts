@@ -1,6 +1,8 @@
+"use client"
+
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { screenBreakpointAtom } from '../modules/packages/store/store.ts';
+import { screenBreakpointAtom } from '../modules/packages/store/store';
 
 const useScreenBreakpoints = () => {
   const [currentBreakpoint, setCurrentBreakpoint] = useRecoilState(screenBreakpointAtom);

@@ -16,10 +16,10 @@ import {
   withGroupTourForcedPartialPrepayment,
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types.ts'
+import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types'
 import { isMobile } from 'react-device-detect'
 
-import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
+import { type Travelers } from '@widgets/TravelersModal/ui/types'
 import { useTranslation } from 'react-i18next'
 import { LANGUAGE_NAME_MAP, type LanguageName } from '@shared/model'
 import { useLanguageNavigate } from '@/hooks/useLanguageNavigate'

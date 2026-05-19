@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { Button, MenuButton as ChakraMenuButton, MenuItem as ChakraMenuItem } from '@chakra-ui/react'
 import { Icon } from '@ui'
 import { Language, LANGUAGES } from '../model'
-import { LanguageButtonProps, LanguageItemProps, LanguageSelectProps } from './types.ts'
+import { LanguageButtonProps, LanguageItemProps, LanguageSelectProps } from './types'
 import { Menu, MenuList } from './Menu'
 
 export const LanguageMenu = ({ activeLanguage, onChange }: LanguageSelectProps) => {

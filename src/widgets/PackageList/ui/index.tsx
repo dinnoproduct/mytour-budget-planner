@@ -8,8 +8,9 @@ import {
 } from "@entities/package";
 import { PackageCardHorizontal } from "@features/PackageCard";
 import { useMemo } from "react";
-import { useQueryParams } from "@/hooks/useQueryParams.ts";
-import { EmptyView } from "@widgets/PackageList/ui/EmptyView.tsx";
+import { useQueryParams } from "@/hooks/useQueryParams";
+import { useLocation } from "@shared/lib/router";
+import { EmptyView } from "@widgets/PackageList/ui/EmptyView";
 import moment from "moment/moment";
 import { getHotelNightsByDate, getNightsByDate } from "@/features/helper";
 import { PackageFilter } from "@/features/PackageFilter";
@@ -20,6 +21,7 @@ import { useTranslation } from "react-i18next";
 
 export const PackageList = () => {
   const { searchParams } = useQueryParams();
+  const location = useLocation();
   const { t } = useTranslation();
   const activeTab = useMemo(() => {
     if (searchParams?.tab) {
@@ -49,34 +51,49 @@ export const PackageList = () => {
       tourPackage.childrenTravelers + tourPackage.infantTravelers;
     let pagePath = "hotel";
 
-    const queryParams: any = {
-      city: tourPackage.city.id.toString(),
-      adultsCount: tourPackage.adultTravelers.toString(),
-      childrenCount: childrenTravelers.toString(),
-      hotelId: tourPackage.hotel.id.toString(),
-      roomId: tourPackage.roomType.toString(),
-    };
+    // Preserve the full list-search query so redirect fallbacks from details
+    // can return users to their exact previous search state.
+    const queryParams = new URLSearchParams(location.search);
+    if (!queryParams.get("city")) {
+      queryParams.set("city", tourPackage.city.id.toString());
+    }
+    queryParams.set("adultsCount", tourPackage.adultTravelers.toString());
+    queryParams.set("childrenCount", childrenTravelers.toString());
+    queryParams.set("hotelId", tourPackage.hotel.id.toString());
+    queryParams.set("offerId", tourPackage.offerId.toString());
+    queryParams.set("agencyId", tourPackage.travelAgency.id.toString());
+    queryParams.set("roomId", tourPackage.roomType.toString());
 
     if (isPackagesSearchView) {
-      queryParams.from = moment(packagesSearchData.fromDate).format(
-        "YYYY-MM-DD",
+      queryParams.set(
+        "from",
+        moment(packagesSearchData.fromDate).format("YYYY-MM-DD"),
       );
-      queryParams.to = moment(packagesSearchData.toDate).format("YYYY-MM-DD");
-      queryParams.childrenAges =
+      queryParams.set(
+        "to",
+        moment(packagesSearchData.toDate).format("YYYY-MM-DD"),
+      );
+      queryParams.set(
+        "childrenAges",
         packagesSearchData.travelersData.childrenCount > 0
           ? packagesSearchData.travelersData.childrenAges.join(",")
-          : "";
+          : "",
+      );
       pagePath = "package";
     } else {
-      queryParams.from = moment(tourPackage.checkin).format("YYYY-MM-DD");
-      queryParams.to = moment(tourPackage.checkout).format("YYYY-MM-DD");
-      queryParams.childrenAges =
+      queryParams.set("from", moment(tourPackage.checkin).format("YYYY-MM-DD"));
+      queryParams.set("to", moment(tourPackage.checkout).format("YYYY-MM-DD"));
+      queryParams.set(
+        "childrenAges",
         hotelSearchData.travelersData.childrenCount > 0
           ? hotelSearchData.travelersData.childrenAges.join(",")
-          : "";
+          : "",
+      );
     }
 
-    const newSearchParams = new URLSearchParams(queryParams).toString();
+    queryParams.set("tab", isPackagesSearchView ? "packages" : "hotel");
+
+    const newSearchParams = queryParams.toString();
 
     const url = `/${pagePath}?${newSearchParams}`;
 

@@ -1,8 +1,8 @@
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query'
 import { useUserContext } from '@entities/user'
-import { splashNotificationService } from '../api/index.ts'
-import { type SplashNotificationViewedPayload } from '../api/types.ts'
-import { getGuestUserId } from '../model/guestId.ts'
+import { splashNotificationService } from '../api/index'
+import { type SplashNotificationViewedPayload } from '../api/types'
+import { getGuestUserId } from '../model/guestId'
 
 export const useSplashNotificationViewed = (
   options?: UseMutationOptions<void, unknown, SplashNotificationViewedPayload>,

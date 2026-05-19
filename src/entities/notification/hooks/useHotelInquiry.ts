@@ -3,7 +3,7 @@ import {
   hotelInquiriesService,
   type HotelInquiryPayload,
   type HotelInquiryResponse,
-} from '../api/HotelInquiriesService.ts'
+} from '../api/HotelInquiriesService'
 
 export const useHotelInquiry = (
   options?: UseMutationOptions<HotelInquiryResponse, unknown, HotelInquiryPayload>,

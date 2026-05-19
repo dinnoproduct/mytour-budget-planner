@@ -2,7 +2,7 @@ import { Box, Flex, HStack } from '@chakra-ui/react'
 import { Icon, Text } from '@ui'
 import { IconName } from '@foundation/Iconography'
 
-export const SummaryCard = ({iconName, children}: {iconName: IconName, children: string}) => {
+export const SummaryCard = ({ iconName, children }: { iconName: IconName, children: string }) => {
 	return (
 		<HStack spacing="2" align="center">
 			<Flex
@@ -13,7 +13,7 @@ export const SummaryCard = ({iconName, children}: {iconName: IconName, children:
 				align="center"
 				justify="center"
 			>
-				<Icon name={iconName} size="20" color="gray.500"/>
+				<Icon name={iconName} size="20" color="gray.500" />
 			</Flex>
 
 			<Text size="sm">{children}</Text>

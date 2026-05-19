@@ -1,4 +1,4 @@
-import { DatePickerFooterProps } from './types.ts'
+import { DatePickerFooterProps } from './types'
 import React, { useMemo } from 'react'
 import { Button, Text } from '@ui'
 import { useTranslation } from 'react-i18next'

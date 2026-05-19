@@ -10,9 +10,9 @@ import {
 import { Button, Icon, Text } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type RoomsMenuProps } from './types.ts'
+import { type RoomsMenuProps } from './types'
 import { useBreakpoint } from '@shared/hooks'
-import { numberWithCommaNormalizer } from '@/utils/normalizers.ts'
+import { numberWithCommaNormalizer } from '@/utils/normalizers'
 
 export const RoomsMenu = ({
   defaultRoom,

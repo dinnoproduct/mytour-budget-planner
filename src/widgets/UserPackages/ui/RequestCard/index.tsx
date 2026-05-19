@@ -12,14 +12,14 @@ import {
 import {
   type RequestCardProps,
   type RequestCardStatus,
-} from '@widgets/UserPackages/ui/RequestCard/types.ts'
-import { RequestsGroupStatus } from '@widgets/UserPackages/ui/types.ts'
+} from '@widgets/UserPackages/ui/RequestCard/types'
+import { RequestsGroupStatus } from '@widgets/UserPackages/ui/types'
 import { useRequestPromoCode } from './useRequestPromoCode'
-import { Layout } from './RequestCardLayout.tsx'
-import { RequestCardMainInfo } from './RequestCardMainInfo.tsx'
-import { RequestCardPromoToggle } from './RequestCardPromoToggle.tsx'
-import { RequestCardPromoModal } from './RequestCardPromoModal.tsx'
-import { RequestCardActions } from './RequestCardActions.tsx'
+import { Layout } from './RequestCardLayout'
+import { RequestCardMainInfo } from './RequestCardMainInfo'
+import { RequestCardPromoToggle } from './RequestCardPromoToggle'
+import { RequestCardPromoModal } from './RequestCardPromoModal'
+import { RequestCardActions } from './RequestCardActions'
 
 export const RequestCard = ({
   request,

@@ -15,7 +15,7 @@ import {
   type SectionLayoutProps,
   type SectionListProps,
   type ListItem as ListItemType,
-} from "../types.ts";
+} from "../types";
 import { useRecoilValue } from "recoil";
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import { formatNumber } from "@shared/utils";
@@ -28,9 +28,9 @@ import {
 } from "@entities/package";
 import { Icon, type IconName } from "@foundation/Iconography";
 import moment from "moment";
-import { TermsAndConditionsSection } from "./ui/TermsAndConditionsSection.tsx";
-import { BookingRulesModal } from "./ui/BookingRulesModal.tsx";
-import { PromoCode } from "./ui/PromoCode.tsx";
+import { TermsAndConditionsSection } from "./ui/TermsAndConditionsSection";
+import { BookingRulesModal } from "./ui/BookingRulesModal";
+import { PromoCode } from "./ui/PromoCode";
 
 const formatDate = (date: string, includeTime = false) => {
   if (!date) {
@@ -302,6 +302,8 @@ export const PreviewDetailsView = ({
     // Show balance only if it's not a single payment (split payment scenario)
     if (!isFullPricePayment && !calculatePromoCodePayments.isSinglePayment) {
       const remainingAmount = calculatePromoCodePayments.secondPayment;
+      const nextPaymentDate =
+        prepaymentInfo?.secondPaymentDate ?? prepaymentInfo?.firstPaymentDate ?? "";
 
       items.push({
         key: t`balance`,
@@ -310,7 +312,7 @@ export const PreviewDetailsView = ({
       });
       items.push({
         key: t`nextPaymentDate`,
-        value: formatDate(prepaymentInfo?.firstPaymentDate || ""),
+        value: formatDate(nextPaymentDate),
         isStrikethrough: false,
       });
     }
@@ -322,6 +324,7 @@ export const PreviewDetailsView = ({
     promoCodeStatus,
     calculatePromoCodePayments,
     prepaymentInfo?.firstPaymentDate,
+    prepaymentInfo?.secondPaymentDate,
     t,
   ]);
 

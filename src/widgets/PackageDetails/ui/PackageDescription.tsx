@@ -1,7 +1,7 @@
-import { Box, Button, ListItem, UnorderedList } from '@chakra-ui/react'
+import { Box, Button, Flex, ListItem, UnorderedList } from '@chakra-ui/react'
 import { Text } from '@ui'
 import { DictionaryTypes, PACKAGE_FACILITY_ICON_MAP, PackageEntity, useDictionary } from '@entities/package'
-import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard.tsx'
+import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard'
 import { useMemo, useState } from 'react'
 import { LANGUAGE_PREFIX, LanguageName } from '@shared/model'
 import { useTranslation } from 'react-i18next'
@@ -46,21 +46,21 @@ export const PackageDescription = ({ tourPackage }: { tourPackage: PackageEntity
 				</Button>
 			)}
 
-			<UnorderedList
-				listStyleType="none"
-				spacing="4"
+			<Flex
+				gap="4"
 				mx="0"
-				mt="4"
+				mt="2"
+				flexWrap={'wrap'}
 			>
 				{hotelFacilities?.map(({ key, value }) => (
-					<ListItem key={key}>
+					<Flex key={key} align="center">
 						<SummaryCard
 							iconName={PACKAGE_FACILITY_ICON_MAP[key]}
 							children={value}
 						/>
-					</ListItem>
+					</Flex>
 				))}
-			</UnorderedList>
+			</Flex>
 		</Box>
 	)
 }

@@ -1,25 +1,25 @@
-import PreviewDetail from '../PreviewDetail/PreviewDetail.tsx'
+import PreviewDetail from '../PreviewDetail/PreviewDetail'
 import { useTranslation } from 'react-i18next'
-import { type IBookForm } from '../../data/packagesTypes.ts'
+import { type IBookForm } from '../../data/packagesTypes'
 import { type FC, useEffect, useMemo, useState } from 'react'
 import { useSetRecoilState } from 'recoil'
-import { preventSideModalCloseAtom } from '../../store/store.ts'
+import { preventSideModalCloseAtom } from '../../store/store'
 import {
   dateFormatter,
   formatDateAndTime,
   langKeyAdapter,
   numberWithCommaNormalizer
-} from '../../../../utils/normalizers.ts'
+} from '../../../../utils/normalizers'
 import {
   PackagesFields,
   PackagesNestedFields
-} from '../../data/packagesEnums.ts'
+} from '../../data/packagesEnums'
 import {
   type DictionaryTypes,
   TermsAndConditionTypes
-} from '../../data/dictionaryEnum.ts'
-import { getDateMinusDays, overDaysFromNow } from '../../../../utils/methods.ts'
-import TermsAndConditionsModal from '../TermsAndConditionsModal/TermsAndConditionsModal.tsx'
+} from '../../data/dictionaryEnum'
+import { getDateMinusDays, overDaysFromNow } from '../../../../utils/methods'
+import TermsAndConditionsModal from '../TermsAndConditionsModal/TermsAndConditionsModal'
 import { useDictionary, useGetCurrentOfferPackage } from '@entities/package'
 import { capitalize } from '@shared/utils'
 

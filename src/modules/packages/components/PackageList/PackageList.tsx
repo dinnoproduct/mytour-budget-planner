@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { filteredPackagesAtom, packagesCurrentPageAtom, screenBreakpointAtom } from '../../store/store.ts';
-import { paginateData } from '../../../../utils/methods.ts';
-import Offer from '../Offer/Offer.tsx';
-import Subscribe from '../Subscribe/Subscribe.tsx';
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
-import useDictionary from '../../hooks/useDictionary.ts';
-import { useQueryParams } from '../../../../hooks/useQueryParams.ts';
-import { PackagesFields } from '../../data/packagesEnums.ts';
+import { filteredPackagesAtom, packagesCurrentPageAtom, screenBreakpointAtom } from '../../store/store';
+import { paginateData } from '../../../../utils/methods';
+import Offer from '../Offer/Offer';
+import Subscribe from '../Subscribe/Subscribe';
+import { DictionaryTypes } from '../../data/dictionaryEnum';
+import useDictionary from '../../hooks/useDictionary';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { PackagesFields } from '../../data/packagesEnums';
 import { useLanguageNavigate } from '../../../../hooks/useLanguageNavigate';
-import { type IPackage } from '../../data/packagesTypes.ts';
+import { type IPackage } from '../../data/packagesTypes';
 
 const PackageList = () => {
   const currentPage = useRecoilValue(packagesCurrentPageAtom);

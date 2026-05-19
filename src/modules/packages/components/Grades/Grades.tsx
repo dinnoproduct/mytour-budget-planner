@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
-import { PackagesFields } from '../../data/packagesEnums.ts';
+import { packageDetailsAtom } from '../../store/store';
+import { PackagesFields } from '../../data/packagesEnums';
 import './index.scss';
 
 const Grades = () => {

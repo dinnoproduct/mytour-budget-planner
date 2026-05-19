@@ -2,8 +2,8 @@ import { Children, cloneElement, type FC, type PropsWithChildren, type ReactElem
 import { useTranslation } from 'react-i18next';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
-import useOutsideClick from '../../hooks/useOtsideClick.ts';
-import { preventSideModalCloseAtom } from '../../modules/packages/store/store.ts';
+import useOutsideClick from '../../hooks/useOtsideClick';
+import { preventSideModalCloseAtom } from '../../modules/packages/store/store';
 import { useRecoilValue } from 'recoil';
 
 const Modal: FC<
@@ -24,7 +24,8 @@ const Modal: FC<
   useOutsideClick(modalRef, handleOutsideClickClose);
 
   const childrenWithProps = Children.map(children, (child) =>
-    cloneElement(child as ReactElement, { modalRef: modalWrapperRef }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cloneElement(child as ReactElement<any>, { modalRef: modalWrapperRef }),
   );
 
   useEffect(() => {

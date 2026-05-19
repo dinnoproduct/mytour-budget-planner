@@ -2,7 +2,7 @@ import { type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useController, useFormContext } from 'react-hook-form';
 import Select, { type SingleValue, type DropdownIndicatorProps, type GroupBase } from 'react-select';
-import { type TOption } from '../../../modules/packages/data/packagesTypes.ts';
+import { type TOption } from '../../../modules/packages/data/packagesTypes';
 import './index.scss';
 import classnames from 'classnames';
 

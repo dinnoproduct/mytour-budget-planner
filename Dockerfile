@@ -1,5 +1,5 @@
-# Use the official Node.js image from Docker Hub
-FROM node:latest
+# ---- Build stage ----
+FROM node:20-alpine AS builder
 
 # Set the working directory for your app inside the container
 WORKDIR /app
@@ -21,3 +21,4 @@ RUN npm run build
 
 # Start app
 CMD ["npm", "start"]
+

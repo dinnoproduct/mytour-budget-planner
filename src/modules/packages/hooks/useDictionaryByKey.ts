@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
-import { dictionaryAtom } from '../store/store.ts';
-import { type DictionaryTypes } from '../data/dictionaryEnum.ts';
+import { dictionaryAtom } from '../store/store';
+import { type DictionaryTypes } from '../data/dictionaryEnum';
 import { useMemo } from 'react';
-import { DictionaryFields } from '../data/packagesEnums.ts';
+import { DictionaryFields } from '../data/packagesEnums';
 
 const useDictionaryByKey = (key: number, dictionaryType: DictionaryTypes) => {
   const dictionary = useRecoilValue(dictionaryAtom(dictionaryType));

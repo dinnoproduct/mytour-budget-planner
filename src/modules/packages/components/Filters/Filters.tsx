@@ -1,15 +1,15 @@
-import useCities from '../../hooks/useCities.ts';
-import CheckboxMultiSelect from '../CheckboxMultiSelect/CheckboxMultiSelect.tsx';
+import useCities from '../../hooks/useCities';
+import CheckboxMultiSelect from '../CheckboxMultiSelect/CheckboxMultiSelect';
 import { memo, useEffect, useMemo, useState } from 'react';
-import { selectOptionNormalizer } from '../../../../utils/normalizers.ts';
+import { selectOptionNormalizer } from '../../../../utils/normalizers';
 import { useTranslation } from 'react-i18next';
-import { type TOption } from '../../data/packagesTypes.ts';
-import FilterInput from '../FilterInput/FilterInput.tsx';
+import { type TOption } from '../../data/packagesTypes';
+import FilterInput from '../FilterInput/FilterInput';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { filteredPackagesAtom, packagesAtom, packagesCurrentPageAtom } from '../../store/store.ts';
-import { PackagesFields } from '../../data/packagesEnums.ts';
+import { filteredPackagesAtom, packagesAtom, packagesCurrentPageAtom } from '../../store/store';
+import { PackagesFields } from '../../data/packagesEnums';
 
-import { useQueryParams } from '../../../../hooks/useQueryParams.ts';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
 import './index.scss';
 
 const singleParams = ['search'];

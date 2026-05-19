@@ -7,7 +7,7 @@ export class SearchService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/${this.apiVersion}/Search/`
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/${this.apiVersion}/Search/`
     })
 
     this.api.interceptors.response.use(

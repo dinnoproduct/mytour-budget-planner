@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@shared/lib/router';
 import { useLanguageRouting } from './useLanguageRouting';
 import { appendStoredUTMsToPath } from '@/utils/utmParams';
 

@@ -1,3 +1,5 @@
+"use client"
+
 import React, {
   createContext,
   useContext,
@@ -6,7 +8,7 @@ import React, {
   useRef,
   useState
 } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from '@shared/lib/router'
 import { useLanguageNavigate } from '../../../../hooks/useLanguageNavigate'
 import { getPathWithoutLanguage } from '../../../../utils/languageRoutes'
 import moment from 'moment'
@@ -20,7 +22,7 @@ import {
   useCitiesOnlyHotel,
   useSearchAsync
 } from '@entities/package'
-import { defaultSelectedHotelCity } from "@/constants/constants.ts";
+import { defaultSelectedHotelCity } from "@/constants/constants";
 import { appendStoredUTMsToSearchParams } from "@/utils/utmParams";
 
 const LOCAL_STORAGE_KEY = 'hotel_packages_search_params'

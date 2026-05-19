@@ -1,5 +1,5 @@
-import { type UserService } from './UserService.ts'
-import { type AuthService } from './AuthService.ts'
+import { type UserService } from './UserService'
+import { type AuthService } from './AuthService'
 
 export type UserUseCaseParams = {
   userService: UserService

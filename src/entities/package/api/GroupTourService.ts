@@ -8,7 +8,7 @@ import {
 } from '@entities/package'
 
 export class GroupTourService {
-  private readonly baseUrl = `${import.meta.env.VITE_API_URL}`
+  private readonly baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`
 
   private async request<T>(
     config: AxiosRequestConfig & { version?: 'V2' }

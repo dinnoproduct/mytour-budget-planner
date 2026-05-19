@@ -34,8 +34,8 @@ export const RoomTypeSection = ({
         '&::-webkit-scrollbar': {
           display: 'none'
         },
-        '-ms-overflow-style': 'none',
-        'scrollbar-width': 'none'
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none'
       }}>
         {roomTypeOffers.map((offer) => (
           <RoomCard

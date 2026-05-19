@@ -3,7 +3,7 @@ import {
   priceAlertService,
   type PriceAlertSubscribePayload,
   type PriceAlertSubscribeResponse,
-} from '../api/PriceAlertService.ts'
+} from '../api/PriceAlertService'
 
 export const usePriceAlertSubscribe = (
   options?: UseMutationOptions<

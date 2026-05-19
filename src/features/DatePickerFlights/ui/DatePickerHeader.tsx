@@ -1,4 +1,4 @@
-import { type DatePickerHeaderProps } from './types.ts'
+import { type DatePickerHeaderProps } from './types'
 import React from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 import { Text } from '@ui'

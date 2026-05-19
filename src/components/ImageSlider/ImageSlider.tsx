@@ -1,11 +1,11 @@
 import Slider, { type LazyLoadTypes } from 'react-slick';
 import { useRef, useState } from 'react';
-import { PackagesFields } from '../../modules/packages/data/packagesEnums.ts';
+import { PackagesFields } from '../../modules/packages/data/packagesEnums';
 import { useTranslation } from 'react-i18next';
 
 import './index.scss';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { preventParentSlideAtom, screenBreakpointAtom } from '../../modules/packages/store/store.ts';
+import { preventParentSlideAtom, screenBreakpointAtom } from '../../modules/packages/store/store';
 import classnames from 'classnames';
 
 interface IImageSlider {

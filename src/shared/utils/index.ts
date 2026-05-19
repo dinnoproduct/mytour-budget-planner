@@ -1,3 +1,3 @@
 export * from './string'
-export * from './number.ts'
-export * from './debounce.ts'
+export * from './number'
+export * from './debounce'

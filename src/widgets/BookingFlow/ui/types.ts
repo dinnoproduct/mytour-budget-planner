@@ -1,5 +1,5 @@
 import { type PackageEntity, type NormalizedRequestEntity } from '@entities/package'
-import { type Travelers } from '@widgets/TravelersModal/ui/types.ts'
+import { type Travelers } from '@widgets/TravelersModal/ui/types'
 
 export type BookingFlowProps = {
   packageDetails?: PackageEntity | null

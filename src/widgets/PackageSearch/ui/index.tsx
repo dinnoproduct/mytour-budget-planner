@@ -1,5 +1,5 @@
 import React from 'react'
-import { type PackageSearchProps } from './types.ts'
+import { type PackageSearchProps } from './types'
 import { useBreakpoint } from '@shared/hooks'
 import { CombinedSearchView } from './components/CombinedSearchView'
 import { FixedSearchView } from './components/FixedSearchView'

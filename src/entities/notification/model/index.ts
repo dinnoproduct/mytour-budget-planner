@@ -1,2 +1,2 @@
-export * from './constants.ts'
-export * from './guestId.ts'
+export * from './constants'
+export * from './guestId'

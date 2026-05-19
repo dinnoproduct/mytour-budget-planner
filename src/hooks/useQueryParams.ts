@@ -1,14 +1,23 @@
+"use client"
+
 import {
-  type SetURLSearchParams,
   useLocation,
   useSearchParams
-} from 'react-router-dom'
+} from '@shared/lib/router'
 import queryString, { type ParsedQuery } from 'query-string'
 import { useMemo } from 'react'
 
+type SetSearchParams = (
+  next:
+    | URLSearchParams
+    | Record<string, string>
+    | ((prev: URLSearchParams) => URLSearchParams | Record<string, string>),
+  options?: { replace?: boolean }
+) => void
+
 type TUseQueryParams = {
   searchParams: ParsedQuery
-  setSearchParams: SetURLSearchParams
+  setSearchParams: SetSearchParams
 }
 
 export const useQueryParams = (): TUseQueryParams => {

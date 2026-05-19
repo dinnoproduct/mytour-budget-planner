@@ -1,5 +1,5 @@
 import { type PackageService } from './PackageService'
-import { type FlightService } from './FlightService.ts'
+import { type FlightService } from './FlightService'
 import {
   type BookPackageInput,
   type CreateRequestInput,
@@ -18,18 +18,18 @@ import {
   type FlightDatesParams,
   type PaymentSystemInfo,
   type CreateGroupTourOfferInput,
-} from './types.ts'
-import { type RequestService } from './RequestService.ts'
-import { type DictionaryService } from './DictionaryService.ts'
+} from './types'
+import { type RequestService } from './RequestService'
+import { type DictionaryService } from './DictionaryService'
 import { type LanguageName } from '@shared/model'
-import { type CityService } from './CityService.ts'
-import { type FlightDatesService } from './FlightDatesService.ts'
-import { type SearchService } from './SearchService.ts'
-import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
-import { type PromoCodeService } from './PromoCodeService.ts'
-import { type FlightEntity } from '../model/entities.ts'
-import { type GroupTourService } from './GroupTourService.ts'
-import { type RequestServiceV2 } from './RequestServiceV2.ts'
+import { type CityService } from './CityService'
+import { type FlightDatesService } from './FlightDatesService'
+import { type SearchService } from './SearchService'
+import { type PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService'
+import { type PromoCodeService } from './PromoCodeService'
+import { type FlightEntity } from '../model/entities'
+import { type GroupTourService } from './GroupTourService'
+import { type RequestServiceV2 } from './RequestServiceV2'
 
 export class PackageUseCases {
   private readonly packageService: PackageService

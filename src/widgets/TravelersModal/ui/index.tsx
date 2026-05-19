@@ -1,4 +1,4 @@
-import { Layout } from './Layout.tsx'
+import { Layout } from './Layout'
 import { Box, Flex, VStack, Text } from '@chakra-ui/react'
 import { FormProvider, useForm, useFieldArray } from 'react-hook-form'
 import { useState, useEffect, useCallback, ChangeEvent } from 'react'
@@ -7,16 +7,16 @@ import {
   type FormData,
   type Traveler,
   type Travelers
-} from '@widgets/TravelersModal/ui/types.ts'
+} from '@widgets/TravelersModal/ui/types'
 import { useTranslation } from 'react-i18next'
 import { capitalize, debounce } from '@shared/utils'
-import MDatePicker from '@/components/FormControls/MDatePicker/MDatePicker.tsx'
-import { Button, Input } from '@/shared/ui/index.ts'
+import MDatePicker from '@/components/FormControls/MDatePicker/MDatePicker'
+import { Button, Input } from '@/shared/ui/index'
 import { StepBottomActions } from '@widgets/BookingFlow/ui/StepBottomActions'
-import { PackagesFields } from '@/modules/packages/data/packagesEnums.ts'
+import { PackagesFields } from '@/modules/packages/data/packagesEnums'
 import { validateTraveler } from '@widgets/TravelersModal/helpers'
 import moment from 'moment'
-import { BookingStep } from '@/shared/configs/metaEvents.ts'
+import { BookingStep } from '@/shared/configs/metaEvents'
 
 const CHILD_MIN_AGE = 2 // infant 0 to infantMaxAge, child CHILD_MIN_AGE to childMaxAge
 

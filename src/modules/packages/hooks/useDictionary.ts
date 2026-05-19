@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { dictionaryAtom } from '../store/store.ts';
-import { DictionaryTypes } from '../data/dictionaryEnum.ts';
-import { getDictionaryService } from '../services/PackagesServices.ts';
+import { dictionaryAtom } from '../store/store';
+import { DictionaryTypes } from '../data/dictionaryEnum';
+import { getDictionaryService } from '../services/PackagesServices';
 
 const languageForDictionaryAdapter: Record<string, number> = {
   arm: 1,

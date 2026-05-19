@@ -1,17 +1,15 @@
 import { type SetStateAction, useMemo, useRef, useState } from 'react';
 import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
 
 import './index.scss';
-import Offer from '../Offer/Offer.tsx';
+import Offer from '../Offer/Offer';
 import { useRecoilValue } from 'recoil';
-import { packagesAtom, preventParentSlideAtom, screenBreakpointAtom } from '../../store/store.ts';
+import { packagesAtom, preventParentSlideAtom, screenBreakpointAtom } from '../../store/store';
 import { useTranslation } from 'react-i18next';
-import { PackagesFields } from '../../data/packagesEnums.ts';
+import { PackagesFields } from '../../data/packagesEnums';
 import { useLanguageNavigate } from '../../../../hooks/useLanguageNavigate';
-import { type IPackage } from '../../data/packagesTypes.ts';
-import useDragDetection from '../../../../hooks/useDragDetection.ts';
+import { type IPackage } from '../../data/packagesTypes';
+import useDragDetection from '../../../../hooks/useDragDetection';
 
 const PackageSlider = () => {
   const { t } = useTranslation();

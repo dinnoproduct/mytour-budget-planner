@@ -8,7 +8,7 @@ import {
   IncompleteTabEmptyState,
   PastTabEmptyState,
   UpcomingTabEmptyState,
-} from "@widgets/UserPackages/ui/EmptyStates.tsx";
+} from "@widgets/UserPackages/ui/EmptyStates";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 import { bookingContextAtom, isLateCheckoutAtom } from "@/modules/packages/store/store";
@@ -66,11 +66,13 @@ export const UserPackages = () => {
   useEffect(() => {
     if (!activeRequest || hasNavigatedRef.current) return;
 
-    const isNoDownPaymentBooked =
+    const shouldOpenPaymentForm =
       activeRequest.status === RequestStatus.NotPaid ||
       activeRequest.status === RequestStatus.Reserved;
+    const shouldOpenRemainingPayment =
+      activeRequest.status === RequestStatus.Booked;
 
-    if (isNoDownPaymentBooked) {
+    if (shouldOpenPaymentForm || shouldOpenRemainingPayment) {
       const packageDetails =
         activeRequestPackage ?? transformRequestToPackage(activeRequest);
       const travelersFromNotes = activeRequest.notes?.travelers as
@@ -100,6 +102,7 @@ export const UserPackages = () => {
       hasNavigatedRef.current = true;
       navigateToPayment({
         state: {
+          mode: shouldOpenRemainingPayment ? "remainingOnly" : undefined,
           packageDetails,
           request: activeRequest,
           travelers: defaultTravelers,
@@ -175,7 +178,7 @@ export const UserPackages = () => {
     request: any,
     promo?: { code: string; discountedFullPrice: number },
   ) => {
-    const isNotPaidOrReserved =
+    const shouldOpenPaymentForm =
       request.status === RequestStatus.NotPaid ||
       request.status === RequestStatus.Reserved;
 
@@ -238,7 +241,7 @@ export const UserPackages = () => {
 
     navigateToPayment({
       state: {
-        mode: isNotPaidOrReserved ? undefined : "remainingOnly",
+        mode: shouldOpenPaymentForm ? undefined : "remainingOnly",
         request,
         packageDetails: transformRequestToPackage(request),
         discountedFullPrice: promo?.discountedFullPrice,

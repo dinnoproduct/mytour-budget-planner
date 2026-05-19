@@ -13,7 +13,7 @@ import {
 import { ChevronRightIcon } from '@chakra-ui/icons'
 import React, { type ReactNode, useMemo, useRef, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useFlightDates } from '@entities/package/hooks/useFlightDates.ts'
+import { useFlightDates } from '@entities/package/hooks/useFlightDates'
 import {
   useCities,
   useHotelPackagesSearchContext,
@@ -21,10 +21,10 @@ import {
 import {
   countryCards,
   packageCards as baseCityCards,
-} from '@/constants/constants.ts'
+} from '@/constants/constants'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
-import {fmt} from "@/utils/methods.ts";
-import { useLanguageRouting } from '@/hooks/useLanguageRouting.ts';
+import {fmt} from "@/utils/methods";
+import { useLanguageRouting } from '@/hooks/useLanguageRouting';
 import { Icon } from '@/shared/ui'
 
 export interface PackageCountry {

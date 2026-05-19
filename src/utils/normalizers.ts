@@ -1,5 +1,5 @@
-import { PackagesFields } from '../modules/packages/data/packagesEnums.ts';
-import { type TOptions } from '../modules/packages/data/packagesTypes.ts';
+import { PackagesFields } from '../modules/packages/data/packagesEnums';
+import { type TOptions } from '../modules/packages/data/packagesTypes';
 
 interface ISelectNormalizer {
   [PackagesFields.id]: number;

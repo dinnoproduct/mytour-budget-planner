@@ -1,3 +1,5 @@
+"use client"
+
 import { PackagesFields } from "@/modules/packages/data/packagesEnums";
 import {
   IGeneratedMultivendorOffer,
@@ -7,7 +9,7 @@ import { generateMultivendorOfferService } from "@/modules/packages/services/Pac
 import { isLateCheckoutAtom } from "@/modules/packages/store/store";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "@shared/lib/router";
 import { useRecoilState } from "recoil";
 import { DictionaryTypes, packageUseCases } from "../api";
 import { useDictionary } from "./useDictionary";

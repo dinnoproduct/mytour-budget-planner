@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { isSubscribedAtom } from '../store/store.ts';
-import { subscribeService } from '../services/PackagesServices.ts';
+import { isSubscribedAtom } from '../store/store';
+import { subscribeService } from '../services/PackagesServices';
 
 const useSubscribe = () => {
   const [isSubscribed, setIsSubscribed] = useRecoilState(isSubscribedAtom);

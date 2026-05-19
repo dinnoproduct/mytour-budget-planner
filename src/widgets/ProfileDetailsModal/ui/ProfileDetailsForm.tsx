@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
   type ProfileDetailsFormProps,
   type ProfileFormData
-} from '@widgets/ProfileDetailsModal/ui/types.ts'
+} from '@widgets/ProfileDetailsModal/ui/types'
 import { ContentLayout } from './ContentLayout'
 import { useEffect, useState } from 'react'
 

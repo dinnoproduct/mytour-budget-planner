@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { bookPackageService } from '../services/PackagesServices.ts';
-import { type IBookRequest } from '../data/packagesTypes.ts';
+import { bookPackageService } from '../services/PackagesServices';
+import { type IBookRequest } from '../data/packagesTypes';
 import { useRecoilState } from 'recoil';
-import { userTokenAtom } from '../store/store.ts';
+import { userTokenAtom } from '../store/store';
 
 const useBook = () => {
   const [loading, setLoading] = useState(false);

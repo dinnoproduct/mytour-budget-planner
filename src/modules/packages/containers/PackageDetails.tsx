@@ -1,34 +1,34 @@
-import usePackages from '../hooks/usePackages.ts'
+import usePackages from '../hooks/usePackages'
 import { useEffect, useState } from 'react'
 import { useRecoilState, useResetRecoilState } from 'recoil'
-import { Link as ReactLink, useParams } from 'react-router-dom'
+import { useParams } from '@shared/lib/router'
 import { useLanguageNavigate } from '../../../hooks/useLanguageNavigate'
 import { useTranslation } from 'react-i18next'
-import ImageSlider from '../../../components/ImageSlider/ImageSlider.tsx'
-import { PackagesFields, PackagesNestedFields } from '../data/packagesEnums.ts'
-import { langKeyAdapter } from '../../../utils/normalizers.ts'
+import ImageSlider from '../../../components/ImageSlider/ImageSlider'
+import { PackagesFields, PackagesNestedFields } from '../data/packagesEnums'
+import { langKeyAdapter } from '../../../utils/normalizers'
 
-import PackageTravelDetails from '../components/PackageTravelDetails/PackageTravelDetails.tsx'
-import PackageDescription from '../components/PackageDescription/PackageDescription.tsx'
-import FlightDetails from '../components/FlightDetails/FlightDetails.tsx'
-import HotelDetails from '../components/HotelDetails/HotelDetails.tsx'
-import Grades from '../components/Grades/Grades.tsx'
-import AdditionalDetails from '../components/AdditionalDetails/AdditionalDetails.tsx'
-import Organization from '../components/Organization/Organization.tsx'
+import PackageTravelDetails from '../components/PackageTravelDetails/PackageTravelDetails'
+import PackageDescription from '../components/PackageDescription/PackageDescription'
+import FlightDetails from '../components/FlightDetails/FlightDetails'
+import HotelDetails from '../components/HotelDetails/HotelDetails'
+import Grades from '../components/Grades/Grades'
+import AdditionalDetails from '../components/AdditionalDetails/AdditionalDetails'
+import Organization from '../components/Organization/Organization'
 import {
 	isBookModalOpenAtom,
 	noResultModalIsOpenAtom,
 	packageDetailsAtom,
 	packageTravelDetailsAtom,
 	packageTravelDetailsModalShowAtom
-} from '../store/store.ts'
+} from '../store/store'
 import { Loader } from '@/components/Loader/Loader'
-import PackageTravelDetailsModal from '../components/PackageTravelDetailsModal/PackageTravelDetailsModal.tsx'
+import PackageTravelDetailsModal from '../components/PackageTravelDetailsModal/PackageTravelDetailsModal'
 import ReactModal from 'react-modal'
 import './index.scss'
 
-import BookModal from '../components/BookModal/BookModal.tsx'
-import Modal from '../../../components/Modal/Modal.tsx'
+import BookModal from '../components/BookModal/BookModal'
+import Modal from '../../../components/Modal/Modal'
 import { Header } from '@widgets/Header'
 import { Img, Link } from '@chakra-ui/react'
 import { usePackagesSearchContext } from '@entities/package'
@@ -79,8 +79,8 @@ const PackageDetails = () => {
 	return (
 		<>
 			{/*<button onClick={login}>sign in</button>*/}
-			<Loader loading={loading}/>
-			<Header/>
+			<Loader loading={loading} />
+			<Header />
 			<ReactModal
 				isOpen={noResultModalIsOpen}
 				onRequestClose={() => {
@@ -97,12 +97,12 @@ const PackageDetails = () => {
 							setNoResultIsOpen(false)
 						}}
 					>
-						<img src="/images/close.svg" alt=""/>
+						<img src="/images/close.svg" alt="" />
 					</button>
 				</div>
 				<div className="text-center m-b-40">
 					<div className="no-result-image">
-						<img src="/images/no_result.svg" alt=""/>
+						<img src="/images/no_result.svg" alt="" />
 					</div>
 					<div className="no-result-text">{t('noDataWithThisParams')}</div>
 				</div>
@@ -125,7 +125,7 @@ const PackageDetails = () => {
 						display="flex"
 						_hover={{ textDecoration: 'none' }}
 					>
-						<Img src="/images/arrow_back.svg" alt="" mr="2"/>
+						<Img src="/images/arrow_back.svg" alt="" mr="2" />
 						{t('back')}
 					</Link>
 				</div>
@@ -133,7 +133,7 @@ const PackageDetails = () => {
 					<div>{packageDetails[name]}</div>
 					<div className="details-stars flex">
 						<div className="stars flex space-between">
-							<img src="/images/star.svg" alt=""/> {packageDetails[PackagesFields.hotel]?.[PackagesFields.stars]}
+							<img src="/images/star.svg" alt="" /> {packageDetails[PackagesFields.hotel]?.[PackagesFields.stars]}
 						</div>
 					</div>
 				</div>
@@ -143,7 +143,7 @@ const PackageDetails = () => {
 				</div>
 				<div className="best-offer-wrapper inner-wrapper flex">
 					<div className="inner-slider-item">
-						<ImageSlider images={packageDetails?.[PackagesFields.hotel]?.[PackagesFields.images]}/>
+						<ImageSlider images={packageDetails?.[PackagesFields.hotel]?.[PackagesFields.images]} />
 					</div>
 					<div className="inner-slider-item">
 						<PackageTravelDetails
@@ -154,13 +154,13 @@ const PackageDetails = () => {
 				</div>
 				<div className="best-offer-wrapper inner-wrapper flex mobile-inner">
 					<div className="details-info-item position-relative">
-						<PackageDescription/>
-						<FlightDetails/>
+						<PackageDescription />
+						<FlightDetails />
 					</div>
 					<div className="details-info-item">
-						<HotelDetails/>
-						<Grades/>
-						<AdditionalDetails/>
+						<HotelDetails />
+						<Grades />
+						<AdditionalDetails />
 					</div>
 				</div>
 				<Modal
@@ -171,13 +171,13 @@ const PackageDetails = () => {
 						}
 					}}
 				>
-					<PackageTravelDetailsModal onClose={() => setIsEditModalOpen(false)}/>
+					<PackageTravelDetailsModal onClose={() => setIsEditModalOpen(false)} />
 				</Modal>
 				<Modal isOpen={isBookModalOpen} onClose={() => setIsBookModalOpen(false)} title="book">
-					<BookModal/>
+					<BookModal />
 				</Modal>
 				<div className="best-offer-wrapper inner-wrapper flex">
-					<Organization/>
+					<Organization />
 				</div>
 			</div>
 		</>

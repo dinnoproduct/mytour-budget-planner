@@ -1,4 +1,4 @@
-import { type Traveler } from '@widgets/TravelersModal/ui/types.ts'
+import { type Traveler } from '@widgets/TravelersModal/ui/types'
 
 export const validateTraveler = (traveler: Traveler) =>
   traveler.firstName?.length >= 2 &&

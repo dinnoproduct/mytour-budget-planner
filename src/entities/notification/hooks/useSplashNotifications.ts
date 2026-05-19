@@ -2,10 +2,10 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useUserContext } from '@entities/user'
 import { type LanguageName } from '@shared/model'
-import { splashNotificationService } from '../api/index.ts'
-import { type SplashNotification } from '../api/types.ts'
-import { NOTIFICATION_LANGUAGE_MAP } from '../model/constants.ts'
-import { getGuestUserId } from '../model/guestId.ts'
+import { splashNotificationService } from '../api/index'
+import { type SplashNotification } from '../api/types'
+import { NOTIFICATION_LANGUAGE_MAP } from '../model/constants'
+import { getGuestUserId } from '../model/guestId'
 
 export const useSplashNotifications = (
   options?: Omit<

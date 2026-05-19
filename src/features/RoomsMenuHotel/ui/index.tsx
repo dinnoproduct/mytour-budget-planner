@@ -18,7 +18,7 @@ import {
 import { Button, Text, Radio } from '@ui'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type RoomsMenuHotelProps } from './types.ts'
+import { type RoomsMenuHotelProps } from './types'
 import { useBreakpoint } from '@shared/hooks'
 import { getRoomPriceString } from '../helpers'
 import { type RoomWithSelectedMeal, type RoomItem } from '../model'

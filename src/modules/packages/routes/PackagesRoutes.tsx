@@ -1,8 +1,8 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { AppPaths } from '../../../constants/constants.ts'
-import PackageDetails from '../containers/PackageDetails.tsx'
+import { AppPaths } from '../../../constants/constants'
+import PackageDetails from '../containers/PackageDetails'
 import { useEffect } from 'react'
-import Packages from '@/modules/packages/containers/Packages.tsx'
+import Packages from '@/modules/packages/containers/Packages'
 import { useLanguageRouting } from '../../../hooks/useLanguageRouting'
 
 const PackagesRoutes = () => {

@@ -1,15 +1,15 @@
 import { PackageUseCases } from './PackageUseCases'
 import { PackageService } from './PackageService'
-import { FlightService } from './FlightService.ts'
-import { RequestService } from './RequestService.ts'
-import { DictionaryService } from './DictionaryService.ts'
-import { CityService } from './CityService.ts'
-import { SearchService } from './SearchService.ts'
-import { PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService.ts'
-import { PromoCodeService } from './PromoCodeService.ts'
-import { FlightDatesService } from './FlightDatesService.ts';
-import { GroupTourService } from './GroupTourService.ts'
-import { RequestServiceV2 } from './RequestServiceV2.ts'
+import { FlightService } from './FlightService'
+import { RequestService } from './RequestService'
+import { DictionaryService } from './DictionaryService'
+import { CityService } from './CityService'
+import { SearchService } from './SearchService'
+import { PrepaymentInfoCalculationService } from './PrepaymentInfoCalculationService'
+import { PromoCodeService } from './PromoCodeService'
+import { FlightDatesService } from './FlightDatesService';
+import { GroupTourService } from './GroupTourService'
+import { RequestServiceV2 } from './RequestServiceV2'
 
 export const packageUseCases = new PackageUseCases({
   packageService: new PackageService(),

@@ -1,4 +1,4 @@
-import { Layout } from './Layout.tsx'
+import { Layout } from './Layout'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { type PaymentErrorModalProps } from './types'

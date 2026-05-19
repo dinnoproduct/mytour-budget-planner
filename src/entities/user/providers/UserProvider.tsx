@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, type ReactNode } from 'react'
 import { useSetUser, useUser } from '../hooks'
 import { type UserEntity } from '@entities/user'
@@ -15,7 +17,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined)
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const setUser = useSetUser()
   const [token, setToken] = React.useState<string>(
-    localStorage.getItem('userToken') || ''
+    typeof window !== 'undefined' ? localStorage.getItem('userToken') || '' : ''
   )
 
   const setUserToken = (token: string) => {

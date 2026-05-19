@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { updateUserService } from '../services/PackagesServices.ts';
+import { updateUserService } from '../services/PackagesServices';
 import { useRecoilState } from 'recoil';
-import { userInfoAtom } from '../store/store.ts';
+import { userInfoAtom } from '../store/store';
 
 const useUser = () => {
   const [loading, setLoading] = useState(false);

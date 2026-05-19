@@ -3,7 +3,7 @@ import { Button as ChakraButton, Box } from '@chakra-ui/react'
 import { Icon } from '@foundation/Iconography'
 import { ICON_BUTTON_SIZE_MAP, ICON_SIZE_MAP } from './constants'
 import { type ButtonProps, type ButtonSize, type LinkProps } from './types'
-import { Link as RouterLink } from 'react-router-dom'
+import NextLink from 'next/link'
 
 export const Button = forwardRef(
   (
@@ -35,8 +35,8 @@ export const Button = forwardRef(
         }
       } else if (to) {
         return {
-          as: RouterLink,
-          to
+          as: NextLink,
+          href: to,
         }
       }
 

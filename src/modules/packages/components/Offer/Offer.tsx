@@ -1,13 +1,13 @@
 import './index.scss';
 import { type FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { langKeyAdapter, numberWithCommaNormalizer } from '../../../../utils/normalizers.ts';
-import { PackagesFields, PackagesNestedFields } from '../../data/packagesEnums.ts';
-import ImageSlider from '../../../../components/ImageSlider/ImageSlider.tsx';
-import { type IPackage } from '../../data/packagesTypes.ts';
+import { langKeyAdapter, numberWithCommaNormalizer } from '../../../../utils/normalizers';
+import { PackagesFields, PackagesNestedFields } from '../../data/packagesEnums';
+import ImageSlider from '../../../../components/ImageSlider/ImageSlider';
+import { type IPackage } from '../../data/packagesTypes';
 import { LanguageLink } from '../../../../components/LanguageLink/LanguageLink';
-import useDictionaryByKey from '../../hooks/useDictionaryByKey.ts';
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
+import useDictionaryByKey from '../../hooks/useDictionaryByKey';
+import { DictionaryTypes } from '../../data/dictionaryEnum';
 
 interface OfferProps {
   isBest?: boolean;

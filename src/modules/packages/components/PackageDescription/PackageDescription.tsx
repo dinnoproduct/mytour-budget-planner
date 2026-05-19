@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { type FC } from 'react';
-import useDictionaryByKey from '../../hooks/useDictionaryByKey.ts';
-import { PackagesFields } from '../../data/packagesEnums.ts';
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
+import useDictionaryByKey from '../../hooks/useDictionaryByKey';
+import { PackagesFields } from '../../data/packagesEnums';
+import { DictionaryTypes } from '../../data/dictionaryEnum';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
-import useDictionary from '../../hooks/useDictionary.ts';
+import { packageDetailsAtom } from '../../store/store';
+import useDictionary from '../../hooks/useDictionary';
 import './index.scss';
 
 const PackageDescription: FC = () => {

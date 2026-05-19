@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { LanguageLink } from '../LanguageLink/LanguageLink';
-import { AppPaths } from '../../constants/constants.ts';
+import { AppPaths } from '../../constants/constants';
 import './index.scss';
 
 const Header = () => {

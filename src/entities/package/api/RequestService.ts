@@ -16,7 +16,7 @@ export class RequestService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: `${import.meta.env.VITE_API_URL}/request`
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/request`
     })
 
     this.api.interceptors.response.use(

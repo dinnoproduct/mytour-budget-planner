@@ -1,8 +1,8 @@
-import { Layout } from './Layout.tsx'
+import { Layout } from './Layout'
 import { Box, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { Button, Text } from '@ui'
-import { type RequestCancelModalProps } from '@widgets/RequestCancelModal/ui/types.ts'
+import { type RequestCancelModalProps } from '@widgets/RequestCancelModal/ui/types'
 import {
   useCancelRequest,
   useRequestCancellationMessage

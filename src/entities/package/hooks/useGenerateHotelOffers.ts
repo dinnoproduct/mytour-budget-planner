@@ -6,6 +6,11 @@ import {
 } from '@entities/package'
 import moment from 'moment'
 
+const toQueryKeyDate = (value: string) => {
+  const parsed = moment(value, moment.ISO_8601, true)
+  return parsed.isValid() ? parsed.format('ddd MMM DD YYYY') : ''
+}
+
 export const useGenerateHotelOffers = (
   input: GenerateHotelOffersInput,
   options?: Omit<UseQueryOptions<OfferEntity[]>, 'queryKey' | 'queryFn'>
@@ -15,8 +20,8 @@ export const useGenerateHotelOffers = (
     queryKey: [
       'generate-hotel-offers',
       input.hotelId,
-      moment(input.checkin).format('ddd MMM DD YYYY'),
-      moment(input.checkout).format('ddd MMM DD YYYY'),
+      toQueryKeyDate(input.checkin),
+      toQueryKeyDate(input.checkout),
       input.adults,
       input.childs,
       input.travelAgency

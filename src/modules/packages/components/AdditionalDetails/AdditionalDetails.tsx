@@ -3,11 +3,11 @@ import { useState } from 'react';
 import './index.scss';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { packageDetailsAtom } from '../../store/store.ts';
-import { langKeyAdapter } from '../../../../utils/normalizers.ts';
-import { DictionaryFields, PackagesFields } from '../../data/packagesEnums.ts';
-import useDictionary from '../../hooks/useDictionary.ts';
-import { DictionaryTypes } from '../../data/dictionaryEnum.ts';
+import { packageDetailsAtom } from '../../store/store';
+import { langKeyAdapter } from '../../../../utils/normalizers';
+import { DictionaryFields, PackagesFields } from '../../data/packagesEnums';
+import useDictionary from '../../hooks/useDictionary';
+import { DictionaryTypes } from '../../data/dictionaryEnum';
 
 const facilityIconMapping = {
   1: 'shape',

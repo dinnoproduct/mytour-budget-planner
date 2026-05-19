@@ -1,9 +1,9 @@
 import * as yup from 'yup';
-import { EMAIL_REGEXP } from '../../../utils/regex.ts';
-import { i18n } from '../../../shared/configs/i18next.ts';
-import { REQUIRED_MESSAGE, WRONG_FORMAT } from '../../../constants/constants.ts';
-import { CustomFields, PackagesFields } from '../data/packagesEnums.ts';
-import { numberWithCommaNormalizer } from '../../../utils/normalizers.ts';
+import { EMAIL_REGEXP } from '../../../utils/regex';
+import { i18n } from '../../../shared/configs/i18next';
+import { REQUIRED_MESSAGE, WRONG_FORMAT } from '../../../constants/constants';
+import { CustomFields, PackagesFields } from '../data/packagesEnums';
+import { numberWithCommaNormalizer } from '../../../utils/normalizers';
 
 export const subscribeScheme = yup.object().shape({
   [CustomFields.email]: yup

@@ -21,7 +21,7 @@ export const Layout = ({ children, isOpen, closeModal }: LayoutProps) => {
       onClose={closeModal}
       isCentered
       size="auth"
-      initialFocusRef={modalContentRef}
+      initialFocusRef={modalContentRef as any}
       closeOnOverlayClick={false}
     >
       <ModalOverlay />

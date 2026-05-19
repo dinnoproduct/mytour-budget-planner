@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from 'react'
 import {
   Modal,
@@ -24,7 +26,7 @@ import { useHotelInquiry } from '@entities/notification'
 import { DatePickerFlexibleSearch } from '@features/DatePickerFlexibleSearch'
 import { DatePickerFlights } from '@/features/DatePickerFlights'
 import { usePackagesSearchContext } from '@entities/package'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from '@shared/lib/router'
 import {
   formatDate,
   normalizePhone,
@@ -141,8 +143,8 @@ export const HotelInquiryModal: React.FC<HotelInquiryModalProps> = ({
   useEffect(() => {
     if (fromDate || toDate) return
 
-    const fromParam = searchParams.get('from') ?? searchParams.get('dateFrom')
-    const toParam = searchParams.get('to') ?? searchParams.get('dateTo')
+    const fromParam = searchParams?.get('from') ?? searchParams?.get('dateFrom') ?? null
+    const toParam = searchParams?.get('to') ?? searchParams?.get('dateTo') ?? null
     const queryFromDate = parseQueryDate(fromParam)
     const queryToDate = parseQueryDate(toParam)
 

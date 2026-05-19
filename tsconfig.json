@@ -1,66 +1,72 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
     "skipLibCheck": true,
-
-    /* Bundler mode */
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
-    "strict": true,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
-      "@components/*": ["./shared/ui/components/*"],
-      "@foundation/*": ["./shared/ui/foundation/*"],
-      "@ui": ["./shared/ui/index.ts"],
-      "@widgets/*": ["./widgets/*"],
-      "@features/*": ["./features/*"],
-      "@shared/*": ["./shared/*"],
-      "@entities/*": ["./entities/*"],
-      "@app/*": ["./app/*"],
-      "@pages/*": ["./pages/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "./shared/ui/components/*"
+      ],
+      "@foundation/*": [
+        "./shared/ui/foundation/*"
+      ],
+      "@ui": [
+        "./shared/ui/index.ts"
+      ],
+      "@widgets/*": [
+        "./widgets/*"
+      ],
+      "@features/*": [
+        "./features/*"
+      ],
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@entities/*": [
+        "./entities/*"
+      ],
+      "@app/*": [
+        "./app-legacy/*"
+      ],
+      "@pages/*": [
+        "./views/*"
+      ]
     }
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
-
-
-//{
-//  "compilerOptions": {
-//    "target": "ES2020",
-//    "useDefineForClassFields": true,
-//    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-//    "module": "ESNext",
-//    "skipLibCheck": true,
-//
-//    "jsx": "react-jsx",
-//    "allowImportingTsExtensions": true,
-//    "sourceMap": true,
-//    "composite": true,
-//    "strict": true,
-//    "noUncheckedIndexedAccess": true,
-//    "moduleResolution": "node",
-//    "baseUrl": ".",
-//    "esModuleInterop": true,
-//    "resolveJsonModule": true,
-//    "forceConsistentCasingInFileNames": true,
-//    "noEmit": true,
-//    "isolatedModules": true
-//  },
-//  "include": ["src"],
-//  "references": [{ "path": "./tsconfig.node.json" }],
-//}

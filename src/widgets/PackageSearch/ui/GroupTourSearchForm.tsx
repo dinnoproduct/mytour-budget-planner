@@ -1,10 +1,12 @@
+"use client"
+
 import React, { useEffect, useMemo, useState } from 'react'
-import { Layouts } from '@widgets/PackageSearch/ui/Layouts.tsx'
+import { Layouts } from '@widgets/PackageSearch/ui/Layouts'
 import { SearchButton } from './SearchButton'
 import { useTranslation } from 'react-i18next'
 import { DestinationSelectMenu } from '@features/DestinationSelectMenu'
 import { MonthSelectMenu, type MonthSelection } from '@features/MonthSelectMenu'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from '@shared/lib/router'
 import { useGroupToursList } from '@entities/package'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 

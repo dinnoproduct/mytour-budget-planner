@@ -1,9 +1,9 @@
-import { langKeyAdapter } from '../../../utils/normalizers.ts';
-import type { PackagesFields } from '../data/packagesEnums.ts';
+import { langKeyAdapter } from '../../../utils/normalizers';
+import type { PackagesFields } from '../data/packagesEnums';
 import type { PackageEntity, GroupTourName } from '@entities/package';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelectedPackage } from './useSelectedPackage.ts';
+import { useSelectedPackage } from './useSelectedPackage';
 
 const usePolicy = (packageOverride?: PackageEntity | null) => {
   const { i18n } = useTranslation();

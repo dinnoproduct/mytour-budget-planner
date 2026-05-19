@@ -5,17 +5,18 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { Button, Icon, Text } from "@ui";
-import { numberWithCommaNormalizer } from "@/utils/normalizers.ts";
+import { numberWithCommaNormalizer } from "@/utils/normalizers";
 import { useBreakpoint } from "@shared/hooks";
 import { useEffect, useMemo, useState } from "react";
+import moment from "moment";
 import { CURRENCY_MAP } from "@/shared/model";
 import { formatNumber } from "@shared/utils";
-import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout.tsx";
+import { CardSectionLayout } from "@/shared/ui/layout/CardSectionLayout";
 import { useBookingDrawer } from "@/modules/packages/hooks/useBookingDrawer";
-import { type PriceSummaryCardProps } from "./types.ts";
+import { type PriceSummaryCardProps } from "./types";
 import { metaEvents } from "@/shared/configs/metaEvents";
-import { getPluralForm } from "@/shared/helpers/getPluralForm.ts";
-import { SectionLayout } from "./SectionLayout.tsx";
+import { getPluralForm } from "@/shared/helpers/getPluralForm";
+import { SectionLayout } from "./SectionLayout";
 import { DictionaryTypes, useDictionary } from "@entities/package";
 import { useUserContext } from "@entities/user";
 import { PriceSummaryCardLayout } from "./Layout";
@@ -109,6 +110,16 @@ export const PriceSummaryCard = ({
     return `${shortMonthName} ${date.getDate()}`;
   };
 
+  const formatDetailedLocalizedDateTime = (rawDate?: string) => {
+    if (!rawDate) return "";
+    const formattedDate = moment(rawDate).format("YYYY, HH:mm");
+    const longMonthName = moment(rawDate).locale("en").format("MMMM").toLowerCase();
+    const shortMonthName = t(`${longMonthName}Short`);
+    const day = moment(rawDate).format("DD");
+
+    return `${shortMonthName} ${day} ${formattedDate}`;
+  };
+
   const isHotelContent = contentType === "hotel";
 
   const [initialFromDate, initialToDate] = useMemo(() => {
@@ -150,13 +161,29 @@ export const PriceSummaryCard = ({
           px="4"
           gridArea="config"
           width="full"
-          borderBottomRadius={{ base: "md !important", md: "0 !important" }}
-          borderTopRadius={"md !important"}
+          borderBottomRadius={{ base: "2xl !important", md: "0 !important" }}
+          borderTopRadius={"2xl !important"}
         >
           <SectionLayout
             listItems={[
               { key: t`travelers`, value: `${tourPackage.adultTravelers} ${t`adult`}${tourPackage.childrenTravelers > 0 ? `, ${tourPackage.childrenTravelers} ${t(getPluralForm(tourPackage.childrenTravelers, 'children')).toLowerCase()}` : ''}` },
               { key: t`duration`, value: durationDateRange },
+              ...(isHotelContent
+                ? [
+                  {
+                    key: t`checkIn`,
+                    value: formatDetailedLocalizedDateTime(
+                      tourPackage.checkin,
+                    ),
+                  },
+                  {
+                    key: t`checkOut`,
+                    value: formatDetailedLocalizedDateTime(
+                      tourPackage.checkout,
+                    ),
+                  },
+                ]
+                : []),
               { key: t`mealType`, value: mealTypeLabel }
             ]}
           />
@@ -172,8 +199,8 @@ export const PriceSummaryCard = ({
           left="0"
           right="0"
           width="full"
-          borderBottomRadius={"md !important"}
-          borderTopRadius={{ base: "md !important", md: "0 !important" }}
+          borderBottomRadius={"2xl !important"}
+          borderTopRadius={{ base: "2xl !important", md: "0 !important" }}
         >
           <Flex width="full" justify="space-between" align="center" height="28px">
             <Text size="sm">{t`total`} :</Text>

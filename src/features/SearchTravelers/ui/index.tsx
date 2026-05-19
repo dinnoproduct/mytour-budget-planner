@@ -11,7 +11,7 @@ import {
 import { AlertCardMessage, Button, Icon, Input, Text } from '@ui'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChildAge, SearchTravelersProps } from './types.ts'
+import { ChildAge, SearchTravelersProps } from './types'
 import { getPluralForm } from '@shared/helpers'
 import { FormState } from '@components/Form'
 import { ChevronRightIcon } from "@chakra-ui/icons";

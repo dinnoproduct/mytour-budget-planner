@@ -2,8 +2,8 @@ import Slider, { Settings } from 'react-slick'
 import React, { useRef, useState } from 'react'
 import { Box, BoxProps } from '@chakra-ui/react'
 import { ImageSliderProps } from '@features/PackageImagesGallery/ui/types'
-import { PaginationBadge } from './Badge.tsx'
-import { GalleryImage } from './GalleryImage.tsx'
+import { PaginationBadge } from './Badge'
+import { GalleryImage } from './GalleryImage'
 import classnames from 'classnames'
 
 const slideTime = 300

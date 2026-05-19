@@ -18,8 +18,8 @@ export const tabsComponentTheme = {
           maxW: 'full',
           overflowX: 'auto',
           '&::-webkit-scrollbar': { display: 'none' },
-          '-ms-overflow-style': 'none',
-          'scrollbar-width': 'none'
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none'
         },
         tabpanel: {
           p: 0,
@@ -71,7 +71,7 @@ export const tabsComponentTheme = {
           border: 'none',
           bgColor: 'whiteAlpha.500',
           borderRadius: '200px',
-          width: {base : 'full', md: 'fit-content'},
+          width: { base: 'full', md: 'fit-content' },
           px: 6,
           py: 4,
           transition: 'background-color 0.2s',
