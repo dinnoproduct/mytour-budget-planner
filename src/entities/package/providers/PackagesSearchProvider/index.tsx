@@ -55,13 +55,14 @@ export const PackagesSearchProvider: React.FC<{
   const { navigateToPackages } = useLanguageNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const safeSearchParams = searchParams ?? new URLSearchParams();
   const [isCityChanged, setIsCityChanged] = useState(false);
   const [isDefaultSearchDone, setIsDefaultSearchDone] = useState(false);
 
   const hasInitializedData = useRef(false);
 
   const isAllowedSearchRoute = useMemo(() => {
-    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
+    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname || "");
     const isAllowed = ALLOWED_SEARCH_ROUTES.some((route) => {
       if (route.path === pathWithoutLanguage) {
         if (route.query.length === 0) {
@@ -69,7 +70,7 @@ export const PackagesSearchProvider: React.FC<{
         }
 
         return route.query.every((query) => {
-          const value = searchParams.get(query[0]);
+          const value = safeSearchParams.get(query[0]);
 
           return value && value === query[1];
         });
@@ -82,7 +83,7 @@ export const PackagesSearchProvider: React.FC<{
   }, [location.pathname, searchParams]);
 
   const isAllowedPackageRoute = useMemo(() => {
-    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname);
+    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname || "");
     const isAllowed = ALLOWED_PACKAGE_ROUTES.some((route) => {
       if (route.path === pathWithoutLanguage) {
         if (!route.query || route.query.length === 0) {
@@ -90,7 +91,7 @@ export const PackagesSearchProvider: React.FC<{
         }
 
         return route.query.every((query) => {
-          const value = searchParams.get(query[0]);
+          const value = safeSearchParams.get(query[0]);
 
           return value && value === query[1];
         });
@@ -109,7 +110,7 @@ export const PackagesSearchProvider: React.FC<{
   const { data: packageList = [] } = usePackageList({
     enabled: isAllowedSearchRoute,
   });
-  
+
   // Memoize package list dependency to prevent unnecessary re-renders
   const packageListKey = useMemo(() => {
     if (!Array.isArray(packageList) || packageList.length === 0) {
@@ -265,7 +266,7 @@ export const PackagesSearchProvider: React.FC<{
     if (!Array.isArray(departureFlights) || departureFlights.length === 0) {
       return;
     }
-    
+
     const dates = departureFlights
       .map((flight) => new Date(flight.departureDate))
       .sort((a, b) => a.getTime() - b.getTime());
@@ -279,7 +280,7 @@ export const PackagesSearchProvider: React.FC<{
     if (!returnFlights || returnFlights.length === 0) {
       return;
     }
-    
+
     const dates = returnFlights.map((flight) => new Date(flight.arrivalDate));
     setAvailableReturnDates(dates);
 
@@ -330,15 +331,27 @@ export const PackagesSearchProvider: React.FC<{
     const formatDate = (date: Date | null) =>
       date ? moment(date).format("YYYY-MM-DD") : "";
 
-    const queryParams = new URLSearchParams({
-      from: formatDate(searchData.fromDate),
-      to: formatDate(searchData.toDate),
-      city: searchData.selectedCity + "",
-      adultsCount: searchData.travelersData.adultsCount.toString(),
-      childrenCount: searchData.travelersData.childrenCount.toString(),
-      childrenAges: searchData.travelersData.childrenCount === 0 ? "" : searchData.travelersData.childrenAges.join(","),
-      tab: "packages",
-    });
+    // Preserve existing query params (e.g. filter params) when regenerating
+    // the packages search URL.
+    const queryParams = new URLSearchParams(safeSearchParams.toString());
+    queryParams.set("from", formatDate(searchData.fromDate));
+    queryParams.set("to", formatDate(searchData.toDate));
+    queryParams.set("city", searchData.selectedCity + "");
+    queryParams.set(
+      "adultsCount",
+      searchData.travelersData.adultsCount.toString()
+    );
+    queryParams.set(
+      "childrenCount",
+      searchData.travelersData.childrenCount.toString()
+    );
+    queryParams.set(
+      "childrenAges",
+      searchData.travelersData.childrenCount === 0
+        ? ""
+        : searchData.travelersData.childrenAges.join(",")
+    );
+    queryParams.set("tab", "packages");
 
     return queryParams;
   };
@@ -422,12 +435,12 @@ export const PackagesSearchProvider: React.FC<{
 
     const currentData = {} as Partial<SearchData>;
 
-    const fromParam = searchParams.get("from");
-    const toParam = searchParams.get("to");
-    const cityParam = searchParams.get("city");
-    const adultsCountParam = searchParams.get("adultsCount");
-    const childrenCountParam = searchParams.get("childrenCount");
-    const childrenAgesParam = searchParams.get("childrenAges");
+    const fromParam = safeSearchParams.get("from");
+    const toParam = safeSearchParams.get("to");
+    const cityParam = safeSearchParams.get("city");
+    const adultsCountParam = safeSearchParams.get("adultsCount");
+    const childrenCountParam = safeSearchParams.get("childrenCount");
+    const childrenAgesParam = safeSearchParams.get("childrenAges");
 
     if (fromParam) {
       currentData.fromDate = getDateParam(fromParam);
@@ -446,8 +459,8 @@ export const PackagesSearchProvider: React.FC<{
       currentData.travelersData = {
         adultsCount: parseInt(adultsCountParam || "0", 10),
         childrenCount: childrenCount,
-        childrenAges: childrenCount === 0 
-          ? [] 
+        childrenAges: childrenCount === 0
+          ? []
           : ((childrenAgesParam || "").split(",").filter(Boolean).map(Number) || []),
       };
     }

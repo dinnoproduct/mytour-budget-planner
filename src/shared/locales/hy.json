@@ -468,5 +468,20 @@
   "groupToursSort.cheapest": "գնի",
   "groupToursSort.title": "Դասավորել ըստ",
   "reviews": "{{count}} գնահատական",
-  "writeReview": "Թողնել գնահատական"
+  "writeReview": "Թողնել գնահատական",
+  "reviewUploadTitle": "Վերբեռնել մեդիա",
+  "reviewUploadLimitHelp": "Կարող եք վերբեռնել մինչև {{images}} նկար և {{videos}} տեսանյութ։",
+  "reviewUploadLimitError": "Սահմանաչափը լրացված է․ առավելագույնը {{images}} նկար և {{videos}} տեսանյութ։",
+  "reviewSelectFiles": "Ընտրել ֆայլեր",
+  "reviewUserNameLabel": "Օգտատիրոջ անուն",
+  "reviewSignInToPost": "Գրանցվեք՝ կարծիք թողնելու համար",
+  "reviewDescriptionLabel": "Նկարագրություն",
+  "reviewDescriptionPlaceholder": "Կիսվեք ձեր փորձով...",
+  "reviewUploadProgressLabel": "Վերբեռնված է {{uploaded}} / {{total}}",
+  "reviewSubmit": "Հրապարակել կարծիքը",
+  "compare": "Համեմատել",
+  "compareFooterBar.selected": "Համեմատելու համար",
+  "compare.addMore": "Ավելացնել ևս {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Վերադառնալ որոնման էջ",
+  "compare.title": "Համեմատություն"
 }

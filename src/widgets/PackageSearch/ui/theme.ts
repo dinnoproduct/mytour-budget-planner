@@ -1,9 +1,15 @@
 import { type PackageSearchVariant } from './types'
 
+export const packageSearchGradients = {
+  packages: 'gr_Packages',
+  hotel: 'gr_Hotel',
+  groupTours: 'gr_GroupTours'
+} as const
+
 export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   centered: {
     container: {
-      background: 'linear-gradient(177.92deg, #8408FF 1.7%, #93C5FF 98.21%)',
+      bg: packageSearchGradients.hotel,
       pt: { base: 4, md: '7' },
       pb: { base: '60px', md: '7' }
     },
@@ -22,7 +28,7 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   },
   centeredPackage: {
     container: {
-      background: 'linear-gradient(178deg, #017BFE 1.7%, #00CFFF 98.21%)',
+      bg: packageSearchGradients.packages,
       pt: { base: 4, md: '7' },
       pb: { base: '60px', md: '7' }
     },
@@ -41,7 +47,7 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
   },
   centeredGroupTours: {
     container: {
-      background: 'linear-gradient(178deg, #FF5070 1.7%, #FFC793 98.21%)',
+      bg: packageSearchGradients.groupTours,
       pt: { base: 4, md: '7' },
       pb: { base: '60px', md: '7' }
     },
@@ -83,13 +89,22 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
     wrapper: {
       height: { base: 'auto', md: '96px' },
       width: 'full',
-      zIndex: 1
+      zIndex: 1,
     },
     container: {
       height: { base: 'auto', md: '96px' },
       position: 'fixed',
       borderBottom: '1px solid',
       borderColor: 'gray.100'
+    },
+    packagesContainer: {
+      bg: packageSearchGradients.packages
+    },
+    hotelContainer: {
+      bg: packageSearchGradients.hotel
+    },
+    groupToursContainer: {
+      bg: packageSearchGradients.groupTours
     },
     contentWrapper: {
       maxWidth: 'full',

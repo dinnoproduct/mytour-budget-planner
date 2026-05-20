@@ -23,9 +23,6 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({ children }) => (
     bgColor="gray.50"
     p={6}
     borderRadius="xl"
-    position="fixed"
-    left="32px"
-    height="full"
   >
     {children}
   </Box>

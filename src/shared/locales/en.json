@@ -468,5 +468,20 @@
   "groupToursSort.cheapest": "price",
   "groupToursSort.title": "Sort by",
   "reviews": "{{count}} reviews",
-  "writeReview": "Write a review"
+  "writeReview": "Write a review",
+  "reviewUploadTitle": "Upload media",
+  "reviewUploadLimitHelp": "You can upload up to {{images}} images and {{videos}} videos.",
+  "reviewUploadLimitError": "Upload limit reached: max {{images}} images and {{videos}} videos.",
+  "reviewSelectFiles": "Select files",
+  "reviewUserNameLabel": "Username",
+  "reviewSignInToPost": "Sign in to post a review",
+  "reviewDescriptionLabel": "Description",
+  "reviewDescriptionPlaceholder": "Share your experience...",
+  "reviewUploadProgressLabel": "Uploaded {{uploaded}} / {{total}}",
+  "reviewSubmit": "Post review",
+  "compare": "Compare",
+  "compareFooterBar.selected": "for comparison",
+  "compare.addMore": "Add more {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Go to search page",
+  "compare.title": "Comparing"
 }

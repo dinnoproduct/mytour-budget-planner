@@ -19,7 +19,7 @@ import {
   useHotelPackagesSearchContext,
 } from '@entities/package'
 import {
-  countryCards,
+  countryCards, 
   packageCards as baseCityCards,
 } from '@/constants/constants'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
