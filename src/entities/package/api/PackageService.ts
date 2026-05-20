@@ -3,9 +3,13 @@ import {
   type GenerateHotelOffersInput,
   type GenerateOffersInput,
   type OfferEntity,
+  type PackageCity,
   type PackageEntity,
+  type PackageHotel,
   type SearchPackagesParams
 } from '@entities/package'
+
+type ReviewHotelEntity = PackageHotel & { city: PackageCity }
 
 export class PackageService {
   private readonly baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`
@@ -80,6 +84,26 @@ export class PackageService {
   ): Promise<PackageEntity> {
     return this.request<PackageEntity>({
       url: `/getHotelPackage/?id=${offerId}&travelAgancy=${travelAgency}`
+    })
+  }
+
+  private async rawRequest<T>(config: AxiosRequestConfig): Promise<T> {
+    const api = axios.create({
+      baseURL: this.baseUrl
+    })
+
+    api.interceptors.response.use(
+      response => response.data,
+      error => Promise.reject(error)
+    )
+
+    return api(config)
+  }
+
+  async getReviewHotelMeta(id: number): Promise<ReviewHotelEntity> {
+    return this.rawRequest<ReviewHotelEntity>({
+      url: '/hotel/gethotel',
+      params: { id }
     })
   }
 }

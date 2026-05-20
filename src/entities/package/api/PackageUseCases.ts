@@ -95,6 +95,10 @@ export class PackageUseCases {
     return this.packageService.getHotelPackage(offerId, travelAgency)
   }
 
+  async getReviewHotelMeta(id: number) {
+    return this.packageService.getReviewHotelMeta(id)
+  }
+
   // flight
   async getAvailableFlights(params: GetAvailableFlightsParams) {
     return this.flightService.getAvailableFlights(params)
