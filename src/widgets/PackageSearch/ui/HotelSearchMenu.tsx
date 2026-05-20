@@ -66,12 +66,12 @@ export const HotelSearchMenu = ({
   }, [isFormOpen])
 
   const cityLabel = useMemo(() => {
-      return cities
-        .filter(c => Array.isArray(searchData.selectedCity) ? searchData.selectedCity.includes(c.id) : [searchData.selectedCity].includes(c.id))
-        .map(c => c[`name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
-          ] || '')
-        .join(', ')
-    }, [searchData.selectedCity, cities, i18n.language]);
+    return cities
+      .filter(c => Array.isArray(searchData.selectedCity) ? searchData.selectedCity.includes(c.id) : [searchData.selectedCity].includes(c.id))
+      .map(c => c[`name${LANGUAGE_PREFIX[i18n.language as LanguageName]}` as keyof PackageCity
+      ] || '')
+      .join(', ')
+  }, [searchData.selectedCity, cities, i18n.language]);
 
   const handleFormOpen = () => {
     onFormOpen()
@@ -106,17 +106,13 @@ export const HotelSearchMenu = ({
       <Box width="full">
         <Box display={isFormOpen ? 'block' : 'none'}>
           <Flex
-            justify="space-between"
+            justify="flex-end"
             align="center"
-            borderBottom="1px solid"
-            borderColor="gray.100"
             width="full"
             p="3"
           >
-            <Text size="sm" color="black">{t`edit`}</Text>
-
             <Box onClick={handleFormClose} cursor="pointer">
-              <Icon name="close" size="24" color="blue.500" />
+              <Icon name="close" size="24" color="white" />
             </Box>
           </Flex>
 
@@ -144,8 +140,9 @@ export const HotelSearchMenu = ({
             mt={showTabs ? '-2' : '0'}
             pb="3"
             pt={showTabs ? '0' : '3'}
-            maxWidth="368px"
+            maxWidth={{ base: "full", md: "368px" }}
             mx="auto"
+            background="linear-gradient(177.92deg, #8408FF 1.7%, #93C5FF 98.21%)"
           >
             <HotelSearchForm onSearch={handleFormClose} />
           </VStack>
@@ -156,8 +153,9 @@ export const HotelSearchMenu = ({
           onClick={handleFormOpen}
           cursor="pointer"
           p="3"
-          maxWidth="368px"
+          maxWidth={{ base: "full", md: "368px" }}
           mx="auto"
+          bgColor="white"
         >
           <Flex width="full" justify="space-between">
             <Text size="sm" color="black" noOfLines={1}>
@@ -170,8 +168,8 @@ export const HotelSearchMenu = ({
             {searchData.days && searchData.days > 0
               ? getApproximateText()
               : `${formatDate(searchData.fromDate)} - ${formatDate(
-                  searchData.toDate
-                )}`}{' '}
+                searchData.toDate
+              )}`}{' '}
             •{' '}
             {searchData.travelersData.adultsCount +
               searchData.travelersData.childrenCount}{' '}

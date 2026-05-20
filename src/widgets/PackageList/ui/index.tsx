@@ -1,5 +1,9 @@
 import { type LayoutProps } from "./types";
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  VStack,
+} from "@chakra-ui/react";
 import {
   PackageCardSkeleton,
   type PackageEntity,
@@ -7,7 +11,7 @@ import {
   usePackagesSearchContext,
 } from "@entities/package";
 import { PackageCardHorizontal } from "@features/PackageCard";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useLocation } from "@shared/lib/router";
 import { EmptyView } from "@widgets/PackageList/ui/EmptyView";
@@ -18,6 +22,13 @@ import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
 import { LoaderWithText } from "@/components/Loader/Loader";
 import { useTranslation } from "react-i18next";
+import { CompareFooterBar } from "./Compare/CompareFooterBar";
+import { CompareModal } from "./Compare/CompareModal";
+
+const MAX_COMPARE_ITEMS = 5;
+
+const getCompareKey = (packageEntity: PackageEntity) =>
+  `${packageEntity.offerId}-${packageEntity.hotel.id}`;
 
 export const PackageList = () => {
   const { searchParams } = useQueryParams();
@@ -144,6 +155,60 @@ export const PackageList = () => {
     ],
   );
 
+  const [selectedComparePackages, setSelectedComparePackages] = useState<
+    PackageEntity[]
+  >([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!filteredActivePackages?.length) {
+      setSelectedComparePackages([]);
+      setIsCompareModalOpen(false);
+      return;
+    }
+
+    const activeKeys = new Set(
+      filteredActivePackages.map((item) => getCompareKey(item)),
+    );
+
+    setSelectedComparePackages((prev) =>
+      prev.filter((item) => activeKeys.has(getCompareKey(item))),
+    );
+  }, [filteredActivePackages]);
+
+  useEffect(() => {
+    if (selectedComparePackages.length < 2 && isCompareModalOpen) {
+      setIsCompareModalOpen(false);
+    }
+  }, [selectedComparePackages.length, isCompareModalOpen]);
+
+  const selectedCompareKeys = useMemo(
+    () => new Set(selectedComparePackages.map((item) => getCompareKey(item))),
+    [selectedComparePackages],
+  );
+
+  const showCompareFooter =
+    selectedComparePackages.length > 1 && !isCompareModalOpen;
+
+  const handleCompareToggle = (
+    packageEntity: PackageEntity,
+    isChecked: boolean,
+  ) => {
+    setSelectedComparePackages((prev) => {
+      const key = getCompareKey(packageEntity);
+      const isAlreadySelected = prev.some((item) => getCompareKey(item) === key);
+
+      if (isChecked) {
+        if (isAlreadySelected || prev.length >= MAX_COMPARE_ITEMS) {
+          return prev;
+        }
+        return [...prev, packageEntity];
+      }
+
+      return prev.filter((item) => getCompareKey(item) !== key);
+    });
+  };
+
   // empty view
   if (!isLoadingPackages && !activePackages?.length) {
     return (
@@ -177,7 +242,7 @@ export const PackageList = () => {
   }
 
   return (
-    <Layout>
+    <Layout hasCompareFooter={showCompareFooter}>
       {!isLoadingPackages ? (
         <Box ml={0} width={{ base: 'full', md: 'auto' }}>
           <PackageFilter
@@ -205,18 +270,59 @@ export const PackageList = () => {
                 key={packageEntity.offerId + "---" + packageEntity.hotel.id}
                 link={generateLink(packageEntity)}
                 nights={getNights()} // todo: check nights
+                isCompareSelected={selectedCompareKeys.has(
+                  getCompareKey(packageEntity),
+                )}
+                isCompareDisabled={
+                  selectedComparePackages.length >= MAX_COMPARE_ITEMS &&
+                  !selectedCompareKeys.has(getCompareKey(packageEntity))
+                }
+                onCompareToggle={(isChecked) =>
+                  handleCompareToggle(packageEntity, isChecked)
+                }
               />
             ))}
         </VStack>
       )}
+      <CompareFooterBar
+        selectedPackages={selectedComparePackages}
+        maxCompareItems={MAX_COMPARE_ITEMS}
+        getCompareKey={getCompareKey}
+        onRemove={(key) =>
+          setSelectedComparePackages((prev) =>
+            prev.filter((item) => getCompareKey(item) !== key),
+          )
+        }
+        onClear={() => setSelectedComparePackages([])}
+        onCompare={() => setIsCompareModalOpen(true)}
+        isHidden={isCompareModalOpen}
+      />
+      <CompareModal
+        isOpen={isCompareModalOpen}
+        onClose={() => setIsCompareModalOpen(false)}
+        packages={selectedComparePackages}
+        cities={activeCities}
+        selectedCityIds={selectedCityIds}
+        maxCompareItems={MAX_COMPARE_ITEMS}
+        itemTypeLabel={t(isPackagesSearchView ? 'package' : 'hotel')}
+        onRemove={(packageEntity) =>
+          setSelectedComparePackages((prev) =>
+            prev.filter((item) => getCompareKey(item) !== getCompareKey(packageEntity)),
+          )
+        }
+        getLink={generateLink}
+      />
     </Layout>
   );
 };
 
 
-const Layout = ({ children }: LayoutProps) => (
+const Layout = ({ children, hasCompareFooter = false }: LayoutProps) => (
   <Box py={{ base: 6, md: 10 }} width="100%" background="white">
-    <Box px={{ base: 4, md: 6, lg: 8 }}>
+    <Box
+      px={{ base: 4, md: 6, lg: 8 }}
+      pb={hasCompareFooter ? { base: "104px", md: "120px" } : 0}
+    >
       <Flex
         gap={6}
         direction={{ base: "column", md: "row" }}
