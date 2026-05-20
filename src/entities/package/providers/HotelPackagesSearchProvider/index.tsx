@@ -48,6 +48,7 @@ export const HotelPackagesSearchProvider: React.FC<{
   const { navigateToPackages } = useLanguageNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
+  const safeSearchParams = searchParams ?? new URLSearchParams()
   const [isLoadingFilteredHotelPackages, setIsLoadingFilteredHotelPackages] =
     useState(false)
   const [isSearchError, setIsSearchError] = useState(false)
@@ -67,13 +68,13 @@ export const HotelPackagesSearchProvider: React.FC<{
   }
 
   const isAllowedSearchRoute = useMemo(() => {
-    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname)
+    const pathWithoutLanguage = getPathWithoutLanguage(location.pathname || '')
     const isAllowed = ALLOWED_SEARCH_ROUTES.some(route => {
       if (route.path === pathWithoutLanguage) {
         if (route.query.length === 0) return true
 
         return route.query.every(query => {
-          const value = searchParams.get(query[0])
+          const value = safeSearchParams.get(query[0])
 
           return value && value === query[1]
         })
@@ -110,20 +111,20 @@ export const HotelPackagesSearchProvider: React.FC<{
       // Validate and filter selectedCity IDs to only include cities that exist in the current cities list
       const savedCityIds = savedSearchData.selectedCity != null
         ? (Array.isArray(savedSearchData.selectedCity)
-            ? savedSearchData.selectedCity
-            : [savedSearchData.selectedCity])
+          ? savedSearchData.selectedCity
+          : [savedSearchData.selectedCity])
         : []
-      
-      const validCityIds = savedCityIds.filter(cityId => 
+
+      const validCityIds = savedCityIds.filter(cityId =>
         cities.some(city => city.id === cityId)
       )
-      
+
       // If no valid cities found, fall back to defaultSelectedHotelCity filtered by available cities
       const selectedCity = validCityIds.length > 0
         ? validCityIds
         : defaultSelectedHotelCity.filter(cityId =>
-            cities.some(city => city.id === cityId)
-          )
+          cities.some(city => city.id === cityId)
+        )
 
       setSearchData({
         ...savedSearchData,
@@ -140,7 +141,7 @@ export const HotelPackagesSearchProvider: React.FC<{
         ) : []
       })
     }
-    
+
     hasInitializedData.current = true
   }, [cities])
 
@@ -152,17 +153,32 @@ export const HotelPackagesSearchProvider: React.FC<{
       ? searchData.selectedCity.join(',')
       : searchData.selectedCity
 
-    const queryParams = new URLSearchParams({
-      from: formatDate(searchData.fromDate),
-      to: formatDate(searchData.toDate),
-      city: cityParam.toString(),
-      adultsCount: searchData.travelersData.adultsCount.toString(),
-      childrenCount: searchData.travelersData.childrenCount.toString(),
-      childrenAges: searchData.travelersData.childrenCount === 0 ? '' : searchData.travelersData.childrenAges.join(','),
-      days: dateMode === 'exact' ? '' : searchData.days?.toString() ?? '',
-      dateMode: dateMode.toString(),
-      tab: 'hotel'
-    })
+    // Preserve existing query params (e.g. filter params) when regenerating
+    // the hotel search URL.
+    const queryParams = new URLSearchParams(safeSearchParams.toString())
+    queryParams.set('from', formatDate(searchData.fromDate))
+    queryParams.set('to', formatDate(searchData.toDate))
+    queryParams.set('city', cityParam.toString())
+    queryParams.set(
+      'adultsCount',
+      searchData.travelersData.adultsCount.toString()
+    )
+    queryParams.set(
+      'childrenCount',
+      searchData.travelersData.childrenCount.toString()
+    )
+    queryParams.set(
+      'childrenAges',
+      searchData.travelersData.childrenCount === 0
+        ? ''
+        : searchData.travelersData.childrenAges.join(',')
+    )
+    queryParams.set(
+      'days',
+      dateMode === 'exact' ? '' : searchData.days?.toString() ?? ''
+    )
+    queryParams.set('dateMode', dateMode.toString())
+    queryParams.set('tab', 'hotel')
 
     return queryParams
   }
@@ -254,7 +270,7 @@ export const HotelPackagesSearchProvider: React.FC<{
   useEffect(() => {
     // Only sync URL params when we're on the hotel tab to prevent
     // packages search params from polluting hotel search data
-    const tabParam = searchParams.get('tab')
+    const tabParam = safeSearchParams.get('tab')
     if (tabParam !== 'hotel') {
       return
     }
@@ -264,14 +280,14 @@ export const HotelPackagesSearchProvider: React.FC<{
 
     const currentData = {} as SearchData
 
-    const fromParam = searchParams.get('from')
-    const toParam = searchParams.get('to')
-    const cityParam = searchParams.get('city')
-    const adultsCountParam = searchParams.get('adultsCount')
-    const childrenCountParam = searchParams.get('childrenCount')
-    const childrenAgesParam = searchParams.get('childrenAges')
-    const dateModeParam = searchParams.get('dateMode')
-    const daysParam = searchParams.get('days')
+    const fromParam = safeSearchParams.get('from')
+    const toParam = safeSearchParams.get('to')
+    const cityParam = safeSearchParams.get('city')
+    const adultsCountParam = safeSearchParams.get('adultsCount')
+    const childrenCountParam = safeSearchParams.get('childrenCount')
+    const childrenAgesParam = safeSearchParams.get('childrenAges')
+    const dateModeParam = safeSearchParams.get('dateMode')
+    const daysParam = safeSearchParams.get('days')
 
     if (fromParam) {
       currentData.fromDate = getDateFromParam(fromParam)
@@ -293,8 +309,8 @@ export const HotelPackagesSearchProvider: React.FC<{
       currentData.travelersData = {
         adultsCount: parseInt(adultsCountParam || '0', 10),
         childrenCount: childrenCount,
-        childrenAges: childrenCount === 0 
-          ? [] 
+        childrenAges: childrenCount === 0
+          ? []
           : ((childrenAgesParam || '').split(',').filter(Boolean).map(Number) || [])
       }
     }
@@ -312,7 +328,7 @@ export const HotelPackagesSearchProvider: React.FC<{
     if (hasUrlData) {
       setSearchData(currentData)
     }
-    
+
   }, [searchParams])
 
   return (
