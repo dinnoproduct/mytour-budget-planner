@@ -1,4 +1,5 @@
-import { Box, Flex, keyframes } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
+import { keyframes } from '@emotion/react'
 import { Illustration, Text } from '@ui'
 import { useTranslation } from 'react-i18next'
 
