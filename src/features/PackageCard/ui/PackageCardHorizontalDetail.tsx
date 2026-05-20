@@ -34,7 +34,7 @@ export const PackageCardHorizontalDetail = ({
   )
 
   return (
-    <Box width={{ base: 'auto', md: '254px' }} p="4">
+    <Box width={{ base: 'auto', md: '254px' }} py="4" px={{ base: 4, md: 0 }}>
       <VStack align={{ base: 'start', md: 'start' }}>
         {isMd && (
           <>
@@ -53,7 +53,7 @@ export const PackageCardHorizontalDetail = ({
               tourPackage={tourPackage}
               childrenTravelers={childrenTravelers}
             />
-            <Flex justify="flex-start" align="center" width="full" flexDirection="row" gap={2}>
+            <Flex justify="flex-start" align="center" width="full" flexDirection="row" gap={2} px={{ base: 0, md: 4 }}>
               <PriceDisplay tourPackage={tourPackage} />
               <ApproximatePriceDisplay tourPackage={tourPackage} />
             </Flex>
@@ -96,11 +96,15 @@ export const PackageCardHorizontalDetail = ({
             />
           </>
         )}
-        <Button
-          hidden={!isMd}
-          width="full"
-          px={3}
-        >{t`learnMore`}</Button>
+        <Box width="full"
+          px={{ base: 0, md: 4 }}
+        >
+          <Button
+            hidden={!isMd}
+            width="full"
+            px={3}
+          >{t`learnMore`}</Button>
+        </Box>
       </VStack>
     </Box>
   )
@@ -116,7 +120,7 @@ const TravelersAndNightsInfo = ({
   const { t } = useTranslation()
 
   return (
-    <Text size="xs" fontWeight="medium" color="gray.600">
+    <Text size="xs" fontWeight="medium" color="gray.600" px={{ base: 0, md: 4 }}>
       {tourPackage.adultTravelers}{' '}
       {t(getPluralForm(tourPackage.adultTravelers, 'adults'))}
       {childrenTravelers}
@@ -147,7 +151,7 @@ const DateTag = ({ tourPackage, fromDate, toDate, nights }: DateTagProps) => {
   }
 
   return (
-    <Tag variant={tagVariant} px={3} rounded="full">
+    <Tag variant={tagVariant} px={3} rounded="full" mx={{ base: 0, md: 4 }}>
       {formatDate(fromDate)} - {formatDate(toDate)}
       {!isNightsAreEqual && (
         <Tooltip
@@ -185,6 +189,7 @@ const CompareButton = ({
       borderTop={{ base: "1px solid", md: "0px solid" }}
       borderColor={{ base: "gray.100", md: "gray.100" }}
       width="full"
+      px={{ base: 0, md: 4 }}
       pt={{ base: 4, md: 0 }}
       pb={{ base: 0, md: 4 }}
       cursor={isDisabled ? "not-allowed" : "pointer"}

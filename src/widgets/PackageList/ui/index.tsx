@@ -188,7 +188,7 @@ export const PackageList = () => {
   );
 
   const showCompareFooter =
-    selectedComparePackages.length > 1 && !isCompareModalOpen;
+    selectedComparePackages.length >= 1 && !isCompareModalOpen;
 
   const handleCompareToggle = (
     packageEntity: PackageEntity,
