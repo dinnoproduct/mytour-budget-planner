@@ -20,6 +20,7 @@ export type CompareFooterContentProps = {
   compareLabel: string;
   counterLabel?: string;
   isMobile?: boolean;
+  isCompareDisabled?: boolean;
 };
 
 export type CompareFooterMobileHeaderProps = {

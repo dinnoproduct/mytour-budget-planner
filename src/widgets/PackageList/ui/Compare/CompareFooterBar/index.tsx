@@ -21,7 +21,8 @@ export const CompareFooterBar = ({
   isHidden = false,
 }: CompareFooterBarProps) => {
   const { t } = useTranslation();
-  const isVisible = selectedPackages.length > 1 && !isHidden;
+  const isVisible = selectedPackages.length >= 1 && !isHidden;
+  const isCompareDisabled = selectedPackages.length < 2;
   const isMobile = useBreakpointValue({ base: true, md: false }) ?? false;
   const { isExpanded, setIsExpanded } = useCompareFooterBarState({
     isMobile,
@@ -61,6 +62,7 @@ export const CompareFooterBar = ({
             clearLabel={t("clear")}
             compareLabel={t("compare")}
             counterLabel={counterLabel}
+            isCompareDisabled={isCompareDisabled}
           />
         ) : null}
 
@@ -74,6 +76,7 @@ export const CompareFooterBar = ({
               onCompare={onCompare}
               clearLabel={t("clear")}
               compareLabel={t("compare")}
+              isCompareDisabled={isCompareDisabled}
               isMobile
             />
           </Collapse>

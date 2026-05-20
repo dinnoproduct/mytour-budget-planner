@@ -24,7 +24,7 @@ export const useCompareFooterBarState = ({
     const previousSelectedCount = previousSelectedCountRef.current;
     const hasNewSelection = selectedCount > previousSelectedCount;
     const reachedCompareMinimum =
-      previousSelectedCount < 2 && selectedCount >= 2;
+      previousSelectedCount < 1 && selectedCount >= 1;
 
     if (
       isMobile &&

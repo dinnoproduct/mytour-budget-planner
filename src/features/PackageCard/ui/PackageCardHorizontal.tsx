@@ -86,7 +86,7 @@ export const PackageCardHorizontal = ({
         <Flex
           gap={4}
           bgColor="gray.50"
-          p={3}
+          p={2}
           grow={1}
           flexDirection={{ base: "column", md: "row" }}
         >
@@ -168,7 +168,7 @@ const Layout = ({
     >
       <Box
         width={{ base: "auto", md: "full" }}
-        rounded="lg"
+        rounded="2xl"
         overflow="hidden"
         border="1px solid"
         borderColor="gray.200"

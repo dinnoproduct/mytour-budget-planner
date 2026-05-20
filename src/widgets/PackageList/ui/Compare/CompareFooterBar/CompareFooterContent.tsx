@@ -13,6 +13,7 @@ export const CompareFooterContent = ({
   compareLabel,
   counterLabel,
   isMobile = false,
+  isCompareDisabled = false,
 }: CompareFooterContentProps) => {
   return (
     <Box px={{ base: 4, md: 8 }} py={{ base: 3, md: 4 }}>
@@ -74,6 +75,7 @@ export const CompareFooterContent = ({
             variant="solid-blue"
             width={isMobile ? "full" : { base: "full", md: "auto" }}
             onClick={onCompare}
+            isDisabled={isCompareDisabled}
           >
             {compareLabel}
           </Button>
