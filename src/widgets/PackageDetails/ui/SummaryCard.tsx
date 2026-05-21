@@ -8,12 +8,12 @@ export const SummaryCard = ({ iconName, children }: { iconName: IconName, childr
 			<Flex
 				bgColor="gray.100"
 				rounded="base"
-				width="28px"
-				height="28px"
+				width="24px"
+				height="24px"
 				align="center"
 				justify="center"
 			>
-				<Icon name={iconName} size="20" color="gray.500" />
+				<Icon name={iconName} size="16" color="gray.500" />
 			</Flex>
 
 			<Text size="sm">{children}</Text>
