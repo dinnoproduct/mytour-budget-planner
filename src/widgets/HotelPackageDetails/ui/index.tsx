@@ -41,6 +41,7 @@ export const HotelPackageDetails = ({
       <CardSectionLayout
         id={HOTEL_DETAILS_SECTION_IDS.overview}
         scrollMarginTop={sectionScrollMargin}
+        padding={0}
         beforeTitle={
           <HotelDetailsSectionNav
             containerRef={containerRef}

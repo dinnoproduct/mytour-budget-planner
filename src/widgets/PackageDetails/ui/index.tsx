@@ -50,6 +50,7 @@ export const PackageDetails = ({
       <CardSectionLayout
         id={PACKAGE_DETAILS_SECTION_IDS.included}
         scrollMarginTop={sectionScrollMargin}
+        padding={0}
         beforeTitle={
           <PackageDetailsSectionNav
             containerRef={containerRef}
