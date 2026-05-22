@@ -254,7 +254,7 @@ const PackageFilterMobileContent = ({
         </Text>
 
         <Button variant="text-blue" onClick={onReset}>
-          {t`cancel`}
+          {t`clear`}
         </Button>
       </Flex>
       <Box
@@ -278,6 +278,8 @@ const PackageFilterMobileContent = ({
           width="full"
           p={4}
           maxW="100dvw"
+          zIndex={100000}
+          backgroundColor="white"
         >
           <Button width="full" onClick={handleOnConfirm}>
             {t`filtering`}
