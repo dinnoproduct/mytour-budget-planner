@@ -7,7 +7,7 @@ import { useBreakpoint } from '@/shared/hooks'
 import { Box, VStack, Flex, Tag, TagRightIcon, Show } from '@chakra-ui/react'
 import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import { CURRENCY_MAP } from '@shared/model'
-import { Button, Icon, Text, Tooltip } from '@ui'
+import { Button, Checkbox, Icon, Text, Tooltip } from '@ui'
 import { getPluralForm } from '@shared/helpers'
 import { formatNumber } from '@shared/utils'
 import moment, { type Moment } from 'moment'
@@ -16,7 +16,10 @@ export const PackageCardHorizontalDetail = ({
   tourPackage,
   nights,
   isHotelPackage,
-  childrenTravelers
+  childrenTravelers,
+  isCompareSelected = false,
+  isCompareDisabled = false,
+  onCompareToggle,
 }: PackageCardHorizontalDetailProps) => {
   const { t } = useTranslation()
   const { isMd } = useBreakpoint()
@@ -31,10 +34,15 @@ export const PackageCardHorizontalDetail = ({
   )
 
   return (
-    <Box width={{ base: 'auto', md: '254px' }} p="4">
-      <VStack align={{ base: 'start', md: 'end' }}>
+    <Box width={{ base: 'auto', md: '254px' }} py="4" px={{ base: 4, md: 0 }}>
+      <VStack align={{ base: 'start', md: 'start' }}>
         {isMd && (
           <>
+            {/* <CompareButton
+              isChecked={isCompareSelected}
+              isDisabled={isCompareDisabled}
+              onToggle={onCompareToggle}
+            /> */}
             <DateTag
               fromDate={fromDate}
               toDate={toDate}
@@ -45,10 +53,11 @@ export const PackageCardHorizontalDetail = ({
               tourPackage={tourPackage}
               childrenTravelers={childrenTravelers}
             />
-            <PriceDisplay tourPackage={tourPackage} />
-            <Flex height="28px" align="center">
+            <Flex justify="flex-start" align="center" width="full" flexDirection="row" gap={2} px={{ base: 0, md: 4 }}>
+              <PriceDisplay tourPackage={tourPackage} />
               <ApproximatePriceDisplay tourPackage={tourPackage} />
             </Flex>
+
           </>
         )}
         {!isMd && (
@@ -58,7 +67,6 @@ export const PackageCardHorizontalDetail = ({
                 tourPackage={tourPackage}
                 childrenTravelers={childrenTravelers}
               />
-
               <DateTag
                 fromDate={fromDate}
                 toDate={toDate}
@@ -66,8 +74,7 @@ export const PackageCardHorizontalDetail = ({
                 tourPackage={tourPackage}
               />
             </Flex>
-
-            <Flex justify="space-between" align="center" width="full">
+            <Flex justify="space-between" align="center" width="full" >
               <Text size="xs" color="gray.600">
                 {t`startFrom`}
               </Text>
@@ -81,14 +88,23 @@ export const PackageCardHorizontalDetail = ({
                 </Flex>
               </Flex>
             </Flex>
+
+            {/* <CompareButton
+              isChecked={isCompareSelected}
+              isDisabled={isCompareDisabled}
+              onToggle={onCompareToggle}
+            /> */}
           </>
         )}
-
-        <Button
-          hidden={!isMd}
-          width="full"
-          px={3}
-        >{t`learnMore`}</Button>
+        <Box width="full"
+          px={{ base: 0, md: 4 }}
+        >
+          <Button
+            hidden={!isMd}
+            width="full"
+            px={3}
+          >{t`learnMore`}</Button>
+        </Box>
       </VStack>
     </Box>
   )
@@ -104,7 +120,7 @@ const TravelersAndNightsInfo = ({
   const { t } = useTranslation()
 
   return (
-    <Text size="xs" fontWeight="medium" color="gray.600">
+    <Text size="xs" fontWeight="medium" color="gray.600" px={{ base: 0, md: 4 }}>
       {tourPackage.adultTravelers}{' '}
       {t(getPluralForm(tourPackage.adultTravelers, 'adults'))}
       {childrenTravelers}
@@ -135,7 +151,7 @@ const DateTag = ({ tourPackage, fromDate, toDate, nights }: DateTagProps) => {
   }
 
   return (
-    <Tag variant={tagVariant} px={3} rounded="full">
+    <Tag variant={tagVariant} px={3} rounded="full" mx={{ base: 0, md: 4 }}>
       {formatDate(fromDate)} - {formatDate(toDate)}
       {!isNightsAreEqual && (
         <Tooltip
@@ -150,6 +166,50 @@ const DateTag = ({ tourPackage, fromDate, toDate, nights }: DateTagProps) => {
         </Tooltip>
       )}
     </Tag>
+  )
+}
+
+
+const CompareButton = ({
+  isChecked,
+  isDisabled,
+  onToggle,
+}: {
+  isChecked: boolean
+  isDisabled: boolean
+  onToggle?: (isChecked: boolean) => void
+}) => {
+  const { t } = useTranslation()
+
+  return (
+    <Flex
+      alignItems="center"
+      gap={2}
+      borderBottom={{ base: "0px solid", md: "1px solid" }}
+      borderTop={{ base: "1px solid", md: "0px solid" }}
+      borderColor={{ base: "gray.100", md: "gray.100" }}
+      width="full"
+      px={{ base: 0, md: 4 }}
+      pt={{ base: 4, md: 0 }}
+      pb={{ base: 0, md: 4 }}
+      cursor={isDisabled ? "not-allowed" : "pointer"}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (isDisabled) return
+        onToggle?.(!isChecked)
+      }}
+    >
+      <Checkbox
+        isChecked={isChecked}
+        isDisabled={isDisabled}
+        pointerEvents="none"
+        onChange={() => undefined}
+      />
+      <Text size="xs" color="gray.600">
+        {t`compare`}
+      </Text>
+    </Flex >
   )
 }
 
@@ -173,11 +233,11 @@ const PriceDisplay = ({
 const ApproximatePriceDisplay = ({
   tourPackage
 }: Pick<PackageCardHorizontalDetailProps, 'tourPackage'>) => (
-  <>
+  <Flex alignItems="center">
     <Icon name="approximate" size="12" color="gray.600" />
-    <Text size="xs" color="gray.600" ml="0.5">
-      {formatNumber(parseFloat(tourPackage.priceInCurrency))}{' '}
+    <Text size="xs" color="gray.600">
+      {formatNumber(tourPackage.priceInCurrency)}{' '}
       {CURRENCY_MAP[tourPackage.currency]}
     </Text>
-  </>
+  </Flex>
 )

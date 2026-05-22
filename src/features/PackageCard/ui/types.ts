@@ -10,6 +10,9 @@ export type PackageCardBasicProps = {
 
 export type PackageCardHorizontalProps = {
   nights: number
+  isCompareSelected?: boolean
+  isCompareDisabled?: boolean
+  onCompareToggle?: (isChecked: boolean) => void
 } & PackageCardBasicProps
 
 export type PackageCardHorizontalDetailProps = {
@@ -17,6 +20,9 @@ export type PackageCardHorizontalDetailProps = {
   childrenTravelers: string
   isHotelPackage: boolean
   nights: number
+  isCompareSelected?: boolean
+  isCompareDisabled?: boolean
+  onCompareToggle?: (isChecked: boolean) => void
 }
 
 export type DateTagProps = {

@@ -2,6 +2,7 @@ import { VStack, Text } from '@chakra-ui/react'
 import { FilterRange } from './FilterRange'
 import { FilterSelect } from './FilterSelect'
 import { FilterRatingCheckbox } from './FilterRating'
+import { FilterCheckboxList } from './FilterCheckboxList'
 import { FILTER_ITEM_TYPE } from '../model'
 
 type BaseProps = {
@@ -22,6 +23,13 @@ type RatingCheckboxFilterProps = BaseProps & {
   onChange: (value: number[]) => void
 }
 
+type CheckboxFilterProps = BaseProps & {
+  type: 'checkboxList'
+  value: number[]
+  options: { key: string; value: number; label: string }[]
+  onChange: (value: number[]) => void
+}
+
 type RangeFilterProps = BaseProps & {
   type: 'range'
   minValue: number
@@ -33,6 +41,7 @@ type RangeFilterProps = BaseProps & {
 
 type FilterItemProps =
   | SelectFilterProps
+  | CheckboxFilterProps
   | RatingCheckboxFilterProps
   | RangeFilterProps
 
@@ -54,6 +63,15 @@ export const FilterItem = (props: FilterItemProps) => {
     case FILTER_ITEM_TYPE.RATING_CHECKBOX_LIST:
       component = (
         <FilterRatingCheckbox
+          value={props.value}
+          options={props.options}
+          onChange={onChange}
+        />
+      )
+      break
+    case FILTER_ITEM_TYPE.CHECKBOX_LIST:
+      component = (
+        <FilterCheckboxList
           value={props.value}
           options={props.options}
           onChange={onChange}

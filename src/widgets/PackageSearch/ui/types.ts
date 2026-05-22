@@ -1,5 +1,5 @@
 import { type BoxProps, type StackProps } from '@chakra-ui/react'
-import {Dispatch, type ReactNode, SetStateAction} from 'react'
+import { Dispatch, type ReactNode, SetStateAction } from 'react'
 
 export type PackageSearchProps = {
   variant?: PackageSearchVariant

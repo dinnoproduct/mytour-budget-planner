@@ -27,6 +27,7 @@ export const useSearchAsync = () => {
     queryClient.fetchQuery({
       queryKey: ['package-search', search],
       queryFn: () => packageUseCases.search(search),
+      staleTime: 0,
       ...options
     })
 } 

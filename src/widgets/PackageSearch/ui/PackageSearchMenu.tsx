@@ -85,35 +85,31 @@ export const PackageSearchMenu = ({
       <Box width="full">
         <Box display={isFormOpen ? 'block' : 'none'}>
           <Flex
-            justify="space-between"
+            justify="flex-end"
             align="center"
-            borderBottom="1px solid"
-            borderColor="gray.100"
             width="full"
             p="3"
           >
-            <Text size="sm" color="black">{t`edit`}</Text>
-
             <Box onClick={handleFormClose} cursor="pointer">
-              <Icon name="close" size="24" color="blue.500" />
+              <Icon name="close" size="24" color="white" />
             </Box>
           </Flex>
 
           {showTabs && (
-          <Tabs
-            labels={[
-              <PackageTabItem key="package-tab" />,
-              <HotelTabItem key="hotel-tab" />,
-              <GroupTabItem key="group-tab" />
-            ]}
-            variant="line"
-            mt="2"
-            index={selectedTab}
-            onChange={handleTabChange}
-            align="center"
-          >
-            <></>
-          </Tabs>
+            <Tabs
+              labels={[
+                <PackageTabItem key="package-tab" />,
+                <HotelTabItem key="hotel-tab" />,
+                <GroupTabItem key="group-tab" />
+              ]}
+              variant="line"
+              mt="2"
+              index={selectedTab}
+              onChange={handleTabChange}
+              align="center"
+            >
+              <></>
+            </Tabs>
           )}
 
           <VStack
@@ -122,8 +118,9 @@ export const PackageSearchMenu = ({
             mt={showTabs ? "-2" : "0"}
             pb="3"
             pt={showTabs ? "0" : "3"}
-            maxWidth="368px"
+            maxWidth={{ base: "full", md: "368px" }}
             mx="auto"
+            background="linear-gradient(177.92deg, #017BFE 1.7%, #00CFFF 98.21%)"
           >
             <PackageSearchForm onSearch={handleFormClose} />
           </VStack>
@@ -134,7 +131,8 @@ export const PackageSearchMenu = ({
           onClick={handleFormOpen}
           cursor="pointer"
           p="3"
-          maxWidth="368px"
+          bgColor="white"
+          maxWidth={{ base: "full", md: "368px" }}
           mx="auto"
         >
           <Flex width="full" justify="space-between">
