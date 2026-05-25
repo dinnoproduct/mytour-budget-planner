@@ -21,6 +21,7 @@ export const PackageCardHorizontal = ({
   tourPackage = {},
   link,
   nights,
+  showCompare = false,
   isCompareSelected = false,
   isCompareDisabled = false,
   onCompareToggle,
@@ -139,6 +140,7 @@ export const PackageCardHorizontal = ({
           nights={nights}
           isHotelPackage={isHotelPackage}
           childrenTravelers={childrenTravelers}
+          showCompare={showCompare}
           isCompareSelected={isCompareSelected}
           isCompareDisabled={isCompareDisabled}
           onCompareToggle={onCompareToggle}

@@ -83,6 +83,15 @@ export const getCompareFilterGroups = (
     .sort((a, b) => a.title.localeCompare(b.title))
 }
 
+export const isCompareFeatureAvailable = (
+  cities: PackageCity[],
+  selectedCityIds: number[],
+  language: string
+) => {
+  const groups = getCompareFilterGroups(cities, selectedCityIds, language)
+  return groups.some(group => group.rows.length > 0)
+}
+
 export const formatShortLocalizedDate = (
   rawDate: string | undefined,
   t: (key: string) => string

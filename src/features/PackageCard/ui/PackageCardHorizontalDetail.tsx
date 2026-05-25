@@ -17,6 +17,7 @@ export const PackageCardHorizontalDetail = ({
   nights,
   isHotelPackage,
   childrenTravelers,
+  showCompare = false,
   isCompareSelected = false,
   isCompareDisabled = false,
   onCompareToggle,
@@ -38,11 +39,13 @@ export const PackageCardHorizontalDetail = ({
       <VStack align={{ base: 'start', md: 'start' }}>
         {isMd && (
           <>
-            <CompareButton
-              isChecked={isCompareSelected}
-              isDisabled={isCompareDisabled}
-              onToggle={onCompareToggle}
-            />
+            {showCompare && (
+              <CompareButton
+                isChecked={isCompareSelected}
+                isDisabled={isCompareDisabled}
+                onToggle={onCompareToggle}
+              />
+            )}
             <DateTag
               fromDate={fromDate}
               toDate={toDate}
@@ -89,11 +92,13 @@ export const PackageCardHorizontalDetail = ({
               </Flex>
             </Flex>
 
-            <CompareButton
-              isChecked={isCompareSelected}
-              isDisabled={isCompareDisabled}
-              onToggle={onCompareToggle}
-            />
+            {showCompare && (
+              <CompareButton
+                isChecked={isCompareSelected}
+                isDisabled={isCompareDisabled}
+                onToggle={onCompareToggle}
+              />
+            )}
           </>
         )}
         <Box width="full"
