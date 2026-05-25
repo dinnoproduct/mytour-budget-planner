@@ -38,11 +38,11 @@ export const PackageCardHorizontalDetail = ({
       <VStack align={{ base: 'start', md: 'start' }}>
         {isMd && (
           <>
-            {/* <CompareButton
+            <CompareButton
               isChecked={isCompareSelected}
               isDisabled={isCompareDisabled}
               onToggle={onCompareToggle}
-            /> */}
+            />
             <DateTag
               fromDate={fromDate}
               toDate={toDate}
@@ -89,11 +89,11 @@ export const PackageCardHorizontalDetail = ({
               </Flex>
             </Flex>
 
-            {/* <CompareButton
+            <CompareButton
               isChecked={isCompareSelected}
               isDisabled={isCompareDisabled}
               onToggle={onCompareToggle}
-            /> */}
+            />
           </>
         )}
         <Box width="full"
