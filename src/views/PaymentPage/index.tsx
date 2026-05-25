@@ -14,6 +14,10 @@ import {
   useCalculatePrepayment,
   usePayRemainingAmount,
   type PaymentSystem,
+  resolveGroupTourPackageTourId,
+  isGroupTourSpecialBookingId,
+  shouldSkipGroupTourForcedPartialPrepaymentOverride,
+  withGroupTourForcedPartialPrepayment,
 } from "@entities/package";
 import { useUserContext } from "@entities/user";
 import { useLanguageNavigate } from "@/hooks/useLanguageNavigate";
@@ -58,6 +62,13 @@ export const PaymentPage = () => {
     [packageDetails?.destinationFlight?.id],
   );
 
+  const isSpecialGroupTourFromRequest = useMemo(
+    () =>
+      !!request?.groupTourId &&
+      isGroupTourSpecialBookingId(request.groupTourId),
+    [request?.groupTourId],
+  );
+
   useEffect(() => {
     localStorage.setItem('bookingResultSource', 'payment');
   }, []);
@@ -76,7 +87,11 @@ export const PaymentPage = () => {
   const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
-      bookingType: isHotelPackage ? 2 : 1,
+      bookingType: isSpecialGroupTourFromRequest
+        ? 3
+        : isHotelPackage
+          ? 2
+          : 1,
       destinationId: packageDetails?.city?.id ?? 0,
       startDate: packageDetails?.checkin ?? packageDetails?.destinationFlight?.departureDate ?? "",
       fullPrice: discountedFullPrice,
@@ -85,7 +100,26 @@ export const PaymentPage = () => {
     { enabled: !!packageDetails?.checkin || !!packageDetails?.destinationFlight?.departureDate },
   );
 
-  const prepaymentInfo = state?.prepaymentInfo ?? prepaymentInfoFromApi;
+  const prepaymentInfoRaw = state?.prepaymentInfo ?? prepaymentInfoFromApi;
+  const skipGroupTourPrepaymentHotfix =
+    shouldSkipGroupTourForcedPartialPrepaymentOverride({
+      isRemainingBalancePayment: isRemainingOnly,
+      paidTowardRequest: request?.prePaymentAmount,
+    });
+  const prepaymentInfo = useMemo(
+    () =>
+      skipGroupTourPrepaymentHotfix
+        ? prepaymentInfoRaw
+        : withGroupTourForcedPartialPrepayment(
+            prepaymentInfoRaw,
+            resolveGroupTourPackageTourId(packageDetails ?? null),
+          ),
+    [
+      prepaymentInfoRaw,
+      packageDetails,
+      skipGroupTourPrepaymentHotfix,
+    ],
+  );
 
   // Use discounted full price consistently in the UI and logic on this page
   // by overriding the price we pass down into payment components.
@@ -406,41 +440,95 @@ function PaymentMethodStep({
       : paymentAmount;
     const travelersList = [...travelers.adults, ...travelers.children];
 
-    const bookInput: any = {
-      requestId: request.id,
-      cityId: packageDetails.city.id,
-      // Keep original (pre-discount) price so backend still knows full package price
-      price: baseFullPrice,
-      hotelId: packageDetails.hotel.id,
-      travelAgencyId: packageDetails.travelAgency.id,
-      offerId: packageDetails.offerId,
-      roomType: packageDetails.roomType,
-      email: user?.email ?? "",
-      notes: JSON.stringify(request.notes ?? {}),
-      phoneNumber: user?.phoneNumber ?? "",
-      amountToBePaid: +amountToBePaid,
-      usdRate: packageDetails.usdRate,
-      currency: packageDetails.currency,
-      rate: packageDetails.rate,
-      travelers: travelersList,
-      paymentSystem,
+    const pd = packageDetails as PackageEntity & {
+      bookingType?: number;
+      departures?: unknown;
+      agency?: unknown;
     };
+
+    const isGroupTour =
+      pd.bookingType === 3 ||
+      (!pd.hotel &&
+        !!pd.departures &&
+        !!(pd as { agency?: unknown }).agency);
+
+    const tourId =
+      request.groupTourId ?? resolveGroupTourPackageTourId(pd);
+
+    const alignBookPriceWithChosenPayment =
+      isGroupTour && isGroupTourSpecialBookingId(tourId);
+
+    const priceForBook = alignBookPriceWithChosenPayment
+      ? +amountToBePaid
+      : baseFullPrice;
+
+    let bookInput: any;
+
+    if (isGroupTour) {
+      const groupTourUuid =
+        typeof pd.id === "string" ? pd.id : tourId;
+
+      bookInput = {
+        requestId: request.id,
+        price: priceForBook,
+        travelAgencyId: pd.travelAgency?.id ?? 0,
+        email: user?.email ?? "",
+        notes: JSON.stringify(request.notes ?? {}),
+        phoneNumber: user?.phoneNumber ?? "",
+        amountToBePaid: +amountToBePaid,
+        usdRate: pd.usdRate,
+        currency: pd.currency,
+        rate: pd.rate,
+        travelers: travelersList,
+        paymentSystem,
+        groupTourId: groupTourUuid,
+        cityId: 0,
+        hotelId: 0,
+        offerId: 0,
+        roomType: pd.roomType ?? 0,
+        startDate: pd.checkin,
+        endDate: pd.checkout,
+        destinationFlightId: 0,
+        returnFlightId: 0,
+        bookingType: 3,
+      };
+    } else {
+      bookInput = {
+        requestId: request.id,
+        cityId: packageDetails.city.id,
+        // Keep original (pre-discount) price unless special group tour branch above
+        price: priceForBook,
+        hotelId: packageDetails.hotel.id,
+        travelAgencyId: packageDetails.travelAgency.id,
+        offerId: packageDetails.offerId,
+        roomType: packageDetails.roomType,
+        email: user?.email ?? "",
+        notes: JSON.stringify(request.notes ?? {}),
+        phoneNumber: user?.phoneNumber ?? "",
+        amountToBePaid: +amountToBePaid,
+        usdRate: packageDetails.usdRate,
+        currency: packageDetails.currency,
+        rate: packageDetails.rate,
+        travelers: travelersList,
+        paymentSystem,
+      };
+
+      if (packageDetails.destinationFlight?.departureDate) {
+        bookInput.startDate = packageDetails.destinationFlight.departureDate;
+        bookInput.endDate = packageDetails.returnFlight.departureDate;
+        bookInput.destinationFlightId = packageDetails.destinationFlight.id;
+        bookInput.returnFlightId = packageDetails.returnFlight.id;
+        bookInput.bookingType = 1;
+      } else {
+        bookInput.startDate = packageDetails.checkin;
+        bookInput.endDate = packageDetails.checkout;
+        bookInput.bookingType = 2;
+        bookInput.foodType = packageDetails.foodType ?? 0;
+      }
+    }
 
     if (promoCodeFromState) {
       bookInput.promoCode = promoCodeFromState;
-    }
-
-    if (packageDetails.destinationFlight?.departureDate) {
-      bookInput.startDate = packageDetails.destinationFlight.departureDate;
-      bookInput.endDate = packageDetails.returnFlight.departureDate;
-      bookInput.destinationFlightId = packageDetails.destinationFlight.id;
-      bookInput.returnFlightId = packageDetails.returnFlight.id;
-      bookInput.bookingType = 1;
-    } else {
-      bookInput.startDate = packageDetails.checkin;
-      bookInput.endDate = packageDetails.checkout;
-      bookInput.bookingType = 2;
-      bookInput.foodType = packageDetails.foodType ?? 0;
     }
 
     try {

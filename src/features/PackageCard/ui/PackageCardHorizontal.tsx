@@ -16,11 +16,17 @@ import {
 import { getPluralForm } from "@shared/helpers";
 import { type PackageCardHorizontalProps } from "./types";
 import { PackageCardHorizontalDetail } from "./PackageCardHorizontalDetail";
+import { getMealTypeLabel } from "../lib/getMealTypeLabel";
 
 export const PackageCardHorizontal = ({
   tourPackage = {},
   link,
   nights,
+  isHotelPackage: isHotelPackageProp,
+  showCompare = false,
+  isCompareSelected = false,
+  isCompareDisabled = false,
+  onCompareToggle,
   ...props
 }: PackageCardHorizontalProps) => {
   const { i18n, t } = useTranslation();
@@ -37,7 +43,7 @@ export const PackageCardHorizontal = ({
   const cityLabel = useMemo(
     () =>
       tourPackage.city[
-        ("name" + languageSuffix) as keyof PackageCity
+      ("name" + languageSuffix) as keyof PackageCity
       ] as string,
     [tourPackage.city, languageSuffix],
   );
@@ -45,7 +51,7 @@ export const PackageCardHorizontal = ({
   const countryLabel = useMemo(
     () =>
       tourPackage.city.country[
-        ("name" + languageSuffix) as keyof PackageCountry
+      ("name" + languageSuffix) as keyof PackageCountry
       ] as string,
     [tourPackage.city.country, languageSuffix],
   );
@@ -69,12 +75,18 @@ export const PackageCardHorizontal = ({
     languageSuffix,
   ]);
 
-  const isHotelPackage = useMemo(
-    () => !tourPackage.destinationFlight?.departureDate,
-    [tourPackage.destinationFlight?.departureDate],
-  );
+  const isHotelPackage = useMemo(() => {
+    if (isHotelPackageProp !== undefined) {
+      return isHotelPackageProp
+    }
 
-  const foodType = foodTypes[tourPackage?.foodType]?.value;
+    return !tourPackage.destinationFlight?.departureDate
+  }, [isHotelPackageProp, tourPackage.destinationFlight?.departureDate])
+
+  const mealTypeLabel = useMemo(
+    () => getMealTypeLabel(tourPackage?.foodType, foodTypes, t("other")),
+    [foodTypes, tourPackage?.foodType, t],
+  );
 
   return (
     <Layout link={link} {...props}>
@@ -83,11 +95,11 @@ export const PackageCardHorizontal = ({
         <Flex
           gap={4}
           bgColor="gray.50"
-          p={3}
+          p={2}
           grow={1}
           flexDirection={{ base: "column", md: "row" }}
         >
-          <Box width="326px">
+          <Box width={{ base: "full", md: "326px" }}>
             <ImageSlider
               images={tourPackage.hotel.images}
               starsCount={tourPackage.hotel.stars}
@@ -111,23 +123,21 @@ export const PackageCardHorizontal = ({
               </Text>
             </Flex>
             {/* breakfast */}
-            {!!foodType && (
-              <Flex alignItems="center" gap={1}>
-                <Icon name="status-success-outlined" size="16" />
-                <StatusOnImageBadge
-                  status="foodType"
-                  position="static"
-                  backgroundColor="transparent"
-                  p={0}
-                  textProps={{
-                    color: "gray.600",
-                  }}
-                  rounded="24px"
-                >
-                  {foodType}
-                </StatusOnImageBadge>
-              </Flex>
-            )}
+            <Flex alignItems="center" gap={1}>
+              <Icon name="status-success-outlined" size="16" />
+              <StatusOnImageBadge
+                status="foodType"
+                position="static"
+                backgroundColor="transparent"
+                p={0}
+                textProps={{
+                  color: "gray.600",
+                }}
+                rounded="24px"
+              >
+                {mealTypeLabel}
+              </StatusOnImageBadge>
+            </Flex>
           </VStack>
         </Flex>
         {/*  */}
@@ -136,6 +146,10 @@ export const PackageCardHorizontal = ({
           nights={nights}
           isHotelPackage={isHotelPackage}
           childrenTravelers={childrenTravelers}
+          showCompare={showCompare}
+          isCompareSelected={isCompareSelected}
+          isCompareDisabled={isCompareDisabled}
+          onCompareToggle={onCompareToggle}
         />
       </Flex>
     </Layout>
@@ -155,14 +169,14 @@ const Layout = ({
     <LanguageLink
       to={link}
       _hover={{ textTransform: "none" }}
-      maxWidth={{ base: "362px", md: "full" }}
-      width={{ base: "auto", md: "full" }}
+      maxWidth={{ base: "full", md: "full" }}
+      width={{ base: "full", md: "full" }}
       target="_blank"
       {...props}
     >
       <Box
         width={{ base: "auto", md: "full" }}
-        rounded="lg"
+        rounded="2xl"
         overflow="hidden"
         border="1px solid"
         borderColor="gray.200"

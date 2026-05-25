@@ -6,7 +6,7 @@ import { CardSectionLayout } from '@/shared/ui/layout/CardSectionLayout'
 import { type DictionaryTypes, PACKAGE_FACILITY_ICON_MAP, useDictionary } from '@entities/package'
 import { SummaryCard } from '@widgets/PackageDetails/ui/SummaryCard'
 import { useMemo } from 'react'
-import { GuestReviews } from '@/widgets/GuestReviews/GuestReviews'
+import { GuestReviews } from '@widgets/GuestReviews'
 import {
   HotelDetailsSectionNav,
   HOTEL_DETAILS_SECTION_IDS,
@@ -41,6 +41,7 @@ export const HotelPackageDetails = ({
       <CardSectionLayout
         id={HOTEL_DETAILS_SECTION_IDS.overview}
         scrollMarginTop={sectionScrollMargin}
+        padding={0}
         beforeTitle={
           <HotelDetailsSectionNav
             containerRef={containerRef}

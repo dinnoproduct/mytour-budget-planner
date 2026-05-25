@@ -43,10 +43,10 @@ export class PackageService {
     })
   }
 
-  private async rawRequest<T>(config: AxiosRequestConfig): Promise<T> {
-    const api = this.getApi()
-    return api(config)
-  }
+  // private async rawRequest<T>(config: AxiosRequestConfig): Promise<T> {
+  //   const api = this.getApi()
+  //   return api(config)
+  // }
 
   // package
   async getPackageList(): Promise<PackageEntity[]> {
@@ -96,6 +96,19 @@ export class PackageService {
     return this.request<PackageEntity>({
       url: `/getHotelPackage/?id=${offerId}&travelAgancy=${travelAgency}`
     })
+  }
+
+  private async rawRequest<T>(config: AxiosRequestConfig): Promise<T> {
+    const api = axios.create({
+      baseURL: this.baseUrl
+    })
+
+    api.interceptors.response.use(
+      response => response.data,
+      error => Promise.reject(error)
+    )
+
+    return api(config)
   }
 
   async getReviewHotelMeta(id: number): Promise<ReviewHotelEntity> {

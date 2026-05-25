@@ -39,7 +39,7 @@ export const PackageCardBasic = ({
   const cityLabel = useMemo(
     () =>
       tourPackage.city[
-        ('name' + languageSuffix) as keyof PackageCity
+      ('name' + languageSuffix) as keyof PackageCity
       ] as string,
     [tourPackage.city, languageSuffix]
   )
@@ -47,7 +47,7 @@ export const PackageCardBasic = ({
   const countryLabel = useMemo(
     () =>
       tourPackage.city.country[
-        ('name' + languageSuffix) as keyof PackageCountry
+      ('name' + languageSuffix) as keyof PackageCountry
       ] as string,
     [tourPackage.city.country, languageSuffix]
   )
@@ -108,7 +108,7 @@ export const PackageCardBasic = ({
 
             <Text size="sm" color="gray.600" ml="0.5">
               {CURRENCY_MAP[tourPackage.currency]}{' '}
-              {formatNumber(parseFloat(tourPackage.priceInCurrency))}
+              {formatNumber(parseFloat(tourPackage.priceInCurrency.toString()))}
             </Text>
           </Flex>
 
@@ -129,9 +129,9 @@ const Layout = ({
   link,
   tourPackage,
   ...props
-}: { 
-  children: ReactNode | ReactNode[]; 
-  link: string; 
+}: {
+  children: ReactNode | ReactNode[];
+  link: string;
   tourPackage: PackageEntity | EmptyObject;
 } & LinkProps) => {
   const { storeSelectedPackage } = useSelectedPackage()
@@ -143,8 +143,8 @@ const Layout = ({
   };
 
   return (
-    <LanguageLink 
-      to={link} 
+    <LanguageLink
+      to={link}
       onClick={handleClick}
       _hover={{ textTransform: 'none' }}
       {...props}

@@ -491,5 +491,10 @@
   "reviewSuccessTitle": "Спасибо, что поделились отзывом.",
   "reviewSuccessDescription": "Ваш отзыв появится на странице после прохождения модерации.",
   "reviewUploadFailedError": "Некоторые файлы не загрузились. Пожалуйста, попробуйте еще раз или удалите неудачные файлы.",
-  "reviewSubmitFailedError": "Не удалось опубликовать отзыв. Пожалуйста, попробуйте еще раз."
+  "reviewSubmitFailedError": "Не удалось опубликовать отзыв. Пожалуйста, попробуйте еще раз.",
+  "compare": "Сравнить",
+  "compareFooterBar.selected": "для сравнения",
+  "compare.addMore": "Добавить ещё {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Перейти к поиску",
+  "compare.title": "Сравнение"
 }

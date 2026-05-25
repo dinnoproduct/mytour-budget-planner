@@ -302,6 +302,8 @@ export const PreviewDetailsView = ({
     // Show balance only if it's not a single payment (split payment scenario)
     if (!isFullPricePayment && !calculatePromoCodePayments.isSinglePayment) {
       const remainingAmount = calculatePromoCodePayments.secondPayment;
+      const nextPaymentDate =
+        prepaymentInfo?.secondPaymentDate ?? prepaymentInfo?.firstPaymentDate ?? "";
 
       items.push({
         key: t`balance`,
@@ -310,7 +312,7 @@ export const PreviewDetailsView = ({
       });
       items.push({
         key: t`nextPaymentDate`,
-        value: formatDate(prepaymentInfo?.firstPaymentDate || ""),
+        value: formatDate(nextPaymentDate),
         isStrikethrough: false,
       });
     }
@@ -322,6 +324,7 @@ export const PreviewDetailsView = ({
     promoCodeStatus,
     calculatePromoCodePayments,
     prepaymentInfo?.firstPaymentDate,
+    prepaymentInfo?.secondPaymentDate,
     t,
   ]);
 

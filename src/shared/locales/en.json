@@ -491,5 +491,10 @@
   "reviewSuccessTitle": "Thank you for sharing your review.",
   "reviewSuccessDescription": "Your review will be available on the page after moderation.",
   "reviewUploadFailedError": "Some files failed to upload. Please try again or remove failed files.",
-  "reviewSubmitFailedError": "Failed to submit review. Please try again."
+  "reviewSubmitFailedError": "Failed to submit review. Please try again.",
+  "compare": "Compare",
+  "compareFooterBar.selected": "for comparison",
+  "compare.addMore": "Add more {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Go to search page",
+  "compare.title": "Comparing"
 }

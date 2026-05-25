@@ -135,9 +135,19 @@ export const StickySectionNav = <T extends string>({
 
   const scrollToSection = (id: T) => {
     setActiveId(id);
-    document.getElementById(id)?.scrollIntoView({
+    const targetSection = document.getElementById(id);
+    if (!targetSection) return;
+
+    const navEl = navMeasureRef.current;
+    const stickyOffset = isMd
+      ? TOP_OFFSET_PX + (navEl?.getBoundingClientRect().height ?? navHeight) + 8
+      : TOP_OFFSET_PX + 8;
+    const targetTop =
+      window.scrollY + targetSection.getBoundingClientRect().top - stickyOffset;
+
+    window.scrollTo({
+      top: Math.max(targetTop, 0),
       behavior: "smooth",
-      block: "start",
     });
   };
 
@@ -154,10 +164,9 @@ export const StickySectionNav = <T extends string>({
       width={showFixed ? `${columnLayout.width}px` : "full"}
       zIndex={11}
       bg="white"
-      py={2}
-      px={showFixed ? { base: 4, md: 4 } : 0}
+      py={4}
+      px={showFixed ? { base: 4, md: 4 } : 4}
       mb={3}
-      mx={showFixed ? { base: -4, md: -4 } : 0}
       borderBottom="1px solid"
       borderInline={showFixed ? "1px solid" : "0px solid"}
       borderColor="gray.100"
@@ -172,18 +181,32 @@ export const StickySectionNav = <T extends string>({
         pb={{ base: 2, md: desktopScrollPaddingBottom }}
         width="full"
         sx={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "var(--chakra-colors-gray-400) var(--chakra-colors-gray-200)",
-          "&::-webkit-scrollbar": {
-            height: "4px",
+          // base (mobile): no scrollbar at all
+          scrollbarWidth: { base: 'none', md: 'none' },
+          msOverflowStyle: 'none',
+          '&::-webkit-scrollbar': {
+            height: { base: 0, md: '6px' },
+            backgroundColor: 'transparent',
           },
-          "&::-webkit-scrollbar-track": {
-            background: "var(--chakra-colors-gray-200)",
-            borderRadius: "9999px",
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent',
           },
-          "&::-webkit-scrollbar-thumb": {
-            background: "var(--chakra-colors-gray-400)",
-            borderRadius: "9999px",
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'transparent',
+            borderRadius: '999px',
+          },
+          // desktop hover: bring back colors so it becomes visible
+          '@media (hover: hover)': {
+            '&:hover': {
+              scrollbarWidth: 'thin',
+              msOverflowStyle: 'auto',
+            },
+            '&:hover::-webkit-scrollbar-track': {
+              backgroundColor: 'gray.200',
+            },
+            '&:hover::-webkit-scrollbar-thumb': {
+              backgroundColor: 'gray.400',
+            },
           },
         }}
       >

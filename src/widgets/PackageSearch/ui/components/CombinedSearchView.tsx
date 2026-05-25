@@ -9,6 +9,7 @@ import {
 } from '@entities/package'
 import { type PackageSearchVariant } from '../types'
 import { GroupTourSearchForm } from '../GroupTourSearchForm'
+import { packageSearchVariants } from '../theme'
 
 interface CombinedSearchViewProps {
   containerProps?: any
@@ -53,11 +54,21 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const fixedWithoutTabsGradientProps =
+    variant === 'fixedWithoutTabs'
+      ? isHotelSearchView
+        ? packageSearchVariants.fixedWithoutTabs.hotelContainer
+        : packageSearchVariants.fixedWithoutTabs.packagesContainer
+      : {}
+
   return (
     <Box position="relative">
       <Layout
         className={showTabs ? 'showTabs' : ''}
-        containerProps={containerProps}
+        containerProps={{
+          ...containerProps,
+          ...fixedWithoutTabsGradientProps
+        }}
         contentProps={contentProps}
         variant={variant}
         defaultTabIndex={defaultTabIndex}

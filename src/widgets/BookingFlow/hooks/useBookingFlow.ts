@@ -9,7 +9,11 @@ import {
   type NormalizedRequestEntity,
   useCalculatePrepayment,
   RequestStatus,
-  useValidatePromoCode
+  useValidatePromoCode,
+  resolveGroupTourPackageTourId,
+  isGroupTourSpecialBookingId,
+  shouldSkipGroupTourForcedPartialPrepaymentOverride,
+  withGroupTourForcedPartialPrepayment,
 } from '@entities/package'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { PaymentModalView, PaymentOption } from '../ui/PaymentModal/types'
@@ -180,6 +184,15 @@ export const useBookingFlow = ({
           bookInput.endDate = packageDetails.checkout
           bookInput.bookingType = 2
           bookInput.foodType = packageDetails.foodType || 0
+        }
+
+        const specialTourId = resolveGroupTourPackageTourId(packageDetails)
+        if (
+          isGroupTour &&
+          paymentOption !== 'noPrepayment' &&
+          isGroupTourSpecialBookingId(specialTourId)
+        ) {
+          bookInput.price = amountToBePaid
         }
 
         if (paymentOption === 'noPrepayment') {
@@ -475,7 +488,7 @@ export const useBookingFlow = ({
 
   const effectiveFullPrice = promoDiscountedPrice ?? discountedFullPrice
 
-  const { data: prepaymentInfo = null } = useCalculatePrepayment(
+  const { data: prepaymentInfoFromApi = null } = useCalculatePrepayment(
     {
       travelAgencyId: packageDetails?.travelAgency?.id ?? 0,
       bookingType: initialRequest?.bookingType
@@ -494,6 +507,30 @@ export const useBookingFlow = ({
       enabled: !!packageDetails && isOpen
     }
   )
+
+  const paidTowardRequest = Math.max(
+    initialRequest?.prePaymentAmount ?? 0,
+    request?.prePaymentAmount ?? 0,
+  )
+  const skipGroupTourPrepaymentHotfix =
+    shouldSkipGroupTourForcedPartialPrepaymentOverride({
+      paidTowardRequest,
+    })
+
+  const prepaymentInfo = useMemo(() => {
+    if (skipGroupTourPrepaymentHotfix) {
+      return prepaymentInfoFromApi
+    }
+    const tourId = resolveGroupTourPackageTourId(packageDetails ?? null)
+    return withGroupTourForcedPartialPrepayment(
+      prepaymentInfoFromApi,
+      tourId,
+    )
+  }, [
+    packageDetails,
+    prepaymentInfoFromApi,
+    skipGroupTourPrepaymentHotfix,
+  ])
 
   return {
     openTravelersModal,

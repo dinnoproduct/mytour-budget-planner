@@ -3,14 +3,14 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-  - dev
+  - main
 
 resources:
   - repo: self
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'f21cc395-cc12-4351-9aca-4bb1d9d21b93'
+  dockerRegistryServiceConnection: '7af691a2-b0a3-4c79-9f22-054427aff3af'
   imageRepository: 'mytourweb'
   containerRegistry: 'dinnomytour.azurecr.io'
   dockerfilePath: '**/Dockerfile'
@@ -37,24 +37,4 @@ stages:
               repository: $(imageRepository)
               dockerfile: $(dockerfilePath)
               containerRegistry: $(dockerRegistryServiceConnection)
-              tags: 'test_refactor'
-
-#  - stage: Deploy
-#    dependsOn: Build
-#    jobs:
-#      - job: DeployToVM
-#        pool:
-#          vmImage: 'ubuntu-latest'
-#        steps:
-#          - task: SSH@0
-#            inputs:
-#              sshEndpoint: 'TestVM-SSH'  # Use the SSH Service Connection Name
-#              runOptions: 'commands'
-#              commands: |
-#                echo $(ACR_PASSWORD) docker login dinnomytour.azurecr.io -u $(ACR_USERNAME) --password-stdin
-#                docker pull dinnomytour.azurecr.io/mytourweb:test
-#                docker stop mytour-web || true
-#                docker rm mytour-web || true
-#                docker run -d -p 3004:3000 --name mytour-web dinnomytour.azurecr.io/mytourweb:test
-#                docker system prune -f
-#              failOnStderr: true
+              tags: 'latest'

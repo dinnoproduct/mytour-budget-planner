@@ -492,5 +492,10 @@
   "reviewSuccessTitle": "Շնորհակալություն կարծիքով կիսվելու համար",
   "reviewSuccessDescription": "Ձեր կարծիքը հասանելի կդառնա էջում՝ մոդերացիա անցնելուց հետո։",
   "reviewUploadFailedError": "Որոշ ֆայլեր չեն բեռնվել։ Փորձեք կրկին կամ հեռացրեք անհաջող ֆայլերը։",
-  "reviewSubmitFailedError": "Չհաջողվեց ուղարկել գնահատականը։ Խնդրում ենք փորձել կրկին"
+  "reviewSubmitFailedError": "Չհաջողվեց ուղարկել գնահատականը։ Խնդրում ենք փորձել կրկին",
+  "compare": "Համեմատել",
+  "compareFooterBar.selected": "Համեմատելու համար",
+  "compare.addMore": "Ավելացնել ևս {{count}} {{itemType}}",
+  "compare.goToSearchPage": "Վերադառնալ որոնման էջ",
+  "compare.title": "Համեմատություն"
 }
