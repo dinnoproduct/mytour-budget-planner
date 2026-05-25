@@ -16,11 +16,14 @@ import {
 import { getPluralForm } from "@shared/helpers";
 import { type PackageCardHorizontalProps } from "./types";
 import { PackageCardHorizontalDetail } from "./PackageCardHorizontalDetail";
+import { getMealTypeLabel } from "../lib/getMealTypeLabel";
 
 export const PackageCardHorizontal = ({
   tourPackage = {},
   link,
   nights,
+  isHotelPackage: isHotelPackageProp,
+  showCompare = false,
   isCompareSelected = false,
   isCompareDisabled = false,
   onCompareToggle,
@@ -72,12 +75,18 @@ export const PackageCardHorizontal = ({
     languageSuffix,
   ]);
 
-  const isHotelPackage = useMemo(
-    () => !tourPackage.destinationFlight?.departureDate,
-    [tourPackage.destinationFlight?.departureDate],
-  );
+  const isHotelPackage = useMemo(() => {
+    if (isHotelPackageProp !== undefined) {
+      return isHotelPackageProp
+    }
 
-  const foodType = foodTypes[tourPackage?.foodType]?.value;
+    return !tourPackage.destinationFlight?.departureDate
+  }, [isHotelPackageProp, tourPackage.destinationFlight?.departureDate])
+
+  const mealTypeLabel = useMemo(
+    () => getMealTypeLabel(tourPackage?.foodType, foodTypes, t("other")),
+    [foodTypes, tourPackage?.foodType, t],
+  );
 
   return (
     <Layout link={link} {...props}>
@@ -114,23 +123,21 @@ export const PackageCardHorizontal = ({
               </Text>
             </Flex>
             {/* breakfast */}
-            {!!foodType && (
-              <Flex alignItems="center" gap={1}>
-                <Icon name="status-success-outlined" size="16" />
-                <StatusOnImageBadge
-                  status="foodType"
-                  position="static"
-                  backgroundColor="transparent"
-                  p={0}
-                  textProps={{
-                    color: "gray.600",
-                  }}
-                  rounded="24px"
-                >
-                  {foodType}
-                </StatusOnImageBadge>
-              </Flex>
-            )}
+            <Flex alignItems="center" gap={1}>
+              <Icon name="status-success-outlined" size="16" />
+              <StatusOnImageBadge
+                status="foodType"
+                position="static"
+                backgroundColor="transparent"
+                p={0}
+                textProps={{
+                  color: "gray.600",
+                }}
+                rounded="24px"
+              >
+                {mealTypeLabel}
+              </StatusOnImageBadge>
+            </Flex>
           </VStack>
         </Flex>
         {/*  */}
@@ -139,6 +146,7 @@ export const PackageCardHorizontal = ({
           nights={nights}
           isHotelPackage={isHotelPackage}
           childrenTravelers={childrenTravelers}
+          showCompare={showCompare}
           isCompareSelected={isCompareSelected}
           isCompareDisabled={isCompareDisabled}
           onCompareToggle={onCompareToggle}

@@ -8,6 +8,7 @@ export type CompareModalProps = {
   selectedCityIds: number[]
   maxCompareItems: number
   itemTypeLabel: string
+  approximateDateLabel?: string
   onRemove: (pack: PackageEntity) => void
   getLink: (pack: PackageEntity) => string
 }

@@ -26,6 +26,7 @@ export const CompareModal = ({
   selectedCityIds,
   maxCompareItems,
   itemTypeLabel,
+  approximateDateLabel,
   onRemove,
   getLink
 }: CompareModalProps) => {
@@ -40,8 +41,8 @@ export const CompareModal = ({
     [cities, selectedCityIds, i18n.language]
   )
   const compareSummary = useMemo(
-    () => getCompareSummary(packages[0], t),
-    [packages, t]
+    () => getCompareSummary(packages[0], t, approximateDateLabel),
+    [packages, t, approximateDateLabel]
   )
   const modalMaxWidth = useMemo(
     () => (packages.length >= 2 && packages.length < 4 ? '70%' : '80%'),

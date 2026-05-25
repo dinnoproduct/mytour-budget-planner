@@ -17,6 +17,7 @@ export const PackageCardHorizontalDetail = ({
   nights,
   isHotelPackage,
   childrenTravelers,
+  showCompare = false,
   isCompareSelected = false,
   isCompareDisabled = false,
   onCompareToggle,
@@ -27,10 +28,14 @@ export const PackageCardHorizontalDetail = ({
   const fromDate = moment(
     isHotelPackage
       ? tourPackage.checkin
-      : tourPackage.destinationFlight.departureDate
+      : (tourPackage.destinationFlight?.departureDate ?? tourPackage.checkin)
   )
   const toDate = moment(
-    isHotelPackage ? tourPackage.checkout : tourPackage.returnFlight.arrivalDate
+    isHotelPackage
+      ? tourPackage.checkout
+      : (tourPackage.returnFlight?.arrivalDate ??
+          tourPackage.returnFlight?.departureDate ??
+          tourPackage.checkout)
   )
 
   return (
@@ -38,11 +43,13 @@ export const PackageCardHorizontalDetail = ({
       <VStack align={{ base: 'start', md: 'start' }}>
         {isMd && (
           <>
-            {/* <CompareButton
-              isChecked={isCompareSelected}
-              isDisabled={isCompareDisabled}
-              onToggle={onCompareToggle}
-            /> */}
+            {showCompare && (
+              <CompareButton
+                isChecked={isCompareSelected}
+                isDisabled={isCompareDisabled}
+                onToggle={onCompareToggle}
+              />
+            )}
             <DateTag
               fromDate={fromDate}
               toDate={toDate}
@@ -89,11 +96,13 @@ export const PackageCardHorizontalDetail = ({
               </Flex>
             </Flex>
 
-            {/* <CompareButton
-              isChecked={isCompareSelected}
-              isDisabled={isCompareDisabled}
-              onToggle={onCompareToggle}
-            /> */}
+            {showCompare && (
+              <CompareButton
+                isChecked={isCompareSelected}
+                isDisabled={isCompareDisabled}
+                onToggle={onCompareToggle}
+              />
+            )}
           </>
         )}
         <Box width="full"
