@@ -31,9 +31,9 @@ export const CompareFooterContent = ({
         align="center"
         justify="space-between"
         gap={4}
-        mt={{ base: 0, md: isMobile ? 0 : 2 }}
+        mt={{ base: 0, md: 2 }}
         alignItems={{ base: "stretch", md: "center" }}
-        direction={{ base: "column", md: isMobile ? "column" : "row" }}
+        direction={{ base: "column", md: "row" }}
       >
         <Box
           w="full"
@@ -44,8 +44,9 @@ export const CompareFooterContent = ({
         >
           <HStack
             spacing={2}
-            w={isMobile ? "max-content" : { base: "max-content", md: "full" }}
-            minW={isMobile ? "max-content" : { base: "max-content", md: "0" }}
+            w={{ base: "max-content", md: "full" }}
+            minW={{ base: "max-content", md: "0" }}
+            alignItems="stretch"
             pr={{ base: 1, md: 0 }}
           >
             {selectedPackages.map((item) => {
@@ -61,19 +62,19 @@ export const CompareFooterContent = ({
           </HStack>
         </Box>
         <HStack
-          w={isMobile ? "full" : { base: "full", md: "auto" }}
+          w={{ base: "full", md: "auto" }}
           spacing={2}
         >
           <Button
             variant="outline-blue"
-            width={isMobile ? "full" : { base: "full", md: "auto" }}
+            width={{ base: "full", md: "auto" }}
             onClick={onClear}
           >
             {clearLabel}
           </Button>
           <Button
             variant="solid-blue"
-            width={isMobile ? "full" : { base: "full", md: "auto" }}
+            width={{ base: "full", md: "auto" }}
             onClick={onCompare}
             isDisabled={isCompareDisabled}
           >
