@@ -131,7 +131,8 @@ export const getDateRange = (
 
 export const getCompareSummary = (
   pack: PackageEntity | undefined,
-  t: (key: string) => string
+  t: (key: string) => string,
+  approximateDateLabel?: string
 ) => {
   if (!pack) {
     return t('compare')
@@ -139,8 +140,9 @@ export const getCompareSummary = (
 
   const adultsLabel = t(getPluralForm(pack.adultTravelers, 'adults')).toLowerCase()
   const nightsLabel = t(getPluralForm(pack.nights, 'nights')).toLowerCase()
+  const dateLabel = approximateDateLabel ?? getDateRange(pack, t)
 
-  return `${getDateRange(pack, t)} | ${pack.adultTravelers} ${adultsLabel} • ${pack.nights} ${nightsLabel}`
+  return `${dateLabel} | ${pack.adultTravelers} ${adultsLabel} • ${pack.nights} ${nightsLabel}`
 }
 
 export const hasComparedValue = (

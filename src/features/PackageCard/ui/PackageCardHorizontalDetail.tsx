@@ -28,10 +28,14 @@ export const PackageCardHorizontalDetail = ({
   const fromDate = moment(
     isHotelPackage
       ? tourPackage.checkin
-      : tourPackage.destinationFlight.departureDate
+      : (tourPackage.destinationFlight?.departureDate ?? tourPackage.checkin)
   )
   const toDate = moment(
-    isHotelPackage ? tourPackage.checkout : tourPackage.returnFlight.arrivalDate
+    isHotelPackage
+      ? tourPackage.checkout
+      : (tourPackage.returnFlight?.arrivalDate ??
+          tourPackage.returnFlight?.departureDate ??
+          tourPackage.checkout)
   )
 
   return (

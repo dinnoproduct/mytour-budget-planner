@@ -8,6 +8,7 @@ import { Button, Icon, StatusOnImageBadge, Text } from '@ui'
 import { CURRENCY_MAP } from '@shared/model'
 import { numberWithCommaNormalizer } from '@/utils/normalizers'
 import ImageSlider from '@features/PackageCard/ui/ImageSlider'
+import { getMealTypeLabel } from '@features/PackageCard/lib/getMealTypeLabel'
 import { formatNumber } from '@shared/utils'
 import { useMemo } from 'react'
 import {
@@ -35,11 +36,9 @@ export const ComparePackageCard = ({
   const { data: foodTypes = [] } = useDictionary(
     'FoodTypeDictionary' as DictionaryTypes.FoodTypeDictionary
   )
-  const foodType = useMemo(
-    () =>
-      foodTypes.find(({ key }) => key === pack.foodType)?.value ??
-      String(pack.foodType ?? ''),
-    [foodTypes, pack.foodType]
+  const mealTypeLabel = useMemo(
+    () => getMealTypeLabel(pack.foodType, foodTypes, t('other')),
+    [foodTypes, pack.foodType, t]
   )
 
   return (
@@ -70,23 +69,21 @@ export const ComparePackageCard = ({
               {cityLabel}
             </Text>
           </Flex>
-          {!!pack.foodType && (
-            <Flex alignItems="center" gap={1}>
-              <Icon name="status-success-outlined" size="16" />
-              <StatusOnImageBadge
-                status="foodType"
-                position="static"
-                backgroundColor="transparent"
-                p={0}
-                textProps={{
-                  color: "gray.600",
-                }}
-                rounded="24px"
-              >
-                {foodType}
-              </StatusOnImageBadge>
-            </Flex>
-          )}
+          <Flex alignItems="center" gap={1}>
+            <Icon name="status-success-outlined" size="16" />
+            <StatusOnImageBadge
+              status="foodType"
+              position="static"
+              backgroundColor="transparent"
+              p={0}
+              textProps={{
+                color: "gray.600",
+              }}
+              rounded="24px"
+            >
+              {mealTypeLabel}
+            </StatusOnImageBadge>
+          </Flex>
         </Box>
 
         <Flex justify="space-between" align="center" px={4}>

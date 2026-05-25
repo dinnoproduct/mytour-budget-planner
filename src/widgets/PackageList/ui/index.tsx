@@ -22,6 +22,7 @@ import { useFilterPackage } from "@/features/PackageFilter/hooks";
 import { Skeleton } from "@shared/ui";
 import { LoaderWithText } from "@/components/Loader/Loader";
 import { useTranslation } from "react-i18next";
+import { formatApproximateSearchDateLabel } from "@shared/helpers";
 import { CompareFooterBar } from "./Compare/CompareFooterBar";
 import { CompareModal } from "./Compare/CompareModal";
 import { isCompareFeatureAvailable } from "./Compare/CompareModal/helpers";
@@ -58,7 +59,38 @@ export const PackageList = () => {
     isAllowedSearchRoute: isHotelSearchView,
     searchData: hotelSearchData,
     cities: hotelCities,
+    dateMode: hotelDateMode,
   } = useHotelPackagesSearchContext();
+
+  const isApproximateSearch = useMemo(() => {
+    const mode =
+      hotelDateMode ?? (searchParams.dateMode as string | undefined);
+    return mode === "approximate";
+  }, [hotelDateMode, searchParams.dateMode]);
+
+  const approximateDateLabel = useMemo(() => {
+    if (!isApproximateSearch) {
+      return undefined;
+    }
+
+    const days = hotelSearchData.days ?? Number(searchParams.days);
+    const fromDate =
+      hotelSearchData.fromDate ??
+      (searchParams.from ? new Date(searchParams.from as string) : null);
+
+    if (!days || !fromDate || Number.isNaN(fromDate.getTime())) {
+      return undefined;
+    }
+
+    return formatApproximateSearchDateLabel(fromDate, days, t);
+  }, [
+    isApproximateSearch,
+    hotelSearchData.days,
+    hotelSearchData.fromDate,
+    searchParams.days,
+    searchParams.from,
+    t,
+  ]);
 
   const generateLink = (tourPackage: PackageEntity) => {
     const childrenTravelers =
@@ -290,6 +322,7 @@ export const PackageList = () => {
                 key={packageEntity.offerId + "---" + packageEntity.hotel.id}
                 link={generateLink(packageEntity)}
                 nights={getNights()} // todo: check nights
+                isHotelPackage={isHotelSearchView}
                 showCompare={isCompareEnabled}
                 isCompareSelected={selectedCompareKeys.has(
                   getCompareKey(packageEntity),
@@ -326,6 +359,7 @@ export const PackageList = () => {
         selectedCityIds={selectedCityIds}
         maxCompareItems={MAX_COMPARE_ITEMS}
         itemTypeLabel={t(isPackagesSearchView ? 'package' : 'hotel')}
+        approximateDateLabel={approximateDateLabel}
         onRemove={(packageEntity) =>
           setSelectedComparePackages((prev) =>
             prev.filter((item) => getCompareKey(item) !== getCompareKey(packageEntity)),
