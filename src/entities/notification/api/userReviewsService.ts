@@ -10,6 +10,29 @@ export interface UploadedUserReviewMedia {
   url: string
 }
 
+type InitUserReviewMediaPayload = {
+  hotelId: number
+  mediaType: number
+  fileName: string
+  contentType: string
+  totalSize: number
+  totalChunks: number
+}
+
+type InitUserReviewMediaResponse = {
+  sessionId: string
+}
+
+const INVALID_UPLOAD_RESPONSE_ERROR = 'UPLOAD_MEDIA_FAILED'
+
+const unwrapAxiosData = <T>(response: T | { data: T }): T => {
+  if (response && typeof response === 'object' && 'data' in response) {
+    return (response as { data: T }).data
+  }
+
+  return response as T
+}
+
 export interface UserReviewRatings {
   location: number
   cleanliness: number
@@ -37,6 +60,7 @@ export interface HotelReview {
   lastName: string
   ratings: UserReviewRatings
   mediaFiles: UserReviewMediaFile[]
+  reviewDate: Date | string
 }
 
 export interface HotelReviewsPagination {
@@ -75,9 +99,21 @@ export class UserReviewsService {
   }
 
   uploadMedia(
-    payload: { hotelId: number; mediaType: number; file: File },
+    payload: {
+      hotelId: number
+      mediaType: number
+      file: File
+      fileName?: string
+      contentType?: string
+      totalSize?: number
+      totalChunks?: number
+    },
     token: string
   ): Promise<UploadedUserReviewMedia> {
+    if (payload.mediaType === 2) {
+      return this.uploadVideoMedia(payload, token)
+    }
+
     const formData = new FormData()
     formData.append('hotelId', String(payload.hotelId))
     formData.append('MediaType', String(payload.mediaType))
@@ -89,6 +125,73 @@ export class UserReviewsService {
         'Content-Type': 'multipart/form-data'
       }
     })
+  }
+
+  private async uploadVideoMedia(
+    payload: {
+      hotelId: number
+      mediaType: number
+      file: File
+      fileName?: string
+      contentType?: string
+      totalSize?: number
+      totalChunks?: number
+    },
+    token: string
+  ): Promise<UploadedUserReviewMedia> {
+    const initPayload: InitUserReviewMediaPayload = {
+      hotelId: payload.hotelId,
+      mediaType: 2,
+      fileName: payload.fileName ?? payload.file.name,
+      contentType: payload.contentType ?? payload.file.type,
+      totalSize: payload.totalSize ?? payload.file.size,
+      totalChunks: payload.totalChunks ?? 1
+    }
+
+    const initResponseRaw = await this.api.post<InitUserReviewMediaResponse>(
+      '/media/init',
+      initPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    const initResponse = unwrapAxiosData<InitUserReviewMediaResponse>(initResponseRaw)
+    const sessionId = initResponse?.sessionId
+
+    if (!sessionId) {
+      throw new Error(INVALID_UPLOAD_RESPONSE_ERROR)
+    }
+
+    const chunkFormData = new FormData()
+    chunkFormData.append('SessionId', sessionId)
+    chunkFormData.append('ChunkIndex', '0')
+    chunkFormData.append('Chunk', payload.file)
+
+    await this.api.post('/media/chunk', chunkFormData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    const mediaCompleteResponseRaw = await this.api.post<UploadedUserReviewMedia>(
+      '/media/complete',
+      { sessionId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    const uploadedMedia = unwrapAxiosData<UploadedUserReviewMedia>(mediaCompleteResponseRaw)
+
+    if (!uploadedMedia?.url) {
+      throw new Error(INVALID_UPLOAD_RESPONSE_ERROR)
+    }
+
+    return uploadedMedia
   }
 
   createHotelReview(

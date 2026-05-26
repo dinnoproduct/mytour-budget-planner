@@ -2,7 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import {
   userReviewsService,
   type HotelReviewsResponse
-} from '../api/userReviewsService'
+} from '../api/UserReviewsService'
 
 export const useHotelReviews = (
   hotelId?: number,

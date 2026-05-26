@@ -3,12 +3,16 @@ import { useUserContext } from '@entities/user'
 import {
   userReviewsService,
   type UploadedUserReviewMedia
-} from '../api/userReviewsService'
+} from '../api/UserReviewsService'
 
 type UploadUserReviewMediaPayload = {
   hotelId: number
   mediaType: number
   file: File
+  fileName?: string
+  contentType?: string
+  totalSize?: number
+  totalChunks?: number
 }
 
 export const useUploadUserReviewMedia = (

@@ -136,11 +136,10 @@ export const PackageDetails = ({
       <CardSectionLayout
         id={PACKAGE_DETAILS_SECTION_IDS.ratings}
         scrollMarginTop={sectionScrollMargin}
-        title={t`grades`}
+        title={t`review`}
       >
         <GuestReviews
-          travellersRating={tourPackage.hotel?.travellersRating}
-          cleanliness={tourPackage.hotel?.cleanliness}
+          hotelId={tourPackage.hotel?.id}
         />
       </CardSectionLayout>
       <CardSectionLayout

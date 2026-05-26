@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { type ReactNode } from "react";
 import { SOCIALS } from "./data";
-import { Text } from "@ui";
+import { Text } from "@foundation/Typography";
 import { useTranslation } from "react-i18next";
 import { LanguageLink } from "@/components/LanguageLink/LanguageLink";
 

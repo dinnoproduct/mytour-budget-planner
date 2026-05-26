@@ -5,9 +5,9 @@ import { WriteHotelReviewPage } from "@pages/WriteHotelReviewPage";
 export const metadata = buildPageMetadata("Write Review");
 
 export default function ReviewPage() {
-  return (<></>
-    // <PackagesPageLayout>
-    //   <WriteHotelReviewPage />
-    // </PackagesPageLayout>
+  return (
+    <PackagesPageLayout>
+      <WriteHotelReviewPage />
+    </PackagesPageLayout>
   );
 }
