@@ -3,7 +3,7 @@ import { useUserContext } from '@entities/user'
 import {
   userReviewsService,
   type CreateHotelReviewPayload
-} from '../api/userReviewsService'
+} from '../api/UserReviewsService'
 
 export const useCreateHotelReview = (
   options?: UseMutationOptions<number, unknown, CreateHotelReviewPayload>

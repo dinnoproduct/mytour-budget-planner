@@ -58,7 +58,7 @@ export const ReviewCard = ({
       <Flex justifyContent="space-between" width="full" alignItems="center">
         <Flex alignItems="center" gap="2">
           <Text color="gray.700" fontWeight="semibold" fontSize="16px">
-            {review.firstName} {review.lastName}
+            {review.firstName}
           </Text>
           <Tag
             variant="subtle-success"

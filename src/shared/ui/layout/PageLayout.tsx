@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Flex, type BoxProps } from '@chakra-ui/react'
 import { Header } from '@widgets/Header'
-import { Footer } from '@ui'
+import { Footer } from '@components/Footer'
 
 interface FooterProps {
   mt?: any

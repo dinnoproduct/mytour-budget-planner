@@ -14,10 +14,7 @@ type ReviewHotelEntity = PackageHotel & { city: PackageCity }
 export class PackageService {
   private readonly baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`
 
-  private async request<T>(
-    config: AxiosRequestConfig & { version?: 'V2' }
-  ): Promise<T> {
-    const { version, ...restConfig } = config
+  private getApi() {
     const api = axios.create({
       baseURL: this.baseUrl
     })
@@ -26,6 +23,15 @@ export class PackageService {
       response => response.data,
       error => Promise.reject(error)
     )
+
+    return api
+  }
+
+  private async request<T>(
+    config: AxiosRequestConfig & { version?: 'V2' }
+  ): Promise<T> {
+    const { version, ...restConfig } = config
+    const api = this.getApi()
 
     const url = version
       ? `/${version}/package${restConfig.url}`
@@ -36,6 +42,11 @@ export class PackageService {
       url
     })
   }
+
+  // private async rawRequest<T>(config: AxiosRequestConfig): Promise<T> {
+  //   const api = this.getApi()
+  //   return api(config)
+  // }
 
   // package
   async getPackageList(): Promise<PackageEntity[]> {

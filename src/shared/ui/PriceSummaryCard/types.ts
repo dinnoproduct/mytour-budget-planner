@@ -4,7 +4,7 @@ import { type ReactNode, type RefObject } from 'react'
 
 export type PriceSummaryCardProps = {
   tourPackage: PackageEntity
-  containerRef?: RefObject<HTMLDivElement>
+  containerRef?: RefObject<HTMLDivElement | null>
   contentType?: 'hotel' | 'package'
   buttonText?: string
 } & BoxProps
