@@ -38,7 +38,7 @@ export const MediaUploadTabs = ({
 
   return (
     <Tabs index={uploadTabIndex} onChange={onTabChange} variant="unstyled">
-      <TabList bg="gray.100" borderRadius="lg" p="1">
+      {/* <TabList bg="gray.100" borderRadius="lg" p="1">
         <Tab
           flex="1"
           borderRadius="md"
@@ -59,7 +59,7 @@ export const MediaUploadTabs = ({
         >
           {t("video")}
         </Tab>
-      </TabList>
+      </TabList> */}
 
       <TabPanels mt="3">
         <TabPanel p="0">
