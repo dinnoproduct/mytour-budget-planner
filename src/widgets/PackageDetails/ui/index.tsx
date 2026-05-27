@@ -67,6 +67,8 @@ export const PackageDetails = ({
             }}
             columnGap="26px"
             rowGap="4"
+            px="4"
+            pb="4"
           >
             {tourPackage.hotel.id ? (
               <SummaryCard iconName="bed" children={t`hotel`} />
