@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-  - main
+  - dev
 
 resources:
   - repo: self
@@ -37,4 +37,24 @@ stages:
               repository: $(imageRepository)
               dockerfile: $(dockerfilePath)
               containerRegistry: $(dockerRegistryServiceConnection)
-              tags: 'latest'
+              tags: 'test'
+
+#  - stage: Deploy
+#    dependsOn: Build
+#    jobs:
+#      - job: DeployToVM
+#        pool:
+#          vmImage: 'ubuntu-latest'
+#        steps:
+#          - task: SSH@0
+#            inputs:
+#              sshEndpoint: 'TestVM-SSH'  # Use the SSH Service Connection Name
+#              runOptions: 'commands'
+#              commands: |
+#                echo $(ACR_PASSWORD) docker login dinnomytour.azurecr.io -u $(ACR_USERNAME) --password-stdin
+#                docker pull dinnomytour.azurecr.io/mytourweb:test
+#                docker stop mytour-web || true
+#                docker rm mytour-web || true
+#                docker run -d -p 3004:3000 --name mytour-web dinnomytour.azurecr.io/mytourweb:test
+#                docker system prune -f
+#              failOnStderr: true

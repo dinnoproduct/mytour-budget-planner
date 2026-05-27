@@ -1,18 +1,17 @@
-import { Flex, HStack, VStack } from '@chakra-ui/react'
+import { Flex, VStack } from '@chakra-ui/react'
 import { Button, Input, Text, Illustration, AlertCardMessage } from '@ui'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { VerifyViewProps } from '@widgets/AuthModal/ui/types'
 import { useConfirmLogin, useConfirmRegistration, useResendOTP, useUserContext } from '@entities/user'
 import { useTranslation } from 'react-i18next'
 import { ContentLayout } from '@widgets/AuthModal/ui/ContentLayout'
 
-const FIELD_COUNT = 4
+const OTP_LENGTH = 4
 
 export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVariant = 'modal' }: VerifyViewProps) => {
 	const { t } = useTranslation()
-	const [verificationCode, setVerificationCode] = useState(Array(FIELD_COUNT).fill(''))
+	const [verificationCode, setVerificationCode] = useState('')
 	const { setUserToken } = useUserContext()
-	const refs = Array(FIELD_COUNT).fill(0).map(() => useRef<HTMLInputElement>(null))
 	const [showError, setShowError] = useState(false)
 	const [errorMessage, setErrorMessage] = useState('')
 
@@ -20,44 +19,22 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVaria
 	const { mutateAsync: confirmLoginAsync, isPending: isLoadingConfirmLogin } = useConfirmLogin()
 	const { mutate: resendVerificationCode } = useResendOTP()
 
-	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setShowError(false)
-		if (event.target.value.length > 1) {
-			event.target.value = event.target.value[0]
-		}
-		const newVerificationCode = [...verificationCode]
-		newVerificationCode[index] = event.target.value
-		setVerificationCode(newVerificationCode)
-		if (event.target.value && refs[index + 1]) {
-			refs[index + 1].current?.focus()
-		}
+		const sanitizedValue = event.target.value.replace(/\D/g, '').slice(0, OTP_LENGTH)
+		setVerificationCode(sanitizedValue)
 	}
 
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-		if (event.key === 'Backspace' && !event.currentTarget.value && refs[index - 1]) {
-			refs[index - 1].current?.focus()
-		}
-	}
-
-	const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>, index: number) => {
+	const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
 		event.preventDefault()
 		let pastedData = event.clipboardData.getData('text')
 		pastedData = pastedData.replace(/\D/g, '')
-		const pastedDigits = pastedData.split('')
-		const newVerificationCode = [...verificationCode]
-		let j = index
-		for (let i = 0; i < pastedDigits.length && j < FIELD_COUNT; i++, j++) {
-			newVerificationCode[j] = pastedDigits[i]
-			if (refs[j + 1]) {
-				refs[j + 1].current?.focus()
-			}
-		}
-		setVerificationCode(newVerificationCode)
+		setVerificationCode(pastedData.slice(0, OTP_LENGTH))
 	}
 
 	const handleVerify = async (e: React.FormEvent<HTMLDivElement>) => {
 		e.preventDefault()
-		const code = verificationCode.join('')
+		const code = verificationCode
 		let token
 
 		try {
@@ -89,26 +66,26 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVaria
 	const contentContainerProps =
 		layoutVariant === 'page'
 			? {
-					width: 'full',
-					maxWidth: '500px',
-					px: 0,
-					height: 'auto',
-					overflowY: 'visible' as const,
-					spacing: 4
-				}
+				width: 'full',
+				maxWidth: '500px',
+				px: 0,
+				height: 'auto',
+				overflowY: 'visible' as const,
+				spacing: 4
+			}
 			: { spacing: 4 }
 
 	return (
 		<ContentLayout
 			primaryButtonLabel={t`confirm`}
-			isDisabled={verificationCode.some(code => code === '')}
+			isDisabled={verificationCode.length !== OTP_LENGTH}
 			contentContainerProps={contentContainerProps}
 			onSubmit={(e) => handleVerify(e)}
 			isLoading={isLoadingConfirmRegistration || isLoadingConfirmLogin}
 			layoutVariant={layoutVariant}
 		>
 			<Flex direction="column" align="center" width="full" textAlign="center">
-				<Illustration name="otp"/>
+				<Illustration name="otp" />
 			</Flex>
 
 			<VStack spacing="4" width="full">
@@ -116,20 +93,18 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVaria
 					{t('otpEnterText', { phoneNumber: payload.formData.phoneNumber })}
 				</Text>
 
-				<HStack spacing="2">
-					{refs.map((ref, index) => (
-						<Input
-							key={index}
-							type="text"
-							size="lg"
-							maxLength={1}
-							onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(event, index)}
-							onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => handleKeyDown(event, index)}
-							onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePaste(event, index)}
-							ref={ref}
-						/>
-					))}
-				</HStack>
+				<Input
+					type="text"
+					size="lg"
+					value={verificationCode}
+					maxLength={OTP_LENGTH}
+					onChange={handleInputChange}
+					onPaste={handlePaste}
+					inputMode="numeric"
+					textAlign="center"
+					letterSpacing="0.4em"
+					autoFocus
+				/>
 
 				<AlertCardMessage
 					status="error"
@@ -137,7 +112,7 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVaria
 					show={showError}
 				/>
 
-				<ResendCodeButton onResend={handleResendCode}/>
+				<ResendCodeButton onResend={handleResendCode} />
 			</VStack>
 		</ContentLayout>
 	)
@@ -145,7 +120,7 @@ export const VerifyView = ({ onSuccess, type, payload, onViewChange, layoutVaria
 
 const RESEND_TIMEOUT_SECONDS = 60
 
-const ResendCodeButton = ({ onResend }: {onResend: () => void}) => {
+const ResendCodeButton = ({ onResend }: { onResend: () => void }) => {
 	const { t } = useTranslation()
 	const [timeLeft, setTimeLeft] = useState(0)
 
