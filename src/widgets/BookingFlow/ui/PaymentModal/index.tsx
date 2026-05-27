@@ -300,6 +300,8 @@ export const PaymentModal = ({
         await onSuccess(amount, "VPos" as PaymentSystem.VPos, paymentOption, promoCodeInfo);
       } else if (paymentMethod === PaymentMethod.idram) {
         await onSuccess(amount, "IDram" as PaymentSystem.IDram, paymentOption, promoCodeInfo);
+      } else if (paymentMethod === PaymentMethod.mir) {
+        await onSuccess(amount, "Mir" as PaymentSystem.Mir, paymentOption, promoCodeInfo);
       }
     } catch (error) {
       setActiveView("paymentError");

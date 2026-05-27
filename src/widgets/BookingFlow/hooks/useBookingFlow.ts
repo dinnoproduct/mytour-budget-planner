@@ -252,6 +252,10 @@ export const useBookingFlow = ({
           paymentSystem === ('IDram' as PaymentSystem.IDram)
         ) {
           window.location.href = bookResponse.bookingPaymentUrl
+        } else if (
+          paymentSystem === ('Mir' as PaymentSystem.Mir)
+        ) {
+          window.location.href = bookResponse.bookingPaymentUrl
         }
       } catch (e) {
         if (renderAsPage) {

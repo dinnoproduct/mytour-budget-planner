@@ -9,10 +9,7 @@ import moment from 'moment'
  * Group tours whose prepayment API returns full-pay-only but must still offer
  * partial payment (minimum 50%) in the UI until then.
  */
-const GROUP_TOUR_IDS_FORCE_PARTIAL_PREPAYMENT = new Set<string>([
-  'f640cb08-54d6-45da-a129-4c31fbd57904',
-  '3213e320-0ef1-4752-9cf9-98f4e619b7dc'
-])
+const GROUP_TOUR_IDS_FORCE_PARTIAL_PREPAYMENT = new Set<string>()
 
 /**
  * TEMPORARY — same ids as prepayment workaround.
