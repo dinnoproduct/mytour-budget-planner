@@ -14,9 +14,7 @@ import { StoriesSection } from '@widgets/StoriesSection'
 import { GroupTourList } from '@widgets/GroupTourList'
 import { useTranslation } from 'react-i18next'
 import { SplashNotificationsManager } from '@entities/notification'
-import { CyprusFlightsWidget } from '@widgets/CyprusFlightsWidget'
-import { CyprusVisaSupportBanner } from '@widgets/CyprusVisaSupport'
-import { CyprusTipsSection } from '@widgets/CyprusTips'
+import { BudgetPlanner } from '@widgets/BudgetPlanner'
 
 const TAB_NAMES = ['cyprus', 'hotels', 'packages', 'group-tours'] as const
 const TAB_NAME_TO_INDEX: Record<string, number> = {
@@ -158,13 +156,7 @@ export const HomePage = () => {
       />
       {tabIndex === 3 && <GroupTourList />}
       {tabIndex !== 0 && <StoriesSection isHotel={tabIndex} />}
-      {tabIndex === 0 && (
-        <>
-          <CyprusVisaSupportBanner />
-          <CyprusFlightsWidget />
-          <CyprusTipsSection />
-        </>
-      )}
+      {tabIndex === 0 && <BudgetPlanner />}
       <PackageBanner mx={{ base: 4, md: 10 }} mt={10} />
       {tabIndex !== 0 && (
         <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex} />
