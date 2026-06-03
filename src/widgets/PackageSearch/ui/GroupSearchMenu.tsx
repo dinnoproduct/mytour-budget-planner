@@ -4,9 +4,10 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Flex, VStack } from '@chakra-ui/react'
 import { Icon, Tabs, Text } from '@ui'
 import {
+  CyprusTabItem,
   GroupTabItem,
   HotelTabItem,
-  PackageTabItem
+  PackageTabItem,
 } from '@widgets/PackageSearch/ui/TabItem'
 import { GroupTourSearchForm } from './GroupTourSearchForm'
 import { useTranslation } from 'react-i18next'
@@ -72,11 +73,14 @@ export const GroupSearchMenu = ({
   const routeCountriesParam = searchParams.get('groupTourRouteCountries') || ''
   const monthsParam = searchParams.get('groupTourMonths') || ''
   const currentTab = searchParams.get('tab') || 'hotels'
-  const [selectedTab, setSelectedTab] = useState(currentTab === 'group-tours' ? 2 : 0)
+  const [selectedTab, setSelectedTab] = useState(
+    currentTab === 'group-tours' ? 3 : 0,
+  )
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([])
   const [selectedMonths, setSelectedMonths] = useState<MonthSelection[]>([])
   const { i18n } = useTranslation()
-  const shouldLoadGroupTours = selectedTab === 2 || currentTab === 'group-tours' || !!isFormOpen
+  const shouldLoadGroupTours =
+    selectedTab === 3 || currentTab === 'group-tours' || !!isFormOpen
   const { data: groupToursData } = useGroupToursList(undefined, {
     enabled: shouldLoadGroupTours
   })
@@ -133,7 +137,7 @@ export const GroupSearchMenu = ({
   }, [isFormOpen])
 
   useEffect(() => {
-    setSelectedTab(currentTab === 'group-tours' ? 2 : 0)
+    setSelectedTab(currentTab === 'group-tours' ? 3 : 0)
   }, [currentTab])
 
   useEffect(() => {
@@ -279,9 +283,10 @@ export const GroupSearchMenu = ({
           {showTabs && (
             <Tabs
               labels={[
-                <PackageTabItem key="package-tab" />,
+                <CyprusTabItem key="cyprus-tab" />,
                 <HotelTabItem key="hotel-tab" />,
-                <GroupTabItem key="group-tab" />
+                <PackageTabItem key="package-tab" />,
+                <GroupTabItem key="group-tab" />,
               ]}
               variant="line"
               align="center"

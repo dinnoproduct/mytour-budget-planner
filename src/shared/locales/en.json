@@ -150,6 +150,7 @@
   "grades": "Ratings",
   "guestsReviews": "Guests reviews",
   "halfPaymentDescription": "In case of partial payment, the remaining amount may change at the time of payment due to fluctuations in the US dollar exchange rate. The calculation is based on the US dollar exchange rate set by the travel agency at the time of payment.",
+  "cyprus": "Cyprus",
   "hotel": "Hotel",
   "hotels": "Hotels",
   "hotelDetails": "Hotel details",
@@ -496,5 +497,19 @@
   "compareFooterBar.selected": "for comparison",
   "compare.addMore": "Add more {{count}} {{itemType}}",
   "compare.goToSearchPage": "Go to search page",
-  "compare.title": "Comparing"
+  "compare.title": "Comparing",
+  "cyprusVisa.title": "Get Cyprus visa support",
+  "cyprusVisa.description": "Fill in your details and we will support you through the visa application process, including appointment booking and document preparation.",
+  "cyprusVisa.documentsLink": "Required documents",
+  "cyprusVisa.applyButton": "Apply for support",
+  "cyprusVisa.modal.title": "Cyprus visa support",
+  "cyprusVisa.modal.description": "Leave your contact details and our team will reach out to you.",
+  "cyprusVisa.modal.fullName": "Full name",
+  "cyprusVisa.modal.email": "Email",
+  "cyprusVisa.modal.phone": "Phone number",
+  "cyprusVisa.modal.submit": "Submit",
+  "cyprusVisa.modal.success": "Thank you, we will contact you shortly",
+  "cyprusVisa.modal.error": "A technical issue occurred, please try again",
+  "cyprusTips.sectionTitle": "Useful information before your trip",
+  "cyprusTips.watchVideo": "Watch video"
 }

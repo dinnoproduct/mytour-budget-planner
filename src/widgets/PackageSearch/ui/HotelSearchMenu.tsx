@@ -9,9 +9,10 @@ import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
 import { HotelSearchForm } from '@widgets/PackageSearch/ui/HotelSearchForm'
 import {
+  CyprusTabItem,
   HotelTabItem,
   GroupTabItem,
-  PackageTabItem
+  PackageTabItem,
 } from '@widgets/PackageSearch/ui/TabItem'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 import { getPluralForm } from '@shared/helpers/index'
@@ -119,9 +120,10 @@ export const HotelSearchMenu = ({
           {showTabs && (
             <Tabs
               labels={[
-                <PackageTabItem key="package-tab" />,
+                <CyprusTabItem key="cyprus-tab" />,
                 <HotelTabItem key="hotel-tab" />,
-                <GroupTabItem key="group-tab" />
+                <PackageTabItem key="package-tab" />,
+                <GroupTabItem key="group-tab" />,
               ]}
               variant="line"
               align="center"

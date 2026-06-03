@@ -4,9 +4,10 @@ import { packageSearchVariants } from '@widgets/PackageSearch/ui/theme'
 import { Tabs, Text } from '@ui'
 import React from 'react'
 import {
+  CyprusTabItem,
   GroupTabItem,
   HotelTabItem,
-  PackageTabItem
+  PackageTabItem,
 } from '@widgets/PackageSearch/ui/TabItem'
 import { useTranslation } from "react-i18next";
 
@@ -20,15 +21,17 @@ export const Layout = ({
   onTabChange,
   showTabs = true
 }: LayoutProps) => {
-
   const { t } = useTranslation()
+  const variantStyles =
+    packageSearchVariants[variant] ?? packageSearchVariants.centered
+
   return (
     <Box
       className={className}
       position="relative"
       width="full"
       display='flex'
-      {...packageSearchVariants[variant].wrapper}
+      {...(variantStyles.wrapper ?? {})}
     >
       <Box
         bgSize="cover"
@@ -37,13 +40,13 @@ export const Layout = ({
         width="full"
         bgColor="white"
         {...containerProps}
-        {...packageSearchVariants[variant].container}
+        {...variantStyles.container}
       >
-        <Flex height="full" {...packageSearchVariants[variant].contentWrapper}>
+        <Flex height="full" {...variantStyles.contentWrapper}>
           <Box
             rounded="xl"
             w={{ base: 'full', md: 'auto' }}
-            {...packageSearchVariants[variant].content}
+            {...variantStyles.content}
             {...contentProps}
           >
             {showTabs ? <Text fontSize={{ base: '24px', sm: '30px' }} py={{ base: '6', sm: '10' }} color='white' textAlign='center' fontWeight='bold'>
@@ -51,9 +54,10 @@ export const Layout = ({
             </Text> : null}
             <Tabs
               labels={[
+                <CyprusTabItem key="cyprus-tab" />,
                 <HotelTabItem key="hotel-tab" />,
                 <PackageTabItem key="package-tab" />,
-                <GroupTabItem key="group-tab" />
+                <GroupTabItem key="group-tab" />,
               ]}
               variant="line"
               align="center"

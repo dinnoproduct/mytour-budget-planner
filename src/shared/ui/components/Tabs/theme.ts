@@ -86,6 +86,9 @@ export const tabsComponentTheme = {
             '.tab-label': {
               color: 'gray.700'
             },
+            '.cyprus-tab-icon': {
+              color: 'gray.700',
+            },
             '>': {
               color: 'gray.700'
             },
@@ -120,6 +123,9 @@ export const tabsComponentTheme = {
           },
           svg: {
             color: 'white'
+          },
+          '.cyprus-tab-icon': {
+            color: 'white',
           },
         },
         tablist: {

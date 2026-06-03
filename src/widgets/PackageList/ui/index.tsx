@@ -7,6 +7,7 @@ import {
 import {
   PackageCardSkeleton,
   type PackageEntity,
+  useCyprusPackagesSearchContext,
   useHotelPackagesSearchContext,
   usePackagesSearchContext,
 } from "@entities/package";
@@ -54,6 +55,15 @@ export const PackageList = () => {
   } = usePackagesSearchContext();
 
   const {
+    filteredHotelPackages: filteredCyprusPackages,
+    isLoadingFilteredHotelPackages: isLoadingFilteredCyprusPackages,
+    isAllowedSearchRoute: isCyprusSearchView,
+    searchData: cyprusSearchData,
+    cities: cyprusCities,
+    dateMode: cyprusDateMode,
+  } = useCyprusPackagesSearchContext();
+
+  const {
     filteredHotelPackages,
     isLoadingFilteredHotelPackages,
     isAllowedSearchRoute: isHotelSearchView,
@@ -62,20 +72,32 @@ export const PackageList = () => {
     dateMode: hotelDateMode,
   } = useHotelPackagesSearchContext();
 
+  const isCyprusTab = activeTab === "cyprus" || isCyprusSearchView;
+  const isHotelLikeSearch = isCyprusTab || isHotelSearchView;
+  const hotelLikeSearchData = isCyprusTab ? cyprusSearchData : hotelSearchData;
+  const hotelLikeDateMode = isCyprusTab ? cyprusDateMode : hotelDateMode;
+  const hotelLikeCities = isCyprusTab ? cyprusCities : hotelCities;
+  const hotelLikePackages = isCyprusTab
+    ? filteredCyprusPackages
+    : filteredHotelPackages;
+  const isLoadingHotelLikePackages = isCyprusTab
+    ? isLoadingFilteredCyprusPackages
+    : isLoadingFilteredHotelPackages;
+
   const isApproximateSearch = useMemo(() => {
     const mode =
-      hotelDateMode ?? (searchParams.dateMode as string | undefined);
+      hotelLikeDateMode ?? (searchParams.dateMode as string | undefined);
     return mode === "approximate";
-  }, [hotelDateMode, searchParams.dateMode]);
+  }, [hotelLikeDateMode, searchParams.dateMode]);
 
   const approximateDateLabel = useMemo(() => {
     if (!isApproximateSearch) {
       return undefined;
     }
 
-    const days = hotelSearchData.days ?? Number(searchParams.days);
+    const days = hotelLikeSearchData.days ?? Number(searchParams.days);
     const fromDate =
-      hotelSearchData.fromDate ??
+      hotelLikeSearchData.fromDate ??
       (searchParams.from ? new Date(searchParams.from as string) : null);
 
     if (!days || !fromDate || Number.isNaN(fromDate.getTime())) {
@@ -85,8 +107,8 @@ export const PackageList = () => {
     return formatApproximateSearchDateLabel(fromDate, days, t);
   }, [
     isApproximateSearch,
-    hotelSearchData.days,
-    hotelSearchData.fromDate,
+    hotelLikeSearchData.days,
+    hotelLikeSearchData.fromDate,
     searchParams.days,
     searchParams.from,
     t,
@@ -131,13 +153,16 @@ export const PackageList = () => {
       queryParams.set("to", moment(tourPackage.checkout).format("YYYY-MM-DD"));
       queryParams.set(
         "childrenAges",
-        hotelSearchData.travelersData.childrenCount > 0
-          ? hotelSearchData.travelersData.childrenAges.join(",")
+        hotelLikeSearchData.travelersData.childrenCount > 0
+          ? hotelLikeSearchData.travelersData.childrenAges.join(",")
           : "",
       );
     }
 
-    queryParams.set("tab", isPackagesSearchView ? "packages" : "hotel");
+    queryParams.set(
+      "tab",
+      isPackagesSearchView ? "packages" : isCyprusTab ? "cyprus" : "hotel",
+    );
 
     const newSearchParams = queryParams.toString();
 
@@ -178,13 +203,13 @@ export const PackageList = () => {
 
   const isLoadingPackages = useMemo(
     () =>
-      isHotelSearchView
-        ? isLoadingFilteredHotelPackages
+      isHotelLikeSearch
+        ? isLoadingHotelLikePackages
         : isLoadingFilteredPackages,
     [
-      isHotelSearchView,
+      isHotelLikeSearch,
       isLoadingFilteredPackages,
-      isLoadingFilteredHotelPackages,
+      isLoadingHotelLikePackages,
     ],
   );
 
@@ -280,12 +305,16 @@ export const PackageList = () => {
     const fromDate = new Date(searchParams.from as string);
     const toDate = new Date(searchParams.to as string);
 
-    return isHotelSearchView
+    return isHotelLikeSearch
       ? getHotelNightsByDate(fromDate, toDate)
       : getNightsByDate(fromDate, toDate);
   };
 
-  if (isLoadingFilteredHotelPackages || isLoadingFilteredPackages || isLoadingPackages) {
+  if (
+    isLoadingHotelLikePackages ||
+    isLoadingFilteredPackages ||
+    isLoadingPackages
+  ) {
     return (
       <Layout >
         <LoaderWithText style={{ backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} loading={isLoadingPackages || false} title={t("loading.packages.title")} description={t("loading.packages.description")} />
@@ -322,7 +351,7 @@ export const PackageList = () => {
                 key={packageEntity.offerId + "---" + packageEntity.hotel.id}
                 link={generateLink(packageEntity)}
                 nights={getNights()} // todo: check nights
-                isHotelPackage={isHotelSearchView}
+                isHotelPackage={isHotelLikeSearch}
                 showCompare={isCompareEnabled}
                 isCompareSelected={selectedCompareKeys.has(
                   getCompareKey(packageEntity),

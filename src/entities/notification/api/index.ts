@@ -5,6 +5,13 @@ export type { PriceAlertSubscribePayload, PriceAlertSubscribeResponse } from './
 export { HotelInquiriesService, hotelInquiriesService } from './HotelInquiriesService'
 export type { HotelInquiryPayload, HotelInquiryResponse } from './HotelInquiriesService'
 export { BannerService, bannerService } from './BannerService'
+export { TipsService, tipsService } from './TipsService'
+export type { ExternalTipsResponse } from '../model/tips'
+export type {
+  ExternalTip,
+  ExternalTipType,
+  TipLocalizedText,
+} from '../model/tips'
 export { UserReviewsService, userReviewsService } from './UserReviewsService'
 export type {
     UserReviewMediaType,

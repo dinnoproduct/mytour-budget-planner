@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import { Layout } from '../Layouts'
+import { CyprusSearchForm } from '../CyprusSearchForm'
 import { HotelSearchForm } from '../HotelSearchForm'
 import { PackageSearchForm } from '../PackageSearchForm'
 import {
+  useCyprusPackagesSearchContext,
   useHotelPackagesSearchContext,
   usePackagesSearchContext,
 } from '@entities/package'
@@ -29,22 +31,34 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
   initialTab,
 }) => {
   const {
+    isAllowedSearchRoute: isCyprusSearchView,
+    navigateToDefaultSearch: navigateToDefaultCyprusSearch,
+  } = useCyprusPackagesSearchContext()
+  const {
     isAllowedSearchRoute: isHotelSearchView,
-    navigateToDefaultSearch: navigateToDefaultHotelSearch
+    navigateToDefaultSearch: navigateToDefaultHotelSearch,
   } = useHotelPackagesSearchContext()
   const {
     isAllowedSearchRoute: isPackageSearchView,
-    navigateToDefaultSearch: navigateToDefaultPackageSearch
+    navigateToDefaultSearch: navigateToDefaultPackageSearch,
   } = usePackagesSearchContext()
 
-  const baseIndex = isPackageSearchView ? 1 : 0
+  const baseIndex = isCyprusSearchView
+    ? 0
+    : isHotelSearchView
+      ? 1
+      : isPackageSearchView
+        ? 2
+        : 0
   const defaultTabIndex = initialTab ?? baseIndex
 
   const handleTabChange = (index: number) => {
     setHotel?.(index)
-    if (index === 1 && isHotelSearchView) {
+    if (index === 0 && (isHotelSearchView || isPackageSearchView)) {
+      navigateToDefaultCyprusSearch()
+    } else if (index === 1 && (isCyprusSearchView || isPackageSearchView)) {
       navigateToDefaultHotelSearch()
-    } else if (index === 0 && isPackageSearchView) {
+    } else if (index === 2 && (isCyprusSearchView || isHotelSearchView)) {
       navigateToDefaultPackageSearch()
     }
   }
@@ -75,6 +89,7 @@ export const CombinedSearchView: React.FC<CombinedSearchViewProps> = ({
         onTabChange={handleTabChange}
         showTabs={showTabs}
       >
+        <CyprusSearchForm />
         <HotelSearchForm />
         <PackageSearchForm />
         <GroupTourSearchForm />

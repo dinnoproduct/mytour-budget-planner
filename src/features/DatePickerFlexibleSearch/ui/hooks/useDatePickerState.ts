@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
+import {
+  useState,
+  useEffect,
+  useCallback,
+  type Dispatch,
+  type SetStateAction,
+} from 'react'
 import { useHotelPackagesSearchContext } from '@/entities/package'
 import type { DateModeType } from '@/entities/package'
 import moment from 'moment'
@@ -8,12 +14,18 @@ interface UseDatePickerStateProps {
   fromDate?: Date | null
   toDate?: Date | null
   onAccept: (fromDate: Date, toDate?: Date | null, days?: number) => void
+  dateMode?: DateModeType
+  setDateMode?: Dispatch<SetStateAction<DateModeType>>
+  searchDays?: number
 }
 
 export const useDatePickerState = ({
   fromDate,
   toDate,
-  onAccept
+  onAccept,
+  dateMode: dateModeProp,
+  setDateMode: setDateModeProp,
+  searchDays,
 }: UseDatePickerStateProps) => {
   const [tabIndex, setTabIndex] = useState(0)
   const [selectedFromDate, setSelectedFromDate] = useState<Date | null>(null)
@@ -23,7 +35,10 @@ export const useDatePickerState = ({
   const [inputToDate, setInputToDate] = useState<Date | null>(null)
   const [days, setDays] = useState<number>()
 
-  const { setDateMode, dateMode, searchData } = useHotelPackagesSearchContext()
+  const hotelContext = useHotelPackagesSearchContext()
+  const dateMode = dateModeProp ?? hotelContext.dateMode
+  const setDateMode = setDateModeProp ?? hotelContext.setDateMode
+  const searchData = { days: searchDays ?? hotelContext.searchData.days }
 
   // Sync with external dates
   useEffect(() => {

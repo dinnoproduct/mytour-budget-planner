@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import {
   PackagesSearchProvider,
   HotelPackagesSearchProvider,
+  CyprusPackagesSearchProvider,
 } from "@entities/package";
 
 interface Props {
@@ -13,7 +14,9 @@ interface Props {
 export function PackagesPageLayout({ children }: Props) {
   return (
     <PackagesSearchProvider>
-      <HotelPackagesSearchProvider>{children}</HotelPackagesSearchProvider>
+      <HotelPackagesSearchProvider>
+        <CyprusPackagesSearchProvider>{children}</CyprusPackagesSearchProvider>
+      </HotelPackagesSearchProvider>
     </PackagesSearchProvider>
   );
 }

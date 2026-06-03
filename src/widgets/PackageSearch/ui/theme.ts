@@ -1,12 +1,32 @@
 import { type PackageSearchVariant } from './types'
 
 export const packageSearchGradients = {
+  cyprus: 'gr_Cyprus',
   packages: 'gr_Packages',
   hotel: 'gr_Hotel',
-  groupTours: 'gr_GroupTours'
+  groupTours: 'gr_GroupTours',
 } as const
 
 export const packageSearchVariants: Record<PackageSearchVariant, any> = {
+  centeredCyprus: {
+    container: {
+      bg: packageSearchGradients.cyprus,
+      pt: { base: 4, md: '7' },
+      pb: { base: '60px', md: '7' },
+    },
+    contentWrapper: {
+      maxWidth: { base: 'full', md: '1140px' },
+      width: 'full',
+      display: 'flex',
+      justifyContent: 'center',
+      mx: 'auto',
+      align: 'center',
+    },
+    content: {
+      pt: { base: 4, md: '4' },
+      pb: { base: 4, md: '10' },
+    },
+  },
   centered: {
     container: {
       bg: packageSearchGradients.hotel,
@@ -100,8 +120,11 @@ export const packageSearchVariants: Record<PackageSearchVariant, any> = {
     packagesContainer: {
       bg: packageSearchGradients.packages
     },
+    cyprusContainer: {
+      bg: packageSearchGradients.cyprus,
+    },
     hotelContainer: {
-      bg: packageSearchGradients.hotel
+      bg: packageSearchGradients.hotel,
     },
     groupToursContainer: {
       bg: packageSearchGradients.groupTours
