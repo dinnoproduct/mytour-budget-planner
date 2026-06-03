@@ -14,15 +14,18 @@ import { StoriesSection } from '@widgets/StoriesSection'
 import { GroupTourList } from '@widgets/GroupTourList'
 import { useTranslation } from 'react-i18next'
 import { SplashNotificationsManager } from '@entities/notification'
+import { CyprusFlightsWidget } from '@widgets/CyprusFlightsWidget'
+import { CyprusVisaSupportBanner } from '@widgets/CyprusVisaSupport'
+import { CyprusTipsSection } from '@widgets/CyprusTips'
 
-const TAB_NAMES = ['hotels', 'packages', 'group-tours'] as const
+const TAB_NAMES = ['cyprus', 'hotels', 'packages', 'group-tours'] as const
 const TAB_NAME_TO_INDEX: Record<string, number> = {
-  // support both old and new query values
-  hotel: 0,
-  hotels: 0,
-  package: 1,
-  packages: 1,
-  'group-tours': 2,
+  cyprus: 0,
+  hotel: 1,
+  hotels: 1,
+  package: 2,
+  packages: 2,
+  'group-tours': 3,
 }
 let isReloadCleanupDone = false
 
@@ -43,7 +46,7 @@ export const HomePage = () => {
         isMounted.current = true
         return
       }
-      const name = TAB_NAMES[index] ?? 'hotels'
+      const name = TAB_NAMES[index] ?? 'cyprus'
       setSearchParams(
         prev => {
           const next = new URLSearchParams(prev)
@@ -104,7 +107,7 @@ export const HomePage = () => {
   }, [setSearchParams])
 
   useEffect(() => {
-    if (tabIndex === 2) {
+    if (tabIndex === 3) {
       return
     }
 
@@ -141,22 +144,31 @@ export const HomePage = () => {
       <SplashNotificationsManager />
       <PackageSearch
         variant={
-          tabIndex === 1
-            ? 'centeredPackage'
-            : tabIndex === 0
-              ? "centered"
-              : "centeredGroupTours"
+          tabIndex === 0
+            ? 'centeredCyprus'
+            : tabIndex === 1
+              ? 'centered'
+              : tabIndex === 2
+                ? 'centeredPackage'
+                : 'centeredGroupTours'
         }
         isHotel={tabIndex}
         setHotel={handleTabChange}
         initialTab={tabIndex}
       />
-      {tabIndex === 2 && <GroupTourList />}
-      <StoriesSection isHotel={tabIndex} />
-      {
-        tabIndex !== 2 && <PackageBanner mx={{ base: 4, md: 10 }} mt={10} />
-      }
-      <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex} />
+      {tabIndex === 3 && <GroupTourList />}
+      {tabIndex !== 0 && <StoriesSection isHotel={tabIndex} />}
+      {tabIndex === 0 && (
+        <>
+          <CyprusVisaSupportBanner />
+          <CyprusFlightsWidget />
+          <CyprusTipsSection />
+        </>
+      )}
+      <PackageBanner mx={{ base: 4, md: 10 }} mt={10} />
+      {tabIndex !== 0 && (
+        <CityOffersSection mt={{ base: '100px', md: '120px' }} isHotel={tabIndex} />
+      )}
       {/*<HotOffersSection mt={{ base: '62px', md: '84px' }} />*/}
       {/*<BlogsSection />*/}
       {/*<AppSection />*/}

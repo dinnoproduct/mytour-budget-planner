@@ -9,7 +9,13 @@ export type PackageSearchProps = {
   initialTab?: number
 } & Omit<LayoutProps, 'children'>
 
-export type PackageSearchVariant = 'fixed' | 'centered' | 'fixedWithoutTabs' | 'centeredPackage' | 'centeredGroupTours'
+export type PackageSearchVariant =
+  | 'fixed'
+  | 'centered'
+  | 'centeredCyprus'
+  | 'fixedWithoutTabs'
+  | 'centeredPackage'
+  | 'centeredGroupTours'
 
 export type LayoutProps = {
   containerProps?: BoxProps

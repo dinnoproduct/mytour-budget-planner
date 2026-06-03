@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next'
 import { Icon, Tabs, Text } from '@ui'
 import { capitalize } from '@shared/utils'
 import {
+  CyprusTabItem,
   HotelTabItem,
   GroupTabItem,
-  PackageTabItem
+  PackageTabItem,
 } from '@widgets/PackageSearch/ui/TabItem'
 import { LANGUAGE_PREFIX, type LanguageName } from '@shared/model'
 
@@ -21,7 +22,7 @@ export const PackageSearchMenu = ({
 }: any) => {
   const { t, i18n } = useTranslation()
   const { searchData, cities } = usePackagesSearchContext()
-  const [selectedTab, setSelectedTab] = useState(0)
+  const [selectedTab, setSelectedTab] = useState(2)
 
   const formatDate = (date?: Date | null) => {
     if (!date) {
@@ -98,9 +99,10 @@ export const PackageSearchMenu = ({
           {showTabs && (
             <Tabs
               labels={[
-                <PackageTabItem key="package-tab" />,
+                <CyprusTabItem key="cyprus-tab" />,
                 <HotelTabItem key="hotel-tab" />,
-                <GroupTabItem key="group-tab" />
+                <PackageTabItem key="package-tab" />,
+                <GroupTabItem key="group-tab" />,
               ]}
               variant="line"
               mt="2"

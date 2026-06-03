@@ -13,7 +13,13 @@ export const StoryItem: React.FC<StoryItemProps> = React.memo(
     const { storySet } = group;
     const avatarImageUrl = storySet.avatarImageUrl;
     const gradientColor =
-      isHotel === 0 ? "gr_Hotel" : isHotel === 1 ? "gr_Packages" : "gr_GroupTours";
+      isHotel === 0
+        ? "gr_Cyprus"
+        : isHotel === 1
+          ? "gr_Hotel"
+          : isHotel === 2
+            ? "gr_Packages"
+            : "gr_GroupTours";
 
     return (
       <VStack

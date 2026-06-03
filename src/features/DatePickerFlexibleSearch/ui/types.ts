@@ -1,3 +1,4 @@
+import { type Dispatch, type SetStateAction } from 'react'
 import { type DateModeType } from '@/entities/package'
 import { type ButtonProps, type MenuProps } from '@chakra-ui/react'
 import type { ComponentType } from 'react'
@@ -11,6 +12,9 @@ export type DatePickerProps = {
   menuProps?: Omit<MenuProps, 'children'>
   portalZIndex?: number
   exactDatesOnly?: boolean
+  dateMode?: DateModeType
+  setDateMode?: Dispatch<SetStateAction<DateModeType>>
+  searchDays?: number
 }
 
 export type DatePickerInputProps = {

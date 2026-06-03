@@ -40,6 +40,8 @@ export enum Methods {
 
 export const defaultSelectedPackageCity = [1]
 export const defaultSelectedHotelCity = [16, 18, 19, 20, 21]
+export const CYPRUS_COUNTRY_ID = 6
+export const defaultSelectedCyprusCity = [32, 33, 34, 35, 37]
 export const packageCards = [
   {
     id: 1,

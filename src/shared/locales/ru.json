@@ -150,6 +150,7 @@
   "grades": "Оценки",
   "guestsReviews": "Отзывы гостей",
   "halfPaymentDescription": "В случае частичной оплаты оставшаяся сумма на момент оплаты может измениться в зависимости от колебаний курса доллара США. Расчет основан на курсе доллара США, установленном туристическим агентством на момент оплаты.",
+  "cyprus": "Кипр",
   "hotel": "Отель",
   "hotels": "Отели",
   "hotelDetails": "Детали отеля",
@@ -496,5 +497,19 @@
   "compareFooterBar.selected": "для сравнения",
   "compare.addMore": "Добавить ещё {{count}} {{itemType}}",
   "compare.goToSearchPage": "Перейти к поиску",
-  "compare.title": "Сравнение"
+  "compare.title": "Сравнение",
+  "cyprusVisa.title": "Получите поддержку по визе на Кипр",
+  "cyprusVisa.description": "Заполните данные, и мы поможем вам в процессе подачи на визу — от записи на приём до подготовки документов.",
+  "cyprusVisa.documentsLink": "Необходимые документы",
+  "cyprusVisa.applyButton": "Подать заявку на поддержку",
+  "cyprusVisa.modal.title": "Поддержка по визе на Кипр",
+  "cyprusVisa.modal.description": "Оставьте контактные данные, и наша команда свяжется с вами.",
+  "cyprusVisa.modal.fullName": "Имя и фамилия",
+  "cyprusVisa.modal.email": "Эл. почта",
+  "cyprusVisa.modal.phone": "Номер телефона",
+  "cyprusVisa.modal.submit": "Отправить",
+  "cyprusVisa.modal.success": "Спасибо, мы скоро свяжемся с вами",
+  "cyprusVisa.modal.error": "Техническая ошибка, попробуйте ещё раз",
+  "cyprusTips.sectionTitle": "Полезная информация перед поездкой",
+  "cyprusTips.watchVideo": "Смотреть видео"
 }

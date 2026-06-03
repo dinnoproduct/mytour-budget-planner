@@ -150,6 +150,7 @@
   "grades": "Գնահատականներ",
   "guestsReviews": "Ճանապարհորդների գնահատական",
   "halfPaymentDescription": "Փաթեթի փուլային վճարման դեպքում գումարի մնացորդը վճարման պահին կարող է փոխվել ԱՄՆ դոլարի փոխարժեքի տատանումներին համապատասխան: Հաշվարկի համար հիմք է ընդունվում վճարման պահի դրությամբ տուրիստական գործակալության կողմից սահմանված ԱՄՆ դոլարի փոխարժեքը:",
+  "cyprus": "Կիպրոս",
   "hotel": "Հյուրանոց",
   "hotels": "Հյուրանոցներ",
   "hotelDetails": "Հյուրանոցի մանրամասներ",
@@ -497,5 +498,19 @@
   "compareFooterBar.selected": "Համեմատելու համար",
   "compare.addMore": "Ավելացնել ևս {{count}} {{itemType}}",
   "compare.goToSearchPage": "Վերադառնալ որոնման էջ",
-  "compare.title": "Համեմատություն"
+  "compare.title": "Համեմատություն",
+  "cyprusVisa.title": "Ստացեք Կիպրոսի վիզայի աջակցություն",
+  "cyprusVisa.description": "Լրացրեք ձեր տվյալները, և մենք կաջակցենք ձեզ վիզայի դիմումի գործընթացում՝ մինչև ժամի ամրագրումը և փաստաթղթերի պատրաստումը։",
+  "cyprusVisa.documentsLink": "Անհրաժեշտ փաստաթղթեր",
+  "cyprusVisa.applyButton": "Դիմել աջակցության համար",
+  "cyprusVisa.modal.title": "Կիպրոսի վիզայի աջակցություն",
+  "cyprusVisa.modal.description": "Լրացրեք կոնտակտային տվյալները, և մեր թիմը կկապվի ձեզ հետ։",
+  "cyprusVisa.modal.fullName": "Անուն Ազգանուն",
+  "cyprusVisa.modal.email": "Էլ․ հասցե",
+  "cyprusVisa.modal.phone": "Հեռախոսահամար",
+  "cyprusVisa.modal.submit": "Ուղարկել",
+  "cyprusVisa.modal.success": "Շնորհակալություն, մենք շուտով կկապվենք ձեզ հետ",
+  "cyprusVisa.modal.error": "Տեխնիկական խնդիր, խնդրում ենք կրկին փորձել",
+  "cyprusTips.sectionTitle": "Օգտակար տեղեկություններ ճամփորդությունից առաջ",
+  "cyprusTips.watchVideo": "Դիտել տեսանյութը"
 }

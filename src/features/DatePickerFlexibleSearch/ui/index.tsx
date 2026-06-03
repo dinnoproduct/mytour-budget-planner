@@ -14,7 +14,10 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
   CustomButton,
   menuProps,
   portalZIndex,
-  exactDatesOnly
+  exactDatesOnly,
+  dateMode,
+  setDateMode,
+  searchDays,
 }) => {
   const { isMd } = useBreakpoint()
 
@@ -36,7 +39,10 @@ export const DatePickerFlexibleSearch: React.FC<DatePickerProps> = ({
   } = useDatePickerState({
     fromDate,
     toDate,
-    onAccept
+    onAccept,
+    dateMode,
+    setDateMode,
+    searchDays,
   })
 
   useDisablePageScroll(isCalendarOpen && !isMd)
