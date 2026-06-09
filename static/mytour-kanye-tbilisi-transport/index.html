@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mytour | Kanye West Tbilisi Transport Plan</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    :root {
+      --brand: #0b69ff;
+      --brand-dark: #0050e5;
+      --ink: #1a202c;
+      --sub: #4a5568;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --bg: #f7fafc;
+      --card: #ffffff;
+      --venue: #e50b32;
+      --shadow: 0 1px 2px 0 #0000000f, 0 1px 3px 0 #0000001a;
+      --shadow-md: 0 2px 4px -1px #0000000f, 0 4px 6px -1px #0000001a;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .wrap {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .panel {
+      width: 430px;
+      min-width: 430px;
+      height: 100%;
+      overflow-y: auto;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+    }
+
+    .header {
+      padding: 20px 22px 16px;
+      color: #fff;
+      background: linear-gradient(178deg, #017bfe 0%, #00b8cf 100%);
+    }
+
+    .brand {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      opacity: .95;
+    }
+
+    h1 {
+      margin: 6px 0 4px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      opacity: .95;
+    }
+
+    .venue-line {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      border-radius: 8px;
+      background: #ffffff29;
+    }
+
+    .section {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .card {
+      margin: 0 22px 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      flex: none;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px #fff, 0 0 0 4px rgba(0, 0, 0, .08);
+    }
+
+    .group-title {
+      font-size: 14.5px;
+      font-weight: 700;
+    }
+
+    .group-area {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill {
+      margin-left: auto;
+      padding: 3px 8px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .card-body {
+      display: none;
+      padding: 0 14px 14px;
+      color: var(--sub);
+      font-size: 12.8px;
+      line-height: 1.55;
+    }
+
+    .card.open .card-body { display: block; }
+
+    .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 7px 0;
+    }
+
+    .row-label {
+      width: 76px;
+      flex: none;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+
+    .row b { color: var(--ink); }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .links a {
+      padding: 7px 10px;
+      color: var(--brand);
+      font-size: 11.5px;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .links a:hover { background: #f0f6ff; }
+
+    .links a.primary {
+      color: #fff;
+      border-color: var(--brand);
+      background: var(--brand);
+    }
+
+    .links a.primary:hover { background: var(--brand-dark); }
+
+    .pickup {
+      margin-top: 9px;
+      padding: 9px 11px;
+      border: 1px dashed #ffb168;
+      border-radius: 8px;
+      background: #fff7ef;
+    }
+
+    .pickup.walk {
+      border-color: #4dd895;
+      background: #e5f9f0;
+    }
+
+    .pickup-title {
+      color: #cc5c00;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+
+    .pickup.walk .pickup-title { color: #00ae4e; }
+
+    .map-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .legend {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 500;
+      max-width: 240px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.7;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow-md);
+    }
+
+    .legend b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .legend i {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      margin-right: 7px;
+      vertical-align: middle;
+      border-radius: 50%;
+    }
+
+    .note {
+      padding: 14px 22px 30px;
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.55;
+    }
+
+    .leaflet-popup-content {
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .popup-title {
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px) {
+      .wrap {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .panel {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .map-wrap {
+        height: 62vh;
+        min-height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="panel">
+      <div class="header">
+        <div class="brand">Mytour Group Transport Operations</div>
+        <h1>Yerevan to Tbilisi to Kanye West</h1>
+        <div class="subtitle">5 hotel groups, private coach per group</div>
+        <div class="venue-line">Venue: Boris Paichadze Dinamo Arena, 2 Akaki Tsereteli Ave, Tbilisi</div>
+      </div>
+
+      <div class="section">
+        <h2>Hotel to Arena</h2>
+        <p>Tap a group to expand. Each route includes hotel departure, ticket collection, and post-event pickup guidance. Yandex links are included for Tbilisi ground ops; Google links are kept as a fallback.</p>
+      </div>
+
+      <div id="cards"></div>
+
+      <div class="note">
+        Checked against current public listings on Yandex, official hotel pages, Booking/Tripadvisor, and Georgia Travel where available.
+        Biography Design has a naming/address mismatch across maps: Yandex shows Biography Tbilisi at Bezhan Kalandadze 12A, while major hotel listings show Biography Design at Bezhan Kalandadze 15. Confirm the exact entrance with the hotel before printing driver sheets.
+      </div>
+    </aside>
+
+    <main class="map-wrap">
+      <div id="map"></div>
+      <div class="legend" id="legend"></div>
+    </main>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="">
+  </script>
+  <script src="./app.js"></script>
+</body>
+</html>
